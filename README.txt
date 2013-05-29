@@ -1,3 +1,4 @@
+========================  LICENSES ========================
 /*
  *  Copyright (C) 2013 Pavel Charvat
  * 
@@ -17,10 +18,34 @@
  *  along with IEDExplorer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+IEDExplorer uses Binary Notes ASN.1 software library:
+
+/*
+* Copyright 2006 Abdulla G. Abdurakhmanov (abdulla.abdurakhmanov@gmail.com).
+* 
+* Licensed under the LGPL, Version 2 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+* 
+*      http://www.gnu.org/copyleft/lgpl.html
+* 
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* 
+* With any your questions welcome to my e-mail 
+* or blog at http://abdulla-a.blogspot.com.
+*/
+
+
+========================  IEDExplorer ========================
+
 
 The IEDExplorer project has been created in my free time in order to reach some familiarization
 and self-education in the IEC61850 protocol.
-The result is the only (as I have seen over Internet) pure .net managed MMS stack
+The result is the only (as I have seen over Internet) pure .net managed MMS stack (not quite complete!)
 and a very basic IEC61850 MMS client implementation.
 
 The code is NOT in production quality, written by a non-professional programmer:
@@ -36,6 +61,7 @@ On the other side:
 - it has already helped me in some situations in debugging 61850 communications
 - it has a big potential for improvement
 - it can be a free alternative to some commercial test utilities
+- it runs under Windows and under Linux/Mono
 
 The project is looking for enthusiastic programmers who want to explore the mysterious
 world of IEC61850 protocol.
