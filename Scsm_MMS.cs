@@ -99,11 +99,13 @@ namespace IEDExplorer
 
         public int ReceiveData(Iec61850State iecs)
         {
-            //iecs.logger.LogDebug("mms.ReceiveData: ");
-            /*long pos = iecs.msMMS.Position;
+            iecs.logger.LogDebug("mms.ReceiveData: ");
+            long pos = iecs.msMMS.Position;
             byte[] b = iecs.msMMS.ToArray();
+            string s = "";
             for (long i = pos; i < b.Length; i++)
-                Console.Write("0x{0:x} ", b[i]);*/
+                s += String.Format("0x{0:x} ", b[i]);
+            iecs.logger.LogDebug(s);
             //Console.WriteLine();
 
             // kvuli breaku
@@ -243,10 +245,11 @@ namespace IEDExplorer
             iecs.logger.LogInfo("FileRead PDU received!!");
             if (iecs.lastOperationData[0] is NodeFile)
             {
-                (iecs.lastOperationData[0] as NodeFile).AppendData( filerd.FileData );
+                (iecs.lastOperationData[0] as NodeFile).AppendData(filerd.FileData);
                 if (filerd.MoreFollows)
                     iecs.fstate = FileTransferState.FILE_READ;
-                else {
+                else
+                {
                     iecs.fstate = FileTransferState.FILE_COMPLETE;
                     (iecs.lastOperationData[0] as NodeFile).FileReady = true;
                 }
@@ -419,9 +422,9 @@ namespace IEDExplorer
                                             NodeBase b = iecs.ied.FindNodeByAddress(varName);
                                             Data dataref = list[i + datanum].Success;
                                             if (!(b is NodeFC))
-                                            // dataref = (dataref.Structure as List<Data>)[0];
-                                            if (list[i + datanum].Success != null)
-                                                recursiveReadData(iecs, dataref, b, NodeState.Reported);
+                                                // dataref = (dataref.Structure as List<Data>)[0];
+                                                if (list[i + datanum].Success != null)
+                                                    recursiveReadData(iecs, dataref, b, NodeState.Reported);
                                             datacnt++;
                                         }
                                         // Evaluation of OptFldsDataReference
@@ -495,21 +498,21 @@ namespace IEDExplorer
             if (iecs.istate == Iec61850lStateEnum.IEC61850_READ_MODEL_DATA_WAIT)
             {
                 iecs.istate = Iec61850lStateEnum.IEC61850_READ_MODEL_DATA;
-               // if (iecs.ied.GetActualChildNode().GetActualChildNode().GetActualChildNode().NextActualChildNode() == null)
-               // {
-                    if (iecs.ied.GetActualChildNode().GetActualChildNode().NextActualChildNode() == null)
+                // if (iecs.ied.GetActualChildNode().GetActualChildNode().GetActualChildNode().NextActualChildNode() == null)
+                // {
+                if (iecs.ied.GetActualChildNode().GetActualChildNode().NextActualChildNode() == null)
+                {
+                    if (iecs.ied.GetActualChildNode().NextActualChildNode() == null)
                     {
-                        if (iecs.ied.GetActualChildNode().NextActualChildNode() == null)
+                        if (iecs.ied.NextActualChildNode() == null)
                         {
-                            if (iecs.ied.NextActualChildNode() == null)
-                            {
-                                // End of loop
-                                iecs.istate = Iec61850lStateEnum.IEC61850_READ_NAMELIST_NAMED_VARIABLE_LIST;
-                                iecs.logger.LogInfo("Reading named variable lists: [IEC61850_READ_NAMELIST_NAMED_VARIABLE_LIST]");
-                                iecs.ied.ResetAllChildNodes();
-                            }
+                            // End of loop
+                            iecs.istate = Iec61850lStateEnum.IEC61850_READ_NAMELIST_NAMED_VARIABLE_LIST;
+                            iecs.logger.LogInfo("Reading named variable lists: [IEC61850_READ_NAMELIST_NAMED_VARIABLE_LIST]");
+                            iecs.ied.ResetAllChildNodes();
                         }
                     }
+                }
                 //}
             }
         }
@@ -593,7 +596,7 @@ namespace IEDExplorer
                     }
                     iecs.logger.LogDebug("GetNameList.MoreFollows: " + GetNameList.MoreFollows.ToString());
                     if (GetNameList.MoreFollows)
-                    //if (GetNameList.ListOfIdentifier.Count > 0)
+                        //if (GetNameList.ListOfIdentifier.Count > 0)
                         iecs.istate = Iec61850lStateEnum.IEC61850_READ_NAMELIST_VAR;
                     else
                     {
@@ -654,8 +657,17 @@ namespace IEDExplorer
 
         void recursiveReadData(Iec61850State iecs, Data data, NodeBase actualNode, NodeState s)
         {
-            if (data == null) return;
-            if (actualNode == null) return;
+            if (data == null)
+            {
+                iecs.logger.LogDebug("data = null, returning from recursiveReadData");
+                return;
+            }
+            if (actualNode == null)
+            {
+                iecs.logger.LogDebug("actualNode = null, returning from recursiveReadData");
+                return;
+            }
+            iecs.logger.LogDebug("recursiveReadData: nodeAddress=" + actualNode.Address + ", state=" + s.ToString());
             actualNode.NodeState = s;
             if (data.Structure != null)
             {
@@ -761,29 +773,41 @@ namespace IEDExplorer
             else if (data.isUtc_timeSelected())
             {
                 iecs.logger.LogDebug("data.Utc_time != null");
-                //byte[] ubval = data.Utc_time.Value;
+
                 long seconds;
                 long millis;
 
-                seconds = (data.Utc_time.Value[0] << 24) +
-                          (data.Utc_time.Value[1] << 16) +
-                          (data.Utc_time.Value[2] << 8) +
-                          (data.Utc_time.Value[3]);
-
-                millis = 0;
-                for (int i = 0; i < 24; i++)
+                //if (actualNode.Address == "BayControllerQ/LTRK1.ApcFTrk.T")
+                //    iecs.logger.LogDebug("BayControllerQ/LTRK1.ApcFTrk.T"); ;
+                if (data.Utc_time.Value != null && data.Utc_time.Value.Length == 8)
                 {
-                    if (((data.Utc_time.Value[(i / 8) + 4] << (i % 8)) & 0x80) > 0)
-                    {
-                        millis += 1000000 / (1 << (i + 1));
-                    }
-                }
-                millis /= 1000;
+                    seconds = (data.Utc_time.Value[0] << 24) +
+                              (data.Utc_time.Value[1] << 16) +
+                              (data.Utc_time.Value[2] << 8) +
+                              (data.Utc_time.Value[3]);
 
-                DateTime dt = ConvertFromUnixTimestamp(seconds);
-                dt = dt.AddMilliseconds(millis);
-                (actualNode as NodeData).DataValue = dt.ToLocalTime();
-                (actualNode as NodeData).DataParam = data.Utc_time.Value[7];
+                    millis = 0;
+                    for (int i = 0; i < 24; i++)
+                    {
+                        if (((data.Utc_time.Value[(i / 8) + 4] << (i % 8)) & 0x80) > 0)
+                        {
+                            millis += 1000000 / (1 << (i + 1));
+                        }
+                    }
+                    millis /= 1000;
+
+                    iecs.logger.LogDebug("calling ConvertFromUnixTimestamp");
+                    DateTime dt = ConvertFromUnixTimestamp(seconds);
+                    iecs.logger.LogDebug("return from ConvertFromUnixTimestamp");
+                    dt = dt.AddMilliseconds(millis);
+                    (actualNode as NodeData).DataValue = dt.ToLocalTime();
+                    (actualNode as NodeData).DataParam = data.Utc_time.Value[7];
+                }
+                else
+                {
+                    (actualNode as NodeData).DataValue = DateTime.Now;
+                    (actualNode as NodeData).DataParam = (byte)0xff;
+                }
             }
             else if (data.isVisible_stringSelected())
             {
@@ -801,6 +825,7 @@ namespace IEDExplorer
                 (actualNode as NodeData).DataValue = data.Bit_string.Value;
                 (actualNode as NodeData).DataParam = data.Bit_string.TrailBitsCnt;
             }
+            iecs.logger.LogDebug("recursiveReadData: successfull return");
         }
 
         void RecursiveReadTypeDescription(Iec61850State iecs, NodeBase actualNode, TypeDescription t)
@@ -928,8 +953,8 @@ namespace IEDExplorer
         }
 
 
-/*///////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
-        
+        /*///////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
+
         public int SendIdentify(Iec61850State iecs)
         {
             MMSpdu mymmspdu = new MMSpdu();
@@ -1354,7 +1379,7 @@ namespace IEDExplorer
             NodeBase[] nvl = new NodeBase[1];
             nvl[0] = el.Address.owner;
             iecs.lastOperationData = nvl;
-            
+
             nvlreq.ListOfVariable = dnvl;
             nvlreq.VariableListName = new ObjectName();
             nvlreq.VariableListName.selectDomain_specific(new ObjectName.Domain_specificSequenceType());
@@ -1445,7 +1470,7 @@ namespace IEDExplorer
             FileDirectory_Request filedreq = new FileDirectory_Request();
             FileName filename = new FileName();
             FileName conafter = new FileName();
-            
+
             filename.initValue();
             if (el.Data[0] is NodeFile)
                 filename.Add((el.Data[0] as NodeFile).FullName);

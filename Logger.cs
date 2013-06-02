@@ -40,11 +40,11 @@ namespace IEDExplorer
         public Logger()
         {
             verbosity = Severity.Information;
-            verbosity = Severity.Debug;
+            //verbosity = Severity.Debug;
             try
             {
-                tmpFile = Path.Combine(Path.GetTempPath(), "MMS_log_file.txt");
-                stream = new FileStream(tmpFile, FileMode.Append, FileAccess.Write, FileShare.Read);
+                tmpFile = /*Path.Combine(Path.GetTempPath(),*/ "MMS_log_file.txt";
+                stream = new FileStream(tmpFile, FileMode.Create, FileAccess.Write, FileShare.Read);
                 writer = new StreamWriter(stream);
             }
             catch { }
@@ -62,8 +62,8 @@ namespace IEDExplorer
             try
             {
                 string msg = string.Format("[{0}.{1}] {2}: {3}", DateTime.Now, DateTime.Now.Millisecond.ToString("D3"), severity.ToString(), message);
-                //writer.WriteLine(msg);
-                //writer.Flush();
+                writer.WriteLine(msg);
+                writer.Flush();
                 if (OnLogMessage != null)
                     OnLogMessage(msg); //, null, null);
             }
