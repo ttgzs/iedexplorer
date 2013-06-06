@@ -28,6 +28,7 @@ using System.Windows.Forms;
 using MMS_ASN1_Model;
 using System.Globalization;
 using System.Threading;
+using org.mkulu.config;
 using IEDExplorer.Resources;
 
 namespace IEDExplorer
@@ -45,6 +46,7 @@ namespace IEDExplorer
         TreeNode nodeToDrag;
         TreeNode listsNode;
         long m_ctlNum = 0;
+        IniFileManager ini;
 
         public MainWindow()
         {
@@ -54,7 +56,38 @@ namespace IEDExplorer
             worker = new Scsm_MMS_Worker(env);
             env.logger.OnLogMessage += new Logger.OnLogMessageDelegate(logger_OnLogMessage);
             env.logger.LogInfo("Starting main program ...");
-            toolStripComboBox_Hostname.SelectedIndex = 0;
+            ini = new IniFileManager(System.IO.Path.GetDirectoryName(Application.ExecutablePath) + "\\mruIP.ini");
+            GetMruIp();
+            if (toolStripComboBox_Hostname.Items.Count > 0)
+                toolStripComboBox_Hostname.SelectedIndex = 0;
+        }
+
+        void SaveMruIp()
+        {
+            int i = 0;
+            if (toolStripComboBox_Hostname.Text != "")
+            {
+                if (toolStripComboBox_Hostname.Items.Count >= 20)
+                {
+                    toolStripComboBox_Hostname.Items.RemoveAt(0);
+                }
+                toolStripComboBox_Hostname.Items.Insert(0, toolStripComboBox_Hostname.Text);
+            }
+            foreach (string s in toolStripComboBox_Hostname.Items)
+            {
+                ini.writeString("MruIp", "Ip" + i++, s);
+            }
+        }
+
+        void GetMruIp()
+        {
+            string s;
+            for (int i = 0; i < 20; i++)
+            {
+                s = ini.getString("MruIp", "Ip" + i, "");
+                if (s != "")
+                    toolStripComboBox_Hostname.Items.Add(s);
+            }
         }
 
         void logger_OnLogMessage(string message)
@@ -222,6 +255,7 @@ namespace IEDExplorer
 
         private void toolStripButton_Run_Click(object sender, EventArgs e)
         {
+            SaveMruIp();
             worker.Start(toolStripComboBox_Hostname.Text, 102); //.SelectedItem.ToString(), 102);
         }
 

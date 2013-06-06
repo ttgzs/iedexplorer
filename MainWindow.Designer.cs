@@ -176,10 +176,6 @@ namespace IEDExplorer
             // 
             // toolStripComboBox_Hostname
             // 
-            this.toolStripComboBox_Hostname.Items.AddRange(new object[] {
-            "localhost",
-            "143.161.47.116",
-            "10.0.0.1"});
             this.toolStripComboBox_Hostname.MergeAction = System.Windows.Forms.MergeAction.Replace;
             this.toolStripComboBox_Hostname.Name = "toolStripComboBox_Hostname";
             this.toolStripComboBox_Hostname.Size = new System.Drawing.Size(121, 25);

@@ -83,6 +83,7 @@
       <DependentUpon>CommandDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="FileTransferState.cs" />
+    <Compile Include="IniFileManager.cs" />
     <Compile Include="NodeFile.cs" />
     <Compile Include="EditValue.cs">
       <SubType>Form</SubType>
