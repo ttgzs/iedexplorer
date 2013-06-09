@@ -67,11 +67,23 @@ namespace IEDExplorer
             int i = 0;
             if (toolStripComboBox_Hostname.Text != "")
             {
-                if (toolStripComboBox_Hostname.Items.Count >= 20)
+                if (toolStripComboBox_Hostname.Items.Contains(toolStripComboBox_Hostname.Text))
                 {
-                    toolStripComboBox_Hostname.Items.RemoveAt(0);
+                    string s = toolStripComboBox_Hostname.Text;
+                    int idx = toolStripComboBox_Hostname.Items.IndexOf(s);
+                    toolStripComboBox_Hostname.Items.RemoveAt(idx);
+                    toolStripComboBox_Hostname.Items.Insert(0, s);
+                    toolStripComboBox_Hostname.SelectedIndex = 0;
                 }
-                toolStripComboBox_Hostname.Items.Insert(0, toolStripComboBox_Hostname.Text);
+                else
+                {
+                    if (toolStripComboBox_Hostname.Items.Count >= 20)
+                    {
+                        toolStripComboBox_Hostname.Items.RemoveAt(toolStripComboBox_Hostname.Items.Count-1);
+                    }
+                    toolStripComboBox_Hostname.Items.Insert(0, toolStripComboBox_Hostname.Text);
+                    toolStripComboBox_Hostname.SelectedIndex = 0;
+                }
             }
             foreach (string s in toolStripComboBox_Hostname.Items)
             {
