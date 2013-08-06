@@ -56,7 +56,7 @@ namespace IEDExplorer
             worker = new Scsm_MMS_Worker(env);
             env.logger.OnLogMessage += new Logger.OnLogMessageDelegate(logger_OnLogMessage);
             env.logger.LogInfo("Starting main program ...");
-            ini = new IniFileManager(System.IO.Path.GetDirectoryName(Application.ExecutablePath) + "\\mruIP.ini");
+            ini = new IniFileManager(System.IO.Path.GetDirectoryName(Application.ExecutablePath) + "\\mruip.ini");
             GetMruIp();
             if (toolStripComboBox_Hostname.Items.Count > 0)
                 toolStripComboBox_Hostname.SelectedIndex = 0;
@@ -265,20 +265,29 @@ namespace IEDExplorer
             }
         }
 
-        private void toolStripButton_Run_Click(object sender, EventArgs e)
-        {
-            SaveMruIp();
+        private void toolStripButton_Run_Click (object sender, EventArgs e)
+		{
+			toolStripButton_Stop.Enabled = true;
+			toolStripButton_Stop.ImageTransparentColor = System.Drawing.Color.LightYellow;
+			if (toolStripComboBox_Hostname.Items.Count == 0) {
+				toolStripComboBox_Hostname.Items.Add ("192.168.0.1");
+			}
+			toolStripButton_Run.Enabled = false;
+			SaveMruIp ();
             worker.Start(toolStripComboBox_Hostname.Text, 102); //.SelectedItem.ToString(), 102);
         }
 
         private void toolStripButton_Stop_Click(object sender, EventArgs e)
         {
             worker.Stop();
+			toolStripButton_Stop.Enabled = false;
+			toolStripButton_Run.Enabled = true;
         }
 
         private void toolStripComboBox_Hostname_SelectedIndexChanged(object sender, EventArgs e)
         {
-            toolStripComboBox_Hostname.SelectedItem.ToString();
+            if (toolStripComboBox_Hostname.SelectedItem != null)
+				toolStripComboBox_Hostname.SelectedItem.ToString();
         }
 
         private void TreeWindow_FormClosing(object sender, FormClosingEventArgs e)
