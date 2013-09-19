@@ -39,16 +39,18 @@ namespace IEDExplorer
                 //    ipHostInfo = Dns.GetHostEntry("");
                 //}
                 //else
+                IPAddress ipAddress = null;
+
+                if (!IPAddress.TryParse(tcps.hostname, out ipAddress))
                 {
                     ipHostInfo = Dns.GetHostEntry(tcps.hostname);
-                }
-                IPAddress ipAddress = null;
-                for (int i = 0; i < ipHostInfo.AddressList.Length; i++)
-                {
-                    if (ipHostInfo.AddressList[i].AddressFamily == AddressFamily.InterNetwork)
+                    for (int i = 0; i < ipHostInfo.AddressList.Length; i++)
                     {
-                        ipAddress = ipHostInfo.AddressList[i];
-                        break;
+                        if (ipHostInfo.AddressList[i].AddressFamily == AddressFamily.InterNetwork)
+                        {
+                            ipAddress = ipHostInfo.AddressList[i];
+                            break;
+                        }
                     }
                 }
                 IPEndPoint remoteEP = new IPEndPoint(ipAddress, tcps.port);
