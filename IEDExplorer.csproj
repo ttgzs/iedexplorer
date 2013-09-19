@@ -618,7 +618,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\running.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\calculator.png" />
