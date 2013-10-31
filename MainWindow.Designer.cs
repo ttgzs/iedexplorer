@@ -58,16 +58,18 @@ namespace IEDExplorer
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton_Run = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton_Stop = new System.Windows.Forms.ToolStripButton();
+			this.toolStripButton_Stop.Enabled = false;
             this.toolStripComboBox_Hostname = new System.Windows.Forms.ToolStripComboBox();
+			this.toolStripComboBox_Hostname.ToolTipText = "IP Address of Server";
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.listView_Log = new IEDExplorer.MyListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+//            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+//            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
@@ -158,6 +160,7 @@ namespace IEDExplorer
             // 
             this.toolStripButton_Run.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripButton_Run.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_Run.Image")));
+//            this.toolStripButton_Run.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton_Run.Name = "toolStripButton_Run";
             this.toolStripButton_Run.Size = new System.Drawing.Size(23, 22);
             this.toolStripButton_Run.Text = "Run";
@@ -229,13 +232,13 @@ namespace IEDExplorer
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TreeWindow_FormClosing);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+//            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+//            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
