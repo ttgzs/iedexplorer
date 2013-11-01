@@ -43,17 +43,16 @@ IEDExplorer uses Binary Notes ASN.1 software library:
 ========================  IEDExplorer ========================
 
 
-The IEDExplorer project has been created in my free time in order to reach some familiarization
-and self-education in the IEC61850 protocol.
-The result is the only (as I have seen over Internet) pure .net managed MMS stack (not quite complete!)
+The IEDExplorer project has been created in my free time in order to learn the IEC61850 protocol.
+The result is the only (as I have seen over Internet) pure .net managed MMS stack (not complete yet)
 and a very basic IEC61850 MMS client implementation.
 
 The code is NOT in production quality, written by a non-professional programmer:
 - it completely lacks tests
 - it uses Binary Notes implementation of MMS ASN.1 encoding/decoding, which is relatively
   slow in the C# flavour, thus not really suitable for a serious usage
-- it has a simplistic UI and UI bindings (desperately needs refactoring)
-- IEC61850 is not suitably modelled, and model is very incomplete (refactoring needed)
+- it has a simplistic UI and UI bindings (needs some refactoring)
+- IEC61850 is modelled in a very simple manner, and model is incomplete (refactoring needed)
 - the MMS client side only has been implemented
 
 On the other side:
@@ -68,3 +67,6 @@ world of IEC61850 protocol.
 
 Rev 0.1 2013/05/29
 The first release 0.1 is an "as is" copy of the last development.
+
+Rev 0.2 2013/11/01
+The second release 0.2 : some enhacements in using DNS results/IP address. Most recent IP list.
