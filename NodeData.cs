@@ -134,25 +134,31 @@ namespace IEDExplorer
                     switch (DataType)
                     {
                         case scsm_MMS_TypeEnum.utc_time:
-                            if (((byte)(DataParam) & 0x40) > 0)     // TimQualTimeBaseErr
-                                val = DataValue.ToString() + "." + ((DateTime)(DataValue)).Millisecond.ToString() + " TimQualTimeBaseErr";
-                            else
-                                val = DataValue.ToString() + "." + ((DateTime)(DataValue)).Millisecond.ToString();
-                            break;
-                        case scsm_MMS_TypeEnum.bit_string:
-                            byte[] bbval = (byte[])DataValue;
-                            int blen = bbval.Length;
-                            int trail = (int)DataParam;
-
-                            StringBuilder sb = new StringBuilder(32);
-                            for (int i = 0; i < blen * 8 - trail; i++)
+                            if (DataParam != null)
                             {
-                                if (((bbval[(i / 8)] << (i % 8)) & 0x80) > 0)
-                                    sb.Append(1);     //.Insert(0, 1);
+                                if (((byte)(DataParam) & 0x40) > 0)     // TimQualTimeBaseErr
+                                    val = DataValue.ToString() + "." + ((DateTime)(DataValue)).Millisecond.ToString() + " TimQualTimeBaseErr";
                                 else
-                                    sb.Append(0);     //.Insert(0, 0);
+                                    val = DataValue.ToString() + "." + ((DateTime)(DataValue)).Millisecond.ToString();
                             }
-                            val = sb.ToString();
+                                break;
+                        case scsm_MMS_TypeEnum.bit_string:
+                            if (DataParam != null)
+                            {
+                                byte[] bbval = (byte[])DataValue;
+                                int blen = bbval.Length;
+                                int trail = (int)DataParam;
+
+                                StringBuilder sb = new StringBuilder(32);
+                                for (int i = 0; i < blen * 8 - trail; i++)
+                                {
+                                    if (((bbval[(i / 8)] << (i % 8)) & 0x80) > 0)
+                                        sb.Append(1);     //.Insert(0, 1);
+                                    else
+                                        sb.Append(0);     //.Insert(0, 0);
+                                }
+                                val = sb.ToString();
+                            }
                             break;
                         default:
                             val = DataValue.ToString();

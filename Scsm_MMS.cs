@@ -486,12 +486,17 @@ namespace IEDExplorer
                     int i = 0;
                     foreach (AccessResult ar in Read.ListOfAccessResult)
                     {
-                        if (ar.Success != null)
+                        if (i <= iecs.lastOperationData.GetUpperBound(0))
                         {
-                            iecs.logger.LogDebug("Reading Actual variable value: " + iecs.lastOperationData[i].Address);
-                            recursiveReadData(iecs, ar.Success, iecs.lastOperationData[i], NodeState.Read);
-                            i++;
+                            if (ar.Success != null)
+                            {
+                                iecs.logger.LogDebug("Reading Actual variable value: " + iecs.lastOperationData[i].Address);
+                                recursiveReadData(iecs, ar.Success, iecs.lastOperationData[i], NodeState.Read);
+                                i++;
+                            }
                         }
+                        else
+                            iecs.logger.LogError("Not matching read structure in ReceiveRead");
                     }
                     iecs.lastOperationData = null;
                 }
@@ -685,7 +690,10 @@ namespace IEDExplorer
                     int i = 0;
                     foreach (Data d in data.Structure)
                     {
-                        recursiveReadData(iecs, d, nb[i], s);
+                        if (i <= nb.GetUpperBound(0))
+                            recursiveReadData(iecs, d, nb[i], s);
+                        else
+                            iecs.logger.LogError("Not matching read structure: Node=" + actualNode.Name);
                         i++;
                     }
                 }
