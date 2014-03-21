@@ -63,19 +63,29 @@ namespace IEDExplorer
             set { _identify = value; }
         }
 
-        public NodeBase FindNodeByAddress(string Domain, string IecAddress)
+        public NodeBase FindNodeByAddress(string Domain, string IecAddress, bool FindList = false)
         {
             if (Domain == null || IecAddress == null)
                 return null;
             NodeBase b = this.FindChildNode(Domain);
             if (b != null)
             {
-                string[] parts = IecAddress.Split(new char[] { '$' });
-                for (int i = 0; i < parts.Length; i++)
+                if (FindList)
                 {
-                    if ((b = b.FindChildNode(parts[i])) == null)
+                    if ((b = b.FindChildNode(IecAddress)) == null)
                     {
                         return null;
+                    }
+                }
+                else
+                {
+                    string[] parts = IecAddress.Split(new char[] { '$' });
+                    for (int i = 0; i < parts.Length; i++)
+                    {
+                        if ((b = b.FindChildNode(parts[i])) == null)
+                        {
+                            return null;
+                        }
                     }
                 }
                 return b;
@@ -83,13 +93,13 @@ namespace IEDExplorer
             return null;
         }
 
-        public NodeBase FindNodeByAddress(string CompleteIecAddress)
+        public NodeBase FindNodeByAddress(string CompleteIecAddress, bool FindList = false)
         {
             if (CompleteIecAddress == null)
                 return null;
             string[] parts = CompleteIecAddress.Split(new char[] { '/' }, 2);
             if (parts.Length == 2)
-                return FindNodeByAddress(parts[0], parts[1]);
+                return FindNodeByAddress(parts[0], parts[1], FindList);
             return null;
         }
 

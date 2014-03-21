@@ -269,7 +269,7 @@ namespace IEDExplorer
 
         private void ReceiveInformationReport(Iec61850State iecs, InformationReport Report)
         {
-            string rptName, datName, varName;
+            string rptName, datName = null, varName;
             byte[] rptOpts = new byte[] { 0, 0 };
             byte[] incBstr = new byte[] { 0 };
             List<AccessResult> list;
@@ -436,6 +436,35 @@ namespace IEDExplorer
                                     else
                                         phase++;
                                 }
+                                // here we will be only if report is received without variable names
+                                if (phase == phsValues)
+                                {
+                                    // Report WIHOUT references:
+                                    // Need to investigate report members
+                                    NodeBase lvb = iecs.lists.FindNodeByAddress(datName, true);
+                                    if (lvb != null)
+                                    {
+                                        NodeBase[] nba = lvb.GetChildNodes();
+                                        //for (int j = 0; j < nba.Length; j++)
+                                        if (datacnt < nba.Length)
+                                        {
+                                            //if (included in phsInclusionBitstring string TODO
+                                            if (!(nba[datacnt] is NodeFC))
+                                            {
+                                                Data dataref = list[i].Success;
+                                                if (list[i].Success != null)
+                                                    recursiveReadData(iecs, dataref, nba[datacnt], NodeState.Reported);
+                                            }
+                                            datacnt++;
+                                        }
+                                        else break;
+                                        // Evaluation of OptFldsDataReference
+                                        if (datacnt == datanum)
+                                            break;
+                                        else
+                                            continue;
+                                    }
+                                }
                             }
                         }
                     }
@@ -484,6 +513,14 @@ namespace IEDExplorer
                 if (Read.ListOfAccessResult != null)
                 {
                     int i = 0;
+                    // libiec61850 correction
+                    // one read of a node is equal to separate reads to node children
+                    if (Read.ListOfAccessResult.Count > iecs.lastOperationData.Length)
+                        if (Read.ListOfAccessResult.Count == iecs.lastOperationData[0].GetChildNodes().Length)
+                        {
+                            iecs.lastOperationData = iecs.lastOperationData[0].GetChildNodes();
+                        }
+                    // libiec61850 correction end
                     foreach (AccessResult ar in Read.ListOfAccessResult)
                     {
                         if (i <= iecs.lastOperationData.GetUpperBound(0))

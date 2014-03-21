@@ -817,7 +817,7 @@ namespace IEDExplorer
                         MessageBox.Show("Suitable URCB not found, list cannot be activated!");
                         return;
                     }
-                } while (!ur.Parent.Name.Contains("rcb"));
+                } while (!ur.Parent.Name.ToLower().Contains("rcb"));
                 vl.urcb = (NodeData)ur;
 
                 if (vl.urcb != null)
