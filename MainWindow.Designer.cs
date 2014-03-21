@@ -228,7 +228,7 @@ namespace IEDExplorer
             this.Controls.Add(this.splitContainer2);
             this.Controls.Add(this.toolStrip1);
             this.Name = "MainWindow";
-            this.Text = "IEDExplorer - IEC61850 Test tool Ver. 0.1";
+            this.Text = "IEDExplorer - IEC61850 Test tool Ver. 0.4";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TreeWindow_FormClosing);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
