@@ -175,7 +175,7 @@ namespace IEDExplorer
                     tn2.Tag = b;
                     tn2.ImageIndex = 1;
                     tn2.SelectedImageIndex = 1;
-                    TreeNode tn3 = tn2.Nodes.Add("data");
+                    TreeNode tn3 = tn2.Nodes.Add("Data");
                     tn3.Tag = b;
                     tn3.ImageIndex = 2;
                     tn3.SelectedImageIndex = 2;
@@ -183,15 +183,24 @@ namespace IEDExplorer
                     NodeBase lb = iecs.lists.FindChildNode(b.Name);
                     if (lb != null)
                     {
-                        tn3 = tn2.Nodes.Add("lists");
+                        tn3 = tn2.Nodes.Add("DataSets");
                         tn3.Tag = lb;
                         tn3.ImageIndex = 3;
                         tn3.SelectedImageIndex = 3;
                         makeTree_listNode(lb, tn3);
                     }
+                    NodeBase rb = iecs.reports.FindChildNode(b.Name);
+                    if (rb != null)
+                    {
+                        tn3 = tn2.Nodes.Add("Reports");
+                        tn3.Tag = rb;
+                        tn3.ImageIndex = 3;
+                        tn3.SelectedImageIndex = 3;
+                        makeTree_reportNode(rb, tn3);
+                    }
                 }
                 nb = iecs.files;
-                TreeNode tn4 = n.Nodes.Add("files");
+                TreeNode tn4 = n.Nodes.Add("Files");
                 tn4.Tag = iecs.files;
                 tn4.ImageIndex = 3;
                 tn4.SelectedImageIndex = 3;
@@ -223,6 +232,27 @@ namespace IEDExplorer
         }
 
         void makeTree_listNode(NodeBase nb, TreeNode tn)
+        {
+            foreach (NodeBase b in nb.GetChildNodes())
+            {
+                TreeNode tn2 = tn.Nodes.Add(b.Name);
+                tn2.Tag = b;
+                b.Tag = tn2;
+                tn2.ImageIndex = 4;
+                tn2.SelectedImageIndex = 4;
+                foreach (NodeBase b2 in b.GetChildNodes())
+                {
+                    TreeNode tn3 = tn2.Nodes.Add(b2.CommAddress.Variable);
+                    tn3.Tag = b2;
+                    tn3.ImageIndex = 7;
+                    tn3.SelectedImageIndex = 7;
+                    /*Node_StateChanged(b2, new EventArgs());
+                    b2.StateChanged += new EventHandler(Node_StateChanged);*/
+                }
+            }
+        }
+
+        void makeTree_reportNode(NodeBase nb, TreeNode tn)
         {
             foreach (NodeBase b in nb.GetChildNodes())
             {

@@ -89,6 +89,10 @@ namespace IEDExplorer
         /// </summary>
         public NodeIed lists = new NodeIed("lists");
         /// <summary>
+        /// Server RP blocks (reports)
+        /// </summary>
+        public NodeIed reports = new NodeIed("reports");
+        /// <summary>
         /// Server files
         /// </summary>
         public NodeIed files = new NodeIed("files");
@@ -104,6 +108,7 @@ namespace IEDExplorer
             (ied as NodeIed).iecs = this;
             (lists as NodeIed).iecs = this;
             (files as NodeIed).iecs = this;
+            (reports as NodeIed).iecs = this;
         }
 
         public void NextState()

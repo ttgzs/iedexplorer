@@ -885,6 +885,17 @@ namespace IEDExplorer
                         NodeBase newActualNode = new NodeData(s.ComponentName.Value);
                         newActualNode = actualNode.AddChildNode(newActualNode);
                         RecursiveReadTypeDescription(iecs, newActualNode, s.ComponentType.TypeDescription);
+                        if (actualNode is NodeFC && actualNode.Name == "RP")
+                        {
+                            // Having RCB
+                            NodeBase nrpied = iecs.reports.AddChildNode(new NodeLD(iecs.ied.GetActualChildNode().Name));
+                            NodeBase nrp = new NodeRP(newActualNode.CommAddress.Variable);
+                            nrpied.AddChildNode(nrp);
+                            foreach (NodeBase nb in newActualNode.GetChildNodes())
+                            {
+                                nrp.LinkChildNode(nb);
+                            }
+                        }
                     }
             }
             else if (t.Array != null)

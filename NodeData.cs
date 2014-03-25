@@ -200,6 +200,9 @@ namespace IEDExplorer
                         case scsm_MMS_TypeEnum.visible_string:
                             DataValue = value;
                             break;
+                        case scsm_MMS_TypeEnum.octet_string:
+                            DataValue = Encoding.ASCII.GetBytes(value);
+                            break;
                         default:
                             //val = DataValue.ToString();
                             break;
