@@ -103,7 +103,9 @@ namespace org.bn.coders.ber
 		{
 			int resultSize = 1;
             bool value = (bool)obj;
-			stream.WriteByte((byte) (value ? 0xFF:0x00));
+            // Pavel 2014/10/13
+            //stream.WriteByte((byte)(value ? 0xFF : 0x00));
+            stream.WriteByte((byte)(value ? 0x01 : 0x00));
 			
 			resultSize += encodeLength(1, stream);
 			resultSize += encodeTag(BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.Universal, ElementType.Primitive, UniversalTags.Boolean), stream);
