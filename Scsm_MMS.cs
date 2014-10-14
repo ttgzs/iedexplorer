@@ -1410,6 +1410,110 @@ namespace IEDExplorer
             return 0;
         }
 
+        public int SendWriteAsStructure(Iec61850State iecs, WriteQueueElement el)
+        {
+            MMSpdu mymmspdu = new MMSpdu();
+            MemoryStream ostream = new MemoryStream();
+
+            Confirmed_RequestPDU crreq = new Confirmed_RequestPDU();
+            ConfirmedServiceRequest csrreq = new ConfirmedServiceRequest();
+            Write_Request wreq = new Write_Request();
+
+            List<VariableAccessSpecification.ListOfVariableSequenceType> vasl = new List<VariableAccessSpecification.ListOfVariableSequenceType>();
+            List<Data> datList_Seq = new List<Data>();
+            List<Data> datList_Struct = new List<Data>();
+
+            VariableAccessSpecification.ListOfVariableSequenceType vas = new VariableAccessSpecification.ListOfVariableSequenceType();
+            Data dat_Seq = new Data();
+            ObjectName on = new ObjectName();
+            ObjectName.Domain_specificSequenceType dst = new ObjectName.Domain_specificSequenceType();
+            dst.DomainID = new Identifier(el.Address.Domain);
+            dst.ItemID = new Identifier(el.Address.Variable);   // until Oper
+            on.selectDomain_specific(dst);
+            vas.VariableSpecification = new VariableSpecification();
+            vas.VariableSpecification.selectName(on);
+            vasl.Add(vas);
+
+            MakeStruct(iecs, (NodeData[])el.Data, datList_Struct);
+            iecs.logger.LogDebug("SendWrite: Writing Command Structure: " + dst.ItemID.Value);
+
+            dat_Seq.selectStructure(datList_Struct);
+            datList_Seq.Add(dat_Seq);
+            
+            wreq.VariableAccessSpecification = new VariableAccessSpecification();
+            wreq.VariableAccessSpecification.selectListOfVariable(vasl);
+            wreq.ListOfData = datList_Seq;
+
+            csrreq.selectWrite(wreq);
+
+            crreq.InvokeID = InvokeID;
+            InvokeID.Value++;
+
+            crreq.Service = csrreq;
+
+            mymmspdu.selectConfirmed_RequestPDU(crreq);
+
+            encoder.encode<MMSpdu>(mymmspdu, ostream);
+
+            if (ostream.Length == 0)
+            {
+                iecs.logger.LogError("mms.SendWriteAsStructure: Encoding Error!");
+                return -1;
+            }
+
+            iecs.sendBytes = (int)ostream.Length;
+            ostream.Seek(0, SeekOrigin.Begin);
+            ostream.Read(iecs.sendBuffer, Tpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
+
+            iecs.osi.Send(iecs);
+            return 0;
+        }
+
+        private static void MakeStruct(Iec61850State iecs, NodeBase[] data, List<Data> datList_Struct)
+        {
+            foreach (NodeData d in data)
+            {
+                Data dat_Struct = new Data();
+
+                switch (d.DataType)
+                {
+                    case scsm_MMS_TypeEnum.boolean:
+                        dat_Struct.selectBoolean((bool)d.DataValue);
+                        break;
+                    case scsm_MMS_TypeEnum.visible_string:
+                        dat_Struct.selectVisible_string((string)d.DataValue);
+                        break;
+                    case scsm_MMS_TypeEnum.octet_string:
+                        dat_Struct.selectOctet_string((byte[])d.DataValue);
+                        break;
+                    case scsm_MMS_TypeEnum.utc_time:
+                        UtcTime val = new UtcTime((byte[])d.DataValue);
+                        dat_Struct.selectUtc_time(val);
+                        break;
+                    case scsm_MMS_TypeEnum.bit_string:
+                        dat_Struct.selectBit_string(new BitString((byte[])d.DataValue, (int)d.DataParam));
+                        break;
+                    case scsm_MMS_TypeEnum.unsigned:
+                        dat_Struct.selectUnsigned((long)d.DataValue);
+                        break;
+                    case scsm_MMS_TypeEnum.integer:
+                        dat_Struct.selectInteger((long)d.DataValue);
+                        break;
+                    case scsm_MMS_TypeEnum.structure:
+                        List<Data> datList_Struct2 = new List<Data>();
+                        MakeStruct(iecs, d.GetChildNodes(), datList_Struct2);          // Recursive call
+                        dat_Struct.selectStructure(datList_Struct2);
+                        break;
+                    default:
+                        iecs.logger.LogError("mms.SendWrite: Cannot send unknown datatype!");
+                        //return 1;
+                        break;
+                }
+                datList_Struct.Add(dat_Struct);
+
+            }
+        }
+
         public int SendDefineNVL(Iec61850State iecs, WriteQueueElement el)
         {
             MMSpdu mymmspdu = new MMSpdu();

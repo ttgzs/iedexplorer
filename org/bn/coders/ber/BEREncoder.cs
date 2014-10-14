@@ -255,7 +255,7 @@ namespace org.bn.coders.ber
                 info.AnnotatedClass = item.GetType();
                 info.ParentAnnotatedClass = elementInfo.AnnotatedClass;
 
-                if (elementInfo.hasPreparedInfo())
+                if (elementInfo.hasPreparedInfo() && elementInfo.PreparedInfo.TypeMetadata != null)
                 {
                     ASN1SequenceOfMetadata seqOfMeta = (ASN1SequenceOfMetadata)elementInfo.PreparedInfo.TypeMetadata;
                     info.PreparedInfo = (seqOfMeta.getItemClassMetadata());

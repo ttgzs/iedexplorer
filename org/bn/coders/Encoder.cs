@@ -55,7 +55,7 @@ namespace org.bn.coders
 		public virtual int encodeClassType(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			int resultSize = 0;
-            if(elementInfo.hasPreparedInfo()) {
+            if(elementInfo.hasPreparedInfo() && elementInfo.PreparedInfo.TypeMetadata != null) {
                 resultSize+=elementInfo.PreparedInfo.TypeMetadata.encode(this,obj, stream, elementInfo);
             }        
             else

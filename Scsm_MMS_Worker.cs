@@ -265,6 +265,9 @@ namespace IEDExplorer
                                     case ActionRequested.Write:
                                         iecs.mms.SendWrite(iecs, el);
                                         break;
+                                    case ActionRequested.WriteAsStructure:
+                                        iecs.mms.SendWriteAsStructure(iecs, el);
+                                        break;
                                     case ActionRequested.Read:
                                         iecs.mms.SendRead(iecs, el);
                                         break;

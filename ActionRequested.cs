@@ -27,6 +27,7 @@ namespace IEDExplorer
     enum ActionRequested
     {
         Write,
+        WriteAsStructure,
         Read,
         DefineNVL,
         DeleteNVL,

@@ -85,7 +85,7 @@ namespace IEDExplorer
             // 
             // buttonNo
             // 
-            this.buttonNo.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.buttonNo.DialogResult = System.Windows.Forms.DialogResult.No;
             this.buttonNo.Location = new System.Drawing.Point(175, 85);
             this.buttonNo.Name = "buttonNo";
             this.buttonNo.Size = new System.Drawing.Size(79, 33);

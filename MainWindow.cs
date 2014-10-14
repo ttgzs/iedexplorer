@@ -587,9 +587,12 @@ namespace IEDExplorer
                     }
                     if (n is NodeData && n.Name == "ctlVal")
                     {
-                        item = menu.Items.Add("Send Command");
+                        item = menu.Items.Add("Send Command (Writes)");
                         item.Tag = n;
                         item.Click += new EventHandler(OnSendCommandClick);
+                        item = menu.Items.Add("Send Command (Structure)");
+                        item.Tag = n;
+                        item.Click += new EventHandler(OnSendCommandAsStructureClick);
                     }
                     if (n is NodeData || n is NodeFC)
                     {
@@ -689,6 +692,20 @@ namespace IEDExplorer
             Iec61850State iecs = data.GetIecs();
             NodeBase[] ndarr = new NodeBase[1];
 
+            SendCommand(data, iecs, ActionRequested.Write);
+        }
+
+        void OnSendCommandAsStructureClick(object sender, EventArgs e)
+        {
+            NodeBase data = (NodeBase)(sender as ToolStripItem).Tag;
+            Iec61850State iecs = data.GetIecs();
+            NodeBase[] ndarr = new NodeBase[1];
+
+            SendCommand(data, iecs, ActionRequested.WriteAsStructure);
+        }
+
+        private void SendCommand(NodeBase data, Iec61850State iecs, ActionRequested how)
+        {
             if (data != null)
             {
                 NodeData d = (NodeData)data.Parent;
@@ -719,25 +736,55 @@ namespace IEDExplorer
                     }
                     if ((b = d.FindChildNode("origin")) != null)
                     {
-                        if ((c = b.FindChildNode("orCat")) != null)
+                        if (how == ActionRequested.WriteAsStructure)
                         {
-                            NodeData n = new NodeData(b.Name + "$" + c.Name);
-                            n.DataType = ((NodeData)c).DataType;
-                            n.DataValue = 2L;
+                            NodeData n = new NodeData(b.Name);
+                            n.DataType = scsm_MMS_TypeEnum.structure;
+                            n.DataValue = 2;
                             ndar.Add(n);
+                            if ((c = b.FindChildNode("orCat")) != null)
+                            {
+                                NodeData n2 = new NodeData(b.Name + "$" + c.Name);
+                                n2.DataType = ((NodeData)c).DataType;
+                                n2.DataValue = 2L;
+                                n.AddChildNode(n2);
+                            }
+                            if ((c = b.FindChildNode("orIdent")) != null)
+                            {
+                                NodeData n2 = new NodeData(b.Name + "$" + c.Name);
+                                n2.DataType = ((NodeData)c).DataType;
+                                //string orIdent = "Neco odnekud";
+                                string orIdent = "ET03: 192.168.001.001 R001 K189 Origin:128";
+                                byte[] bytes = new byte[orIdent.Length];
+                                int tmp1, tmp2; bool tmp3;
+                                Encoder ascii = (new ASCIIEncoding()).GetEncoder();
+                                ascii.Convert(orIdent.ToCharArray(), 0, orIdent.Length, bytes, 0, orIdent.Length, true, out tmp1, out tmp2, out tmp3);
+                                n2.DataValue = bytes;
+                                n.AddChildNode(n2);
+                            }
                         }
-                        if ((c = b.FindChildNode("orIdent")) != null)
+                        else
                         {
-                            NodeData n = new NodeData(b.Name + "$" + c.Name);
-                            n.DataType = ((NodeData)c).DataType;
-                            //string orIdent = "Neco odnekud";
-                            string orIdent = "ET03: 143.161.047.115 R001 K189 Origin:128";
-                            byte[] bytes = new byte[orIdent.Length];
-                            int tmp1, tmp2; bool tmp3;
-                            Encoder ascii = (new ASCIIEncoding()).GetEncoder();
-                            ascii.Convert(orIdent.ToCharArray(), 0, orIdent.Length, bytes, 0, orIdent.Length, true, out tmp1, out tmp2, out tmp3);
-                            n.DataValue = bytes;
-                            ndar.Add(n);
+                            if ((c = b.FindChildNode("orCat")) != null)
+                            {
+                                NodeData n = new NodeData(b.Name + "$" + c.Name);
+                                n.DataType = ((NodeData)c).DataType;
+                                n.DataValue = 2L;
+                                ndar.Add(n);
+                            }
+                            if ((c = b.FindChildNode("orIdent")) != null)
+                            {
+                                NodeData n = new NodeData(b.Name + "$" + c.Name);
+                                n.DataType = ((NodeData)c).DataType;
+                                //string orIdent = "Neco odnekud";
+                                string orIdent = "ET03: 143.161.047.115 R001 K189 Origin:128";
+                                byte[] bytes = new byte[orIdent.Length];
+                                int tmp1, tmp2; bool tmp3;
+                                Encoder ascii = (new ASCIIEncoding()).GetEncoder();
+                                ascii.Convert(orIdent.ToCharArray(), 0, orIdent.Length, bytes, 0, orIdent.Length, true, out tmp1, out tmp2, out tmp3);
+                                n.DataValue = bytes;
+                                ndar.Add(n);
+                            }
                         }
                     }
                     if ((b = d.FindChildNode("ctlNum")) != null)
@@ -763,6 +810,7 @@ namespace IEDExplorer
                         NodeData n = new NodeData(b.Name);
                         n.DataType = ((NodeData)b).DataType;
                         n.DataValue = false;
+                        ndar.Add(n);
                     }
                     if ((b = d.FindChildNode("Check")) != null)
                     {
@@ -772,7 +820,7 @@ namespace IEDExplorer
                         n.DataParam = ((NodeData)b).DataParam;
                         ndar.Add(n);
                     }
-                    iecs.Send(ndar.ToArray(), d.CommAddress, ActionRequested.Write);
+                    iecs.Send(ndar.ToArray(), d.CommAddress, how);
                 }
                 else
                     MessageBox.Show("Basic structure not found!");
