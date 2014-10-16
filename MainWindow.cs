@@ -60,6 +60,8 @@ namespace IEDExplorer
             GetMruIp();
             if (toolStripComboBox_Hostname.Items.Count > 0)
                 toolStripComboBox_Hostname.SelectedIndex = 0;
+            toolStripComboBoxLoggingLevel.Items.AddRange(Enum.GetNames(typeof(Logger.Severity)));
+            toolStripComboBoxLoggingLevel.SelectedItem = env.logger.Verbosity.ToString();
         }
 
         void SaveMruIp()
@@ -1023,6 +1025,16 @@ namespace IEDExplorer
         {
             // Reset the drag rectangle when the mouse button is raised.
             dragBoxFromMouseDown = Rectangle.Empty;
+        }
+
+        private void toolStripComboBoxLoggingLevel_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            env.logger.Verbosity = (Logger.Severity)Enum.Parse(typeof(Logger.Severity), ((ToolStripComboBox)sender).Text);
+        }
+
+        private void clearLogToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            listView_Log.Items.Clear();
         }
 
     }
