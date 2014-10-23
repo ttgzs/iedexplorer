@@ -1225,7 +1225,14 @@ namespace IEDExplorer
             ObjectName on = new ObjectName();
             ObjectName.Domain_specificSequenceType dst = new ObjectName.Domain_specificSequenceType();
 
-            dst.DomainID = new Identifier(iecs.lists.GetActualChildNode().Name);
+            NodeBase n = iecs.lists.GetActualChildNode();
+            if (n == null)
+            {
+                iecs.logger.LogError("mms.SendGetNamedVariableListAttributes: No lists defined!");
+                return -2;
+            }
+
+            dst.DomainID = new Identifier(n.Name);
             dst.ItemID = new Identifier(iecs.lists.GetActualChildNode().GetActualChildNode().Name);         // List name e.g. MMXU0$MX
 
             iecs.logger.LogDebug("GetNamedVariableListAttributes: Get Attr for: " + dst.ItemID.Value);

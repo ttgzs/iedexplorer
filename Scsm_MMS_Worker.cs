@@ -186,8 +186,10 @@ namespace IEDExplorer
                                         break;
                                     case Iec61850lStateEnum.IEC61850_READ_ACCESSAT_NAMED_VARIABLE_LIST:
                                         iecs.logger.LogDebug("[IEC61850_READ_ACCESSAT_NAMED_VARIABLE_LIST]");
-                                        iecs.mms.SendGetNamedVariableListAttributes(iecs);
-                                        iecs.istate = Iec61850lStateEnum.IEC61850_READ_ACCESSAT_NAMED_VARIABLE_LIST_WAIT;
+                                        if (iecs.mms.SendGetNamedVariableListAttributes(iecs) != -0)
+                                            iecs.istate = Iec61850lStateEnum.IEC61850_MAKEGUI;
+                                        else
+                                            iecs.istate = Iec61850lStateEnum.IEC61850_READ_ACCESSAT_NAMED_VARIABLE_LIST_WAIT;
                                         break;
                                     case Iec61850lStateEnum.IEC61850_MAKEGUI:
                                         iecs.logger.LogDebug("[IEC61850_MAKEGUI]");
