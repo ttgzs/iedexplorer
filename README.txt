@@ -70,3 +70,18 @@ The first release 0.1 is an "as is" copy of the last development.
 
 Rev 0.2 2013/11/01
 The second release 0.2 : some enhacements in using DNS results/IP address. Most recent IP list.
+
+Rev 0.3 2014/03/19
+Some changes to make libiec61850 based server communication working.
+
+Rev 0.4 2014/03/21
+Reading variables from libiec61850 server working. Accepting reports without variable references.
+
+Rev 0.5 2014/10/24
+RP blocks have own tree.
+Added NodeRP.cs
+Boolean sent with 0x01.
+Commands as a structure - working prototype for single commands direct.
+Logging level combo.
+Inspecting ied without defined lists possible, for example some libiec61850 samples.
+Support for reading Arrays.
