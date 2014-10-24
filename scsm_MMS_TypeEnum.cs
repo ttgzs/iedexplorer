@@ -24,7 +24,7 @@ using System.Text;
 
 namespace IEDExplorer
 {
-    enum scsm_MMS_TypeEnum
+    public enum scsm_MMS_TypeEnum
     {
         structure,
 

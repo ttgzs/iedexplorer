@@ -79,6 +79,7 @@
     <Compile Include="CommandDialog.Designer.cs">
       <DependentUpon>CommandDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="CommandParams.cs" />
     <Compile Include="NodeRP.cs" />
     <Compile Include="FileTransferState.cs" />
     <Compile Include="IniFileManager.cs" />

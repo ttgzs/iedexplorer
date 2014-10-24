@@ -51,6 +51,7 @@ namespace IEDExplorer
             this.buttonOK = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonNo = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -93,11 +94,22 @@ namespace IEDExplorer
             this.buttonNo.Text = "Send FALSE";
             this.buttonNo.UseVisualStyleBackColor = true;
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.label2.Location = new System.Drawing.Point(26, 62);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(355, 20);
+            this.label2.TabIndex = 4;
+            this.label2.Text = "Attention!!! Command will be sent to Server";
+            // 
             // CommandDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(413, 130);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.buttonNo);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOK);
@@ -115,5 +127,6 @@ namespace IEDExplorer
         private System.Windows.Forms.Button buttonOK;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.Button buttonNo;
+        private System.Windows.Forms.Label label2;
     }
 }

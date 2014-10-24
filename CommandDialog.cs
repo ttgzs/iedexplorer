@@ -30,9 +30,13 @@ namespace IEDExplorer
 {
     public partial class CommandDialog : Form
     {
-        public CommandDialog()
+        public CommandParams Cpar;
+
+        public CommandDialog(CommandParams cpar)
         {
+            Cpar = cpar;
             InitializeComponent();
+            label2.Text = Cpar.CommandFlowFlag.ToString().Replace('_',' ');
         }
     }
 }

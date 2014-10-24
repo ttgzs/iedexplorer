@@ -713,27 +713,50 @@ namespace IEDExplorer
                 NodeData d = (NodeData)data.Parent;
                 if (d != null)
                 {
-                    CommandDialog dlg = new CommandDialog();
+                    NodeBase b, c;
+                    CommandParams cPar = new CommandParams();
+                    cPar.CommType = CommandType.SingleCommand;
+                    if ((b = d.FindChildNode("ctlVal")) != null)
+                    {
+                        cPar.DataType = ((NodeData)b).DataType;
+                    }
+                    cPar.T = DateTime.Now;
+                    cPar.interlockCheck = true;
+                    cPar.synchroCheck = true;
+                    cPar.orCat = 2;
+                    cPar.orIdent = "ET03: 192.168.001.001 R001 K189 Origin:128";
+                    b = data;
+                    List<string> path = new List<string>();
+                    do
+                    {
+                        b = b.Parent;
+                        path.Add(b.Name);
+                    } while (!(b is NodeFC));
+                    path[0] = "ctlModel";
+                    path[path.Count - 1] = "CF";
+                    b = b.Parent;
+                    for (int i = path.Count-1; i >= 0; i--)
+                    {
+                        if ((b = b.FindChildNode(path[i])) == null)
+                            break;
+                    }
+                    if (b != null)
+                        if (b is NodeData)
+                            cPar.CommandFlowFlag = (CommandFlow)((long)((b as NodeData).DataValue));
+
+                    CommandDialog dlg = new CommandDialog(cPar);
                     DialogResult res = dlg.ShowDialog(this);
-                    bool snd = true;
-                    if (res == DialogResult.No)
-                        snd = false;
+
                     if (res == DialogResult.Cancel)
                         return;
 
                     List<NodeData> ndar = new List<NodeData>();
-                    NodeBase b, c;
                     //char *nameo[] = {"$Oper$ctlVal", "$Oper$origin$orCat", "$Oper$origin$orIdent", "$Oper$ctlNum", "$Oper$T", "$Oper$Test", "$Oper$Check"};
                     if ((b = d.FindChildNode("ctlVal")) != null)
                     {
                         NodeData n = new NodeData(b.Name);
                         n.DataType = ((NodeData)b).DataType;
-                        switch (n.DataType)
-                        {
-                            case scsm_MMS_TypeEnum.boolean:
-                                n.DataValue = snd;
-                                break;
-                        }
+                        n.DataValue = cPar.ctlVal;
                         ndar.Add(n);
                     }
                     if ((b = d.FindChildNode("origin")) != null)
@@ -748,7 +771,7 @@ namespace IEDExplorer
                             {
                                 NodeData n2 = new NodeData(b.Name + "$" + c.Name);
                                 n2.DataType = ((NodeData)c).DataType;
-                                n2.DataValue = 2L;
+                                n2.DataValue = cPar.orCat;
                                 n.AddChildNode(n2);
                             }
                             if ((c = b.FindChildNode("orIdent")) != null)
@@ -756,11 +779,11 @@ namespace IEDExplorer
                                 NodeData n2 = new NodeData(b.Name + "$" + c.Name);
                                 n2.DataType = ((NodeData)c).DataType;
                                 //string orIdent = "Neco odnekud";
-                                string orIdent = "ET03: 192.168.001.001 R001 K189 Origin:128";
-                                byte[] bytes = new byte[orIdent.Length];
+                                //string orIdent = "ET03: 192.168.001.001 R001 K189 Origin:128";
+                                byte[] bytes = new byte[cPar.orIdent.Length];
                                 int tmp1, tmp2; bool tmp3;
                                 Encoder ascii = (new ASCIIEncoding()).GetEncoder();
-                                ascii.Convert(orIdent.ToCharArray(), 0, orIdent.Length, bytes, 0, orIdent.Length, true, out tmp1, out tmp2, out tmp3);
+                                ascii.Convert(cPar.orIdent.ToCharArray(), 0, cPar.orIdent.Length, bytes, 0, cPar.orIdent.Length, true, out tmp1, out tmp2, out tmp3);
                                 n2.DataValue = bytes;
                                 n.AddChildNode(n2);
                             }
@@ -771,7 +794,7 @@ namespace IEDExplorer
                             {
                                 NodeData n = new NodeData(b.Name + "$" + c.Name);
                                 n.DataType = ((NodeData)c).DataType;
-                                n.DataValue = 2L;
+                                n.DataValue = cPar.orCat;
                                 ndar.Add(n);
                             }
                             if ((c = b.FindChildNode("orIdent")) != null)
@@ -779,11 +802,11 @@ namespace IEDExplorer
                                 NodeData n = new NodeData(b.Name + "$" + c.Name);
                                 n.DataType = ((NodeData)c).DataType;
                                 //string orIdent = "Neco odnekud";
-                                string orIdent = "ET03: 143.161.047.115 R001 K189 Origin:128";
-                                byte[] bytes = new byte[orIdent.Length];
+                                //string orIdent = "ET03: 143.161.047.115 R001 K189 Origin:128";
+                                byte[] bytes = new byte[cPar.orIdent.Length];
                                 int tmp1, tmp2; bool tmp3;
                                 Encoder ascii = (new ASCIIEncoding()).GetEncoder();
-                                ascii.Convert(orIdent.ToCharArray(), 0, orIdent.Length, bytes, 0, orIdent.Length, true, out tmp1, out tmp2, out tmp3);
+                                ascii.Convert(cPar.orIdent.ToCharArray(), 0, cPar.orIdent.Length, bytes, 0, cPar.orIdent.Length, true, out tmp1, out tmp2, out tmp3);
                                 n.DataValue = bytes;
                                 ndar.Add(n);
                             }
