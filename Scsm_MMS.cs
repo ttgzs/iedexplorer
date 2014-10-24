@@ -715,29 +715,29 @@ namespace IEDExplorer
             {
                 iecs.logger.LogDebug("data.Structure != null");
                 NodeBase[] nb = actualNode.GetChildNodes();
-                /*if (nb.Length == 0)
+                int i = 0;
+                foreach (Data d in data.Structure)
                 {
-                    foreach (Data d in data.Structure)
-                    {
-                        recursiveReadData(iecs, d, actualNode, s);
-                    }
-                }
-                else*/
-                {
-                    int i = 0;
-                    foreach (Data d in data.Structure)
-                    {
-                        if (i <= nb.GetUpperBound(0))
-                            recursiveReadData(iecs, d, nb[i], s);
-                        else
-                            iecs.logger.LogError("Not matching read structure: Node=" + actualNode.Name);
-                        i++;
-                    }
+                    if (i <= nb.GetUpperBound(0))
+                        recursiveReadData(iecs, d, nb[i], s);
+                    else
+                        iecs.logger.LogError("Not matching read structure: Node=" + actualNode.Name);
+                    i++;
                 }
             }
             else if (data.Array != null)
             {
                 iecs.logger.LogDebug("data.Array != null");
+                int i = 0;
+                NodeBase[] nb = actualNode.GetChildNodes();
+                foreach (Data d in data.Array)
+                {
+                    if (i <= nb.GetUpperBound(0))
+                        recursiveReadData(iecs, d, nb[i], s);
+                    else
+                        iecs.logger.LogError("Not matching read array: Node=" + actualNode.Name);
+                    i++;
+                }
             }
             else if (data.isIntegerSelected())
             {

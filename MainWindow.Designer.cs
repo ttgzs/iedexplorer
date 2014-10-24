@@ -51,22 +51,22 @@ namespace IEDExplorer
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.treeView1 = new System.Windows.Forms.TreeView();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.toolStripButton_Run = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton_Stop = new System.Windows.Forms.ToolStripButton();
-            this.toolStripComboBox_Hostname = new System.Windows.Forms.ToolStripComboBox();
-            this.toolStripComboBoxLoggingLevel = new System.Windows.Forms.ToolStripComboBox();
-            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
-            this.contextMenuStripLog = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.clearLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.listView_data = new IEDExplorer.MyListView();
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolStripButton_Run = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton_Stop = new System.Windows.Forms.ToolStripButton();
+            this.toolStripComboBox_Hostname = new System.Windows.Forms.ToolStripComboBox();
+            this.toolStripComboBoxLoggingLevel = new System.Windows.Forms.ToolStripComboBox();
+            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.listView_Log = new IEDExplorer.MyListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.contextMenuStripLog = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.clearLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -109,6 +109,44 @@ namespace IEDExplorer
             this.treeView1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.treeView1_MouseDown);
             this.treeView1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.treeView1_MouseMove);
             this.treeView1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.treeView1_MouseUp);
+            // 
+            // listView_data
+            // 
+            this.listView_data.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader2,
+            this.columnHeader3,
+            this.columnHeader4,
+            this.columnHeader5});
+            this.listView_data.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listView_data.FullRowSelect = true;
+            this.listView_data.GridLines = true;
+            this.listView_data.Location = new System.Drawing.Point(0, 0);
+            this.listView_data.Name = "listView_data";
+            this.listView_data.Size = new System.Drawing.Size(729, 499);
+            this.listView_data.TabIndex = 0;
+            this.listView_data.UseCompatibleStateImageBehavior = false;
+            this.listView_data.View = System.Windows.Forms.View.Details;
+            this.listView_data.SelectedIndexChanged += new System.EventHandler(this.listView_data_SelectedIndexChanged);
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Name";
+            this.columnHeader2.Width = 350;
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Type";
+            this.columnHeader3.Width = 100;
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Value";
+            this.columnHeader4.Width = 100;
+            // 
+            // columnHeader5
+            // 
+            this.columnHeader5.Text = "Communication Address";
+            this.columnHeader5.Width = 350;
             // 
             // toolStrip1
             // 
@@ -160,6 +198,13 @@ namespace IEDExplorer
             this.toolStripComboBoxLoggingLevel.Size = new System.Drawing.Size(121, 25);
             this.toolStripComboBoxLoggingLevel.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBoxLoggingLevel_SelectedIndexChanged);
             // 
+            // toolStripLabel1
+            // 
+            this.toolStripLabel1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripLabel1.Name = "toolStripLabel1";
+            this.toolStripLabel1.Size = new System.Drawing.Size(84, 22);
+            this.toolStripLabel1.Text = "Logging level: ";
+            // 
             // splitContainer2
             // 
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -177,65 +222,6 @@ namespace IEDExplorer
             this.splitContainer2.Size = new System.Drawing.Size(1211, 626);
             this.splitContainer2.SplitterDistance = 499;
             this.splitContainer2.TabIndex = 2;
-            // 
-            // toolStripLabel1
-            // 
-            this.toolStripLabel1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(84, 22);
-            this.toolStripLabel1.Text = "Logging level: ";
-            // 
-            // contextMenuStripLog
-            // 
-            this.contextMenuStripLog.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.clearLogToolStripMenuItem});
-            this.contextMenuStripLog.Name = "contextMenuStripLog";
-            this.contextMenuStripLog.Size = new System.Drawing.Size(125, 26);
-            // 
-            // clearLogToolStripMenuItem
-            // 
-            this.clearLogToolStripMenuItem.Name = "clearLogToolStripMenuItem";
-            this.clearLogToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
-            this.clearLogToolStripMenuItem.Text = "Clear Log";
-            this.clearLogToolStripMenuItem.Click += new System.EventHandler(this.clearLogToolStripMenuItem_Click);
-            // 
-            // listView_data
-            // 
-            this.listView_data.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader2,
-            this.columnHeader3,
-            this.columnHeader4,
-            this.columnHeader5});
-            this.listView_data.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listView_data.FullRowSelect = true;
-            this.listView_data.GridLines = true;
-            this.listView_data.Location = new System.Drawing.Point(0, 0);
-            this.listView_data.Name = "listView_data";
-            this.listView_data.Size = new System.Drawing.Size(729, 499);
-            this.listView_data.TabIndex = 0;
-            this.listView_data.UseCompatibleStateImageBehavior = false;
-            this.listView_data.View = System.Windows.Forms.View.Details;
-            this.listView_data.SelectedIndexChanged += new System.EventHandler(this.listView_data_SelectedIndexChanged);
-            // 
-            // columnHeader2
-            // 
-            this.columnHeader2.Text = "Name";
-            this.columnHeader2.Width = 350;
-            // 
-            // columnHeader3
-            // 
-            this.columnHeader3.Text = "Type";
-            this.columnHeader3.Width = 100;
-            // 
-            // columnHeader4
-            // 
-            this.columnHeader4.Text = "Value";
-            this.columnHeader4.Width = 100;
-            // 
-            // columnHeader5
-            // 
-            this.columnHeader5.Text = "Communication Address";
-            this.columnHeader5.Width = 350;
             // 
             // listView_Log
             // 
@@ -255,6 +241,20 @@ namespace IEDExplorer
             this.columnHeader1.Text = "Info";
             this.columnHeader1.Width = 900;
             // 
+            // contextMenuStripLog
+            // 
+            this.contextMenuStripLog.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.clearLogToolStripMenuItem});
+            this.contextMenuStripLog.Name = "contextMenuStripLog";
+            this.contextMenuStripLog.Size = new System.Drawing.Size(125, 26);
+            // 
+            // clearLogToolStripMenuItem
+            // 
+            this.clearLogToolStripMenuItem.Name = "clearLogToolStripMenuItem";
+            this.clearLogToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.clearLogToolStripMenuItem.Text = "Clear Log";
+            this.clearLogToolStripMenuItem.Click += new System.EventHandler(this.clearLogToolStripMenuItem_Click);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -263,7 +263,7 @@ namespace IEDExplorer
             this.Controls.Add(this.splitContainer2);
             this.Controls.Add(this.toolStrip1);
             this.Name = "MainWindow";
-            this.Text = "IEDExplorer - IEC61850 Test tool Ver. 0.4";
+            this.Text = "IEDExplorer - IEC61850 Test tool Ver. 0.5";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TreeWindow_FormClosing);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
