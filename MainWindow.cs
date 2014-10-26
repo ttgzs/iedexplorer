@@ -719,12 +719,15 @@ namespace IEDExplorer
                     if ((b = d.FindChildNode("ctlVal")) != null)
                     {
                         cPar.DataType = ((NodeData)b).DataType;
+                        cPar.Address = b.Address;
+                        cPar.ctlVal = ((NodeData)b).DataValue;
                     }
                     cPar.T = DateTime.Now;
                     cPar.interlockCheck = true;
                     cPar.synchroCheck = true;
                     cPar.orCat = 2;
                     cPar.orIdent = "ET03: 192.168.001.001 R001 K189 Origin:128";
+                    cPar.CommandFlowFlag = CommandFlow.Unknown;
                     b = data;
                     List<string> path = new List<string>();
                     do

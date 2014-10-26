@@ -23,6 +23,7 @@ namespace IEDExplorer
         Select_Before_Operate_With_Normal_Security,
         Direct_Control_With_Enhanced_Security,
         Select_Before_Operate_With_Enhanced_Security,
+        Unknown,
     }
 
     public class CommandParams
@@ -37,5 +38,6 @@ namespace IEDExplorer
         public bool Test;
         public bool interlockCheck;
         public bool synchroCheck;
+        public string Address;
     }
 }

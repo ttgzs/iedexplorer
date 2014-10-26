@@ -36,7 +36,43 @@ namespace IEDExplorer
         {
             Cpar = cpar;
             InitializeComponent();
-            label2.Text = Cpar.CommandFlowFlag.ToString().Replace('_',' ');
+            labelFlow.Text = Cpar.CommandFlowFlag.ToString().Replace('_',' ');
+            labelAddr.Text = Cpar.Address;
+            checkBoxInterlockCheck.Checked = Cpar.interlockCheck;
+            checkBoxSynchroCheck.Checked = Cpar.synchroCheck;
+            checkBoxTest.Checked = Cpar.Test;
+            numericUpDownCat.Value = Cpar.orCat;
+            textBoxIdent.Text = Cpar.orIdent;
+            comboBoxValue.Items.Clear();
+            dateTimePickerTime.Value = Cpar.T;
+            switch (Cpar.DataType)
+            {
+                case scsm_MMS_TypeEnum.boolean:
+                    comboBoxValue.Items.Add("OFF / False");
+                    comboBoxValue.Items.Add("ON  / True");
+                    comboBoxValue.SelectedIndex = (bool)Cpar.ctlVal ? 0 : 1;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void buttonOK_Click(object sender, EventArgs e)
+        {
+            Cpar.interlockCheck = checkBoxInterlockCheck.Checked;
+            Cpar.synchroCheck = checkBoxSynchroCheck.Checked;
+            Cpar.Test = checkBoxTest.Checked;
+            Cpar.orCat = (long)numericUpDownCat.Value;
+            Cpar.orIdent = textBoxIdent.Text;
+            switch (Cpar.DataType)
+            {
+                case scsm_MMS_TypeEnum.boolean:
+                    Cpar.ctlVal = comboBoxValue.SelectedIndex > 0 ? true : false;
+                    break;
+                default:
+                    break;
+            }
+            Cpar.T = dateTimePickerTime.Value;
         }
     }
 }
