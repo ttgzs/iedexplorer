@@ -722,12 +722,13 @@ namespace IEDExplorer
                         cPar.Address = b.Address;
                         cPar.ctlVal = ((NodeData)b).DataValue;
                     }
-                    cPar.T = DateTime.Now;
+                    cPar.T = DateTime.MinValue;
                     cPar.interlockCheck = true;
                     cPar.synchroCheck = true;
-                    cPar.orCat = 2;
-                    cPar.orIdent = "ET03: 192.168.001.001 R001 K189 Origin:128";
-                    cPar.CommandFlowFlag = CommandFlow.Unknown;
+                    cPar.orCat = OrCat.STATION_CONTROL;
+                    cPar.orIdent = "IEDEXPLORER";
+                    //cPar.orIdent = "ET03: 192.168.001.001 R001 K189 Origin:128";
+                    cPar.CommandFlowFlag = CommandCtrlModel.Unknown;
                     b = data;
                     List<string> path = new List<string>();
                     do
@@ -745,7 +746,7 @@ namespace IEDExplorer
                     }
                     if (b != null)
                         if (b is NodeData)
-                            cPar.CommandFlowFlag = (CommandFlow)((long)((b as NodeData).DataValue));
+                            cPar.CommandFlowFlag = (CommandCtrlModel)((long)((b as NodeData).DataValue));
 
                     CommandDialog dlg = new CommandDialog(cPar);
                     DialogResult res = dlg.ShowDialog(this);
@@ -774,15 +775,13 @@ namespace IEDExplorer
                             {
                                 NodeData n2 = new NodeData(b.Name + "$" + c.Name);
                                 n2.DataType = ((NodeData)c).DataType;
-                                n2.DataValue = cPar.orCat;
+                                n2.DataValue = (long)cPar.orCat;
                                 n.AddChildNode(n2);
                             }
                             if ((c = b.FindChildNode("orIdent")) != null)
                             {
                                 NodeData n2 = new NodeData(b.Name + "$" + c.Name);
                                 n2.DataType = ((NodeData)c).DataType;
-                                //string orIdent = "Neco odnekud";
-                                //string orIdent = "ET03: 192.168.001.001 R001 K189 Origin:128";
                                 byte[] bytes = new byte[cPar.orIdent.Length];
                                 int tmp1, tmp2; bool tmp3;
                                 Encoder ascii = (new ASCIIEncoding()).GetEncoder();
@@ -797,15 +796,13 @@ namespace IEDExplorer
                             {
                                 NodeData n = new NodeData(b.Name + "$" + c.Name);
                                 n.DataType = ((NodeData)c).DataType;
-                                n.DataValue = cPar.orCat;
+                                n.DataValue = (long)cPar.orCat;
                                 ndar.Add(n);
                             }
                             if ((c = b.FindChildNode("orIdent")) != null)
                             {
                                 NodeData n = new NodeData(b.Name + "$" + c.Name);
                                 n.DataType = ((NodeData)c).DataType;
-                                //string orIdent = "Neco odnekud";
-                                //string orIdent = "ET03: 143.161.047.115 R001 K189 Origin:128";
                                 byte[] bytes = new byte[cPar.orIdent.Length];
                                 int tmp1, tmp2; bool tmp3;
                                 Encoder ascii = (new ASCIIEncoding()).GetEncoder();
@@ -826,11 +823,18 @@ namespace IEDExplorer
                     {
                         NodeData n = new NodeData(b.Name);
                         n.DataType = ((NodeData)b).DataType;
-                        DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-                        TimeSpan diff = DateTime.Now - origin;
-                        uint ui = (uint)Math.Floor(diff.TotalSeconds);
-                        byte[] uib = BitConverter.GetBytes(ui);
-                        n.DataValue = new byte[] { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };
+                        byte[] btm = new byte[] { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };
+                        n.DataValue = btm;
+
+                        if (cPar.T != DateTime.MinValue)
+                        {
+                            int t = (int)Scsm_MMS.ConvertToUnixTimestamp(cPar.T);
+                            byte[] uib = BitConverter.GetBytes(t);
+                            btm[0] = uib[3];
+                            btm[1] = uib[2];
+                            btm[2] = uib[1];
+                            btm[3] = uib[0];
+                        }
                         ndar.Add(n);
                     }
                     if ((b = d.FindChildNode("Test")) != null)

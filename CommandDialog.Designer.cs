@@ -55,22 +55,25 @@ namespace IEDExplorer
             this.label4 = new System.Windows.Forms.Label();
             this.labelAddr = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.dateTimePickerTime = new System.Windows.Forms.DateTimePicker();
             this.checkBoxTest = new System.Windows.Forms.CheckBox();
             this.checkBoxSynchroCheck = new System.Windows.Forms.CheckBox();
             this.checkBoxInterlockCheck = new System.Windows.Forms.CheckBox();
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxValue = new System.Windows.Forms.ComboBox();
             this.groupBoxOrig = new System.Windows.Forms.GroupBox();
+            this.comboBoxCat = new System.Windows.Forms.ComboBox();
             this.textBoxIdent = new System.Windows.Forms.TextBox();
-            this.numericUpDownCat = new System.Windows.Forms.NumericUpDown();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.dateTimePickerT = new System.Windows.Forms.DateTimePicker();
+            this.checkBoxTActive = new System.Windows.Forms.CheckBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBoxOrig.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCat)).BeginInit();
             this.groupBox2.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -86,7 +89,7 @@ namespace IEDExplorer
             // buttonOK
             // 
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(70, 298);
+            this.buttonOK.Location = new System.Drawing.Point(68, 361);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(79, 33);
             this.buttonOK.TabIndex = 1;
@@ -97,7 +100,7 @@ namespace IEDExplorer
             // buttonCancel
             // 
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(276, 298);
+            this.buttonCancel.Location = new System.Drawing.Point(274, 361);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(79, 33);
             this.buttonCancel.TabIndex = 2;
@@ -110,9 +113,9 @@ namespace IEDExplorer
             this.labelFlow.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.labelFlow.Location = new System.Drawing.Point(66, 20);
             this.labelFlow.Name = "labelFlow";
-            this.labelFlow.Size = new System.Drawing.Size(29, 13);
+            this.labelFlow.Size = new System.Drawing.Size(69, 13);
             this.labelFlow.TabIndex = 4;
-            this.labelFlow.Text = "Flow";
+            this.labelFlow.Text = "ControlModel";
             // 
             // label3
             // 
@@ -120,9 +123,9 @@ namespace IEDExplorer
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.label3.Location = new System.Drawing.Point(6, 20);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(37, 13);
+            this.label3.Size = new System.Drawing.Size(57, 13);
             this.label3.TabIndex = 5;
-            this.label3.Text = "Type: ";
+            this.label3.Text = "CtrlModel: ";
             // 
             // label4
             // 
@@ -146,7 +149,6 @@ namespace IEDExplorer
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.dateTimePickerTime);
             this.groupBox1.Controls.Add(this.checkBoxTest);
             this.groupBox1.Controls.Add(this.checkBoxSynchroCheck);
             this.groupBox1.Controls.Add(this.checkBoxInterlockCheck);
@@ -156,14 +158,6 @@ namespace IEDExplorer
             this.groupBox1.TabIndex = 8;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Command Options";
-            // 
-            // dateTimePickerTime
-            // 
-            this.dateTimePickerTime.Format = System.Windows.Forms.DateTimePickerFormat.Time;
-            this.dateTimePickerTime.Location = new System.Drawing.Point(271, 25);
-            this.dateTimePickerTime.Name = "dateTimePickerTime";
-            this.dateTimePickerTime.Size = new System.Drawing.Size(112, 20);
-            this.dateTimePickerTime.TabIndex = 3;
             // 
             // checkBoxTest
             // 
@@ -220,16 +214,26 @@ namespace IEDExplorer
             // 
             // groupBoxOrig
             // 
+            this.groupBoxOrig.Controls.Add(this.comboBoxCat);
             this.groupBoxOrig.Controls.Add(this.textBoxIdent);
-            this.groupBoxOrig.Controls.Add(this.numericUpDownCat);
             this.groupBoxOrig.Controls.Add(this.label6);
             this.groupBoxOrig.Controls.Add(this.label5);
-            this.groupBoxOrig.Location = new System.Drawing.Point(12, 211);
+            this.groupBoxOrig.Location = new System.Drawing.Point(10, 274);
             this.groupBoxOrig.Name = "groupBoxOrig";
             this.groupBoxOrig.Size = new System.Drawing.Size(389, 79);
             this.groupBoxOrig.TabIndex = 11;
             this.groupBoxOrig.TabStop = false;
             this.groupBoxOrig.Text = "Originator";
+            // 
+            // comboBoxCat
+            // 
+            this.comboBoxCat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxCat.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.comboBoxCat.FormattingEnabled = true;
+            this.comboBoxCat.Location = new System.Drawing.Point(86, 18);
+            this.comboBoxCat.Name = "comboBoxCat";
+            this.comboBoxCat.Size = new System.Drawing.Size(297, 21);
+            this.comboBoxCat.TabIndex = 11;
             // 
             // textBoxIdent
             // 
@@ -237,13 +241,6 @@ namespace IEDExplorer
             this.textBoxIdent.Name = "textBoxIdent";
             this.textBoxIdent.Size = new System.Drawing.Size(297, 20);
             this.textBoxIdent.TabIndex = 3;
-            // 
-            // numericUpDownCat
-            // 
-            this.numericUpDownCat.Location = new System.Drawing.Point(86, 19);
-            this.numericUpDownCat.Name = "numericUpDownCat";
-            this.numericUpDownCat.Size = new System.Drawing.Size(56, 20);
-            this.numericUpDownCat.TabIndex = 2;
             // 
             // label6
             // 
@@ -278,11 +275,55 @@ namespace IEDExplorer
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Command";
             // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.label7);
+            this.groupBox3.Controls.Add(this.dateTimePickerT);
+            this.groupBox3.Controls.Add(this.checkBoxTActive);
+            this.groupBox3.Location = new System.Drawing.Point(12, 211);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(389, 60);
+            this.groupBox3.TabIndex = 9;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Time Activated Command";
+            // 
+            // dateTimePickerT
+            // 
+            this.dateTimePickerT.CustomFormat = "dd.MM.yyyy     HH:mm:ss";
+            this.dateTimePickerT.Enabled = false;
+            this.dateTimePickerT.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dateTimePickerT.Location = new System.Drawing.Point(218, 25);
+            this.dateTimePickerT.Name = "dateTimePickerT";
+            this.dateTimePickerT.Size = new System.Drawing.Size(165, 20);
+            this.dateTimePickerT.TabIndex = 3;
+            // 
+            // checkBoxTActive
+            // 
+            this.checkBoxTActive.AutoSize = true;
+            this.checkBoxTActive.Location = new System.Drawing.Point(6, 28);
+            this.checkBoxTActive.Name = "checkBoxTActive";
+            this.checkBoxTActive.Size = new System.Drawing.Size(56, 17);
+            this.checkBoxTActive.TabIndex = 0;
+            this.checkBoxTActive.Tag = "Active";
+            this.checkBoxTActive.Text = "Active";
+            this.checkBoxTActive.UseVisualStyleBackColor = true;
+            this.checkBoxTActive.CheckedChanged += new System.EventHandler(this.checkBoxTActive_CheckedChanged);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(120, 28);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(92, 13);
+            this.label7.TabIndex = 4;
+            this.label7.Text = "Execute at (UTC):";
+            // 
             // CommandDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(413, 343);
+            this.ClientSize = new System.Drawing.Size(413, 406);
+            this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBoxOrig);
             this.Controls.Add(this.groupBox1);
@@ -295,9 +336,10 @@ namespace IEDExplorer
             this.groupBox1.PerformLayout();
             this.groupBoxOrig.ResumeLayout(false);
             this.groupBoxOrig.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCat)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -321,9 +363,12 @@ namespace IEDExplorer
         private System.Windows.Forms.GroupBox groupBoxOrig;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.NumericUpDown numericUpDownCat;
         private System.Windows.Forms.TextBox textBoxIdent;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.DateTimePicker dateTimePickerTime;
+        private System.Windows.Forms.ComboBox comboBoxCat;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.DateTimePicker dateTimePickerT;
+        private System.Windows.Forms.CheckBox checkBoxTActive;
+        private System.Windows.Forms.Label label7;
     }
 }

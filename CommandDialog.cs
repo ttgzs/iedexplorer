@@ -41,10 +41,12 @@ namespace IEDExplorer
             checkBoxInterlockCheck.Checked = Cpar.interlockCheck;
             checkBoxSynchroCheck.Checked = Cpar.synchroCheck;
             checkBoxTest.Checked = Cpar.Test;
-            numericUpDownCat.Value = Cpar.orCat;
+            //.Value = (decimal)Cpar.orCat;
+            comboBoxCat.Items.AddRange(Enum.GetNames(typeof(OrCat)));
+            comboBoxCat.SelectedIndex = (int)Cpar.orCat;
             textBoxIdent.Text = Cpar.orIdent;
             comboBoxValue.Items.Clear();
-            dateTimePickerTime.Value = Cpar.T;
+            dateTimePickerT.Value = Cpar.T;
             switch (Cpar.DataType)
             {
                 case scsm_MMS_TypeEnum.boolean:
@@ -62,7 +64,7 @@ namespace IEDExplorer
             Cpar.interlockCheck = checkBoxInterlockCheck.Checked;
             Cpar.synchroCheck = checkBoxSynchroCheck.Checked;
             Cpar.Test = checkBoxTest.Checked;
-            Cpar.orCat = (long)numericUpDownCat.Value;
+            Cpar.orCat = (OrCat)comboBoxCat.SelectedIndex;
             Cpar.orIdent = textBoxIdent.Text;
             switch (Cpar.DataType)
             {
@@ -72,7 +74,21 @@ namespace IEDExplorer
                 default:
                     break;
             }
-            Cpar.T = dateTimePickerTime.Value;
+            Cpar.T = dateTimePickerT.Value;
+        }
+
+        private void checkBoxTActive_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxTActive.Checked)
+            {
+                dateTimePickerT.Enabled = true;
+                dateTimePickerT.Value = DateTime.UtcNow;
+            }
+            else
+            {
+                dateTimePickerT.Enabled = false;
+                Cpar.T = DateTime.MinValue;
+            }
         }
     }
 }

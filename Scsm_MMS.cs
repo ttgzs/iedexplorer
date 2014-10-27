@@ -1836,17 +1836,17 @@ namespace IEDExplorer
             }
         }
 
-        static DateTime ConvertFromUnixTimestamp(double timestamp)
+        public static DateTime ConvertFromUnixTimestamp(double timestamp)
         {
             DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             return origin.AddSeconds(timestamp);
         }
 
-        static double ConvertToUnixTimestamp(DateTime date)
+        public static long ConvertToUnixTimestamp(DateTime date)
         {
             DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
             TimeSpan diff = date - origin;
-            return Math.Floor(diff.TotalSeconds);
+            return (long)Math.Floor(diff.TotalSeconds);
         }
     }
 }
