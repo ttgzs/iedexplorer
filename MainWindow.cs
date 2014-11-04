@@ -33,7 +33,7 @@ using IEDExplorer.Resources;
 
 namespace IEDExplorer
 {
-    public partial class MainWindow : Form
+    public partial class MainWindowOld : Form
     {
         Scsm_MMS_Worker worker;
         delegate void OnMessageCallback(string message);
@@ -47,21 +47,22 @@ namespace IEDExplorer
         TreeNode listsNode;
         long m_ctlNum = 0;
         IniFileManager ini;
+        Logger logger;
 
-        public MainWindow()
+        public MainWindowOld()
         {
             InitializeComponent();
-            env.logger = new Logger();
+            logger = Logger.getLogger();
             env.mainWindow = this;
             worker = new Scsm_MMS_Worker(env);
-            env.logger.OnLogMessage += new Logger.OnLogMessageDelegate(logger_OnLogMessage);
-            env.logger.LogInfo("Starting main program ...");
+            logger.OnLogMessage += new Logger.OnLogMessageDelegate(logger_OnLogMessage);
+            logger.LogInfo("Starting main program ...");
             ini = new IniFileManager(System.IO.Path.GetDirectoryName(Application.ExecutablePath) + "\\mruip.ini");
             GetMruIp();
             if (toolStripComboBox_Hostname.Items.Count > 0)
                 toolStripComboBox_Hostname.SelectedIndex = 0;
             toolStripComboBoxLoggingLevel.Items.AddRange(Enum.GetNames(typeof(Logger.Severity)));
-            toolStripComboBoxLoggingLevel.SelectedItem = env.logger.Verbosity.ToString();
+            toolStripComboBoxLoggingLevel.SelectedItem = logger.Verbosity.ToString();
         }
 
         void SaveMruIp()
@@ -302,7 +303,7 @@ namespace IEDExplorer
 			toolStripButton_Stop.Enabled = true;
 			toolStripButton_Stop.ImageTransparentColor = System.Drawing.Color.LightYellow;
 			if (toolStripComboBox_Hostname.Items.Count == 0) {
-				toolStripComboBox_Hostname.Items.Add ("192.168.0.1");
+				toolStripComboBox_Hostname.Items.Add ("localhost");
 			}
 			toolStripButton_Run.Enabled = false;
 			SaveMruIp ();
@@ -1059,7 +1060,7 @@ namespace IEDExplorer
 
         private void toolStripComboBoxLoggingLevel_SelectedIndexChanged(object sender, EventArgs e)
         {
-            env.logger.Verbosity = (Logger.Severity)Enum.Parse(typeof(Logger.Severity), ((ToolStripComboBox)sender).Text);
+            logger.Verbosity = (Logger.Severity)Enum.Parse(typeof(Logger.Severity), ((ToolStripComboBox)sender).Text);
         }
 
         private void clearLogToolStripMenuItem_Click(object sender, EventArgs e)

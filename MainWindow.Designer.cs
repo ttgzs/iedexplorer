@@ -19,7 +19,7 @@
 
 namespace IEDExplorer
 {
-    partial class MainWindow
+    partial class MainWindowOld
     {
         /// <summary>
         /// Required designer variable.
@@ -48,7 +48,7 @@ namespace IEDExplorer
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindowOld));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.listView_data = new IEDExplorer.MyListView();

@@ -46,7 +46,8 @@ namespace IEDExplorer
             comboBoxCat.SelectedIndex = (int)Cpar.orCat;
             textBoxIdent.Text = Cpar.orIdent;
             comboBoxValue.Items.Clear();
-            dateTimePickerT.Value = Cpar.T;
+            if (Cpar.T != DateTime.MinValue)
+                dateTimePickerT.Value = Cpar.T;
             switch (Cpar.DataType)
             {
                 case scsm_MMS_TypeEnum.boolean:
@@ -74,7 +75,8 @@ namespace IEDExplorer
                 default:
                     break;
             }
-            Cpar.T = dateTimePickerT.Value;
+            if (dateTimePickerT.Enabled)
+                Cpar.T = dateTimePickerT.Value;
         }
 
         private void checkBoxTActive_CheckedChanged(object sender, EventArgs e)

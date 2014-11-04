@@ -32,7 +32,9 @@ namespace IEDExplorer
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainWindow());
+            //Application.Run(new MainWindowOld());
+            Env env = new Env();
+            Application.Run(new Views.MainWindow(env));
         }
     }
 }

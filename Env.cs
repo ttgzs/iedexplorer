@@ -21,12 +21,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
+using IEDExplorer.Views;
 
 namespace IEDExplorer
 {
     public class Env
     {
-        public Logger logger;
-        public MainWindow mainWindow;
+        //public Logger logger;
+        //public MainWindowOld mainWindow;
+        public WindowManager winMgr;
     }
 }

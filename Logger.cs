@@ -37,7 +37,15 @@ namespace IEDExplorer
         TextWriter writer;
         Severity verbosity;
 
-        public Logger()
+        static Logger sLog;
+        public static Logger getLogger()
+        {
+            if (sLog == null)
+                sLog = new Logger();
+            return sLog;
+        }
+
+        private Logger()
         {
             verbosity = Severity.Information;
             //verbosity = Severity.Debug;
@@ -93,13 +101,22 @@ namespace IEDExplorer
             Log(Severity.Error, message);
         }
 
-        public Severity Verbosity
+         public void ClearLog()
+        {
+            if (OnClearLog != null)
+                OnClearLog();
+        }
+
+       public Severity Verbosity
         {
             get { return verbosity; }
-            set { verbosity = value; }
+            set { verbosity = value; Log(Severity.Information, "Verbosity selected: " + verbosity.ToString()); }
         }
 
         public delegate void OnLogMessageDelegate(string message);
         public event OnLogMessageDelegate OnLogMessage;
+
+        public delegate void OnClearLogDelegate();
+        public event OnClearLogDelegate OnClearLog;
     }
 }

@@ -39,6 +39,7 @@ namespace IEDExplorer
         private Env _env;
         WaitHandle[] _waitHandles = new WaitHandle[5];
         public Iec61850State iecs;
+        Logger logger = Logger.getLogger();
 
         public Scsm_MMS_Worker(string hostname, int port, Env env)
         {
@@ -66,7 +67,7 @@ namespace IEDExplorer
             {
                 _run = true;
                 _workerThread = new Thread(new ParameterizedThreadStart(WorkerThreadProc));
-                _env.logger.LogInfo(String.Format("Starting new communication, hostname = {0}, port = {1}.", _hostname, _port));
+                logger.LogInfo(String.Format("Starting new communication, hostname = {0}, port = {1}.", _hostname, _port));
                 _workerThread.Start(this);
             }
             else
@@ -82,7 +83,7 @@ namespace IEDExplorer
                 (_waitHandles[3] as ManualResetEvent).Set();
                 //_workerThread.Join();
                 _workerThread = null;
-                _env.logger.LogInfo(String.Format("Communication to hostname = {0}, port = {1} stopped.", _hostname, _port));
+                logger.LogInfo(String.Format("Communication to hostname = {0}, port = {1} stopped.", _hostname, _port));
             }
         }
 
@@ -98,7 +99,7 @@ namespace IEDExplorer
             iecs = new Iec61850State();
             iecs.hostname = self._hostname;
             iecs.port = self._port;
-            iecs.logger = self._env.logger;
+            iecs.logger = Logger.getLogger();
             _waitHandles[0] = iecs.connectDone;
             _waitHandles[1] = iecs.receiveDone;
             _waitHandles[2] = iecs.sendDone;
@@ -193,7 +194,8 @@ namespace IEDExplorer
                                         break;
                                     case Iec61850lStateEnum.IEC61850_MAKEGUI:
                                         iecs.logger.LogDebug("[IEC61850_MAKEGUI]");
-                                        self._env.mainWindow.makeTree(iecs);
+                                        //self._env.mainWindow.makeTree(iecs);
+                                        self._env.winMgr.MakeIedTree(iecs);
                                         iecs.istate = Iec61850lStateEnum.IEC61850_FREILAUF;
                                         //iecs.lastOperationData = new NodeBase[1];//() {  };
                                         //iecs.lastOperationData[0] = iecs.files;
@@ -205,7 +207,8 @@ namespace IEDExplorer
                                         {
                                             case FileTransferState.FILE_DIRECTORY:
                                                 if (iecs.lastOperationData[0] is NodeIed) 
-                                                    self._env.mainWindow.makeTree(iecs);
+                                                    //self._env.mainWindow.makeTree(iecs);
+                                                    self._env.winMgr.MakeIedTree(iecs);
                                                 iecs.fstate = FileTransferState.FILE_NO_ACTION;
                                                 break;
                                             case FileTransferState.FILE_OPENED:
