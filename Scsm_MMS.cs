@@ -419,7 +419,7 @@ namespace IEDExplorer
                                         {
                                             varName = list[i].Success.Visible_string;
                                             iecs.logger.LogDebug("Report Variable Name = " + varName);
-                                            NodeBase b = iecs.ied.FindNodeByAddress(varName);
+                                            NodeBase b = iecs.dataModel.ied.FindNodeByAddress(varName);
                                             Data dataref = list[i + datanum].Success;
                                             if (!(b is NodeFC))
                                                 // dataref = (dataref.Structure as List<Data>)[0];
@@ -441,7 +441,7 @@ namespace IEDExplorer
                                 {
                                     // Report WIHOUT references:
                                     // Need to investigate report members
-                                    NodeBase lvb = iecs.lists.FindNodeByAddress(datName, true);
+                                    NodeBase lvb = iecs.dataModel.lists.FindNodeByAddress(datName, true);
                                     if (lvb != null)
                                     {
                                         NodeBase[] nba = lvb.GetChildNodes();
@@ -491,7 +491,7 @@ namespace IEDExplorer
                             while (are.MoveNext() && vase.MoveNext())
                             {
                                 iecs.logger.LogDebug("Reading variable: " + vase.Current.VariableSpecification.Name.Domain_specific.ItemID.Value);
-                                NodeBase b = (iecs.ied as NodeIed).FindNodeByAddress(vase.Current.VariableSpecification.Name.Domain_specific.DomainID.Value, vase.Current.VariableSpecification.Name.Domain_specific.ItemID.Value);
+                                NodeBase b = (iecs.dataModel.ied as NodeIed).FindNodeByAddress(vase.Current.VariableSpecification.Name.Domain_specific.DomainID.Value, vase.Current.VariableSpecification.Name.Domain_specific.ItemID.Value);
                                 if (b != null)
                                 {
                                     iecs.logger.LogDebug("Node address: " + b.Address);
@@ -540,18 +540,18 @@ namespace IEDExplorer
             if (iecs.istate == Iec61850lStateEnum.IEC61850_READ_MODEL_DATA_WAIT)
             {
                 iecs.istate = Iec61850lStateEnum.IEC61850_READ_MODEL_DATA;
-                // if (iecs.ied.GetActualChildNode().GetActualChildNode().GetActualChildNode().NextActualChildNode() == null)
+                // if (iecs.dataModel.ied.GetActualChildNode().GetActualChildNode().GetActualChildNode().NextActualChildNode() == null)
                 // {
-                if (iecs.ied.GetActualChildNode().GetActualChildNode().NextActualChildNode() == null)
+                if (iecs.dataModel.ied.GetActualChildNode().GetActualChildNode().NextActualChildNode() == null)
                 {
-                    if (iecs.ied.GetActualChildNode().NextActualChildNode() == null)
+                    if (iecs.dataModel.ied.GetActualChildNode().NextActualChildNode() == null)
                     {
-                        if (iecs.ied.NextActualChildNode() == null)
+                        if (iecs.dataModel.ied.NextActualChildNode() == null)
                         {
                             // End of loop
                             iecs.istate = Iec61850lStateEnum.IEC61850_READ_NAMELIST_NAMED_VARIABLE_LIST;
                             iecs.logger.LogInfo("Reading named variable lists: [IEC61850_READ_NAMELIST_NAMED_VARIABLE_LIST]");
-                            iecs.ied.ResetAllChildNodes();
+                            iecs.dataModel.ied.ResetAllChildNodes();
                         }
                     }
                 }
@@ -563,7 +563,7 @@ namespace IEDExplorer
         {
             iecs.logger.LogDebug("GetNamedVariableListAttributes != null");
             if (GetNamedVariableListAttributes.MmsDeletable)
-                (iecs.lists.GetActualChildNode().GetActualChildNode() as NodeVL).Deletable = true;
+                (iecs.dataModel.lists.GetActualChildNode().GetActualChildNode() as NodeVL).Deletable = true;
 
             if (GetNamedVariableListAttributes.ListOfVariable != null)
             {
@@ -571,22 +571,22 @@ namespace IEDExplorer
                 foreach (GetNamedVariableListAttributes_Response.ListOfVariableSequenceType v in GetNamedVariableListAttributes.ListOfVariable)
                 {
                     iecs.logger.LogDebug(String.Format("GetNameList.ListOfIdentifier: {0}/{1}", v.VariableSpecification.Name.Domain_specific.DomainID.Value, v.VariableSpecification.Name.Domain_specific.ItemID.Value));
-                    //iecs.lists.GetActualChildNode().GetActualChildNode().AddChildNode(new NodeLD(v.VariableSpecification.Name.Domain_specific.ItemID.Value));
-                    NodeBase b = (iecs.ied as NodeIed).FindNodeByAddress(v.VariableSpecification.Name.Domain_specific.DomainID.Value, v.VariableSpecification.Name.Domain_specific.ItemID.Value);
+                    //iecs.dataModel.lists.GetActualChildNode().GetActualChildNode().AddChildNode(new NodeLD(v.VariableSpecification.Name.Domain_specific.ItemID.Value));
+                    NodeBase b = (iecs.dataModel.ied as NodeIed).FindNodeByAddress(v.VariableSpecification.Name.Domain_specific.DomainID.Value, v.VariableSpecification.Name.Domain_specific.ItemID.Value);
                     if (b != null)
                     {
-                        iecs.lists.GetActualChildNode().GetActualChildNode().LinkChildNode(b);
+                        iecs.dataModel.lists.GetActualChildNode().GetActualChildNode().LinkChildNode(b);
                     }
                 }
                 iecs.istate = Iec61850lStateEnum.IEC61850_READ_ACCESSAT_NAMED_VARIABLE_LIST;
-                if (iecs.lists.GetActualChildNode().NextActualChildNode() == null)
+                if (iecs.dataModel.lists.GetActualChildNode().NextActualChildNode() == null)
                 {
-                    if (iecs.lists.NextActualChildNode() == null)
+                    if (iecs.dataModel.lists.NextActualChildNode() == null)
                     {
                         // End of loop
                         iecs.istate = Iec61850lStateEnum.IEC61850_MAKEGUI;
                         iecs.logger.LogInfo("Init end: [IEC61850_FREILAUF]");
-                        iecs.lists.ResetAllChildNodes();
+                        iecs.dataModel.lists.ResetAllChildNodes();
                         //iecs.
                     }
                 }
@@ -599,17 +599,17 @@ namespace IEDExplorer
             if (GetVariableAccessAttributes.TypeDescription != null)
             {
                 iecs.logger.LogDebug("GetVariableAccessAttributes.TypeDescription != null");
-                RecursiveReadTypeDescription(iecs, iecs.ied.GetActualChildNode().GetActualChildNode(),
+                RecursiveReadTypeDescription(iecs, iecs.dataModel.ied.GetActualChildNode().GetActualChildNode(),
                                              GetVariableAccessAttributes.TypeDescription);
                 iecs.istate = Iec61850lStateEnum.IEC61850_READ_ACCESSAT_VAR;
-                if (iecs.ied.GetActualChildNode().NextActualChildNode() == null)
+                if (iecs.dataModel.ied.GetActualChildNode().NextActualChildNode() == null)
                 {
-                    if (iecs.ied.NextActualChildNode() == null)
+                    if (iecs.dataModel.ied.NextActualChildNode() == null)
                     {
                         // End of loop
                         iecs.istate = Iec61850lStateEnum.IEC61850_READ_MODEL_DATA;
                         iecs.logger.LogInfo("Reading variable values: [IEC61850_READ_MODEL_DATA]");
-                        iecs.ied.ResetAllChildNodes();
+                        iecs.dataModel.ied.ResetAllChildNodes();
                     }
                 }
             }
@@ -623,7 +623,7 @@ namespace IEDExplorer
                     foreach (Identifier i in GetNameList.ListOfIdentifier)
                     {
                         iecs.logger.LogDebug(String.Format("GetNameList.ListOfIdentifier: {0}", i.Value));
-                        iecs.ied.AddChildNode(new NodeLD(i.Value));
+                        iecs.dataModel.ied.AddChildNode(new NodeLD(i.Value));
                         iecs.continueAfter = null;
                     }
                     iecs.istate = Iec61850lStateEnum.IEC61850_READ_NAMELIST_VAR;
@@ -643,11 +643,11 @@ namespace IEDExplorer
                     else
                     {
                         iecs.continueAfter = null;
-                        if (iecs.ied.NextActualChildNode() == null)
+                        if (iecs.dataModel.ied.NextActualChildNode() == null)
                         {
                             iecs.istate = Iec61850lStateEnum.IEC61850_READ_ACCESSAT_VAR;    // next state
                             iecs.logger.LogInfo("Reading variable specifications: [IEC61850_READ_ACCESSAT_VAR]");
-                            iecs.ied.ResetAllChildNodes();
+                            iecs.dataModel.ied.ResetAllChildNodes();
                         }
                         else
                             iecs.istate = Iec61850lStateEnum.IEC61850_READ_NAMELIST_VAR;         // next logical device
@@ -658,7 +658,7 @@ namespace IEDExplorer
                         foreach (Identifier i in GetNameList.ListOfIdentifier)
                         {
                             iecs.logger.LogDebug(String.Format("GetNameList.ListOfIdentifier: {0}", i.Value));
-                            NodeBase nld = iecs.lists.AddChildNode(new NodeLD(iecs.ied.GetActualChildNode().Name));
+                            NodeBase nld = iecs.dataModel.lists.AddChildNode(new NodeLD(iecs.dataModel.ied.GetActualChildNode().Name));
                             NodeVL vl = new NodeVL(i.Value);
                             vl.Defined = true;
                             nld.AddChildNode(vl);
@@ -669,12 +669,12 @@ namespace IEDExplorer
                     else
                     {
                         iecs.continueAfter = null;
-                        if (iecs.ied.NextActualChildNode() == null)
+                        if (iecs.dataModel.ied.NextActualChildNode() == null)
                         {
                             iecs.logger.LogInfo("Reading variable lists attributes: [IEC61850_READ_ACCESSAT_NAMED_VARIABLE_LIST]");    // next state
                             iecs.istate = Iec61850lStateEnum.IEC61850_READ_ACCESSAT_NAMED_VARIABLE_LIST; // next state
-                            iecs.ied.ResetAllChildNodes();
-                            iecs.lists.ResetAllChildNodes();
+                            iecs.dataModel.ied.ResetAllChildNodes();
+                            iecs.dataModel.lists.ResetAllChildNodes();
                         }
                         else
                             iecs.istate = Iec61850lStateEnum.IEC61850_READ_NAMELIST_NAMED_VARIABLE_LIST;         // next logical device
@@ -690,9 +690,9 @@ namespace IEDExplorer
                 Identify.ModelName.Value,
                 Identify.Revision.Value
                 ));
-            (iecs.ied as NodeIed).VendorName = Identify.VendorName.Value;
-            (iecs.ied as NodeIed).ModelName = Identify.ModelName.Value;
-            (iecs.ied as NodeIed).Revision = Identify.Revision.Value;
+            (iecs.dataModel.ied as NodeIed).VendorName = Identify.VendorName.Value;
+            (iecs.dataModel.ied as NodeIed).ModelName = Identify.ModelName.Value;
+            (iecs.dataModel.ied as NodeIed).Revision = Identify.Revision.Value;
             iecs.istate = Iec61850lStateEnum.IEC61850_READ_NAMELIST_DOMAIN;
             iecs.logger.LogInfo("Reading domain (LD) names: [IEC61850_READ_NAMELIST_DOMAIN]");
         }
@@ -888,7 +888,7 @@ namespace IEDExplorer
                         if (actualNode is NodeFC && actualNode.Name == "RP")
                         {
                             // Having RCB
-                            NodeBase nrpied = iecs.reports.AddChildNode(new NodeLD(iecs.ied.GetActualChildNode().Name));
+                            NodeBase nrpied = iecs.dataModel.reports.AddChildNode(new NodeLD(iecs.dataModel.ied.GetActualChildNode().Name));
                             NodeBase nrp = new NodeRP(newActualNode.CommAddress.Variable);
                             nrpied.AddChildNode(nrp);
                             foreach (NodeBase nb in newActualNode.GetChildNodes())
@@ -993,11 +993,11 @@ namespace IEDExplorer
                     mymmspdu.Initiate_ResponsePDU.NegotiatedMaxServOutstandingCalled.Value));
                 if ((mymmspdu.Initiate_ResponsePDU.InitResponseDetail.ServicesSupportedCalled.Value.Value[1] & 0x10) == 0x10)
                 {
-                    iecs.ied.DefineNVL = true;
+                    iecs.dataModel.ied.DefineNVL = true;
                 }
                 if ((mymmspdu.Initiate_ResponsePDU.InitResponseDetail.ServicesSupportedCalled.Value.Value[0] & 0x20) == 0x20)
                 {
-                    iecs.ied.Identify = true;
+                    iecs.dataModel.ied.Identify = true;
                 }
             }
             else
@@ -1099,7 +1099,7 @@ namespace IEDExplorer
             nlreq.ObjectClass = new ObjectClass();
             nlreq.ObjectClass.selectBasicObjectClass(ObjectClass.ObjectClass__basicObjectClass_namedVariable);
             nlreq.ObjectScope = new GetNameList_Request.ObjectScopeChoiceType();
-            nlreq.ObjectScope.selectDomainSpecific(new Identifier(iecs.ied.GetActualChildNode().Name));
+            nlreq.ObjectScope.selectDomainSpecific(new Identifier(iecs.dataModel.ied.GetActualChildNode().Name));
             nlreq.ContinueAfter = iecs.continueAfter;
 
             csrreq.selectGetNameList(nlreq);
@@ -1140,7 +1140,7 @@ namespace IEDExplorer
             nlreq.ObjectClass = new ObjectClass();
             nlreq.ObjectClass.selectBasicObjectClass(ObjectClass.ObjectClass__basicObjectClass_namedVariableList);
             nlreq.ObjectScope = new GetNameList_Request.ObjectScopeChoiceType();
-            nlreq.ObjectScope.selectDomainSpecific(new Identifier(iecs.ied.GetActualChildNode().Name));
+            nlreq.ObjectScope.selectDomainSpecific(new Identifier(iecs.dataModel.ied.GetActualChildNode().Name));
             nlreq.ContinueAfter = iecs.continueAfter;
 
             csrreq.selectGetNameList(nlreq);
@@ -1180,8 +1180,8 @@ namespace IEDExplorer
             ObjectName on = new ObjectName();
             ObjectName.Domain_specificSequenceType dst = new ObjectName.Domain_specificSequenceType();
 
-            dst.DomainID = new Identifier(iecs.ied.GetActualChildNode().Name);
-            dst.ItemID = new Identifier(iecs.ied.GetActualChildNode().GetActualChildNode().Name);         // LN name e.g. MMXU0
+            dst.DomainID = new Identifier(iecs.dataModel.ied.GetActualChildNode().Name);
+            dst.ItemID = new Identifier(iecs.dataModel.ied.GetActualChildNode().GetActualChildNode().Name);         // LN name e.g. MMXU0
 
             iecs.logger.LogDebug("SendGetVariableAccessAttributes: Get Attr for: " + dst.ItemID.Value);
             on.selectDomain_specific(dst);
@@ -1225,7 +1225,7 @@ namespace IEDExplorer
             ObjectName on = new ObjectName();
             ObjectName.Domain_specificSequenceType dst = new ObjectName.Domain_specificSequenceType();
 
-            NodeBase n = iecs.lists.GetActualChildNode();
+            NodeBase n = iecs.dataModel.lists.GetActualChildNode();
             if (n == null)
             {
                 iecs.logger.LogError("mms.SendGetNamedVariableListAttributes: No lists defined!");
@@ -1233,7 +1233,7 @@ namespace IEDExplorer
             }
 
             dst.DomainID = new Identifier(n.Name);
-            dst.ItemID = new Identifier(iecs.lists.GetActualChildNode().GetActualChildNode().Name);         // List name e.g. MMXU0$MX
+            dst.ItemID = new Identifier(iecs.dataModel.lists.GetActualChildNode().GetActualChildNode().Name);         // List name e.g. MMXU0$MX
 
             iecs.logger.LogDebug("GetNamedVariableListAttributes: Get Attr for: " + dst.ItemID.Value);
             on.selectDomain_specific(dst);
@@ -1818,7 +1818,7 @@ namespace IEDExplorer
         void AddIecAddress(Iec61850State iecs, string addr)
         {
             string[] parts = addr.Split(new char[] { '$' });
-            NodeBase curld = iecs.ied.GetActualChildNode();
+            NodeBase curld = iecs.dataModel.ied.GetActualChildNode();
             NodeBase curln, curfc; //, curdt;
             if (parts.Length < 1)
             {

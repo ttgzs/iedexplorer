@@ -83,19 +83,7 @@ namespace IEDExplorer
         /// <summary>
         /// Server data
         /// </summary>
-        public NodeIed ied = new NodeIed("ied");
-        /// <summary>
-        /// Server named variable lists
-        /// </summary>
-        public NodeIed lists = new NodeIed("lists");
-        /// <summary>
-        /// Server RP blocks (reports)
-        /// </summary>
-        public NodeIed reports = new NodeIed("reports");
-        /// <summary>
-        /// Server files
-        /// </summary>
-        public NodeIed files = new NodeIed("files");
+        public Iec61850Model dataModel;
         /// <summary>
         /// Queue for sending data from another threads
         /// </summary>
@@ -105,10 +93,7 @@ namespace IEDExplorer
 
         public Iec61850State()
         {
-            (ied as NodeIed).iecs = this;
-            (lists as NodeIed).iecs = this;
-            (files as NodeIed).iecs = this;
-            (reports as NodeIed).iecs = this;
+            dataModel = new Iec61850Model(this);
         }
 
         public void NextState()

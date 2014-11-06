@@ -72,13 +72,13 @@ namespace IEDExplorer.Views
                 treeViewIed.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DA6"))));
                 treeViewIed.ImageList.Images.Add(((System.Drawing.Image)(resources.GetObject("folder"))));
                 treeViewIed.Nodes.Clear();
-                TreeNode n = treeViewIed.Nodes.Add(iecs.ied.Name + " = " + iecs.hostname +
-                                                 ", Vendor = " + (iecs.ied as NodeIed).VendorName +
-                                                 ", Model = " + (iecs.ied as NodeIed).ModelName +
-                                                 ", Revision = " + (iecs.ied as NodeIed).Revision +
-                                                 ", DefineNVL = " + (iecs.ied as NodeIed).DefineNVL
+                TreeNode n = treeViewIed.Nodes.Add(iecs.dataModel.ied.Name + " = " + iecs.hostname +
+                                                 ", Vendor = " + (iecs.dataModel.ied as NodeIed).VendorName +
+                                                 ", Model = " + (iecs.dataModel.ied as NodeIed).ModelName +
+                                                 ", Revision = " + (iecs.dataModel.ied as NodeIed).Revision +
+                                                 ", DefineNVL = " + (iecs.dataModel.ied as NodeIed).DefineNVL
                                                  );
-                NodeBase nb = iecs.ied;
+                NodeBase nb = iecs.dataModel.ied;
                 n.Tag = nb;
                 n.ImageIndex = 0;
                 foreach (NodeBase b in nb.GetChildNodes())
@@ -92,7 +92,7 @@ namespace IEDExplorer.Views
                     tn3.ImageIndex = 2;
                     tn3.SelectedImageIndex = 2;
                     makeTree_dataNode(b, tn3);
-                    NodeBase lb = iecs.lists.FindChildNode(b.Name);
+                    NodeBase lb = iecs.dataModel.lists.FindChildNode(b.Name);
                     if (lb != null)
                     {
                         tn3 = tn2.Nodes.Add("DataSets");
@@ -101,7 +101,7 @@ namespace IEDExplorer.Views
                         tn3.SelectedImageIndex = 3;
                         makeTree_listNode(lb, tn3);
                     }
-                    NodeBase rb = iecs.reports.FindChildNode(b.Name);
+                    NodeBase rb = iecs.dataModel.reports.FindChildNode(b.Name);
                     if (rb != null)
                     {
                         tn3 = tn2.Nodes.Add("Reports");
@@ -111,9 +111,9 @@ namespace IEDExplorer.Views
                         makeTree_reportNode(rb, tn3);
                     }
                 }
-                nb = iecs.files;
+                nb = iecs.dataModel.files;
                 TreeNode tn4 = n.Nodes.Add("Files");
-                tn4.Tag = iecs.files;
+                tn4.Tag = iecs.dataModel.files;
                 tn4.ImageIndex = 3;
                 tn4.SelectedImageIndex = 3;
                 makeTree_fileNode(nb, tn4);
@@ -306,7 +306,7 @@ namespace IEDExplorer.Views
                             item.Click += new EventHandler(OnDeleteNVLClick);
                         }
                     }
-                    else if (e.Node.Text == "lists" && n.GetIecs().ied.DefineNVL)
+                    else if (e.Node.Text == "lists" && n.GetIecs().dataModel.ied.DefineNVL)
                     {
                         item = menu.Items.Add("Add New Name List");
                         item.Tag = n;
@@ -675,7 +675,7 @@ namespace IEDExplorer.Views
             {
                 do
                 {
-                    ur = (NodeData)iecs.ied.FindNodeByValue(scsm_MMS_TypeEnum.visible_string, vl.Address, ref ur);
+                    ur = (NodeData)iecs.dataModel.ied.FindNodeByValue(scsm_MMS_TypeEnum.visible_string, vl.Address, ref ur);
                     if (ur == null)
                     {
                         MessageBox.Show("Suitable URCB not found, list cannot be activated!");
