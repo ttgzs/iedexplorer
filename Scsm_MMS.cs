@@ -120,7 +120,8 @@ namespace IEDExplorer
                 mymmspdu = decoder.decode<MMSpdu>(iecs.msMMS);
                 MemoryStream ms = new MemoryStream();
                 xmlencoder.encode<MMSpdu>(mymmspdu, ms);
-                string st = System.Text.Encoding.ASCII.GetString(ms.GetBuffer(), 0, ms.GetBuffer().Length);
+                byte[] buf = ms.ToArray();
+                string st = System.Text.Encoding.ASCII.GetString(buf, 0, buf.Length);
                 iecs.logger.LogInfo(st);
             }
             catch (Exception e)

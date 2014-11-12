@@ -50,7 +50,12 @@ namespace IEDExplorer.BNExtension
         public override int encodeSequence(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			int resultSize = 0;
-            resultSize += printString(stream, "<Sequence>\n");
+            string s = "";
+            if (elementInfo.hasPreparedInfo() && elementInfo.hasPreparedASN1ElementInfo())
+            {
+                s = elementInfo.PreparedASN1ElementInfo.Name;
+            }
+            resultSize += printString(stream, "<Sequence " + s + ">");
             PropertyInfo[] fields = elementInfo.getProperties(obj.GetType());
             for (int i = 0; i < fields.Length; i++)
 			{
@@ -85,7 +90,16 @@ namespace IEDExplorer.BNExtension
         public override int encodeChoice(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			int result = 0;
-            result += printString(stream, "<Choice>\n");
+            string s = "";
+            if (elementInfo.hasPreparedInfo() && elementInfo.hasPreparedASN1ElementInfo())
+            {
+                s = elementInfo.PreparedASN1ElementInfo.Name;
+            }
+            else
+            {
+                s = elementInfo.AnnotatedClass.ToString();
+            }
+            result += printString(stream, "<Choice " + s +">\n");
             int sizeOfChoiceField = base.encodeChoice(obj, stream, elementInfo);
             /*if (
                 (elementInfo.hasPreparedInfo() && elementInfo.hasPreparedASN1ElementInfo() && elementInfo.PreparedASN1ElementInfo.HasTag )
@@ -102,11 +116,16 @@ namespace IEDExplorer.BNExtension
 		{
 			int resultSize = 0;
             ASN1EnumItem enumObj = elementInfo.getAttribute<ASN1EnumItem>();
-			/*int szOfInt = encodeIntegerValue(enumObj.Tag, stream);
-			resultSize += szOfInt;
-			resultSize += encodeLength(szOfInt, stream);
-			resultSize += encodeTag(BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.Universal, ElementType.Primitive, UniversalTags.Enumerated), stream);*/
-            resultSize += printString(stream, "<Enum>"+enumObj.Tag.ToString() + "</Enum>\n");
+            string s = "";
+            if (elementInfo.hasPreparedInfo() && elementInfo.hasPreparedASN1ElementInfo())
+            {
+                s = elementInfo.PreparedASN1ElementInfo.Name;
+            }
+            /*int szOfInt = encodeIntegerValue(enumObj.Tag, stream);
+            resultSize += szOfInt;
+            resultSize += encodeLength(szOfInt, stream);
+            resultSize += encodeTag(BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.Universal, ElementType.Primitive, UniversalTags.Enumerated), stream);*/
+            resultSize += printString(stream, "<Enum "+s+">"+enumObj.Tag.ToString() + "</Enum>\n");
 			return resultSize;
 		}
 
@@ -120,7 +139,12 @@ namespace IEDExplorer.BNExtension
 			
 			resultSize += encodeLength(1, stream);
 			resultSize += encodeTag(BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.Universal, ElementType.Primitive, UniversalTags.Boolean), stream);*/
-            resultSize += printString(stream, "<Boolean>" + value.ToString() + "</Boolean>\n");
+            string s = "";
+            if (elementInfo.hasPreparedInfo() && elementInfo.hasPreparedASN1ElementInfo())
+            {
+                s = elementInfo.PreparedASN1ElementInfo.Name;
+            }
+            resultSize += printString(stream, "<Boolean "+s+">" + value.ToString() + "</Boolean>\n");
             return resultSize;
 		}
 
@@ -137,7 +161,12 @@ namespace IEDExplorer.BNExtension
                 sb.Append(buffer[i]);
                 sb.Append(',');
             }
-            resultSize += printString(stream, "<Any>" + sb.ToString() + "</Any>\n");
+            string s = "";
+            if (elementInfo.hasPreparedInfo() && elementInfo.hasPreparedASN1ElementInfo())
+            {
+                s = elementInfo.PreparedASN1ElementInfo.Name;
+            }
+            resultSize += printString(stream, "<Any "+s+">" + sb.ToString() + "</Any>\n");
             //resultSize += sizeOfString;
 			return resultSize;
 		}
@@ -172,7 +201,12 @@ namespace IEDExplorer.BNExtension
 			resultSize += szOfInt;
 			resultSize += encodeLength(szOfInt, stream);
 			resultSize += encodeTag(BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.Universal, ElementType.Primitive, UniversalTags.Integer), stream);*/
-            resultSize += printString(stream, "<Integer>" + obj.ToString() + "</Integer>\n");
+            string s = "";
+            if (elementInfo.hasPreparedInfo() && elementInfo.hasPreparedASN1ElementInfo())
+            {
+                s = elementInfo.PreparedASN1ElementInfo.Name;
+            }
+            resultSize += printString(stream, "<Integer "+s+">" + obj.ToString() + "</Integer>\n");
             return resultSize;
 		}
 
@@ -228,7 +262,12 @@ namespace IEDExplorer.BNExtension
             resultSize += szOfInt;
             resultSize += encodeLength(szOfInt, stream);
             resultSize += encodeTag(BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.Universal, ElementType.Primitive, UniversalTags.Real), stream);*/
-            resultSize += printString(stream, "<Real>" + value.ToString() + "</Real>\n");
+            string s = "";
+            if (elementInfo.hasPreparedInfo() && elementInfo.hasPreparedASN1ElementInfo())
+            {
+                s = elementInfo.PreparedASN1ElementInfo.Name;
+            }
+            resultSize += printString(stream, "<Real "+s+">" + value.ToString() + "</Real>\n");
             return resultSize;
         }
 
@@ -244,7 +283,12 @@ namespace IEDExplorer.BNExtension
 			resultSize += sizeOfString;
 			resultSize += encodeLength(sizeOfString, stream);
 			resultSize += encodeTag(BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.Universal, ElementType.Primitive, UniversalTags.OctetString), stream);*/
-            resultSize += printString(stream, "<OctetString>");
+            string s = "";
+            if (elementInfo.hasPreparedInfo() && elementInfo.hasPreparedASN1ElementInfo())
+            {
+                s = elementInfo.PreparedASN1ElementInfo.Name;
+            }
+            resultSize += printString(stream, "<OctetString "+s+">");
             stream.Write(buffer, 0, sizeOfString);
             resultSize += sizeOfString;
             resultSize += printString(stream, "</OctetString>");
@@ -263,14 +307,24 @@ namespace IEDExplorer.BNExtension
 			resultSize += sizeOfString;
 			resultSize += encodeLength(sizeOfString, stream);
 			resultSize += encodeTag(BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.Universal, ElementType.Primitive, CoderUtils.getStringTagForElement(elementInfo)), stream);*/
-            resultSize += printString(stream, "<String>" + (string)obj + "</String>\n");
+            string s = "";
+            if (elementInfo.hasPreparedInfo() && elementInfo.hasPreparedASN1ElementInfo())
+            {
+                s = elementInfo.PreparedASN1ElementInfo.Name;
+            }
+            resultSize += printString(stream, "<String "+s+">" + (string)obj + "</String>\n");
             return resultSize;
 		}
 
         public override int encodeSequenceOf(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			int resultSize = 0;
-            resultSize += printString(stream, "<SequenceOf>");
+            string s = "";
+            if (elementInfo.hasPreparedInfo() && elementInfo.hasPreparedASN1ElementInfo())
+            {
+                s = elementInfo.PreparedASN1ElementInfo.Name;
+            }
+            resultSize += printString(stream, "<SequenceOf "+s+">");
             System.Collections.IList collection = (System.Collections.IList)obj;
             CoderUtils.checkConstraints(collection.Count, elementInfo);
             
@@ -344,7 +398,12 @@ namespace IEDExplorer.BNExtension
 			//stream.WriteByte((byte) 0);
 			int resultSize = 0;
 			//resultSize += encodeTag(BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.Universal, ElementType.Primitive, UniversalTags.Null), stream);
-            resultSize += printString(stream, "<Null/>");
+            string s = "";
+            if (elementInfo.hasPreparedInfo() && elementInfo.hasPreparedASN1ElementInfo())
+            {
+                s = elementInfo.PreparedASN1ElementInfo.Name;
+            }
+            resultSize += printString(stream, "<Null "+s+"/>");
             return resultSize;
 		}
 
@@ -364,13 +423,18 @@ namespace IEDExplorer.BNExtension
                 BERCoderUtils.getTagValueForElement(elementInfo,TagClasses.Universal, ElementType.Primitive, UniversalTags.Bitstring),
                 stream
             );*/
+            string s = "";
+            if (elementInfo.hasPreparedInfo() && elementInfo.hasPreparedASN1ElementInfo())
+            {
+                s = elementInfo.PreparedASN1ElementInfo.Name;
+            }
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
             for (int i = 0; i < buffer.Length; i++)
             {
                 sb.Append(buffer[i]);
                 sb.Append(',');
             }
-            resultSize += printString(stream, "<BitString>" + sb.ToString() + "</BitString>\n");
+            resultSize += printString(stream, "<BitString "+s+">" + sb.ToString() + "</BitString>\n");
             return resultSize;
         }
 
@@ -386,7 +450,12 @@ namespace IEDExplorer.BNExtension
                 BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.Universal, ElementType.Primitive, UniversalTags.ObjectIdentifier),
                 stream
             );*/
-            return printString(stream, "<ObjectIdentifier>" + oid.Value + "</ObjectIdentifier>\n");
+            string s = "";
+            if (elementInfo.hasPreparedInfo() && elementInfo.hasPreparedASN1ElementInfo())
+            {
+                s = elementInfo.PreparedASN1ElementInfo.Name;
+            }
+            return printString(stream, "<ObjectIdentifier "+s+">" + oid.Value + "</ObjectIdentifier>\n");
         }
 	}
 }
