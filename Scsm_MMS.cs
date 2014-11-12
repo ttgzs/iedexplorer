@@ -94,6 +94,7 @@ namespace IEDExplorer
 
         IDecoder decoder = CoderFactory.getInstance().newDecoder("BER");
         IEncoder encoder = CoderFactory.getInstance().newEncoder("BER");
+        IEncoder xmlencoder = new IEDExplorer.BNExtension.XMLEncoder();
 
         Unsigned32 InvokeID = new Unsigned32();
 
@@ -117,6 +118,10 @@ namespace IEDExplorer
             try
             {
                 mymmspdu = decoder.decode<MMSpdu>(iecs.msMMS);
+                MemoryStream ms = new MemoryStream();
+                xmlencoder.encode<MMSpdu>(mymmspdu, ms);
+                string st = System.Text.Encoding.ASCII.GetString(ms.GetBuffer(), 0, ms.GetBuffer().Length);
+                iecs.logger.LogInfo(st);
             }
             catch (Exception e)
             {

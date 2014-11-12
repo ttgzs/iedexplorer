@@ -71,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionRequested.cs" />
+    <Compile Include="BNExtension\XMLEncoder.cs" />
     <Compile Include="Dialogs\AddNVLDialog.cs">
       <SubType>Form</SubType>
     </Compile>
