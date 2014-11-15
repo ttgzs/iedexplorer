@@ -55,7 +55,7 @@ namespace IEDExplorer.BNExtension
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
-            resultSize += printString(stream, "<Sequence " + s + ">");
+            resultSize += printString(stream, "<" + s + " type = \"Sequence\">");
             PropertyInfo[] fields = elementInfo.getProperties(obj.GetType());
             for (int i = 0; i < fields.Length; i++)
 			{
@@ -63,26 +63,6 @@ namespace IEDExplorer.BNExtension
                 resultSize += encodeSequenceField(obj, fields.Length - 1 - i, field, stream, elementInfo);
 			}
 
-            /*if(!CoderUtils.isSequenceSet(elementInfo)) 
-            {
-                resultSize += encodeHeader(
-                    BERCoderUtils.getTagValueForElement(
-                        elementInfo,
-                        TagClasses.Universal,
-                        ElementType.Constructed,
-                        UniversalTags.Sequence)
-                    , resultSize, stream);
-            }
-            else
-            {
-                resultSize += encodeHeader(
-                    BERCoderUtils.getTagValueForElement(
-                        elementInfo,
-                        TagClasses.Universal,
-                        ElementType.Constructed,
-                        UniversalTags.Set)
-                    , resultSize, stream);
-            }*/
             resultSize += printString(stream, "</Sequence>\n");
             return resultSize;
 		}
@@ -98,6 +78,8 @@ namespace IEDExplorer.BNExtension
             else
             {
                 s = elementInfo.AnnotatedClass.ToString();
+                string[] sa = s.Split(new char[1] { '.' });
+                s = sa[sa.Length - 1];
             }
             result += printString(stream, "<Choice " + s +">\n");
             int sizeOfChoiceField = base.encodeChoice(obj, stream, elementInfo);
