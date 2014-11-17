@@ -387,6 +387,12 @@
     <Compile Include="TreeViewAdv\Tree\TreeViewAdvCancelEventArgs.cs" />
     <Compile Include="TreeViewAdv\Tree\TreeViewAdvEventArgs.cs" />
     <Compile Include="TreeViewAdv\Tree\TreeViewRowDrawEventArgs.cs" />
+    <Compile Include="Views\CaptureView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\CaptureView.Designer.cs">
+      <DependentUpon>CaptureView.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\IedDataView.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -957,6 +963,9 @@
     <EmbeddedResource Include="TreeViewAdv\Properties\Resources.resx" />
     <EmbeddedResource Include="TreeViewAdv\Tree\TreeViewAdv.resx">
       <DependentUpon>TreeViewAdv.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\CaptureView.resx">
+      <DependentUpon>CaptureView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\IedDataView.resx">
       <DependentUpon>IedDataView.cs</DependentUpon>

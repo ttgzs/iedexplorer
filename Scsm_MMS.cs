@@ -94,7 +94,6 @@ namespace IEDExplorer
 
         IDecoder decoder = CoderFactory.getInstance().newDecoder("BER");
         IEncoder encoder = CoderFactory.getInstance().newEncoder("BER");
-        IEncoder xmlencoder = new IEDExplorer.BNExtension.XMLEncoder();
 
         Unsigned32 InvokeID = new Unsigned32();
 
@@ -117,12 +116,16 @@ namespace IEDExplorer
             MMSpdu mymmspdu = null;
             try
             {
+                MMSCapture cap = null;
+                if (iecs.CaptureActive) cap = new MMSCapture(iecs.msMMS.ToArray(), iecs.msMMS.Position, MMSCapture.CaptureDirection.In);
+                ////////////////// Decoding
                 mymmspdu = decoder.decode<MMSpdu>(iecs.msMMS);
-                MemoryStream ms = new MemoryStream();
-                xmlencoder.encode<MMSpdu>(mymmspdu, ms);
-                byte[] buf = ms.ToArray();
-                string st = System.Text.Encoding.ASCII.GetString(buf, 0, buf.Length);
-                iecs.logger.LogInfo(st);
+                ////////////////// Decoding
+                if (iecs.CaptureActive)
+                {
+                    cap.MMSPdu = mymmspdu;
+                    iecs.CapturedData.Add(cap);
+                }
             }
             catch (Exception e)
             {

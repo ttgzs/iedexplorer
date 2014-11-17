@@ -90,6 +90,14 @@ namespace IEDExplorer
         public Queue<WriteQueueElement> SendQueue = new Queue<WriteQueueElement>();
         public ManualResetEvent sendQueueWritten = new ManualResetEvent(false);
         public NodeBase[] lastOperationData = null;
+        /// <summary>
+        /// List of captured MMS packets (PDUs)
+        /// </summary>
+        public List<MMSCapture> CapturedData = new List<MMSCapture>();
+        /// <summary>
+        /// Capture of MMS packets (PDUs) active
+        /// </summary>
+        public bool CaptureActive = false;
 
         public Iec61850State()
         {
