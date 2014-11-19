@@ -18,7 +18,8 @@ namespace IEDExplorer.Views
         LogView logWindow;
         IedTreeView iedWindow;
         IedDataView dataWindow;
-        //public TSProject project;
+        CaptureView captureWindow;
+
         public Env environment;
 
         public WindowManager(DockPanel dockPanel, Env env, MainWindow mWin)
@@ -38,6 +39,11 @@ namespace IEDExplorer.Views
             dataWindow.ShowHint = DockState.Document;
             dataWindow.CloseButtonVisible = false;
             dataWindow.Show(dockPanel);
+
+            captureWindow = new CaptureView(this);
+            captureWindow.ShowHint = DockState.Document;
+            captureWindow.CloseButtonVisible = false;
+            captureWindow.Show(dockPanel);
 
             logWindow = new LogView(environment);
             logWindow.ShowHint = DockState.DockBottom;
