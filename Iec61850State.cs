@@ -83,25 +83,20 @@ namespace IEDExplorer
         /// <summary>
         /// Server data
         /// </summary>
-        public Iec61850Model dataModel;
+        public Iec61850Model DataModel;
         /// <summary>
         /// Queue for sending data from another threads
         /// </summary>
         public Queue<WriteQueueElement> SendQueue = new Queue<WriteQueueElement>();
         public ManualResetEvent sendQueueWritten = new ManualResetEvent(false);
         public NodeBase[] lastOperationData = null;
-        /// <summary>
-        /// List of captured MMS packets (PDUs)
-        /// </summary>
-        public List<MMSCapture> CapturedData = new List<MMSCapture>();
-        /// <summary>
-        /// Capture of MMS packets (PDUs) active
-        /// </summary>
-        public bool CaptureActive = false;
+
+        public MMSCaptureDb CaptureDb;
 
         public Iec61850State()
         {
-            dataModel = new Iec61850Model(this);
+            DataModel = new Iec61850Model(this);
+            CaptureDb = new MMSCaptureDb(this);
         }
 
         public void NextState()

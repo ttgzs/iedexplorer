@@ -250,6 +250,7 @@
     <Compile Include="Docking\Win32\NativeMethods.cs" />
     <Compile Include="Iec61850Model.cs" />
     <Compile Include="MMSCapture.cs" />
+    <Compile Include="MMSCaptureDb.cs" />
     <Compile Include="NodeRP.cs" />
     <Compile Include="FileTransferState.cs" />
     <Compile Include="IniFileManager.cs" />

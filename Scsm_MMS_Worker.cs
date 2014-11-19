@@ -100,6 +100,8 @@ namespace IEDExplorer
             iecs.hostname = self._hostname;
             iecs.port = self._port;
             iecs.logger = Logger.getLogger();
+            _env.winMgr.GetCaptureActive(iecs);
+
             _waitHandles[0] = iecs.connectDone;
             _waitHandles[1] = iecs.receiveDone;
             _waitHandles[2] = iecs.sendDone;
@@ -143,7 +145,7 @@ namespace IEDExplorer
                                 switch (iecs.istate)
                                 {
                                     case Iec61850lStateEnum.IEC61850_STATE_START:
-                                        if (iecs.dataModel.ied.Identify) {
+                                        if (iecs.DataModel.ied.Identify) {
                                             iecs.logger.LogInfo("[IEC61850_STATE_START] (Send IdentifyRequest)");
                                             iecs.mms.SendIdentify(iecs);
                                             iecs.istate = Iec61850lStateEnum.IEC61850_CONNECT_MMS_WAIT;
@@ -175,7 +177,7 @@ namespace IEDExplorer
                                         adr.Variable = null;
                                         adr.owner = null;
                                         NodeBase[] data = new NodeBase[1];
-                                        data[0] = iecs.dataModel.ied.GetActualChildNode().GetActualChildNode().GetActualChildNode(); //.GetActualChildNode();
+                                        data[0] = iecs.DataModel.ied.GetActualChildNode().GetActualChildNode().GetActualChildNode(); //.GetActualChildNode();
                                         WriteQueueElement wqel = new WriteQueueElement(data, adr, ActionRequested.Read);
                                         iecs.mms.SendRead(iecs, wqel);
                                         iecs.istate = Iec61850lStateEnum.IEC61850_READ_MODEL_DATA_WAIT;

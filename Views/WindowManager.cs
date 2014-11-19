@@ -20,13 +20,13 @@ namespace IEDExplorer.Views
         IedDataView dataWindow;
         CaptureView captureWindow;
 
-        public Env environment;
+        public Env env;
 
-        public WindowManager(DockPanel dockPanel, Env env, MainWindow mWin)
+        public WindowManager(DockPanel dockPanel, Env envir, MainWindow mWin)
         {
             this.dockPanel = dockPanel;
-            environment = env;
-            env.winMgr = this;
+            env = envir;
+            envir.winMgr = this;
             mainWindow = mWin;
             //Create toolwindows
             iedWindow = new IedTreeView(this);
@@ -35,7 +35,7 @@ namespace IEDExplorer.Views
             //iedWindow.Parent = (Form)mainWindow;
             //iedWindow.SelectNode += new ProjView.SelectNodeHandler(OnSelectProjectNode);
 
-            dataWindow = new IedDataView(environment);
+            dataWindow = new IedDataView(env);
             dataWindow.ShowHint = DockState.Document;
             dataWindow.CloseButtonVisible = false;
             dataWindow.Show(dockPanel);
@@ -45,7 +45,7 @@ namespace IEDExplorer.Views
             captureWindow.CloseButtonVisible = false;
             captureWindow.Show(dockPanel);
 
-            logWindow = new LogView(environment);
+            logWindow = new LogView(env);
             logWindow.ShowHint = DockState.DockBottom;
             logWindow.CloseButtonVisible = false;
             //logWindow.Parent = (Form)mainWindow;
@@ -89,6 +89,15 @@ namespace IEDExplorer.Views
             {
                 dataWindow.SelectNode(tn);
             }
+        }
+
+        internal void GetCaptureActive(Iec61850State iecs)
+        {
+            captureWindow.OnCaptureActiveChanged += (ca) =>
+            {
+                iecs.CaptureDb.CaptureActive = ca;
+            };
+            iecs.CaptureDb.CaptureActive = captureWindow.CaptureActive;
         }
 
         #region IDisposable Members
