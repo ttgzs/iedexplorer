@@ -10,6 +10,7 @@ namespace IEDExplorer
         Iec61850State iecs;
         public delegate void NewPacket(MMSCapture cap);
         public event NewPacket OnNewPacket;
+        int PacketNr;
 
         public MMSCaptureDb(Iec61850State _iecs)
         {
@@ -27,7 +28,14 @@ namespace IEDExplorer
         public void AddPacket(MMSCapture cap)
         {
             CapturedData.Add(cap);
+            cap.PacketNr = PacketNr++;
             if (OnNewPacket != null) OnNewPacket(cap);
+        }
+
+        public void Clear()
+        {
+            CapturedData.Clear();
+            PacketNr = 0;
         }
     }
 }

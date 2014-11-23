@@ -100,7 +100,7 @@ namespace IEDExplorer
             iecs.hostname = self._hostname;
             iecs.port = self._port;
             iecs.logger = Logger.getLogger();
-            _env.winMgr.GetCaptureActive(iecs);
+            _env.winMgr.BindToCapture(iecs);
 
             _waitHandles[0] = iecs.connectDone;
             _waitHandles[1] = iecs.receiveDone;
@@ -305,6 +305,7 @@ namespace IEDExplorer
                 }
             }
             TcpRw.StopClient(iecs);
+            _env.winMgr.UnBindFromCapture(iecs);
         }
     }
 }

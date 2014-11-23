@@ -91,13 +91,37 @@ namespace IEDExplorer.Views
             }
         }
 
-        internal void GetCaptureActive(Iec61850State iecs)
+        internal void BindToCapture(Iec61850State iecs)
         {
             captureWindow.OnCaptureActiveChanged += (ca) =>
             {
                 iecs.CaptureDb.CaptureActive = ca;
             };
+            captureWindow.OnClearCapture += () =>
+            {
+                iecs.CaptureDb.Clear();
+            };
             iecs.CaptureDb.CaptureActive = captureWindow.CaptureActive;
+            iecs.CaptureDb.OnNewPacket += (cap) =>
+                {
+                    captureWindow.AddPacket(cap);
+                };
+        }
+
+        internal void UnBindFromCapture(Iec61850State iecs)
+        {
+            captureWindow.OnCaptureActiveChanged -= (ca) =>
+            {
+                iecs.CaptureDb.CaptureActive = ca;
+            };
+            captureWindow.OnClearCapture -= () =>
+            {
+                iecs.CaptureDb.Clear();
+            };
+            iecs.CaptureDb.OnNewPacket -= (cap) =>
+            {
+                captureWindow.AddPacket(cap);
+            };
         }
 
         #region IDisposable Members

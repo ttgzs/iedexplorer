@@ -152,11 +152,15 @@ namespace IEDExplorer
                 // Complete the connection.
                 if (tcps.workSocket != null)
                 {
-                    tcps.recvBytes = tcps.workSocket.EndReceive(ar);
-                    //Console.WriteLine("ReceiveCallback: Data received {0}",
-                    //    tcps.recvBytes.ToString());
+                    try
+                    {
+                        tcps.recvBytes = tcps.workSocket.EndReceive(ar);
+                        //Console.WriteLine("ReceiveCallback: Data received {0}",
+                        //    tcps.recvBytes.ToString());
 
-                    Tpkt.Parse(tcps);
+                        Tpkt.Parse(tcps);
+                    }
+                    catch {}
                     // Signal that the data has been received.
                     tcps.receiveDone.Set();
                 }

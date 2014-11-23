@@ -8,7 +8,7 @@ using org.bn;
 
 namespace IEDExplorer
 {
-    class MMSCapture
+    public class MMSCapture
     {
         public enum CaptureDirection
         {
@@ -20,6 +20,7 @@ namespace IEDExplorer
         MMSpdu pdu;
         CaptureDirection direction;
         DateTime time;
+        public int PacketNr { get; set; }
 
         public MMSCapture(byte[] pkt, long pos, CaptureDirection dir)
         {
