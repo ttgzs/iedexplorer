@@ -1,21 +1,21 @@
 /*
-* Copyright 2006 Abdulla G. Abdurakhmanov (abdulla.abdurakhmanov@gmail.com).
-* 
-* Licensed under the LGPL, Version 2 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-* 
-*      http://www.gnu.org/copyleft/lgpl.html
-* 
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-* 
-* With any your questions welcome to my e-mail 
-* or blog at http://abdulla-a.blogspot.com.
-*/
+ *  Copyright (C) 2013 Pavel Charvat
+ * 
+ *  This file is part of IEDExplorer.
+ *
+ *  IEDExplorer is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  IEDExplorer is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with IEDExplorer.  If not, see <http://www.gnu.org/licenses/>.
+ */
 using System;
 using System.Reflection;
 using System.Collections.Generic;
@@ -35,6 +35,10 @@ namespace IEDExplorer.BNExtension
 		{
 		}
 
+        private int indent = 0;
+        private int indOfs = 4;
+        private int unknown = 0;
+
         public override void encode<T>(T obj, System.IO.Stream stream)
 		{
             base.encode(obj, stream);
@@ -43,6 +47,7 @@ namespace IEDExplorer.BNExtension
         int printString(System.IO.Stream stream, String str)
         {
             byte[] buf = System.Text.Encoding.ASCII.GetBytes(str);
+            for (int i=0; i < indent; i++) stream.WriteByte(32);
             stream.Write(buf,0,buf.Length);
             return buf.Length;
         }
@@ -55,7 +60,13 @@ namespace IEDExplorer.BNExtension
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
-            resultSize += printString(stream, "<" + s + " type = \"Sequence\">");
+            if (s == "") 
+            {
+                s = "unnamedSequence" + unknown.ToString("D3");
+                unknown++;
+            }
+            resultSize += printString(stream, "<" + s + " type = \"Sequence\">\r\n");
+            indent += indOfs;
             PropertyInfo[] fields = elementInfo.getProperties(obj.GetType());
             for (int i = 0; i < fields.Length; i++)
 			{
@@ -63,7 +74,8 @@ namespace IEDExplorer.BNExtension
                 resultSize += encodeSequenceField(obj, fields.Length - 1 - i, field, stream, elementInfo);
 			}
 
-            resultSize += printString(stream, "</Sequence>\n");
+            indent -= indOfs;
+            resultSize += printString(stream, "</" + s + ">\r\n");
             return resultSize;
 		}
 
@@ -80,17 +92,15 @@ namespace IEDExplorer.BNExtension
                 s = elementInfo.AnnotatedClass.ToString();
                 string[] sa = s.Split(new char[1] { '.' });
                 s = sa[sa.Length - 1];
+                indent = 0;
+                unknown = 0;
             }
-            result += printString(stream, "<Choice " + s +">\n");
+            result += printString(stream, "<" + s + " type = \"Choice\">\r\n");
+            indent += indOfs;
             int sizeOfChoiceField = base.encodeChoice(obj, stream, elementInfo);
-            /*if (
-                (elementInfo.hasPreparedInfo() && elementInfo.hasPreparedASN1ElementInfo() && elementInfo.PreparedASN1ElementInfo.HasTag )
-                || ( elementInfo.ASN1ElementInfo != null && elementInfo.ASN1ElementInfo.HasTag) )
-            {
-                result += encodeHeader(BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.ContextSpecific, ElementType.Constructed, UniversalTags.LastUniversal), sizeOfChoiceField, stream);
-            }*/
 			result += sizeOfChoiceField;
-            result += printString(stream, "</Choice>\n");
+            indent -= indOfs;
+            result += printString(stream, "</" + s + ">\r\n");
             return result;
 		}
 
@@ -103,11 +113,7 @@ namespace IEDExplorer.BNExtension
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
-            /*int szOfInt = encodeIntegerValue(enumObj.Tag, stream);
-            resultSize += szOfInt;
-            resultSize += encodeLength(szOfInt, stream);
-            resultSize += encodeTag(BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.Universal, ElementType.Primitive, UniversalTags.Enumerated), stream);*/
-            resultSize += printString(stream, "<Enum "+s+">"+enumObj.Tag.ToString() + "</Enum>\n");
+            resultSize += printString(stream, "<Enum "+s+">"+enumObj.Tag.ToString() + "</Enum>\r\n");
 			return resultSize;
 		}
 
@@ -115,18 +121,12 @@ namespace IEDExplorer.BNExtension
 		{
 			int resultSize = 1;
             bool value = (bool)obj;
-            // Pavel 2014/10/13
-            //stream.WriteByte((byte)(value ? 0xFF : 0x00));
-            /*stream.WriteByte((byte)(value ? 0x01 : 0x00));
-			
-			resultSize += encodeLength(1, stream);
-			resultSize += encodeTag(BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.Universal, ElementType.Primitive, UniversalTags.Boolean), stream);*/
             string s = "";
             if (elementInfo.hasPreparedInfo() && elementInfo.hasPreparedASN1ElementInfo())
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
-            resultSize += printString(stream, "<Boolean "+s+">" + value.ToString() + "</Boolean>\n");
+            resultSize += printString(stream, "<Boolean "+s+">" + value.ToString() + "</Boolean>\r\n");
             return resultSize;
 		}
 
@@ -134,9 +134,7 @@ namespace IEDExplorer.BNExtension
 		{
 			int resultSize = 0, sizeOfString = 0;
 			byte[] buffer = (byte[]) obj;
-            //sizeOfString = buffer.Length;
             CoderUtils.checkConstraints(sizeOfString, elementInfo);
-            //stream.Write(buffer, 0, buffer.Length);
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
             for (int i = 0; i < buffer.Length; i++)
             {
@@ -148,47 +146,19 @@ namespace IEDExplorer.BNExtension
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
-            resultSize += printString(stream, "<Any "+s+">" + sb.ToString() + "</Any>\n");
-            //resultSize += sizeOfString;
+            resultSize += printString(stream, "<Any "+s+">" + sb.ToString() + "</Any>\r\n");
 			return resultSize;
 		}
 		
-		/*protected internal int encodeIntegerValue(long val, System.IO.Stream stream)
-		{            
-			int resultSize = CoderUtils.getIntegerLength(val);
-			for (int i = 0; i < resultSize; i++)
-			{
-				stream.WriteByte((byte) val);
-				val = val >> 8;
-			}
-			return resultSize;
-		}*/
-
         public override int encodeInteger(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			int resultSize = 0;
-            /*int szOfInt = 0;
-            if (obj.GetType().Equals(typeof(int)))
-            {
-                int val = (int)obj;
-                CoderUtils.checkConstraints(val, elementInfo);
-                szOfInt = encodeIntegerValue(val, stream);
-            }
-            else
-            {
-                long val = (long)obj;
-                CoderUtils.checkConstraints(val, elementInfo);
-                szOfInt = encodeIntegerValue(val, stream);
-            }
-			resultSize += szOfInt;
-			resultSize += encodeLength(szOfInt, stream);
-			resultSize += encodeTag(BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.Universal, ElementType.Primitive, UniversalTags.Integer), stream);*/
             string s = "";
             if (elementInfo.hasPreparedInfo() && elementInfo.hasPreparedASN1ElementInfo())
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
-            resultSize += printString(stream, "<Integer "+s+">" + obj.ToString() + "</Integer>\n");
+            resultSize += printString(stream, "<Integer "+s+">" + obj.ToString() + "</Integer>\r\n");
             return resultSize;
 		}
 
@@ -196,60 +166,12 @@ namespace IEDExplorer.BNExtension
         {
             int resultSize = 0;
             Double value = (Double) obj;
-            /*//CoderUtils.checkConstraints(value,elementInfo);
-            int szOfInt = 0;
-//#if PocketPC
-            byte[] dblValAsBytes =  System.BitConverter.GetBytes(value);
-            long asLong = System.BitConverter.ToInt64(dblValAsBytes, 0);
-//#else            
-            long asLong = System.BitConverter.DoubleToInt64Bits(value);
-//#endif
-            if (value == Double.PositiveInfinity)
-            { // positive infinity
-                stream.WriteByte(0x40); // 01000000 Value is PLUS-INFINITY
-            }
-            else
-            if(value == Double.NegativeInfinity) 
-            { // negative infinity            
-                stream.WriteByte(0x41); // 01000001 Value is MINUS-INFINITY
-            }        
-            else 
-            if(asLong!=0x0) {
-                long exponent = ((0x7ff0000000000000L & asLong) >> 52) - 1023 - 52;
-                long mantissa = 0x000fffffffffffffL & asLong;
-                mantissa |= 0x10000000000000L; // set virtual delimeter
-                
-                // pack mantissa for base 2
-                while((mantissa & 0xFFL) == 0x0) {
-                    mantissa >>= 8;
-                    exponent += 8; //increment exponent to 8 (base 2)
-                }        
-                while((mantissa & 0x01L) == 0x0) {
-                    mantissa >>= 1;
-                    exponent+=1; //increment exponent to 1
-                }
-                 
-                 szOfInt+= encodeIntegerValue(mantissa,stream);
-                 int szOfExp = CoderUtils.getIntegerLength(exponent);
-                 szOfInt+= encodeIntegerValue(exponent,stream);
-                 
-                 byte realPreamble = 0x80;
-                 realPreamble |= (byte)(szOfExp - 1);
-                 if( ((ulong)asLong & 0x8000000000000000L) == 1) {
-                     realPreamble|= 0x40; // Sign
-                 }
-                 stream.WriteByte(realPreamble );
-                 szOfInt+=1;
-            }
-            resultSize += szOfInt;
-            resultSize += encodeLength(szOfInt, stream);
-            resultSize += encodeTag(BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.Universal, ElementType.Primitive, UniversalTags.Real), stream);*/
             string s = "";
             if (elementInfo.hasPreparedInfo() && elementInfo.hasPreparedASN1ElementInfo())
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
-            resultSize += printString(stream, "<Real "+s+">" + value.ToString() + "</Real>\n");
+            resultSize += printString(stream, "<Real "+s+">" + value.ToString() + "</Real>\r\n");
             return resultSize;
         }
 
@@ -258,13 +180,6 @@ namespace IEDExplorer.BNExtension
 			int resultSize = 0, sizeOfString = 0;
 			byte[] buffer = (byte[]) obj;
             sizeOfString = buffer.Length;
-            /*CoderUtils.checkConstraints(sizeOfString, elementInfo);
-
-			stream.Write(buffer, 0, buffer.Length);
-			
-			resultSize += sizeOfString;
-			resultSize += encodeLength(sizeOfString, stream);
-			resultSize += encodeTag(BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.Universal, ElementType.Primitive, UniversalTags.OctetString), stream);*/
             string s = "";
             if (elementInfo.hasPreparedInfo() && elementInfo.hasPreparedASN1ElementInfo())
             {
@@ -273,28 +188,19 @@ namespace IEDExplorer.BNExtension
             resultSize += printString(stream, "<OctetString "+s+">");
             stream.Write(buffer, 0, sizeOfString);
             resultSize += sizeOfString;
-            resultSize += printString(stream, "</OctetString>");
+            resultSize += printString(stream, "</OctetString>\r\n");
             return resultSize;
 		}
 
         public override int encodeString(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			int resultSize = 0;//, sizeOfString = 0;
-            /*byte[] buffer = CoderUtils.ASN1StringToBuffer(obj, elementInfo); 
-            sizeOfString = buffer.Length;
-            CoderUtils.checkConstraints(sizeOfString, elementInfo);
-
-            stream.Write(buffer, 0, buffer.Length);
-			
-			resultSize += sizeOfString;
-			resultSize += encodeLength(sizeOfString, stream);
-			resultSize += encodeTag(BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.Universal, ElementType.Primitive, CoderUtils.getStringTagForElement(elementInfo)), stream);*/
             string s = "";
             if (elementInfo.hasPreparedInfo() && elementInfo.hasPreparedASN1ElementInfo())
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
-            resultSize += printString(stream, "<String "+s+">" + (string)obj + "</String>\n");
+            resultSize += printString(stream, "<String "+s+">" + (string)obj + "</String>\r\n");
             return resultSize;
 		}
 
@@ -306,7 +212,8 @@ namespace IEDExplorer.BNExtension
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
-            resultSize += printString(stream, "<SequenceOf "+s+">");
+            resultSize += printString(stream, "<" + s + " type = \"SequenceOf\">\r\n");
+            indent += indOfs;
             System.Collections.IList collection = (System.Collections.IList)obj;
             CoderUtils.checkConstraints(collection.Count, elementInfo);
             
@@ -327,84 +234,30 @@ namespace IEDExplorer.BNExtension
 				sizeOfCollection += encodeClassType(item, stream, info);
 			}
 			resultSize += sizeOfCollection;
-            resultSize += printString(stream, "</SequenceOf>");
-            /*resultSize += encodeLength(sizeOfCollection, stream);
-
-            if(!CoderUtils.isSequenceSetOf(elementInfo))
-            {
-                resultSize += encodeTag(BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.Universal, ElementType.Constructed, UniversalTags.Sequence), stream);
-            }
-            else
-            {
-                resultSize += encodeTag(BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.Universal, ElementType.Constructed, UniversalTags.Set), stream);
-            }*/
+            indent -= indOfs;
+            resultSize += printString(stream, "</" + s + ">\r\n");
 			return resultSize;
 		}
 		
-		/*protected internal int encodeHeader(DecodedObject<int> tagValue, int contentLen, System.IO.Stream stream)
-		{
-			int resultSize = encodeLength(contentLen, stream);
-			resultSize += encodeTag(tagValue, stream);
-			return resultSize;
-		}*/
-
-        /*protected internal int encodeTag(DecodedObject<int> tagValue, System.IO.Stream stream)
-		{
-            int resultSize = tagValue.Size;
-            int value = tagValue.Value;
-            for (int i = 0; i < tagValue.Size; i++)
-            {
-                stream.WriteByte((byte)value);
-                value = value >> 8;
-            }
-            return resultSize;
-
-            /*int resultSize = 0;
-            if (tagValue.Size == 1)
-            {
-                stream.WriteByte((byte)tagValue.Value);
-                resultSize++;
-            }
-            else
-                resultSize += encodeIntegerValue(tagValue.Value, stream);
-            return resultSize;*
-		}*/
-		
-		/*protected internal int encodeLength(int length, System.IO.Stream stream)
-		{
-            return BERCoderUtils.encodeLength (length, stream);
-		}*/
-
         public override int encodeNull(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
-			//stream.WriteByte((byte) 0);
 			int resultSize = 0;
-			//resultSize += encodeTag(BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.Universal, ElementType.Primitive, UniversalTags.Null), stream);
+
             string s = "";
             if (elementInfo.hasPreparedInfo() && elementInfo.hasPreparedASN1ElementInfo())
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
-            resultSize += printString(stream, "<Null "+s+"/>");
+            resultSize += printString(stream, "<Null "+s+"/>\r\n");
             return resultSize;
 		}
 
         public override int encodeBitString(Object obj, System.IO.Stream stream, ElementInfo elementInfo)
         {
-            int resultSize = 0;//, sizeOfString = 0;
+            int resultSize = 0;
             BitString str = (BitString)obj;
             CoderUtils.checkConstraints(str.getLengthInBits(), elementInfo);
             byte[] buffer = str.Value;
-            /*stream.Write( buffer, 0, buffer.Length );
-            stream.WriteByte ( (byte) str.getTrailBitsCnt() );
-            sizeOfString = buffer.Length + 1;
-            
-            resultSize += sizeOfString;
-            resultSize += encodeLength(sizeOfString, stream);
-            resultSize += encodeTag( 
-                BERCoderUtils.getTagValueForElement(elementInfo,TagClasses.Universal, ElementType.Primitive, UniversalTags.Bitstring),
-                stream
-            );*/
             string s = "";
             if (elementInfo.hasPreparedInfo() && elementInfo.hasPreparedASN1ElementInfo())
             {
@@ -416,28 +269,19 @@ namespace IEDExplorer.BNExtension
                 sb.Append(buffer[i]);
                 sb.Append(',');
             }
-            resultSize += printString(stream, "<BitString "+s+">" + sb.ToString() + "</BitString>\n");
+            resultSize += printString(stream, "<BitString "+s+">" + sb.ToString() + "</BitString>\r\n");
             return resultSize;
         }
 
         public override int encodeObjectIdentifier(Object obj, System.IO.Stream stream, ElementInfo elementInfo)
         {
             ObjectIdentifier oid = (ObjectIdentifier)obj;
-            /*int[] ia = oid.getIntArray();
-            byte[] buffer = BERObjectIdentifier.Encode(ia);
-            stream.Write(buffer, 0, buffer.Length);
-            int resultSize = buffer.Length;
-            resultSize += encodeLength(resultSize, stream);
-            resultSize += encodeTag(
-                BERCoderUtils.getTagValueForElement(elementInfo, TagClasses.Universal, ElementType.Primitive, UniversalTags.ObjectIdentifier),
-                stream
-            );*/
             string s = "";
             if (elementInfo.hasPreparedInfo() && elementInfo.hasPreparedASN1ElementInfo())
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
-            return printString(stream, "<ObjectIdentifier "+s+">" + oid.Value + "</ObjectIdentifier>\n");
+            return printString(stream, "<ObjectIdentifier "+s+">" + oid.Value + "</ObjectIdentifier>\r\n");
         }
 	}
 }

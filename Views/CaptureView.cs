@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using System.ComponentModel.Design;
+using Be.Windows.Forms;
 
 namespace IEDExplorer.Views
 {
@@ -15,7 +16,8 @@ namespace IEDExplorer.Views
     {
         delegate void AddPacketDelegate(MMSCapture cap);
 
-        ByteViewer bv = new ByteViewer();
+        //ByteViewer bv = new ByteViewer();
+        //HexBox hb = new HexBox();
         WindowManager winMgr;
         public bool CaptureActive;
         CheckBox cb = new CheckBox();
@@ -28,12 +30,17 @@ namespace IEDExplorer.Views
         {
             winMgr = wm;
             InitializeComponent();
-            bv.Location = new Point(0, 0);
+            /*bv.Location = new Point(0, 0);
             bv.Size = new Size(20, 20);
             bv.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
-            bv.AutoSize = true;
-            this.splitContainer2.Panel2.Controls.Add(bv);
-            bv.SetBytes(new byte[] { 5, 33, 16, 172, 55 });
+            bv.AutoSize = true;*/
+            /*hb.Parent = splitContainer2.Panel2;
+            this.splitContainer2.Panel2.Controls.Add(hb);
+            hb.Location = new Point(0, 0);
+            hb.Size = new Size(200, 200);
+            hb.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
+            hb.AutoSize = true;*/
+            //bv.SetBytes(new byte[] { 5, 33, 16, 172, 55 });
 
             cb.Text = "Start capture";
             cb.CheckStateChanged += (s, ex) =>
@@ -57,10 +64,17 @@ namespace IEDExplorer.Views
             {
                 ListViewItem lit = new ListViewItem(cap.PacketNr.ToString());
                 lit.Tag = cap;
-                lit.SubItems.Add(cap.Time.ToString());
-                lit.SubItems.Add(cap.Direction == MMSCapture.CaptureDirection.In ? ">>" : "<<");
-                lit.SubItems.Add(cap.MMSPduType);
-                lit.SubItems.Add(cap.MMSPduService);
+                lit.BackColor = cap.Direction == MMSCapture.CaptureDirection.In ? Color.LightGray : Color.White;
+                ListViewItem.ListViewSubItem lsi = new ListViewItem.ListViewSubItem(lit, cap.Time.ToString("d.MM.yyyy hh:mm:ss.fff"));
+                lit.SubItems.Add(lsi);
+                lsi = new ListViewItem.ListViewSubItem(lit, cap.Direction == MMSCapture.CaptureDirection.In ? ">>" : "<<");
+                lit.SubItems.Add(lsi);
+                lsi = new ListViewItem.ListViewSubItem(lit, cap.MMSPduType);
+                lit.SubItems.Add(lsi);
+                lsi = new ListViewItem.ListViewSubItem(lit, cap.MMSPduService);
+                lit.SubItems.Add(lsi);
+                lsi = new ListViewItem.ListViewSubItem(lit, cap.EncodedPacket.Length.ToString());
+                lit.SubItems.Add(lsi);
                 listView1.Items.Add(lit);
             }
         }
@@ -69,6 +83,23 @@ namespace IEDExplorer.Views
         {
             listView1.Items.Clear();
             if (OnClearCapture != null) OnClearCapture();
+        }
+
+        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listView1.SelectedItems.Count > 0)
+            {
+                MMSCapture cap = (listView1.SelectedItems[0].Tag as MMSCapture);
+                textBoxXML.Text = cap.XMLPdu;
+                //bv.SetBytes(cap.EncodedPacket);
+                hexBox1.ByteProvider = new DynamicByteProvider(cap.EncodedPacket);
+            }
+            else
+            {
+                textBoxXML.Text = "";
+                //bv.SetBytes(new byte[] { });
+                hexBox1.ByteProvider = null;
+            }
         }
     }
 }

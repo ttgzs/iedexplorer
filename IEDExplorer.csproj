@@ -248,6 +248,27 @@
     </Compile>
     <Compile Include="Docking\Win32\Enums.cs" />
     <Compile Include="Docking\Win32\NativeMethods.cs" />
+    <Compile Include="HexBox\BuiltInContextMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="HexBox\ByteCharConverters.cs" />
+    <Compile Include="HexBox\ByteCollection.cs" />
+    <Compile Include="HexBox\BytePositionInfo.cs" />
+    <Compile Include="HexBox\DataBlock.cs" />
+    <Compile Include="HexBox\DataMap.cs" />
+    <Compile Include="HexBox\DynamicByteProvider.cs" />
+    <Compile Include="HexBox\DynamicFileByteProvider.cs" />
+    <Compile Include="HexBox\FileByteProvider.cs" />
+    <Compile Include="HexBox\FileDataBlock.cs" />
+    <Compile Include="HexBox\FindOptions.cs" />
+    <Compile Include="HexBox\HexBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="HexBox\HexCasing.cs" />
+    <Compile Include="HexBox\IByteProvider.cs" />
+    <Compile Include="HexBox\MemoryDataBlock.cs" />
+    <Compile Include="HexBox\NativeMethods.cs" />
+    <Compile Include="HexBox\Util.cs" />
     <Compile Include="Iec61850Model.cs" />
     <Compile Include="MMSCapture.cs" />
     <Compile Include="MMSCaptureDb.cs" />
@@ -952,6 +973,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\EditValue.resx">
       <DependentUpon>EditValue.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HexBox\HexBox.resx">
+      <DependentUpon>HexBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

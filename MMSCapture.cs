@@ -477,7 +477,7 @@ namespace IEDExplorer
             }
         }
 
-        public string Packet
+        /*public string Packet
         {
             get
             {
@@ -489,6 +489,8 @@ namespace IEDExplorer
                 }
                 return sb.ToString();
             }
-        }
+        }*/
+
+        public byte[] EncodedPacket { get { return encodedPacket; } }
     }
 }

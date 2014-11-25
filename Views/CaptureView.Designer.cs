@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CaptureView));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolStripButtonClear = new System.Windows.Forms.ToolStripButton();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.listView1 = new System.Windows.Forms.ListView();
             this.PacketNrCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -40,7 +41,7 @@
             this.SizeCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.textBoxXML = new System.Windows.Forms.TextBox();
-            this.toolStripButtonClear = new System.Windows.Forms.ToolStripButton();
+            this.hexBox1 = new Be.Windows.Forms.HexBox();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -48,6 +49,7 @@
             this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -60,6 +62,16 @@
             this.toolStrip1.Size = new System.Drawing.Size(837, 25);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
+            // 
+            // toolStripButtonClear
+            // 
+            this.toolStripButtonClear.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButtonClear.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonClear.Image")));
+            this.toolStripButtonClear.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonClear.Name = "toolStripButtonClear";
+            this.toolStripButtonClear.Size = new System.Drawing.Size(83, 22);
+            this.toolStripButtonClear.Text = "Clear Capture";
+            this.toolStripButtonClear.Click += new System.EventHandler(this.toolStripButtonClear_Click);
             // 
             // splitContainer1
             // 
@@ -96,15 +108,17 @@
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
+            this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
             // 
             // PacketNrCol
             // 
-            this.PacketNrCol.Text = "Nr.";
+            this.PacketNrCol.Text = "Packet Nr.";
+            this.PacketNrCol.Width = 80;
             // 
             // TimeCol
             // 
             this.TimeCol.Text = "Time";
-            this.TimeCol.Width = 120;
+            this.TimeCol.Width = 150;
             // 
             // DirCol
             // 
@@ -135,6 +149,10 @@
             // splitContainer2.Panel1
             // 
             this.splitContainer2.Panel1.Controls.Add(this.textBoxXML);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.hexBox1);
             this.splitContainer2.Size = new System.Drawing.Size(837, 251);
             this.splitContainer2.SplitterDistance = 416;
             this.splitContainer2.TabIndex = 0;
@@ -147,18 +165,28 @@
             this.textBoxXML.Location = new System.Drawing.Point(3, 0);
             this.textBoxXML.Multiline = true;
             this.textBoxXML.Name = "textBoxXML";
+            this.textBoxXML.ReadOnly = true;
+            this.textBoxXML.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.textBoxXML.Size = new System.Drawing.Size(410, 248);
             this.textBoxXML.TabIndex = 0;
+            this.textBoxXML.WordWrap = false;
             // 
-            // toolStripButtonClear
+            // hexBox1
             // 
-            this.toolStripButtonClear.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButtonClear.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonClear.Image")));
-            this.toolStripButtonClear.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonClear.Name = "toolStripButtonClear";
-            this.toolStripButtonClear.Size = new System.Drawing.Size(83, 22);
-            this.toolStripButtonClear.Text = "Clear Capture";
-            this.toolStripButtonClear.Click += new System.EventHandler(this.toolStripButtonClear_Click);
+            this.hexBox1.ColumnInfoVisible = true;
+            this.hexBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.hexBox1.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.hexBox1.GroupSeparatorVisible = true;
+            this.hexBox1.LineInfoVisible = true;
+            this.hexBox1.Location = new System.Drawing.Point(0, 0);
+            this.hexBox1.Name = "hexBox1";
+            this.hexBox1.ReadOnly = true;
+            this.hexBox1.ShadowSelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(60)))), ((int)(((byte)(188)))), ((int)(((byte)(255)))));
+            this.hexBox1.Size = new System.Drawing.Size(417, 251);
+            this.hexBox1.StringViewVisible = true;
+            this.hexBox1.TabIndex = 0;
+            this.hexBox1.UseFixedBytesPerLine = true;
+            this.hexBox1.VScrollBarVisible = true;
             // 
             // CaptureView
             // 
@@ -178,6 +206,7 @@
             this.splitContainer1.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel1.PerformLayout();
+            this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -199,6 +228,7 @@
         private System.Windows.Forms.ColumnHeader SizeCol;
         private System.Windows.Forms.ColumnHeader PacketNrCol;
         private System.Windows.Forms.ToolStripButton toolStripButtonClear;
+        private Be.Windows.Forms.HexBox hexBox1;
 
     }
 }
