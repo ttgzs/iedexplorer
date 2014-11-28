@@ -95,7 +95,8 @@ namespace IEDExplorer
         IDecoder decoder = CoderFactory.getInstance().newDecoder("BER");
         IEncoder encoder = CoderFactory.getInstance().newEncoder("BER");
 
-        Unsigned32 InvokeID = new Unsigned32();
+        //Unsigned32 InvokeID = new Unsigned32();
+        int InvokeID = 0;
 
         public int ReceiveData(Iec61850State iecs)
         {
@@ -117,7 +118,8 @@ namespace IEDExplorer
             try
             {
                 MMSCapture cap = null;
-                if (iecs.CaptureDb.CaptureActive) cap = new MMSCapture(iecs.msMMS.ToArray(), iecs.msMMS.Position, MMSCapture.CaptureDirection.In);
+                byte[] pkt = iecs.msMMS.ToArray();
+                if (iecs.CaptureDb.CaptureActive) cap = new MMSCapture(pkt, iecs.msMMS.Position, pkt.Length, MMSCapture.CaptureDirection.In);
                 ////////////////// Decoding
                 mymmspdu = decoder.decode<MMSpdu>(iecs.msMMS);
                 ////////////////// Decoding
@@ -1033,8 +1035,8 @@ namespace IEDExplorer
 
             csrreq.selectIdentify(idreq);
 
-            InvokeID.Value = 0;
-            crreq.InvokeID = InvokeID;
+            InvokeID = 0;
+            crreq.InvokeID = new Unsigned32(InvokeID++);
             crreq.Service = csrreq;
 
             mymmspdu.selectConfirmed_RequestPDU(crreq);
@@ -1072,8 +1074,7 @@ namespace IEDExplorer
 
             csrreq.selectGetNameList(nlreq);
 
-            crreq.InvokeID = InvokeID;
-            InvokeID.Value++;
+            crreq.InvokeID = new Unsigned32(InvokeID++);
 
             crreq.Service = csrreq;
 
@@ -1113,8 +1114,7 @@ namespace IEDExplorer
 
             csrreq.selectGetNameList(nlreq);
 
-            crreq.InvokeID = InvokeID;
-            InvokeID.Value++;
+            crreq.InvokeID = new Unsigned32(InvokeID++);
 
             crreq.Service = csrreq;
 
@@ -1154,8 +1154,7 @@ namespace IEDExplorer
 
             csrreq.selectGetNameList(nlreq);
 
-            crreq.InvokeID = InvokeID;
-            InvokeID.Value++;
+            crreq.InvokeID = new Unsigned32(InvokeID++);
 
             crreq.Service = csrreq;
 
@@ -1199,8 +1198,7 @@ namespace IEDExplorer
 
             csrreq.selectGetVariableAccessAttributes(vareq);
 
-            crreq.InvokeID = InvokeID;
-            InvokeID.Value++;
+            crreq.InvokeID = new Unsigned32(InvokeID++);
 
             crreq.Service = csrreq;
 
@@ -1251,8 +1249,7 @@ namespace IEDExplorer
 
             csrreq.selectGetNamedVariableListAttributes(nareq);
 
-            crreq.InvokeID = InvokeID;
-            InvokeID.Value++;
+            crreq.InvokeID = new Unsigned32(InvokeID++);
 
             crreq.Service = csrreq;
 
@@ -1313,8 +1310,7 @@ namespace IEDExplorer
 
             csrreq.selectRead(rreq);
 
-            crreq.InvokeID = InvokeID;
-            InvokeID.Value++;
+            crreq.InvokeID = new Unsigned32(InvokeID++);
 
             crreq.Service = csrreq;
 
@@ -1403,8 +1399,7 @@ namespace IEDExplorer
 
             csrreq.selectWrite(wreq);
 
-            crreq.InvokeID = InvokeID;
-            InvokeID.Value++;
+            crreq.InvokeID = new Unsigned32(InvokeID++);
 
             crreq.Service = csrreq;
 
@@ -1462,8 +1457,7 @@ namespace IEDExplorer
 
             csrreq.selectWrite(wreq);
 
-            crreq.InvokeID = InvokeID;
-            InvokeID.Value++;
+            crreq.InvokeID = new Unsigned32(InvokeID++);
 
             crreq.Service = csrreq;
 
@@ -1564,8 +1558,7 @@ namespace IEDExplorer
 
             csrreq.selectDefineNamedVariableList(nvlreq);
 
-            crreq.InvokeID = InvokeID;
-            InvokeID.Value++;
+            crreq.InvokeID = new Unsigned32(InvokeID++);
 
             crreq.Service = csrreq;
 
@@ -1613,8 +1606,7 @@ namespace IEDExplorer
 
             csrreq.selectDeleteNamedVariableList(dnvlreq);
 
-            crreq.InvokeID = InvokeID;
-            InvokeID.Value++;
+            crreq.InvokeID = new Unsigned32(InvokeID++);
 
             crreq.Service = csrreq;
 
@@ -1666,8 +1658,7 @@ namespace IEDExplorer
 
             csrreq.selectFileDirectory(filedreq);
 
-            crreq.InvokeID = InvokeID;
-            InvokeID.Value++;
+            crreq.InvokeID = new Unsigned32(InvokeID++);
 
             crreq.Service = csrreq;
 
@@ -1714,8 +1705,7 @@ namespace IEDExplorer
 
             csrreq.selectFileOpen(fileoreq);
 
-            crreq.InvokeID = InvokeID;
-            InvokeID.Value++;
+            crreq.InvokeID = new Unsigned32(InvokeID++);
 
             crreq.Service = csrreq;
 
@@ -1757,8 +1747,7 @@ namespace IEDExplorer
 
             csrreq.selectFileRead(filerreq);
 
-            crreq.InvokeID = InvokeID;
-            InvokeID.Value++;
+            crreq.InvokeID = new Unsigned32(InvokeID++);
 
             crreq.Service = csrreq;
 
@@ -1801,8 +1790,7 @@ namespace IEDExplorer
 
             csrreq.selectFileClose(filecreq);
 
-            crreq.InvokeID = InvokeID;
-            InvokeID.Value++;
+            crreq.InvokeID = new Unsigned32(InvokeID++);
 
             crreq.Service = csrreq;
 
@@ -1828,8 +1816,8 @@ namespace IEDExplorer
         {
             if (iecs.CaptureDb.CaptureActive)
             {
-                MMSCapture cap = null;
-                cap = new MMSCapture(iecs.sendBuffer, Tpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, MMSCapture.CaptureDirection.Out);
+                MMSCapture cap;
+                cap = new MMSCapture(iecs.sendBuffer, Tpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes + Tpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF,MMSCapture.CaptureDirection.Out);
                 cap.MMSPdu = pdu;
                 iecs.CaptureDb.AddPacket(cap);
             }

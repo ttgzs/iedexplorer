@@ -22,10 +22,10 @@ namespace IEDExplorer
         DateTime time;
         public int PacketNr { get; set; }
 
-        public MMSCapture(byte[] pkt, long pos, CaptureDirection dir)
+        public MMSCapture(byte[] pkt, long pos, long len, CaptureDirection dir)
         {
-            encodedPacket = new Byte[pkt.Length - pos];
-            Array.Copy(pkt, pos, encodedPacket, 0, pkt.Length - pos);
+            encodedPacket = new Byte[len - pos];
+            Array.Copy(pkt, pos, encodedPacket, 0, len - pos);
             direction = dir;
             time = DateTime.Now;
         }

@@ -113,7 +113,7 @@ namespace IEDExplorer.BNExtension
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
-            resultSize += printString(stream, "<Enum "+s+">"+enumObj.Tag.ToString() + "</Enum>\r\n");
+            resultSize += printString(stream, "<" + s + " type = \"Enum\">"+enumObj.Tag.ToString() + "</" + s + ">\r\n");
 			return resultSize;
 		}
 
@@ -126,7 +126,7 @@ namespace IEDExplorer.BNExtension
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
-            resultSize += printString(stream, "<Boolean "+s+">" + value.ToString() + "</Boolean>\r\n");
+            resultSize += printString(stream, "<" + s + " type = \"Boolean\">"+value.ToString() + "</" + s + ">\r\n");
             return resultSize;
 		}
 
@@ -146,7 +146,7 @@ namespace IEDExplorer.BNExtension
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
-            resultSize += printString(stream, "<Any "+s+">" + sb.ToString() + "</Any>\r\n");
+            resultSize += printString(stream, "<" + s + " type = \"Any\">" + sb.ToString() + "</"+ s + ">\r\n");
 			return resultSize;
 		}
 		
@@ -158,7 +158,7 @@ namespace IEDExplorer.BNExtension
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
-            resultSize += printString(stream, "<Integer "+s+">" + obj.ToString() + "</Integer>\r\n");
+            resultSize += printString(stream, "<" + s + " type = \"Integer\">" + obj.ToString() + "</" + s + ">\r\n");
             return resultSize;
 		}
 
@@ -171,7 +171,7 @@ namespace IEDExplorer.BNExtension
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
-            resultSize += printString(stream, "<Real "+s+">" + value.ToString() + "</Real>\r\n");
+            resultSize += printString(stream, "<" + s + " type = \"Real\">" + value.ToString() + "</" + s + ">\r\n");
             return resultSize;
         }
 
@@ -185,10 +185,10 @@ namespace IEDExplorer.BNExtension
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
-            resultSize += printString(stream, "<OctetString "+s+">");
+            resultSize += printString(stream, "<" + s + " type = \"OctetString\">");
             stream.Write(buffer, 0, sizeOfString);
             resultSize += sizeOfString;
-            resultSize += printString(stream, "</OctetString>\r\n");
+            resultSize += printString(stream, "</" + s + ">\r\n");
             return resultSize;
 		}
 
@@ -200,7 +200,7 @@ namespace IEDExplorer.BNExtension
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
-            resultSize += printString(stream, "<String "+s+">" + (string)obj + "</String>\r\n");
+            resultSize += printString(stream, "<" + s + " type = \"String\">" + (string)obj + "</" + s + ">\r\n");
             return resultSize;
 		}
 
@@ -248,7 +248,7 @@ namespace IEDExplorer.BNExtension
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
-            resultSize += printString(stream, "<Null "+s+"/>\r\n");
+            resultSize += printString(stream, "<"+s+" type = Null/>\r\n");
             return resultSize;
 		}
 
@@ -269,7 +269,7 @@ namespace IEDExplorer.BNExtension
                 sb.Append(buffer[i]);
                 sb.Append(',');
             }
-            resultSize += printString(stream, "<BitString "+s+">" + sb.ToString() + "</BitString>\r\n");
+            resultSize += printString(stream, "<" + s + " type = BitString\">" + sb.ToString() + "</" + s + ">\r\n");
             return resultSize;
         }
 
@@ -281,7 +281,7 @@ namespace IEDExplorer.BNExtension
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
-            return printString(stream, "<ObjectIdentifier "+s+">" + oid.Value + "</ObjectIdentifier>\r\n");
+            return printString(stream, "<" + s + " type = \"ObjectIdentifier\">" + oid.Value + "</" + s + ">\r\n");
         }
 	}
 }
