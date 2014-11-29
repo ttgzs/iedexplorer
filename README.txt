@@ -85,3 +85,10 @@ Commands as a structure - working prototype for single commands direct.
 Logging level combo.
 Inspecting ied without defined lists possible, for example some libiec61850 samples.
 Support for reading Arrays.
+
+Rev 0.6 2014/11/04
+New UI - begin with new libraries. Command Dialog - continue
+
+Rev 0.7
+Packet capture finished. New UI.
+
