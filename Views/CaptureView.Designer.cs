@@ -32,7 +32,7 @@
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButtonClear = new System.Windows.Forms.ToolStripButton();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.listView1 = new System.Windows.Forms.ListView();
+            this.listViewPackets = new System.Windows.Forms.ListView();
             this.PacketNrCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.TimeCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.DirCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -40,8 +40,12 @@
             this.MMSServiceCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SizeCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.hexBoxHEX = new Be.Windows.Forms.HexBox();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.textBoxXML = new System.Windows.Forms.TextBox();
-            this.hexBox1 = new Be.Windows.Forms.HexBox();
+            this.treeViewXML = new System.Windows.Forms.TreeView();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -51,6 +55,9 @@
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStrip1
@@ -82,7 +89,7 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.listView1);
+            this.splitContainer1.Panel1.Controls.Add(this.listViewPackets);
             // 
             // splitContainer1.Panel2
             // 
@@ -93,22 +100,22 @@
             // 
             // listView1
             // 
-            this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.listViewPackets.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.PacketNrCol,
             this.TimeCol,
             this.DirCol,
             this.MMSPduCol,
             this.MMSServiceCol,
             this.SizeCol});
-            this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listView1.FullRowSelect = true;
-            this.listView1.Location = new System.Drawing.Point(0, 0);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(837, 245);
-            this.listView1.TabIndex = 0;
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.View = System.Windows.Forms.View.Details;
-            this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
+            this.listViewPackets.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listViewPackets.FullRowSelect = true;
+            this.listViewPackets.Location = new System.Drawing.Point(0, 0);
+            this.listViewPackets.Name = "listView1";
+            this.listViewPackets.Size = new System.Drawing.Size(837, 245);
+            this.listViewPackets.TabIndex = 0;
+            this.listViewPackets.UseCompatibleStateImageBehavior = false;
+            this.listViewPackets.View = System.Windows.Forms.View.Details;
+            this.listViewPackets.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
             // 
             // PacketNrCol
             // 
@@ -148,45 +155,90 @@
             // 
             // splitContainer2.Panel1
             // 
-            this.splitContainer2.Panel1.Controls.Add(this.textBoxXML);
+            this.splitContainer2.Panel1.Controls.Add(this.tabControl1);
             // 
             // splitContainer2.Panel2
             // 
-            this.splitContainer2.Panel2.Controls.Add(this.hexBox1);
+            this.splitContainer2.Panel2.Controls.Add(this.hexBoxHEX);
             this.splitContainer2.Size = new System.Drawing.Size(837, 251);
             this.splitContainer2.SplitterDistance = 416;
             this.splitContainer2.TabIndex = 0;
+            // 
+            // hexBox1
+            // 
+            this.hexBoxHEX.BytesPerLine = 8;
+            this.hexBoxHEX.ColumnInfoVisible = true;
+            this.hexBoxHEX.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.hexBoxHEX.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.hexBoxHEX.LineInfoVisible = true;
+            this.hexBoxHEX.Location = new System.Drawing.Point(0, 0);
+            this.hexBoxHEX.Name = "hexBox1";
+            this.hexBoxHEX.ReadOnly = true;
+            this.hexBoxHEX.ShadowSelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(60)))), ((int)(((byte)(188)))), ((int)(((byte)(255)))));
+            this.hexBoxHEX.Size = new System.Drawing.Size(417, 251);
+            this.hexBoxHEX.StringViewVisible = true;
+            this.hexBoxHEX.TabIndex = 0;
+            this.hexBoxHEX.UseFixedBytesPerLine = true;
+            this.hexBoxHEX.VScrollBarVisible = true;
+            // 
+            // tabControl1
+            // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Location = new System.Drawing.Point(3, 3);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(411, 248);
+            this.tabControl1.TabIndex = 0;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.textBoxXML);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(403, 222);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "XML Text";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.treeViewXML);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(403, 222);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "XML Tree";
+            this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // textBoxXML
             // 
             this.textBoxXML.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxXML.Location = new System.Drawing.Point(3, 0);
+            this.textBoxXML.Location = new System.Drawing.Point(0, 0);
             this.textBoxXML.Multiline = true;
             this.textBoxXML.Name = "textBoxXML";
             this.textBoxXML.ReadOnly = true;
             this.textBoxXML.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxXML.Size = new System.Drawing.Size(410, 248);
-            this.textBoxXML.TabIndex = 0;
+            this.textBoxXML.Size = new System.Drawing.Size(403, 222);
+            this.textBoxXML.TabIndex = 1;
             this.textBoxXML.WordWrap = false;
             // 
-            // hexBox1
+            // treeView1
             // 
-            this.hexBox1.ColumnInfoVisible = true;
-            this.hexBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.hexBox1.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.hexBox1.GroupSeparatorVisible = true;
-            this.hexBox1.LineInfoVisible = true;
-            this.hexBox1.Location = new System.Drawing.Point(0, 0);
-            this.hexBox1.Name = "hexBox1";
-            this.hexBox1.ReadOnly = true;
-            this.hexBox1.ShadowSelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(60)))), ((int)(((byte)(188)))), ((int)(((byte)(255)))));
-            this.hexBox1.Size = new System.Drawing.Size(417, 251);
-            this.hexBox1.StringViewVisible = true;
-            this.hexBox1.TabIndex = 0;
-            this.hexBox1.UseFixedBytesPerLine = true;
-            this.hexBox1.VScrollBarVisible = true;
+            this.treeViewXML.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.treeViewXML.Location = new System.Drawing.Point(0, 0);
+            this.treeViewXML.Name = "treeView1";
+            this.treeViewXML.Size = new System.Drawing.Size(403, 222);
+            this.treeViewXML.TabIndex = 0;
             // 
             // CaptureView
             // 
@@ -205,10 +257,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
-            this.splitContainer2.Panel1.PerformLayout();
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
+            this.tabPage2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -219,8 +274,7 @@
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
-        private System.Windows.Forms.ListView listView1;
-        private System.Windows.Forms.TextBox textBoxXML;
+        private System.Windows.Forms.ListView listViewPackets;
         private System.Windows.Forms.ColumnHeader TimeCol;
         private System.Windows.Forms.ColumnHeader MMSPduCol;
         private System.Windows.Forms.ColumnHeader DirCol;
@@ -228,7 +282,12 @@
         private System.Windows.Forms.ColumnHeader SizeCol;
         private System.Windows.Forms.ColumnHeader PacketNrCol;
         private System.Windows.Forms.ToolStripButton toolStripButtonClear;
-        private Be.Windows.Forms.HexBox hexBox1;
+        private Be.Windows.Forms.HexBox hexBoxHEX;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TextBox textBoxXML;
+        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TreeView treeViewXML;
 
     }
 }

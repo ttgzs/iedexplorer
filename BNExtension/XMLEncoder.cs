@@ -65,7 +65,7 @@ namespace IEDExplorer.BNExtension
                 s = "unnamedSequence" + unknown.ToString("D3");
                 unknown++;
             }
-            resultSize += printString(stream, "<" + s + " type = \"Sequence\">\r\n");
+            resultSize += printString(stream, "<" + s + " type=\"Sequence\">\r\n");
             indent += indOfs;
             PropertyInfo[] fields = elementInfo.getProperties(obj.GetType());
             for (int i = 0; i < fields.Length; i++)
@@ -92,10 +92,10 @@ namespace IEDExplorer.BNExtension
                 s = elementInfo.AnnotatedClass.ToString();
                 string[] sa = s.Split(new char[1] { '.' });
                 s = sa[sa.Length - 1];
-                indent = 0;
-                unknown = 0;
+                //indent = 0;
+                //unknown = 0;
             }
-            result += printString(stream, "<" + s + " type = \"Choice\">\r\n");
+            result += printString(stream, "<" + s + " type=\"Choice\">\r\n");
             indent += indOfs;
             int sizeOfChoiceField = base.encodeChoice(obj, stream, elementInfo);
 			result += sizeOfChoiceField;
@@ -113,7 +113,12 @@ namespace IEDExplorer.BNExtension
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
-            resultSize += printString(stream, "<" + s + " type = \"Enum\">"+enumObj.Tag.ToString() + "</" + s + ">\r\n");
+            if (s == "")
+            {
+                s = "unnamedEnum" + unknown.ToString("D3");
+                unknown++;
+            }
+            resultSize += printString(stream, "<" + s + " type=\"Enum\">" + enumObj.Tag.ToString() + "</" + s + ">\r\n");
 			return resultSize;
 		}
 
@@ -126,7 +131,12 @@ namespace IEDExplorer.BNExtension
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
-            resultSize += printString(stream, "<" + s + " type = \"Boolean\">"+value.ToString() + "</" + s + ">\r\n");
+            if (s == "")
+            {
+                s = "unnamedBoolean" + unknown.ToString("D3");
+                unknown++;
+            }
+            resultSize += printString(stream, "<" + s + " type=\"Boolean\">" + value.ToString() + "</" + s + ">\r\n");
             return resultSize;
 		}
 
@@ -146,7 +156,12 @@ namespace IEDExplorer.BNExtension
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
-            resultSize += printString(stream, "<" + s + " type = \"Any\">" + sb.ToString() + "</"+ s + ">\r\n");
+            if (s == "")
+            {
+                s = "unnamedAny" + unknown.ToString("D3");
+                unknown++;
+            }
+            resultSize += printString(stream, "<" + s + " type=\"Any\">" + sb.ToString() + "</" + s + ">\r\n");
 			return resultSize;
 		}
 		
@@ -158,7 +173,12 @@ namespace IEDExplorer.BNExtension
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
-            resultSize += printString(stream, "<" + s + " type = \"Integer\">" + obj.ToString() + "</" + s + ">\r\n");
+            if (s == "")
+            {
+                s = "unnamedInteger" + unknown.ToString("D3");
+                unknown++;
+            }
+            resultSize += printString(stream, "<" + s + " type=\"Integer\">" + obj.ToString() + "</" + s + ">\r\n");
             return resultSize;
 		}
 
@@ -171,7 +191,12 @@ namespace IEDExplorer.BNExtension
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
-            resultSize += printString(stream, "<" + s + " type = \"Real\">" + value.ToString() + "</" + s + ">\r\n");
+            if (s == "")
+            {
+                s = "unnamedReal" + unknown.ToString("D3");
+                unknown++;
+            }
+            resultSize += printString(stream, "<" + s + " type=\"Real\">" + value.ToString() + "</" + s + ">\r\n");
             return resultSize;
         }
 
@@ -185,7 +210,12 @@ namespace IEDExplorer.BNExtension
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
-            resultSize += printString(stream, "<" + s + " type = \"OctetString\">");
+            if (s == "")
+            {
+                s = "unnamedOctetString" + unknown.ToString("D3");
+                unknown++;
+            }
+            resultSize += printString(stream, "<" + s + " type=\"OctetString\">");
             stream.Write(buffer, 0, sizeOfString);
             resultSize += sizeOfString;
             resultSize += printString(stream, "</" + s + ">\r\n");
@@ -200,7 +230,12 @@ namespace IEDExplorer.BNExtension
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
-            resultSize += printString(stream, "<" + s + " type = \"String\">" + (string)obj + "</" + s + ">\r\n");
+            if (s == "")
+            {
+                s = "unnamedString" + unknown.ToString("D3");
+                unknown++;
+            }
+            resultSize += printString(stream, "<" + s + " type=\"String\">" + (string)obj + "</" + s + ">\r\n");
             return resultSize;
 		}
 
@@ -212,7 +247,12 @@ namespace IEDExplorer.BNExtension
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
-            resultSize += printString(stream, "<" + s + " type = \"SequenceOf\">\r\n");
+            if (s == "")
+            {
+                s = "unnamedSequenceOf" + unknown.ToString("D3");
+                unknown++;
+            }
+            resultSize += printString(stream, "<" + s + " type=\"SequenceOf\">\r\n");
             indent += indOfs;
             System.Collections.IList collection = (System.Collections.IList)obj;
             CoderUtils.checkConstraints(collection.Count, elementInfo);
@@ -248,7 +288,12 @@ namespace IEDExplorer.BNExtension
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
-            resultSize += printString(stream, "<"+s+" type = Null/>\r\n");
+            if (s == "")
+            {
+                s = "unnamedNull" + unknown.ToString("D3");
+                unknown++;
+            }
+            resultSize += printString(stream, "<" + s + " type=\"Null\"/>\r\n");
             return resultSize;
 		}
 
@@ -263,13 +308,18 @@ namespace IEDExplorer.BNExtension
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
+            if (s == "")
+            {
+                s = "unnamedBitString" + unknown.ToString("D3");
+                unknown++;
+            }
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
             for (int i = 0; i < buffer.Length; i++)
             {
                 sb.Append(buffer[i]);
                 sb.Append(',');
             }
-            resultSize += printString(stream, "<" + s + " type = BitString\">" + sb.ToString() + "</" + s + ">\r\n");
+            resultSize += printString(stream, "<" + s + " type=\"BitString\">" + sb.ToString() + "</" + s + ">\r\n");
             return resultSize;
         }
 
@@ -281,7 +331,12 @@ namespace IEDExplorer.BNExtension
             {
                 s = elementInfo.PreparedASN1ElementInfo.Name;
             }
-            return printString(stream, "<" + s + " type = \"ObjectIdentifier\">" + oid.Value + "</" + s + ">\r\n");
+            if (s == "")
+            {
+                s = "unnamedObjectIdentifier" + unknown.ToString("D3");
+                unknown++;
+            }
+            return printString(stream, "<" + s + " type=\"ObjectIdentifier\">" + oid.Value + "</" + s + ">\r\n");
         }
 	}
 }
