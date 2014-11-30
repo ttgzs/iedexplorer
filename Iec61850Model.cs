@@ -23,6 +23,9 @@ namespace IEDExplorer
         /// Server files
         /// </summary>
         public NodeIed files = new NodeIed("files");
+        /// Enum types
+        /// </summary>
+        public NodeIed enums = new NodeIed("enums");
 
         public Iec61850Model(Iec61850State iecs)
         {

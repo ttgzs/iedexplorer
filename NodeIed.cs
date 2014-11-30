@@ -26,42 +26,20 @@ namespace IEDExplorer
 {
     class NodeIed: NodeBase
     {
-        private string  _vendorName;
-        private string  _modelName;
-        private string _revision;
-        private bool _defineNVL;
-        private bool _identify;
-
         public NodeIed(string Name)
             : base(Name)
         {
         }
-        public string  VendorName {
-            get { return _vendorName;}
-            set { _vendorName = value; }
-        }
 
-        public string  ModelName {
-            get { return _modelName; }
-            set { _modelName = value; }
-        }
+        public string VendorName { get; set; }
 
-        public string Revision {
-            get { return _revision; }
-            set { _revision = value; }
-        }
+        public string ModelName { get; set; }
 
-        public bool DefineNVL
-        {
-            get { return _defineNVL; }
-            set { _defineNVL = value; }
-        }
+        public string Revision { get; set; }
 
-        public bool Identify
-        {
-            get { return _identify; }
-            set { _identify = value; }
-        }
+        public bool DefineNVL { get; set; }
+
+        public bool Identify { get; set; }
 
         public NodeBase FindNodeByAddress(string Domain, string IecAddress, bool FindList = false)
         {

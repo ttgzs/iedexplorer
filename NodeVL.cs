@@ -26,32 +26,19 @@ namespace IEDExplorer
 {
     class NodeVL: NodeBase
     {
-        bool _deletable = false;
-        bool _activated = false;
-        bool _defined = false;
-
         public NodeVL(string Name)
             : base(Name)
         {
+            Defined = false;
+            Activated = false;
+            Deletable = false;
         }
 
-        public bool Deletable
-        {
-            get { return _deletable; }
-            set { _deletable = value; }
-        }
+        public bool Deletable { get; set; }
 
-        public bool Activated
-        {
-            get { return _activated; }
-            set { _activated = value; }
-        }
+        public bool Activated { get; set; }
 
-        public bool Defined
-        {
-            get { return _defined; }
-            set { _defined = value; }
-        }
+        public bool Defined { get; set; }
 
         public NodeData urcb { get; set; }
     }

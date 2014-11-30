@@ -27,6 +27,8 @@ namespace IEDExplorer
     class NodeData : NodeBase
     {
         private scsm_MMS_TypeEnum _dataType = scsm_MMS_TypeEnum.structure;
+        private string _bType = "";
+        private string _type = "";
         private Object _dataValue = null;
         private Object _dataParam = null;
         private Object _valueTag = null;
@@ -47,6 +49,21 @@ namespace IEDExplorer
             {
                 _dataType = value;
             }
+        }
+
+        public string Type
+        {
+            get { return _type; }
+            set { _type = value; }
+        }
+
+        public string FCDesc { get; set; }
+        public string DOName { get; set; }
+
+        public string BType
+        {
+            get { return _bType; }
+            set { _bType = value; }
         }
 
         public Object DataValue

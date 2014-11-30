@@ -272,6 +272,7 @@
     <Compile Include="Iec61850Model.cs" />
     <Compile Include="MMSCapture.cs" />
     <Compile Include="MMSCaptureDb.cs" />
+    <Compile Include="NodeDO.cs" />
     <Compile Include="NodeRP.cs" />
     <Compile Include="FileTransferState.cs" />
     <Compile Include="IniFileManager.cs" />
@@ -282,6 +283,7 @@
     <Compile Include="Dialogs\EditValue.Designer.cs">
       <DependentUpon>EditValue.cs</DependentUpon>
     </Compile>
+    <Compile Include="SCLParser.cs" />
     <Compile Include="TreeViewAdv\BitmapHelper.cs" />
     <Compile Include="TreeViewAdv\GifDecoder.cs" />
     <Compile Include="TreeViewAdv\NumericTextBox.cs">
@@ -940,6 +942,12 @@
     <Compile Include="Views\MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\SCLView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\SCLView.Designer.cs">
+      <DependentUpon>SCLView.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\WindowManager.cs" />
     <Compile Include="WriteQueueElement.cs" />
   </ItemGroup>
@@ -1003,6 +1011,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\SCLView.resx">
+      <DependentUpon>SCLView.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

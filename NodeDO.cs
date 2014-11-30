@@ -24,19 +24,14 @@ using System.Text;
 
 namespace IEDExplorer
 {
-    class NodeRP: NodeBase
+    class NodeDO : NodeBase
     {
-        bool _deletable = false;
-        bool _defined = false;
-
-        public NodeRP(string Name)
+        public NodeDO(string Name)
             : base(Name)
         {
-            Activated = false;
         }
 
-        public bool Activated { get; set; }
+        public string Type { get; set; }
 
-        public NodeVL dataset { get; set; }
     }
 }

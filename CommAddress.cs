@@ -28,6 +28,8 @@ namespace IEDExplorer
     {
         public string Domain;
         public string Variable;
+        public string LogicalNode;
+        public string VariablePath;
         public NodeBase owner;
     }
 }

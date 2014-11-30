@@ -18,7 +18,9 @@
  */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace IEDExplorer
 {
@@ -32,20 +34,19 @@ namespace IEDExplorer
         Written
     }
 
-    public class NodeBase 
+    public class NodeBase : IComparable<NodeBase>
     {
-        private string _name;
         private List<String> _fc = new List<string>();
-        private object _tag;
         protected List<NodeBase> _childNodes;
         private int _actualChildNode;
-        private NodeBase _parent;
+        private string _address;
+        private bool _addressLock = false;
         public event EventHandler StateChanged;
         private NodeState _nodeState;
 
         public NodeBase(string Name)
         {
-            _name = Name;
+            this.Name = Name;
             _childNodes = new List<NodeBase>();
             _nodeState = NodeState.Initial;
         }
@@ -74,37 +75,13 @@ namespace IEDExplorer
             }
         }
 
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-        }
+        public string Name { get; private set; }
 
-        public object Tag
-        {
-            get
-            {
-                return _tag;
-            }
-            set
-            {
-                _tag = value;
-            }
-        }
+        public string TypeId { get; set; }
 
-        public NodeBase Parent
-        {
-            get
-            {
-                return _parent;
-            }
-            set
-            {
-                _parent = value;
-            }
-        }
+        public object Tag { get; set; }
+
+        public NodeBase Parent { get; set; }
 
         public List<String> FC
         {
@@ -123,7 +100,7 @@ namespace IEDExplorer
         {
             foreach (NodeBase n in _childNodes)
             {
-                if (Node._name == n._name)
+                if (Node.Name == n.Name)
                     return n;
             }
             _childNodes.Add(Node);
@@ -131,13 +108,30 @@ namespace IEDExplorer
             return Node;
         }
 
+        public NodeBase ForceAddChildNode(NodeBase Node)
+        {
+            _childNodes.Add(Node);
+            Node.Parent = this;
+            return Node;
+        }
+
         public NodeBase LinkChildNode(NodeBase Node)
         {
-            foreach (NodeBase n in _childNodes)
+            foreach (var n in _childNodes.Where(n => Node.Name == n.Name))
             {
-                if (Node._name == n._name)
-                    return n;
+                return n;
             }
+            _childNodes.Add(Node);
+            return Node;
+        }
+
+        /// <summary>
+        /// Links the node without checking to see if a node with the same name exists
+        /// </summary>
+        /// <param name="Node"></param>
+        /// <returns> the linked node </returns>
+        public NodeBase ForceLinkChildNode(NodeBase Node)
+        {
             _childNodes.Add(Node);
             return Node;
         }
@@ -166,12 +160,7 @@ namespace IEDExplorer
 
         public NodeBase FindChildNode(string Name)
         {
-            foreach (NodeBase n in _childNodes)
-            {
-                if (n.Name == Name)
-                    return n;
-            }
-            return null;
+            return _childNodes.FirstOrDefault(n => n.Name == Name);
         }
 
         public void ResetActualChildNode()
@@ -182,7 +171,7 @@ namespace IEDExplorer
         public void ResetAllChildNodes()
         {
             _actualChildNode = 0;
-            foreach (NodeBase n in _childNodes)
+            foreach (var n in _childNodes)
             {
                 n.ResetAllChildNodes();
             }
@@ -192,6 +181,9 @@ namespace IEDExplorer
         {
             get
             {
+                if (_addressLock)
+                    return _address;
+
                 string address = "";
                 NodeBase tmpn = this;
                 List<string> parts = new List<string>();
@@ -219,6 +211,11 @@ namespace IEDExplorer
                 }
                 return address;
             }
+            set
+            {
+                _address = value;
+                _addressLock = true;
+            }
         }
 
         public CommAddress CommAddress
@@ -238,6 +235,7 @@ namespace IEDExplorer
                 } while (tmpn != null);
 
                 commAddress.Variable = "";
+                commAddress.VariablePath = "";
                 for (int i = parts.Count - 2; i >= 0; i--)
                 {
                     if (i == parts.Count - 2)
@@ -247,8 +245,14 @@ namespace IEDExplorer
                     else
                     {
                         commAddress.Variable += parts[i];
+                        if (i == parts.Count - 3)
+                            commAddress.LogicalNode = parts[i];
                         if (i != 0)
                             commAddress.Variable += "$";
+                    }
+                    if (i < parts.Count - 3)
+                    {
+                        commAddress.VariablePath = String.Concat(commAddress.VariablePath, "$", parts[i]);
                     }
                 }
                 return commAddress;
@@ -282,6 +286,16 @@ namespace IEDExplorer
                 }
             }
             return null;
+        }
+
+        public void SortImmediateChildren()
+        {
+            _childNodes = _childNodes.OrderBy(n => n.Name).ToList();
+        }
+
+        public int CompareTo(NodeBase other)
+        {
+            return string.Compare(Name, other.Name, StringComparison.CurrentCultureIgnoreCase);
         }
     }
 }
