@@ -119,5 +119,15 @@ namespace IEDExplorer.Views
                 worker.Stop();
         }
 
+        private void toolStripButtonOpenSCL_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            DialogResult res = ofd.ShowDialog();
+            if (res == System.Windows.Forms.DialogResult.OK)
+            {
+                wm.AddSCLView(ofd.FileName);
+            }
+        }
+
     }
 }

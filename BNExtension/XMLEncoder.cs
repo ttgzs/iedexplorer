@@ -92,8 +92,8 @@ namespace IEDExplorer.BNExtension
                 s = elementInfo.AnnotatedClass.ToString();
                 string[] sa = s.Split(new char[1] { '.' });
                 s = sa[sa.Length - 1];
-                //indent = 0;
-                //unknown = 0;
+                sa = s.Split(new char[1] { '+' });
+                s = sa[0];
             }
             result += printString(stream, "<" + s + " type=\"Choice\">\r\n");
             indent += indOfs;
@@ -204,6 +204,7 @@ namespace IEDExplorer.BNExtension
 		{
 			int resultSize = 0, sizeOfString = 0;
 			byte[] buffer = (byte[]) obj;
+            string hlp = "";
             sizeOfString = buffer.Length;
             string s = "";
             if (elementInfo.hasPreparedInfo() && elementInfo.hasPreparedASN1ElementInfo())
@@ -215,10 +216,15 @@ namespace IEDExplorer.BNExtension
                 s = "unnamedOctetString" + unknown.ToString("D3");
                 unknown++;
             }
-            resultSize += printString(stream, "<" + s + " type=\"OctetString\">");
-            stream.Write(buffer, 0, sizeOfString);
+            hlp = "<" + s + " type=\"OctetString\">";
+            //stream.Write(buffer, 0, sizeOfString);
+            foreach (byte b in buffer)
+            {
+                hlp += b.ToString("X2") + " ";
+            }
             resultSize += sizeOfString;
-            resultSize += printString(stream, "</" + s + ">\r\n");
+            hlp += "</" + s + ">\r\n";
+            resultSize += printString(stream, hlp);
             return resultSize;
 		}
 
@@ -293,7 +299,7 @@ namespace IEDExplorer.BNExtension
                 s = "unnamedNull" + unknown.ToString("D3");
                 unknown++;
             }
-            resultSize += printString(stream, "<" + s + " type=\"Null\"/>\r\n");
+            resultSize += printString(stream, "<" + s + " type=\"Null\">Empty</" + s + ">\r\n");
             return resultSize;
 		}
 
@@ -316,8 +322,9 @@ namespace IEDExplorer.BNExtension
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
             for (int i = 0; i < buffer.Length; i++)
             {
-                sb.Append(buffer[i]);
-                sb.Append(',');
+                for (int j=0; j<8;j++)
+                    sb.Append((buffer[i]>>j & 1).ToString());
+                if (i<buffer.Length-1) sb.Append(',');
             }
             resultSize += printString(stream, "<" + s + " type=\"BitString\">" + sb.ToString() + "</" + s + ">\r\n");
             return resultSize;

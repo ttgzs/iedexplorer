@@ -52,7 +52,7 @@ namespace IEDExplorer
         /// <param name="fileName"></param>
         /// <param name="env"></param>
         /// <returns>IECS tree state to be displayed</returns>
-        public static Iec61850Model CreateTree(String fileName, Env env)
+        public static Iec61850Model CreateTree(String fileName) //, Env env)
         {
             _dataModel = new Iec61850State().DataModel;
             _nodeTypes = new List<NodeBase>();

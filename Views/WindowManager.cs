@@ -124,6 +124,13 @@ namespace IEDExplorer.Views
             };
         }
 
+        public void AddSCLView(string filename)
+        {
+            DockContent sclView = new SCLView(filename);
+            documentViews.Add(sclView);
+            sclView.Show(dockPanel);
+        }
+
         #region IDisposable Members
 
 		public void Dispose()
