@@ -68,8 +68,9 @@ namespace IEDExplorer.BNExtension
             resultSize += printString(stream, "<" + s + " type=\"Sequence\">\r\n");
             indent += indOfs;
             PropertyInfo[] fields = elementInfo.getProperties(obj.GetType());
-            for (int i = 0; i < fields.Length; i++)
-			{
+            //for (int i = 0; i < fields.Length; i++)
+            for (int i = fields.Length - 1; i >= 0; i--)
+                {
                 PropertyInfo field = fields[fields.Length - 1 - i];
                 resultSize += encodeSequenceField(obj, fields.Length - 1 - i, field, stream, elementInfo);
 			}
@@ -78,6 +79,47 @@ namespace IEDExplorer.BNExtension
             resultSize += printString(stream, "</" + s + ">\r\n");
             return resultSize;
 		}
+
+        public override int encodeSequenceOf(object obj, System.IO.Stream stream, ElementInfo elementInfo)
+        {
+            int resultSize = 0;
+            string s = "";
+            if (elementInfo.hasPreparedInfo() && elementInfo.hasPreparedASN1ElementInfo())
+            {
+                s = elementInfo.PreparedASN1ElementInfo.Name;
+            }
+            if (s == "")
+            {
+                s = "unnamedSequenceOf" + unknown.ToString("D3");
+                unknown++;
+            }
+            resultSize += printString(stream, "<" + s + " type=\"SequenceOf\">\r\n");
+            indent += indOfs;
+            System.Collections.IList collection = (System.Collections.IList)obj;
+            CoderUtils.checkConstraints(collection.Count, elementInfo);
+
+            int sizeOfCollection = 0;
+            //for (int i = 0; i < collection.Count; i++)
+            for (int i = collection.Count - 1; i >= 0; i--)
+            {
+                object item = collection[collection.Count - 1 - i];
+                ElementInfo info = new ElementInfo();
+                info.AnnotatedClass = item.GetType();
+                info.ParentAnnotatedClass = elementInfo.AnnotatedClass;
+
+                if (elementInfo.hasPreparedInfo() && elementInfo.PreparedInfo.TypeMetadata != null)
+                {
+                    ASN1SequenceOfMetadata seqOfMeta = (ASN1SequenceOfMetadata)elementInfo.PreparedInfo.TypeMetadata;
+                    info.PreparedInfo = (seqOfMeta.getItemClassMetadata());
+                }
+
+                sizeOfCollection += encodeClassType(item, stream, info);
+            }
+            resultSize += sizeOfCollection;
+            indent -= indOfs;
+            resultSize += printString(stream, "</" + s + ">\r\n");
+            return resultSize;
+        }
 
         public override int encodeChoice(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
@@ -245,46 +287,6 @@ namespace IEDExplorer.BNExtension
             return resultSize;
 		}
 
-        public override int encodeSequenceOf(object obj, System.IO.Stream stream, ElementInfo elementInfo)
-		{
-			int resultSize = 0;
-            string s = "";
-            if (elementInfo.hasPreparedInfo() && elementInfo.hasPreparedASN1ElementInfo())
-            {
-                s = elementInfo.PreparedASN1ElementInfo.Name;
-            }
-            if (s == "")
-            {
-                s = "unnamedSequenceOf" + unknown.ToString("D3");
-                unknown++;
-            }
-            resultSize += printString(stream, "<" + s + " type=\"SequenceOf\">\r\n");
-            indent += indOfs;
-            System.Collections.IList collection = (System.Collections.IList)obj;
-            CoderUtils.checkConstraints(collection.Count, elementInfo);
-            
-            int sizeOfCollection = 0;
-			for (int i = 0; i < collection.Count; i++)
-			{
-				object item = collection[collection.Count - 1 - i];
-				ElementInfo info = new ElementInfo();
-                info.AnnotatedClass = item.GetType();
-                info.ParentAnnotatedClass = elementInfo.AnnotatedClass;
-
-                if (elementInfo.hasPreparedInfo() && elementInfo.PreparedInfo.TypeMetadata != null)
-                {
-                    ASN1SequenceOfMetadata seqOfMeta = (ASN1SequenceOfMetadata)elementInfo.PreparedInfo.TypeMetadata;
-                    info.PreparedInfo = (seqOfMeta.getItemClassMetadata());
-                }
-
-				sizeOfCollection += encodeClassType(item, stream, info);
-			}
-			resultSize += sizeOfCollection;
-            indent -= indOfs;
-            resultSize += printString(stream, "</" + s + ">\r\n");
-			return resultSize;
-		}
-		
         public override int encodeNull(object obj, System.IO.Stream stream, ElementInfo elementInfo)
 		{
 			int resultSize = 0;

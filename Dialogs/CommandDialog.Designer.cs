@@ -47,6 +47,7 @@ namespace IEDExplorer
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CommandDialog));
             this.label1 = new System.Windows.Forms.Label();
             this.buttonOK = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
@@ -67,9 +68,9 @@ namespace IEDExplorer
             this.label5 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.dateTimePickerT = new System.Windows.Forms.DateTimePicker();
             this.checkBoxTActive = new System.Windows.Forms.CheckBox();
-            this.label7 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBoxOrig.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -287,6 +288,15 @@ namespace IEDExplorer
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Time Activated Command";
             // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(120, 28);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(92, 13);
+            this.label7.TabIndex = 4;
+            this.label7.Text = "Execute at (UTC):";
+            // 
             // dateTimePickerT
             // 
             this.dateTimePickerT.CustomFormat = "dd.MM.yyyy     HH:mm:ss";
@@ -309,15 +319,6 @@ namespace IEDExplorer
             this.checkBoxTActive.UseVisualStyleBackColor = true;
             this.checkBoxTActive.CheckedChanged += new System.EventHandler(this.checkBoxTActive_CheckedChanged);
             // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(120, 28);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(92, 13);
-            this.label7.TabIndex = 4;
-            this.label7.Text = "Execute at (UTC):";
-            // 
             // CommandDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -330,6 +331,7 @@ namespace IEDExplorer
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOK);
             this.Controls.Add(this.label1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "CommandDialog";
             this.Text = "Sending a Command";
             this.groupBox1.ResumeLayout(false);

@@ -31,28 +31,35 @@ namespace IEDExplorer.Views
             //Create toolwindows
             iedWindow = new IedTreeView(this);
             iedWindow.CloseButtonVisible = false;
+            iedWindow.FormClosing += new FormClosingEventHandler(persistentWindows_FormClosing);
             iedWindow.Show(dockPanel, DockState.DockLeft);
-            //iedWindow.Parent = (Form)mainWindow;
-            //iedWindow.SelectNode += new ProjView.SelectNodeHandler(OnSelectProjectNode);
 
             dataWindow = new IedDataView(env);
             dataWindow.ShowHint = DockState.Document;
             dataWindow.CloseButtonVisible = false;
+            dataWindow.FormClosing += new FormClosingEventHandler(persistentWindows_FormClosing);
             dataWindow.Show(dockPanel);
 
             captureWindow = new CaptureView(this);
             captureWindow.ShowHint = DockState.Document;
             captureWindow.CloseButtonVisible = false;
+            captureWindow.FormClosing += new FormClosingEventHandler(persistentWindows_FormClosing);
             captureWindow.Show(dockPanel);
 
             logWindow = new LogView(env);
             logWindow.ShowHint = DockState.DockBottom;
             logWindow.CloseButtonVisible = false;
-            //logWindow.Parent = (Form)mainWindow;
+            logWindow.FormClosing += new FormClosingEventHandler(persistentWindows_FormClosing);
             logWindow.Show(dockPanel);
 
             //Connect Windows Manager to helper events
             dockPanel.ActiveDocumentChanged += new EventHandler(OnActiveDocumentChanged);
+        }
+
+        // Prevention against user closing the window which should be always visible
+        void persistentWindows_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing) e.Cancel = true;
         }
 
         void OnActiveDocumentChanged(object sender, EventArgs e)
@@ -61,7 +68,7 @@ namespace IEDExplorer.Views
         }
 
         public void ForceWindowsClose()
-		{
+        {
             while (documentViews.Count > 0)
             {
                 DockContent doc = documentViews[0];
@@ -70,8 +77,8 @@ namespace IEDExplorer.Views
             }
             documentViews.Clear();
 
-			dockPanel.ActiveDocumentChanged -= new EventHandler(OnActiveDocumentChanged);
-		}
+            dockPanel.ActiveDocumentChanged -= new EventHandler(OnActiveDocumentChanged);
+        }
 
         MainWindow MainWindow { get { return mainWindow; } }
 
@@ -126,24 +133,43 @@ namespace IEDExplorer.Views
 
         public void AddSCLView(string filename)
         {
+            foreach (DockContent dc in documentViews)
+            {
+                if (dc is SCLView)
+                {
+                    if ((dc as SCLView).Filename == filename)
+                    {
+                        dc.Show();
+                        return;
+                    }
+                }
+            }
+
             DockContent sclView = new SCLView(filename);
+            sclView.FormClosed += new FormClosedEventHandler(sclView_FormClosed);
             documentViews.Add(sclView);
             sclView.Show(dockPanel);
         }
 
+        void sclView_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            (sender as SCLView).FormClosed -= new FormClosedEventHandler(sclView_FormClosed);
+            documentViews.Remove(sender as SCLView);
+        }
+
         #region IDisposable Members
 
-		public void Dispose()
-		{
-			ForceWindowsClose();
+        public void Dispose()
+        {
+            ForceWindowsClose();
             //projWindow.SelectNode -= new ProjView.SelectNodeHandler(OnSelectProjectNode);
-			dockPanel.ActiveDocumentChanged -= new EventHandler(OnActiveDocumentChanged);
+            dockPanel.ActiveDocumentChanged -= new EventHandler(OnActiveDocumentChanged);
 
-			//Create toolwindows
+            //Create toolwindows
             iedWindow.Dispose();
-		}
+        }
 
-		#endregion
+        #endregion
 
     }
 }

@@ -92,3 +92,7 @@ New UI - begin with new libraries. Command Dialog - continue
 Rev 0.7
 Packet capture finished. New UI.
 
+Rev 0.71 2014/12/07
+SCL File View added thanks to Joel Kaiser.
+
+

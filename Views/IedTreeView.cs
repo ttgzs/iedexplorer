@@ -246,10 +246,22 @@ namespace IEDExplorer.Views
                     {
                         firsticon = 6;
                     }
-                    else if (b.GetType() == typeof(NodeData))
+                    /*else if (b.GetType() == typeof(NodeData))
                     {
                         if (b.GetChildNodes().Length == 0)
                         { // Leaf
+                            firsticon = 8;
+                        }
+                        else
+                        {
+                            firsticon = 7;
+                        }
+                    }*/
+                    else if ((b.GetType() == typeof(NodeData)) || (b.GetType() == typeof(NodeDO)))
+                    {
+                        if (b.GetChildNodes().Length == 0)
+                        {
+                            // Leaf
                             firsticon = 8;
                         }
                         else

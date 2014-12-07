@@ -14,13 +14,20 @@ namespace IEDExplorer.Views
     public partial class SCLView : DockContent
     {
         string filename;
+        string filename_short;
         Iec61850Model dataModel;
+        public string Filename { get { return filename; } }
+        private int _currentRow = -1;
+
         public SCLView(string fname)
         {
             filename = fname;
             InitializeComponent();
             dataModel = SCLParser.CreateTree(filename);
             makeTree(dataModel);
+            string[] fparts = filename.Split(new char[] { '/', '\\' });
+            filename_short  = fparts[fparts.Length - 1];
+            this.Text = filename_short;
         }
 
         internal void makeTree(Iec61850Model dataModel)
@@ -208,18 +215,149 @@ namespace IEDExplorer.Views
                     {
                         firsticon = 6;
                     }
-                    else if (b.GetType() == typeof(NodeDO))
+                    else if ((b.GetType() == typeof(NodeData)) || (b.GetType() == typeof(NodeDO)))
                     {
-                        firsticon = 7;
-                    }
-                    else if (b.GetType() == typeof(NodeData))
-                    {
-                        firsticon = 8;
+                        if (b.GetChildNodes().Length == 0)
+                        {
+                            // Leaf
+                            firsticon = 8;
+                        }
+                        else
+                        {
+                            firsticon = 7;
+                        }
                     }
                     tn.ImageIndex = firsticon + ((int)b.NodeState) * 4;
                     tn.SelectedImageIndex = firsticon + ((int)b.NodeState) * 4;
                     treeViewSCL.Invalidate(tn.Bounds);
                 }
         }
+
+        private void dataGridView_data_SelectionChanged(object sender, EventArgs e)
+        {
+
+            if (dataGridView_data.CurrentRow.Index != _currentRow)
+            {
+                foreach (DataGridViewCell cell in dataGridView_data.SelectedCells)
+                {
+                    if (dataGridView_data.Rows[cell.RowIndex].Tag != null)
+                        (dataGridView_data.Rows[cell.RowIndex].Tag as TreeNode).EnsureVisible();
+                }
+                _currentRow = dataGridView_data.CurrentRow.Index;
+            }
+        }
+
+        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            /*foreach (DataGridViewRow r in dataGridView_data.Rows)
+            {
+                if (r.Tag is TreeNode)
+                    if ((r.Tag as TreeNode).Tag is NodeData)
+                        ((r.Tag as TreeNode).Tag as NodeData).ValueChanged -= new EventHandler(Node_ValueChanged);
+            }*/
+            dataGridView_data.Rows.Clear();
+            var n = (NodeBase)e.Node.Tag;
+
+            var row = dataGridView_data.Rows.Add(makeRow(n));
+            dataGridView_data.Rows[row].Tag = e.Node;
+            if (n.GetChildNodes().Length > 0)
+            {
+                dataGridView_data.Rows.Add(
+                    new string[] { "------------- CHILD NODES -------------", "-------------", "-------------", "-------------", "-------------", "-------------" });
+                recursiveAddLine(n, e.Node);
+            }
+            dataGridView_data.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells | DataGridViewAutoSizeColumnsMode.ColumnHeader);
+        }
+
+        private void recursiveAddLine(NodeBase n, TreeNode tn)
+        {
+            if ((n.GetChildNodes().Length > 0))
+            {
+                if (n is NodeVL)
+                {
+                    foreach (NodeBase nb in n.GetChildNodes())
+                    {
+                        var li = dataGridView_data.Rows.Add(makeRow(nb));
+                        dataGridView_data.Rows[li].Tag = n.Tag;
+                    }
+                }
+                else
+                {
+                    if (tn.Text == "lists")
+                    {
+                        foreach (NodeBase nb in n.GetChildNodes())
+                        {
+                            var li = dataGridView_data.Rows.Add(makeRow(nb));
+                            dataGridView_data.Rows[li].Tag = n.Tag;
+                        }
+                    }
+                    if (n is NodeFile || tn.Text == "files")
+                    {
+                        foreach (NodeBase nb in n.GetChildNodes())
+                        {
+                            var li = dataGridView_data.Rows.Add(makeRow(nb));
+                            dataGridView_data.Rows[li].Tag = n.Tag;
+                        }
+                    }
+                    else
+                    {
+                        foreach (NodeBase nb in n.GetChildNodes())
+                        {
+                            recursiveAddLine(nb, tn);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                var li = dataGridView_data.Rows.Add(makeRow(n));
+                dataGridView_data.Rows[li].Tag = n.Tag;
+            }
+        }
+
+        private string[] makeRow(NodeBase n)
+        {
+            if (n is NodeData)
+            {
+                string val = (n as NodeData).StringValue;
+                string type = String.IsNullOrWhiteSpace((n as NodeData).BType)
+                    ? (n as NodeData).DataType.ToString()
+                    : (n as NodeData).BType;
+                var dgvr =
+                    new string[]
+                    {
+                        n.Address, type, val,
+                        n.CommAddress.Domain, n.CommAddress.LogicalNode, n.CommAddress.VariablePath
+                    };
+                //(n as NodeData).ValueChanged += new EventHandler(Node_ValueChanged);
+                (n as NodeData).ValueTag = dgvr;
+                //lvi.SubItems[2].Text;
+                return dgvr;
+            }
+            else if (n is NodeVL)
+            {
+                return
+                    new string[]
+                    {
+                        n.Address, n.ToString(), "",
+                        "Deletable = " + (n as NodeVL).Deletable.ToString() + ", " + "Defined = " +
+                        (n as NodeVL).Defined.ToString()
+                    };
+            }
+            else if (n is NodeFile)
+            {
+                string val;
+                if ((n as NodeFile).isDir)
+                    val = "Dir";
+                else
+                    val = (n as NodeFile).ReportedSize.ToString();
+                return new string[] { n.Name, n.ToString(), val, (n as NodeFile).FullName };
+            }
+            else if (n != null)
+                return
+                    new string[] { n.Address, n.ToString(), "", n.CommAddress.Domain, n.CommAddress.LogicalNode, n.CommAddress.VariablePath };
+            return null;
+        }
+
     }
 }
