@@ -110,6 +110,8 @@ namespace IEDExplorer
             //DateTime tout = null;
 
             CommAddress ad = new CommAddress();
+            DateTime IdentifyTimeoutBase = new DateTime();
+            TimeSpan IdentifyTimeout = new TimeSpan(0, 0, 5);   // 5 sec
 
             while (self._run)
             {
@@ -149,10 +151,20 @@ namespace IEDExplorer
                                             iecs.logger.LogInfo("[IEC61850_STATE_START] (Send IdentifyRequest)");
                                             iecs.mms.SendIdentify(iecs);
                                             iecs.istate = Iec61850lStateEnum.IEC61850_CONNECT_MMS_WAIT;
+                                            IdentifyTimeoutBase = DateTime.UtcNow;
                                         }
                                         else
                                         {
                                             iecs.istate = Iec61850lStateEnum.IEC61850_READ_NAMELIST_DOMAIN;
+                                        }
+                                        break;
+                                    case Iec61850lStateEnum.IEC61850_CONNECT_MMS_WAIT:
+                                        // If we wait for Identify response too long, continue without it
+                                        if (DateTime.UtcNow.Subtract(IdentifyTimeout).CompareTo(IdentifyTimeoutBase) > 0)
+                                        {
+                                            // Timeout expired
+                                            iecs.istate = Iec61850lStateEnum.IEC61850_READ_NAMELIST_DOMAIN;
+                                            iecs.logger.LogWarning("MMS Identify message not supported by server, although declared in ServicesSupportedCalled bitstring");
                                         }
                                         break;
                                     case Iec61850lStateEnum.IEC61850_READ_NAMELIST_DOMAIN:
@@ -178,6 +190,7 @@ namespace IEDExplorer
                                         adr.owner = null;
                                         NodeBase[] data = new NodeBase[1];
                                         data[0] = iecs.DataModel.ied.GetActualChildNode().GetActualChildNode().GetActualChildNode(); //.GetActualChildNode();
+                                        //data[0] = iecs.DataModel.ied.GetActualChildNode().GetActualChildNode().GetActualChildNode().GetActualChildNode();
                                         WriteQueueElement wqel = new WriteQueueElement(data, adr, ActionRequested.Read);
                                         iecs.mms.SendRead(iecs, wqel);
                                         iecs.istate = Iec61850lStateEnum.IEC61850_READ_MODEL_DATA_WAIT;

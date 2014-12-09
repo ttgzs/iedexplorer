@@ -98,6 +98,96 @@ namespace IEDExplorer
         //Unsigned32 InvokeID = new Unsigned32();
         int InvokeID = 0;
 
+        bool[] ServiceSupportOptions = new bool[96];
+        enum ServiceSupportOptionsEnum
+        {
+            status = 0,
+            getNameList = 1,
+            identify = 2,
+            rename = 3,
+            read = 4,
+            write = 5,
+            getVariableAccessAttributes = 6,
+            defineNamedVariable = 7,
+            defineScatteredAccess = 8,
+            getScatteredAccessAttributes = 9,
+            deleteVariableAccess = 10,
+            defineNamedVariableList = 11,
+            getNamedVariableListAttributes = 12,
+            deleteNamedVariableList = 13,
+            defineNamedType = 14,
+            getNamedTypeAttributes = 15,
+            deleteNamedType = 16,
+            input = 17,
+            output = 18,
+            takeControl = 19,
+            relinquishControl = 20,
+            defineSemaphore = 21,
+            deleteSemaphore = 22,
+            reportSemaphoreStatus = 23,
+            reportPoolSemaphoreStatus = 24,
+            reportSemaphoreEntryStatus = 25,
+            initiateDownloadSequence = 26,
+            downloadSegment = 27,
+            terminateDownloadSequence = 28,
+            initiateUploadSequence = 29,
+            uploadSegment = 30,
+            terminateUploadSequence = 31,
+            requestDomainDownload = 32,
+            requestDomainUpload = 33,
+            loadDomainContent = 34,
+            storeDomainContent = 35,
+            deleteDomain = 36,
+            getDomainAttributes = 37,
+            createProgramInvocation = 38,
+            deleteProgramInvocation = 39,
+            start = 40,
+            stop = 41,
+            resume = 42,
+            reset = 43,
+            kill = 44,
+            getProgramInvocationAttributes = 45,
+            obtainFile = 46,
+            defineEventCondition = 47,
+            deleteEventCondition = 48,
+            getEventConditionAttributes = 49,
+            reportEventConditionStatus = 50,
+            alterEventConditionMonitoring = 51,
+            triggerEvent = 52,
+            defineEventAction = 53,
+            deleteEventAction = 54,
+            getEventActionAttributes = 55,
+            reportEventActionStatus = 56,
+            defineEventEnrollment = 57,
+            deleteEventEnrollment = 58,
+            alterEventEnrollment = 59,
+            reportEventEnrollmentStatus = 60,
+            getEventEnrollmentAttributes = 61,
+            acknowledgeEventNotification = 62,
+            getAlarmSummary = 63,
+            getAlarmEnrollmentSummary = 64,
+            readJournal = 65,
+            writeJournal = 66,
+            initializeJournal = 67,
+            reportJournalStatus = 68,
+            createJournal = 69,
+            deleteJournal = 70,
+            getCapabilityList = 71,
+            fileOpen = 72,
+            fileRead = 73,
+            fileClose = 74,
+            fileRename = 75,
+            fileDelete = 76,
+            fileDirectory = 77,
+            unsolicitedStatus = 78,
+            informationReport = 79,
+            eventNotification = 80,
+            attachToEventCondition = 81,
+            attachToSemaphore = 82,
+            conclude = 83,
+            cancel = 84
+        }
+        
         public int ReceiveData(Iec61850State iecs)
         {
             iecs.logger.LogDebug("mms.ReceiveData: ");
@@ -1002,11 +1092,29 @@ namespace IEDExplorer
                 iecs.logger.LogDebug("mymmspdu.Initiate_ResponsePDU exists!");
                 iecs.logger.LogDebug(String.Format("mymmspdu.Initiate_ResponsePDU.NegotiatedMaxServOutstandingCalled: {0}",
                     mymmspdu.Initiate_ResponsePDU.NegotiatedMaxServOutstandingCalled.Value));
-                if ((mymmspdu.Initiate_ResponsePDU.InitResponseDetail.ServicesSupportedCalled.Value.Value[1] & 0x10) == 0x10)
+                //StringBuilder sb = new StringBuilder();
+                StringBuilder sb2 = new StringBuilder();
+                int j = 0;
+                foreach (byte b in mymmspdu.Initiate_ResponsePDU.InitResponseDetail.ServicesSupportedCalled.Value.Value)
+                {
+                    for (int i = 7; i >= 0; i--)
+                    {
+                        //sb.Append((b >> i) & 1);
+                        ServiceSupportOptions[j] = ((b >> i) & 1) == 1;
+                        if (ServiceSupportOptions[j]) sb2.Append(Enum.GetName(typeof(ServiceSupportOptionsEnum), (ServiceSupportOptionsEnum)j) + ',');
+                        j++;
+                    }
+                    //sb.Append(' ');
+                }
+                //iecs.logger.LogInfo("mymmspdu.Initiate_ResponsePDU.InitResponseDetail.ServicesSupportedCalled.Value: " + sb.ToString());
+                iecs.logger.LogInfo("Services Supported: " + sb2.ToString());
+                //if ((mymmspdu.Initiate_ResponsePDU.InitResponseDetail.ServicesSupportedCalled.Value.Value[1] & 0x10) == 0x10)
+                if (ServiceSupportOptions[(int)ServiceSupportOptionsEnum.defineNamedVariableList])
                 {
                     iecs.DataModel.ied.DefineNVL = true;
                 }
-                if ((mymmspdu.Initiate_ResponsePDU.InitResponseDetail.ServicesSupportedCalled.Value.Value[0] & 0x20) == 0x20)
+                if (ServiceSupportOptions[(int)ServiceSupportOptionsEnum.identify])
+                //if ((mymmspdu.Initiate_ResponsePDU.InitResponseDetail.ServicesSupportedCalled.Value.Value[0] & 0x20) == 0x20)
                 {
                     iecs.DataModel.ied.Identify = true;
                 }

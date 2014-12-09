@@ -29,37 +29,42 @@ namespace IEDExplorer.Views
 
         void logger_OnClearLog()
         {
-            listViewLog.Items.Clear();
+            dataGridView_log.Rows.Clear();
         }
 
         void logger_OnLogMessage(string message)
         {
-            if (listViewLog.InvokeRequired)
+            if (dataGridView_log.InvokeRequired)
             {
                 OnMessageCallback d = new OnMessageCallback(logger_OnLogMessage);
                 this.Invoke(d, new object[] { message });
             }
             else
             {
-                listViewLog.BeginUpdate();
-                ListViewItem item = listViewLog.Items.Add(message);
+                dataGridView_log.Rows.Add(message);
+                dataGridView_log.FirstDisplayedScrollingRowIndex = dataGridView_log.RowCount - 1;
+                //listViewLog.BeginUpdate();
+                //ListViewItem item = dataGridView_log.Items.Add(message);
                 if (message.Contains("Error"))
-                    item.ForeColor = Color.Red;
+                    dataGridView_log.Rows[dataGridView_log.RowCount - 1].Cells[0].Style.ForeColor = Color.Red;
+                    //item.ForeColor = Color.Red;
                 else if (message.Contains("Warning"))
-                    item.ForeColor = Color.Blue;
-                item.EnsureVisible();
-                listViewLog.EndUpdate();
+                    dataGridView_log.Rows[dataGridView_log.RowCount - 1].Cells[0].Style.ForeColor = Color.Blue;
+                    //item.ForeColor = Color.Blue;
+                //item.EnsureVisible();
+                //listViewLog.EndUpdate();
             }
         }
 
         private void listViewLog_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
-                contextMenuStrip1.Show(listViewLog, e.X, e.Y);
+                contextMenuStrip1.Show(dataGridView_log, e.X, e.Y);
         }
+
         private void clearLogToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            listViewLog.Items.Clear();
+            dataGridView_log.Rows.Clear();
         }
 
         private void saveLogToolStripMenuItem_Click(object sender, EventArgs e)
@@ -71,9 +76,9 @@ namespace IEDExplorer.Views
             {
                 FileStream stream = new FileStream(saveFileDialog1.FileName, FileMode.Create, FileAccess.Write, FileShare.Read);
                 StreamWriter writer = new StreamWriter(stream);
-                foreach (ListViewItem t in listViewLog.Items)
+                foreach (DataGridViewRow r in dataGridView_log.Rows)
                 {
-                    writer.WriteLine(t.Text);
+                    writer.WriteLine(r.Cells[0].Value.ToString());
                 }
                 writer.Close();
             }
