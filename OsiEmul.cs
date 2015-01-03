@@ -74,7 +74,7 @@ namespace IEDExplorer
         public int SendCOTPSessionInit(Iec61850State iecs)
         {
             // Make COTP init telegramm
-            int offs = Tpkt.TPKT_SIZEOF;
+            int offs = OsiTpkt.TPKT_SIZEOF;
 
             unchecked
             {
@@ -100,7 +100,7 @@ namespace IEDExplorer
 
             iecs.sendBytes = offs + COTP_HDR_CR_SIZEOF;
 
-            Tpkt.Send(iecs);
+            OsiTpkt.Send(iecs);
             return 0;
         }
 
@@ -148,7 +148,7 @@ namespace IEDExplorer
 
             iecs.sendBytes = PresentationInit_imprint.Length;
 
-            Tpkt.Send(iecs);
+            OsiTpkt.Send(iecs);
             return 0;
         }
 
@@ -293,7 +293,7 @@ namespace IEDExplorer
         public int Send(Iec61850State iecs)
         {
             // Make COTP data telegramm
-            int offs = Tpkt.TPKT_SIZEOF;
+            int offs = OsiTpkt.TPKT_SIZEOF;
 
             iecs.sendBuffer[offs++] = 0x02; // cotp.hdrlen
             iecs.sendBuffer[offs++] = COTP_CODE_DT; // code
@@ -320,7 +320,7 @@ namespace IEDExplorer
             offs += 2;
 
             iecs.sendBytes += offs;
-            Tpkt.Send(iecs);
+            OsiTpkt.Send(iecs);
             return 0;
         }
     }

@@ -1,0 +1,479 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace IEDExplorer
+{
+    class OsiSess
+    {
+        ushort callingSessionSelector;
+        ushort calledSessionSelector;
+        ushort sessionRequirement;
+        byte protocolOptions;
+        int userDataIndex = 0;
+
+        Iec61850State iecs;
+        Logger logger;
+
+        public OsiSess (Iec61850State iec)
+	    {
+            iecs = iec;
+            logger = iecs.logger;
+	    }
+
+        enum IsoSessionIndication
+        {
+            SESSION_OK,
+            SESSION_ERROR,
+            SESSION_CONNECT,
+            SESSION_GIVE_TOKEN,
+            SESSION_DATA,
+            SESSION_ABORT,
+            SESSION_FINISH,
+            SESSION_DISCONNECT,
+            SESSION_NOT_FINISHED
+        }
+
+int parseAcceptParameters(byte[] buffer, int startOffset, int parameterLength)
+{
+    byte pi;
+    byte param_len;
+    byte param_val;
+    byte hasProtocolOptions = 0;
+    byte hasProtocolVersion = 0;
+    int offset = startOffset;
+    int maxOffset = offset + parameterLength;
+
+    while (offset < maxOffset) {
+        pi = buffer[offset++];
+        param_len = buffer[offset++];
+
+        switch (pi) {
+        case 19: /* Protocol options */
+            if (param_len != 1)
+                return -1;
+            protocolOptions = buffer[offset++];
+            logger.LogDebug(String.Format("SESSION: Param - Protocol Options: {0X}", protocolOptions));
+            hasProtocolOptions = 1;
+            break;
+        case 21: /* TSDU Maximum Size */
+            logger.LogDebug("SESSION: Param - TODO TSDU Maximum Size");
+            offset += 4;
+            break;
+        case 22: /* Version Number */
+            param_val = buffer[offset++];
+            logger.LogDebug("SESSION: Param - Version number");
+            if (param_val != 2)
+                return -1;
+            hasProtocolVersion = 1;
+            break;
+        case 23: /* Initial Serial Number */
+            logger.LogDebug("SESSION: Param - TODO Initial Serial Number");
+            offset += param_len;
+            break;
+        case 26: /* Token Setting Item */
+            param_val = buffer[offset++];
+            logger.LogDebug(String.Format("SESSION: Param - Token Setting Item: {0}", param_val));
+            break;
+        case 55: /* Second Initial Serial Number */
+            logger.LogDebug("SESSION: Param - TODO Second Initial Serial Number");
+            offset += param_len;
+            break;
+        case 56: /* Upper Limit Serial Number */
+            logger.LogDebug("SESSION: Param - TODO Upper Limit Serial Number");
+            offset += param_len;
+            break;
+        case 57: /* Large Initial Serial Number */
+            logger.LogDebug("SESSION: Param - TODO Large Initial Serial Number");
+            offset += param_len;
+            break;
+        case 58: /* Large Second Initial Serial Number */
+            logger.LogDebug("SESSION: Param - TODO Large Second Initial Serial Number");
+            offset += param_len;
+            break;
+        default:
+            logger.LogDebug(String.Format("SESSION: Param - Invalid Parameter with ID {0}", pi);
+            break;
+        }
+    }
+
+    if (hasProtocolOptions > 0 && hasProtocolVersion > 0)
+        return offset - startOffset;
+    else
+        return -1;
+}
+
+IsoSessionIndication parseSessionHeaderParameters(byte[] buffer, int parametersOctets)
+{
+    int offset = 2;
+    byte pgi;
+    byte parameterLength;
+
+    while (offset < (parametersOctets + 2)) {
+        pgi = buffer[offset++];
+        parameterLength = buffer[offset++];
+
+        switch (pgi) {
+        case 1: /* Connection Identifier */
+            logger.LogDebug("SESSION: PGI - connection identifier");
+
+            offset += parameterLength;
+            break;
+        case 5: /* Connection/Accept Item */
+            logger.LogDebug("SESSION: PGI - Connection/Accept Item");
+
+            int connectAcceptLen;
+
+            connectAcceptLen = parseAcceptParameters(buffer, offset, parameterLength);
+
+            if (connectAcceptLen == -1)
+                return IsoSessionIndication.SESSION_ERROR;
+
+            offset += connectAcceptLen;
+            break;
+        case 17: /* Transport disconnect */
+            offset += parameterLength;
+            break;
+        case 20: /* Session User Requirements */
+            logger.LogDebug("SESSION: Parameter - Session User Req");
+            if (parameterLength != 2)
+                return IsoSessionIndication.SESSION_ERROR;
+
+            sessionRequirement = (ushort)(buffer[offset++] * 0x100);
+            sessionRequirement += buffer[offset++];
+            break;
+        case 25: /* Enclosure item */
+            offset += parameterLength;
+            break;
+        case 49:
+            offset += parameterLength;
+            break;
+        case 51: /* Calling Session Selector */
+            logger.LogDebug("SESSION: Parameter - Calling Session Selector");
+
+            if (parameterLength != 2)
+                return IsoSessionIndication.SESSION_ERROR;
+
+            callingSessionSelector = (ushort)(buffer[offset++] * 0x100);
+            callingSessionSelector += buffer[offset++];
+            break;
+        case 52: /* Called Session Selector */
+            logger.LogDebug("SESSION: Parameter - Called Session Selector");
+
+            if (parameterLength != 2)
+                return IsoSessionIndication.SESSION_ERROR;
+
+            calledSessionSelector = (ushort)(buffer[offset++] * 0x100);
+            calledSessionSelector += buffer[offset++];
+            break;
+        case 60: /* Data Overflow */
+            logger.LogDebug("SESSION: Parameter - Data Overflow");
+            offset += parameterLength;
+            break;
+        case 193: /* User Data */
+            logger.LogDebug("SESSION: PGI - user data");
+
+            /* here we should return - the remaining data is for upper layers ! */
+            /*ByteBuffer_wrap(&session->userData, message->buffer + offset,
+                    message->size - offset, message->maxSize - offset);*/
+            userDataIndex = offset;
+            return IsoSessionIndication.SESSION_OK;
+
+        case 194: /* Extended User Data */
+            logger.LogDebug("SESSION: PGI - extended user data");
+            break;
+        default:
+            logger.LogDebug("SESSION: invalid parameter/PGI");
+            break;
+        }
+    }
+
+    return IsoSessionIndication.SESSION_ERROR;
+}
+
+    const byte[] dataSpdu = { 0x01, 0x00, 0x01, 0x00 };
+
+/*void
+IsoSession_createDataSpdu(IsoSession* session, BufferChain buffer, BufferChain payload)
+{
+    buffer->buffer = (byte*) dataSpdu;
+    buffer->partLength = 4;
+    buffer->length = 4 + payload->length;
+    buffer->nextPart = payload;
+}*/
+
+int encodeConnectAcceptItem(byte[] buf, int offset, byte options)
+{
+    buf[offset++] = 5;
+    buf[offset++] = 6;
+    buf[offset++] = 0x13; /* Protocol Options */
+    buf[offset++] = 1;
+    buf[offset++] = options;
+    buf[offset++] = 0x16; /* Version Number */
+    buf[offset++] = 1;
+    buf[offset++] = 2; /* Version = 2 */
+
+    return offset;
+}
+
+int encodeSessionRequirement(byte[] buf, int offset)
+{
+    buf[offset++] = 0x14;
+    buf[offset++] = 2;
+    buf[offset++] = (byte) (sessionRequirement / 0x100);
+    buf[offset++] = (byte) (sessionRequirement & 0x00ff);
+
+    return offset;
+}
+
+int encodeCallingSessionSelector(byte[] buf, int offset)
+{
+    buf[offset++] = 0x33;
+    buf[offset++] = 2;
+    buf[offset++] = (byte) (callingSessionSelector / 0x100);
+    buf[offset++] = (byte) (callingSessionSelector & 0x00ff);
+
+    return offset;
+}
+
+int encodeCalledSessionSelector(byte[] buf, int offset)
+{
+    buf[offset++] = 0x34;
+    buf[offset++] = 2;
+    buf[offset++] = (byte) (calledSessionSelector / 0x100);
+    buf[offset++] = (byte) (calledSessionSelector & 0x00ff);
+
+    return offset;
+}
+
+int encodeSessionUserData(byte[] buf, int offset, byte payloadLength)
+{
+    buf[offset++] = 0xc1;
+    buf[offset++] = payloadLength;
+
+    return offset;
+}
+
+void IsoSession_createConnectSpdu(OsiConnectionParameters isoParameters, byte[] buffer, byte[] payload)
+{
+    int offset = 0;
+    int lengthOffset;
+
+    buffer[offset++] = 13; /* CONNECT SPDU */
+    lengthOffset = offset;
+    offset++; /* Skip byte for length - fill it later */
+
+    calledSessionSelector = isoParameters.remoteSSelector;
+    callingSessionSelector = isoParameters.localSSelector;
+
+    offset = encodeConnectAcceptItem(buffer, offset, 0);
+
+    offset = encodeSessionRequirement(buffer, offset);
+
+    offset = encodeCallingSessionSelector(buffer, offset);
+
+    offset = encodeCalledSessionSelector(buffer, offset);
+
+    offset = encodeSessionUserData(buffer, offset, (byte)payload.Length);
+
+    int spduLength = (offset - lengthOffset - 1) + payload.Length;
+
+    buffer[lengthOffset] = (byte)spduLength;
+
+    payload.CopyTo(buffer, offset);
+    buffer->partLength = offset;
+    buffer->length = offset + payload->length;
+    buffer->nextPart = payload;
+}
+
+void
+IsoSession_createAbortSpdu(IsoSession* self, BufferChain buffer, BufferChain payload)
+{
+    int offset = 0;
+    byte* buf = buffer->buffer;
+
+    buf[offset++] = 25; /* ABORT-SPDU code */
+    buf[offset++] = 5 + payload->length; /* LI */
+    buf[offset++] = 17; /* PI-Code transport-disconnect */
+    buf[offset++] = 1; /* LI = 1 */
+    buf[offset++] = 11; /* transport-connection-released | user-abort | no-reason */
+    buf[offset++] = 193; /* PGI-Code user data */
+    buf[offset++] = payload->length; /* LI of user data */
+
+    buffer->partLength = offset;
+    buffer->length = payload->length + offset;
+    buffer->nextPart = payload;
+}
+
+void
+IsoSession_createFinishSpdu(IsoSession* self, BufferChain buffer, BufferChain payload)
+{
+    int offset = 0;
+    byte* buf = buffer->buffer;
+
+    buf[offset++] = 9; /* FINISH-SPDU code */
+
+    buf[offset++] = 5 + payload->length; /* LI */
+    buf[offset++] = 17; /* PI-Code transport-disconnect */
+    buf[offset++] = 1; /* LI = 1 */
+    buf[offset++] = 2; /* transport-connection-released */
+    buf[offset++] = 193; /* PGI-Code user data */
+    buf[offset++] = payload->length; /* LI of user data */
+
+    buffer->partLength = offset;
+    buffer->length = payload->length + offset;
+    buffer->nextPart = payload;
+}
+
+void
+IsoSession_createDisconnectSpdu(IsoSession* self, BufferChain buffer, BufferChain payload)
+{
+    int offset = 0;
+    byte* buf = buffer->buffer;
+
+    buf[offset++] = 10; /* DISCONNECT-SPDU code */
+
+    buf[offset++] = 2 + payload->length; /* LI */
+    buf[offset++] = 193; /* PGI-Code user data */
+    buf[offset++] = payload->length; /* LI of user data */
+
+    buffer->partLength = offset;
+    buffer->length = payload->length + offset;
+    buffer->nextPart = payload;
+}
+
+void IsoSession_createAcceptSpdu(IsoSession* self, BufferChain buffer, BufferChain payload)
+{
+    int offset = 0;
+    byte* buf = buffer->buffer;
+    int lengthOffset;
+
+    int payloadLength = payload->length;
+
+    buf[offset++] = 14; /* ACCEPT SPDU */
+    lengthOffset = offset;
+    offset++;
+
+    offset = encodeConnectAcceptItem(buf, offset, self->protocolOptions);
+
+    offset = encodeSessionRequirement(self, buf, offset);
+
+    offset = encodeCalledSessionSelector(self, buf, offset);
+
+    offset = encodeSessionUserData(self, buf, offset, payloadLength);
+
+    int spduLength = (offset - lengthOffset - 1) + payloadLength;
+
+    buf[lengthOffset] = spduLength;
+
+    buffer->partLength = offset;
+    buffer->length = offset + payloadLength;
+    buffer->nextPart = payload;
+}
+
+void
+IsoSession_init(IsoSession* session)
+{
+    memset(session, 0, sizeof(IsoSession));
+    session->sessionRequirement = 0x0002; /* default = duplex functional unit */
+    session->callingSessionSelector = 0x0001;
+    session->calledSessionSelector = 0x0001;
+}
+
+ByteBuffer*
+IsoSession_getUserData(IsoSession* session)
+{
+    return &session->userData;
+}
+
+IsoSessionIndication
+IsoSession_parseMessage(IsoSession* session, ByteBuffer* message)
+{
+    byte* buffer = message->buffer;
+    byte id;
+    byte length;
+
+    if (message->size > 1) {
+        id = buffer[0];
+        length = buffer[1];
+    }
+    else
+        return SESSION_ERROR;
+
+    switch (id) {
+    case 13: /* CONNECT(CN) SPDU */
+        if (length != (message->size - 2))
+            return SESSION_ERROR;
+        if (parseSessionHeaderParameters(session, message, length) == SESSION_OK)
+            return SESSION_CONNECT;
+        else {
+            logger.LogDebug("SESSION: error parsing connect spdu\n");
+            return SESSION_ERROR;
+        }
+        break;
+    case 14: /* ACCEPT SPDU */
+        if (length != (message->size - 2))
+            return SESSION_ERROR;
+        if (parseSessionHeaderParameters(session, message, length) == SESSION_OK)
+            return SESSION_CONNECT;
+        else {
+            logger.LogDebug("SESSION: error parsing accept spdu\n");
+            return SESSION_ERROR;
+        }
+
+        break;
+    case 1: /* Give token / data SPDU */
+        if (message->size < 4)
+            return SESSION_ERROR;
+
+        if ((length == 0) && (buffer[2] == 1) && (buffer[3] == 0)) {
+            ByteBuffer_wrap(&session->userData, message->buffer + 4, message->size - 4, message->maxSize - 4);
+
+            return SESSION_DATA;
+        }
+        return SESSION_ERROR;
+
+    case 8: /* NOT-FINISHED SPDU */
+        return SESSION_NOT_FINISHED;
+
+    case 9: /* FINISH SPDU */
+        if (DEBUG_SESSION)
+            printf("SESSION: recvd FINISH SPDU\n");
+
+        if (length != (message->size - 2))
+            return SESSION_ERROR;
+
+        if (parseSessionHeaderParameters(session, message, length) == SESSION_OK)
+            return SESSION_FINISH;
+        else
+            return SESSION_ERROR;
+
+        break;
+
+    case 10: /* DISCONNECT SPDU */
+        if (DEBUG_SESSION)
+            printf("SESSION: recvd DISCONNECT SPDU\n");
+
+        if (length != (message->size - 2))
+            return SESSION_ERROR;
+
+        if (parseSessionHeaderParameters(session, message, length) == SESSION_OK)
+            return SESSION_DISCONNECT;
+        else
+            return SESSION_ERROR;
+
+        break;
+
+    case 25: /* ABORT SPDU */
+        return SESSION_ABORT;
+
+    default:
+        break;
+    }
+
+    return SESSION_ERROR;
+}
+
+    }
+}

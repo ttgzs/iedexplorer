@@ -1159,7 +1159,7 @@ namespace IEDExplorer
 
             iecs.sendBytes = (int)ostream.Length;
             ostream.Seek(0, SeekOrigin.Begin);
-            ostream.Read(iecs.sendBuffer, Tpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
+            ostream.Read(iecs.sendBuffer, OsiTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
 
             this.Send(iecs, mymmspdu);
 
@@ -1198,7 +1198,7 @@ namespace IEDExplorer
 
             iecs.sendBytes = (int)ostream.Length;
             ostream.Seek(0, SeekOrigin.Begin);
-            ostream.Read(iecs.sendBuffer, Tpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
+            ostream.Read(iecs.sendBuffer, OsiTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
 
             this.Send(iecs, mymmspdu);
 
@@ -1238,7 +1238,7 @@ namespace IEDExplorer
 
             iecs.sendBytes = (int)ostream.Length;
             ostream.Seek(0, SeekOrigin.Begin);
-            ostream.Read(iecs.sendBuffer, Tpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
+            ostream.Read(iecs.sendBuffer, OsiTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
 
             this.Send(iecs, mymmspdu);
 
@@ -1278,7 +1278,7 @@ namespace IEDExplorer
 
             iecs.sendBytes = (int)ostream.Length;
             ostream.Seek(0, SeekOrigin.Begin);
-            ostream.Read(iecs.sendBuffer, Tpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
+            ostream.Read(iecs.sendBuffer, OsiTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
 
             this.Send(iecs, mymmspdu);
 
@@ -1322,7 +1322,7 @@ namespace IEDExplorer
 
             iecs.sendBytes = (int)ostream.Length;
             ostream.Seek(0, SeekOrigin.Begin);
-            ostream.Read(iecs.sendBuffer, Tpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
+            ostream.Read(iecs.sendBuffer, OsiTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
 
             this.Send(iecs, mymmspdu);
 
@@ -1373,7 +1373,7 @@ namespace IEDExplorer
 
             iecs.sendBytes = (int)ostream.Length;
             ostream.Seek(0, SeekOrigin.Begin);
-            ostream.Read(iecs.sendBuffer, Tpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
+            ostream.Read(iecs.sendBuffer, OsiTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
 
             this.Send(iecs, mymmspdu);
 
@@ -1434,7 +1434,7 @@ namespace IEDExplorer
 
             iecs.sendBytes = (int)ostream.Length;
             ostream.Seek(0, SeekOrigin.Begin);
-            ostream.Read(iecs.sendBuffer, Tpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
+            ostream.Read(iecs.sendBuffer, OsiTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
 
             this.Send(iecs, mymmspdu);
 
@@ -1523,7 +1523,7 @@ namespace IEDExplorer
 
             iecs.sendBytes = (int)ostream.Length;
             ostream.Seek(0, SeekOrigin.Begin);
-            ostream.Read(iecs.sendBuffer, Tpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
+            ostream.Read(iecs.sendBuffer, OsiTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
 
             this.Send(iecs, mymmspdu);
             return 0;
@@ -1581,7 +1581,7 @@ namespace IEDExplorer
 
             iecs.sendBytes = (int)ostream.Length;
             ostream.Seek(0, SeekOrigin.Begin);
-            ostream.Read(iecs.sendBuffer, Tpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
+            ostream.Read(iecs.sendBuffer, OsiTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
 
             this.Send(iecs, mymmspdu);
             return 0;
@@ -1682,7 +1682,7 @@ namespace IEDExplorer
 
             iecs.sendBytes = (int)ostream.Length;
             ostream.Seek(0, SeekOrigin.Begin);
-            ostream.Read(iecs.sendBuffer, Tpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
+            ostream.Read(iecs.sendBuffer, OsiTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
 
             this.Send(iecs, mymmspdu);
             return 0;
@@ -1730,7 +1730,7 @@ namespace IEDExplorer
 
             iecs.sendBytes = (int)ostream.Length;
             ostream.Seek(0, SeekOrigin.Begin);
-            ostream.Read(iecs.sendBuffer, Tpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
+            ostream.Read(iecs.sendBuffer, OsiTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
 
             this.Send(iecs, mymmspdu);
             return 0;
@@ -1782,7 +1782,7 @@ namespace IEDExplorer
 
             iecs.sendBytes = (int)ostream.Length;
             ostream.Seek(0, SeekOrigin.Begin);
-            ostream.Read(iecs.sendBuffer, Tpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
+            ostream.Read(iecs.sendBuffer, OsiTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
 
             this.Send(iecs, mymmspdu);
             return 0;
@@ -1829,7 +1829,7 @@ namespace IEDExplorer
 
             iecs.sendBytes = (int)ostream.Length;
             ostream.Seek(0, SeekOrigin.Begin);
-            ostream.Read(iecs.sendBuffer, Tpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
+            ostream.Read(iecs.sendBuffer, OsiTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
 
             this.Send(iecs, mymmspdu);
             return 0;
@@ -1871,7 +1871,7 @@ namespace IEDExplorer
 
             iecs.sendBytes = (int)ostream.Length;
             ostream.Seek(0, SeekOrigin.Begin);
-            ostream.Read(iecs.sendBuffer, Tpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
+            ostream.Read(iecs.sendBuffer, OsiTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
 
             this.Send(iecs, mymmspdu);
             return 0;
@@ -1914,7 +1914,7 @@ namespace IEDExplorer
 
             iecs.sendBytes = (int)ostream.Length;
             ostream.Seek(0, SeekOrigin.Begin);
-            ostream.Read(iecs.sendBuffer, Tpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
+            ostream.Read(iecs.sendBuffer, OsiTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
 
             this.Send(iecs, mymmspdu);
             return 0;
@@ -1925,7 +1925,7 @@ namespace IEDExplorer
             if (iecs.CaptureDb.CaptureActive)
             {
                 MMSCapture cap;
-                cap = new MMSCapture(iecs.sendBuffer, Tpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes + Tpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF,MMSCapture.CaptureDirection.Out);
+                cap = new MMSCapture(iecs.sendBuffer, OsiTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes + OsiTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF,MMSCapture.CaptureDirection.Out);
                 cap.MMSPdu = pdu;
                 iecs.CaptureDb.AddPacket(cap);
             }

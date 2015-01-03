@@ -289,6 +289,11 @@
     <Compile Include="Dialogs\EditValue.Designer.cs">
       <DependentUpon>EditValue.cs</DependentUpon>
     </Compile>
+    <Compile Include="OsiAcse.cs" />
+    <Compile Include="OsiConnectionParameters.cs" />
+    <Compile Include="OsiCotp.cs" />
+    <Compile Include="OsiPres.cs" />
+    <Compile Include="OsiSess.cs" />
     <Compile Include="SCLParser.cs" />
     <Compile Include="TreeViewAdv\BitmapHelper.cs" />
     <Compile Include="TreeViewAdv\GifDecoder.cs" />
@@ -551,7 +556,7 @@
     <Compile Include="TcpProtocolState.cs" />
     <Compile Include="OsiEmul.cs" />
     <Compile Include="TcpState.cs" />
-    <Compile Include="TpktState.cs" />
+    <Compile Include="OsiTpktState.cs" />
     <Compile Include="Iec61850StateEnum.cs" />
     <Compile Include="TcpRw.cs" />
     <Compile Include="Iec61850State.cs" />
@@ -941,7 +946,7 @@
     <Compile Include="MMS_ASN1_Model\Write_Response.cs" />
     <Compile Include="Scsm_MMS_Worker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tpkt.cs" />
+    <Compile Include="OsiTpkt.cs" />
     <Compile Include="Views\MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>

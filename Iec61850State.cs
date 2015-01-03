@@ -51,7 +51,7 @@ namespace IEDExplorer
         /// <summary>
         /// TPKT Receive state
         /// </summary>
-        public TpktState kstate = TpktState.TPKT_RECEIVE_START;
+        public OsiTpktState kstate = OsiTpktState.TPKT_RECEIVE_START;
         /// <summary>
         /// OSI Receive state
         /// </summary>
@@ -65,7 +65,19 @@ namespace IEDExplorer
         /// </summary>
         public OsiEmul osi = new OsiEmul();
         /// <summary>
-        /// MMS Protocol emulation
+        /// OSI Protocol COTP layer (new implementation)
+        /// </summary>
+        public OsiCotp osiCotp = new OsiCotp();
+        /// <summary>
+        /// OSI Protocol ACSE layer (new implementation)
+        /// </summary>
+        public OsiAcse osiAcse = new OsiAcse();
+        /// <summary>
+        /// OSI Protocol PRES layer (new implementation)
+        /// </summary>
+        public OsiPres osiPres = new OsiPres();
+        /// <summary>
+        /// MMS Protocol
         /// </summary>
         public Scsm_MMS mms = new Scsm_MMS();
         /// <summary>

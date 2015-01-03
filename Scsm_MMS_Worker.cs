@@ -119,7 +119,7 @@ namespace IEDExplorer
                 {
                     case TcpProtocolState.TCP_STATE_START:
                         iecs.logger.LogInfo("[TCP_STATE_START]");
-                        iecs.kstate = TpktState.TPKT_RECEIVE_START;
+                        iecs.kstate = OsiTpktState.TPKT_RECEIVE_START;
                         iecs.ostate = OsiProtocolState.OSI_STATE_START;
                         iecs.istate = Iec61850lStateEnum.IEC61850_STATE_START;
                         TcpRw.StartClient(iecs);

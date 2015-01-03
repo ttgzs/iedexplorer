@@ -158,7 +158,7 @@ namespace IEDExplorer
                         //Console.WriteLine("ReceiveCallback: Data received {0}",
                         //    tcps.recvBytes.ToString());
 
-                        Tpkt.Parse(tcps);
+                        OsiTpkt.Parse(tcps);
                     }
                     catch {}
                     // Signal that the data has been received.
