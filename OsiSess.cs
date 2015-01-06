@@ -56,7 +56,7 @@ namespace IEDExplorer
                         if (param_len != 1)
                             return -1;
                         protocolOptions = buffer[offset++];
-                        logger.LogDebug(String.Format("SESSION: Param - Protocol Options: {0X}", protocolOptions));
+                        logger.LogDebug(String.Format("SESSION: Param - Protocol Options: 0x{0:X2}", protocolOptions));
                         hasProtocolOptions = 1;
                         break;
                     case 21: /* TSDU Maximum Size */
@@ -76,7 +76,7 @@ namespace IEDExplorer
                         break;
                     case 26: /* Token Setting Item */
                         param_val = buffer[offset++];
-                        logger.LogDebug(String.Format("SESSION: Param - Token Setting Item: {0}", param_val));
+                        logger.LogDebug(String.Format("SESSION: Param - Token Setting Item: 0x{0:X2}", param_val));
                         break;
                     case 55: /* Second Initial Serial Number */
                         logger.LogDebug("SESSION: Param - TODO Second Initial Serial Number");
@@ -95,7 +95,7 @@ namespace IEDExplorer
                         offset += param_len;
                         break;
                     default:
-                        logger.LogDebug(String.Format("SESSION: Param - Invalid Parameter with ID {0}", pi));
+                        logger.LogDebug(String.Format("SESSION: Param - Invalid Parameter with ID 0x{0:X2}", pi));
                         break;
                 }
             }

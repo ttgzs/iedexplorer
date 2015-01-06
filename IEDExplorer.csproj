@@ -294,6 +294,7 @@
     <Compile Include="OsiCotp.cs" />
     <Compile Include="OsiPres.cs" />
     <Compile Include="OsiSess.cs" />
+    <Compile Include="OsiUtil.cs" />
     <Compile Include="SCLParser.cs" />
     <Compile Include="TreeViewAdv\BitmapHelper.cs" />
     <Compile Include="TreeViewAdv\GifDecoder.cs" />
