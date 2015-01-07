@@ -74,7 +74,7 @@ namespace IEDExplorer
         public int SendCOTPSessionInit(Iec61850State iecs)
         {
             // Make COTP init telegramm
-            int offs = OsiTpkt.TPKT_SIZEOF;
+            int offs = IsoTpkt.TPKT_SIZEOF;
 
             unchecked
             {
@@ -100,7 +100,7 @@ namespace IEDExplorer
 
             iecs.sendBytes = offs + COTP_HDR_CR_SIZEOF;
 
-            OsiTpkt.Send(iecs);
+            IsoTpkt.Send(iecs);
             return 0;
         }
 
@@ -148,7 +148,7 @@ namespace IEDExplorer
 
             iecs.sendBytes = PresentationInit_imprint.Length;
 
-            OsiTpkt.Send(iecs);
+            IsoTpkt.Send(iecs);
             return 0;
         }
 
@@ -172,26 +172,26 @@ namespace IEDExplorer
 
             switch (iecs.ostate)
             {
-                case OsiProtocolState.OSI_CONNECT_COTP_WAIT:
+                case IsoProtocolState.OSI_CONNECT_COTP_WAIT:
                     iecs.logger.LogDebug(String.Format("Calling ParseCOTPSessionInit with data len {0}", iecs.msMMS.Length));
                     if (ParseCOTPSessionInit(iecs) == 0)
-                        iecs.ostate = OsiProtocolState.OSI_CONNECT_PRES;
+                        iecs.ostate = IsoProtocolState.OSI_CONNECT_PRES;
                     else
-                        iecs.ostate = OsiProtocolState.OSI_STATE_SHUTDOWN;
+                        iecs.ostate = IsoProtocolState.OSI_STATE_SHUTDOWN;
                     break;
-                case OsiProtocolState.OSI_CONNECT_PRES_WAIT:
+                case IsoProtocolState.OSI_CONNECT_PRES_WAIT:
                     iecs.logger.LogDebug(String.Format("Calling ParsePresentationInit with data len {0}", iecs.msMMS.Length));
                     if (ParsePresentationInit(iecs) == 0)
-                        iecs.ostate = OsiProtocolState.OSI_CONNECTED;
+                        iecs.ostate = IsoProtocolState.OSI_CONNECTED;
                     else
-                        iecs.ostate = OsiProtocolState.OSI_STATE_SHUTDOWN;
+                        iecs.ostate = IsoProtocolState.OSI_STATE_SHUTDOWN;
                     break;
-                case OsiProtocolState.OSI_CONNECTED:
+                case IsoProtocolState.OSI_CONNECTED:
                     iecs.logger.LogDebug(String.Format("Calling mms.ReceiveData with data len {0}", iecs.msMMS.Length));
                     if (iecs.osi.ParsePresentationData(iecs) == 0)
-                        iecs.ostate = OsiProtocolState.OSI_CONNECTED;
+                        iecs.ostate = IsoProtocolState.OSI_CONNECTED;
                     else
-                        iecs.ostate = OsiProtocolState.OSI_STATE_SHUTDOWN;
+                        iecs.ostate = IsoProtocolState.OSI_STATE_SHUTDOWN;
                     break;
             }
             // Reset the stream
@@ -293,7 +293,7 @@ namespace IEDExplorer
         public int Send(Iec61850State iecs)
         {
             // Make COTP data telegramm
-            int offs = OsiTpkt.TPKT_SIZEOF;
+            int offs = IsoTpkt.TPKT_SIZEOF;
 
             iecs.sendBuffer[offs++] = 0x02; // cotp.hdrlen
             iecs.sendBuffer[offs++] = COTP_CODE_DT; // code
@@ -320,7 +320,7 @@ namespace IEDExplorer
             offs += 2;
 
             iecs.sendBytes += offs;
-            OsiTpkt.Send(iecs);
+            IsoTpkt.Send(iecs);
             return 0;
         }
     }

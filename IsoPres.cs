@@ -5,7 +5,7 @@ using System.Text;
 
 namespace IEDExplorer
 {
-    class OsiPres
+    class IsoPres
     {
         uint callingPresentationSelector;
         uint calledPresentationSelector;
@@ -18,7 +18,7 @@ namespace IEDExplorer
         Iec61850State iecs;
         Logger logger;
 
-        public OsiPres(Iec61850State iec)
+        public IsoPres(Iec61850State iec)
         {
             iecs = iec;
             logger = iecs.logger;
@@ -44,10 +44,10 @@ namespace IEDExplorer
 
         int encodeAcceptBer(byte[] buffer, int bufPos)
         {
-            bufPos = OsiUtil.BerEncoder_encodeTL(0x30, 7, buffer, bufPos);
-            bufPos = OsiUtil.BerEncoder_encodeTL(0x80, 1, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0x30, 7, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0x80, 1, buffer, bufPos);
             buffer[bufPos++] = 0;
-            bufPos = OsiUtil.BerEncoder_encodeTL(0x81, 2, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0x81, 2, buffer, bufPos);
             buffer[bufPos++] = 0x51;
             buffer[bufPos++] = 0x01;
 
@@ -60,31 +60,31 @@ namespace IEDExplorer
 
             /* presentation-data */
             encodedDataSetLength += payloadLength + 1;
-            encodedDataSetLength += OsiUtil.BerEncoder_determineLengthSize((uint)payloadLength);
+            encodedDataSetLength += IsoUtil.BerEncoder_determineLengthSize((uint)payloadLength);
 
             int fullyEncodedDataLength = encodedDataSetLength;
 
-            fullyEncodedDataLength += OsiUtil.BerEncoder_determineLengthSize((uint)encodedDataSetLength) + 1;
+            fullyEncodedDataLength += IsoUtil.BerEncoder_determineLengthSize((uint)encodedDataSetLength) + 1;
 
             if (encode)
             {
                 /* fully-encoded-data */
-                bufPos = OsiUtil.BerEncoder_encodeTL(0x61, (uint)fullyEncodedDataLength, buffer, bufPos);
-                bufPos = OsiUtil.BerEncoder_encodeTL(0x30, (uint)encodedDataSetLength, buffer, bufPos);
+                bufPos = IsoUtil.BerEncoder_encodeTL(0x61, (uint)fullyEncodedDataLength, buffer, bufPos);
+                bufPos = IsoUtil.BerEncoder_encodeTL(0x30, (uint)encodedDataSetLength, buffer, bufPos);
 
                 /* presentation-selector acse */
-                bufPos = OsiUtil.BerEncoder_encodeTL(0x02, 1, buffer, bufPos);
+                bufPos = IsoUtil.BerEncoder_encodeTL(0x02, 1, buffer, bufPos);
                 buffer[bufPos++] = contextId;
 
                 /* presentation-data (= acse payload) */
-                bufPos = OsiUtil.BerEncoder_encodeTL(0xa0, (uint)payloadLength, buffer, bufPos);
+                bufPos = IsoUtil.BerEncoder_encodeTL(0xa0, (uint)payloadLength, buffer, bufPos);
 
                 return bufPos;
             }
             else
             {
                 int encodedUserDataLength = fullyEncodedDataLength + 1;
-                encodedUserDataLength += OsiUtil.BerEncoder_determineLengthSize((uint)fullyEncodedDataLength);
+                encodedUserDataLength += IsoUtil.BerEncoder_determineLengthSize((uint)fullyEncodedDataLength);
 
                 return encodedUserDataLength;
             }
@@ -112,67 +112,67 @@ namespace IEDExplorer
 
             contentLength += normalModeLength; // + 2;
 
-            contentLength += 1 + OsiUtil.BerEncoder_determineLengthSize((uint)normalModeLength);
+            contentLength += 1 + IsoUtil.BerEncoder_determineLengthSize((uint)normalModeLength);
 
             int bufPos = 0;
 
-            bufPos = OsiUtil.BerEncoder_encodeTL(0x31, (uint)contentLength, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0x31, (uint)contentLength, buffer, bufPos);
 
             /* mode-selector */
-            bufPos = OsiUtil.BerEncoder_encodeTL(0xa0, 3, buffer, bufPos);
-            bufPos = OsiUtil.BerEncoder_encodeTL(0x80, 1, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0xa0, 3, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0x80, 1, buffer, bufPos);
             buffer[bufPos++] = 1; /* 1 = normal-mode */
 
             /* normal-mode-parameters */
-            bufPos = OsiUtil.BerEncoder_encodeTL(0xa2, (uint)normalModeLength, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0xa2, (uint)normalModeLength, buffer, bufPos);
 
             /* calling-presentation-selector */
-            bufPos = OsiUtil.BerEncoder_encodeTL(0x81, 4, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0x81, 4, buffer, bufPos);
             buffer[bufPos++] = (byte)((callingPresentationSelector >> 24) & 0xff);
             buffer[bufPos++] = (byte)((callingPresentationSelector >> 16) & 0xff);
             buffer[bufPos++] = (byte)((callingPresentationSelector >> 8) & 0xff);
             buffer[bufPos++] = (byte)(callingPresentationSelector & 0xff);
 
             /* called-presentation-selector */
-            bufPos = OsiUtil.BerEncoder_encodeTL(0x82, 4, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0x82, 4, buffer, bufPos);
             buffer[bufPos++] = (byte)((calledPresentationSelector >> 24) & 0xff);
             buffer[bufPos++] = (byte)((calledPresentationSelector >> 16) & 0xff);
             buffer[bufPos++] = (byte)((calledPresentationSelector >> 8) & 0xff);
             buffer[bufPos++] = (byte)(calledPresentationSelector & 0xff);
 
             /* presentation-context-id list */
-            bufPos = OsiUtil.BerEncoder_encodeTL(0xa4, 35, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0xa4, 35, buffer, bufPos);
 
             /* acse context list item */
-            bufPos = OsiUtil.BerEncoder_encodeTL(0x30, 15, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0x30, 15, buffer, bufPos);
 
-            bufPos = OsiUtil.BerEncoder_encodeTL(0x02, 1, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0x02, 1, buffer, bufPos);
             buffer[bufPos++] = 1;
 
-            bufPos = OsiUtil.BerEncoder_encodeTL(0x06, 4, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0x06, 4, buffer, bufPos);
             //memcpy(buffer + bufPos, asn_id_as_acse, 4);
             asn_id_as_acse.CopyTo(buffer, bufPos);
             bufPos += 4;
 
-            bufPos = OsiUtil.BerEncoder_encodeTL(0x30, 4, buffer, bufPos);
-            bufPos = OsiUtil.BerEncoder_encodeTL(0x06, 2, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0x30, 4, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0x06, 2, buffer, bufPos);
             //memcpy(buffer + bufPos, ber_id, 2);
             ber_id.CopyTo(buffer, bufPos);
             bufPos += 2;
 
             /* mms context list item */
-            bufPos = OsiUtil.BerEncoder_encodeTL(0x30, 16, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0x30, 16, buffer, bufPos);
 
-            bufPos = OsiUtil.BerEncoder_encodeTL(0x02, 1, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0x02, 1, buffer, bufPos);
             buffer[bufPos++] = 3;
 
-            bufPos = OsiUtil.BerEncoder_encodeTL(0x06, 5, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0x06, 5, buffer, bufPos);
             //memcpy(buffer + bufPos, asn_id_mms, 5);
             asn_id_mms.CopyTo(buffer, bufPos);
             bufPos += 5;
 
-            bufPos = OsiUtil.BerEncoder_encodeTL(0x30, 4, buffer, bufPos);
-            bufPos = OsiUtil.BerEncoder_encodeTL(0x06, 2, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0x30, 4, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0x06, 2, buffer, bufPos);
             //memcpy(buffer + bufPos, ber_id, 2);
             ber_id.CopyTo(buffer, bufPos);
             bufPos += 2;
@@ -202,7 +202,7 @@ namespace IEDExplorer
                 return -1;
             }
 
-            bufPos = OsiUtil.BerDecoder_decodeLength(buffer, ref len, bufPos, endPos);
+            bufPos = IsoUtil.BerDecoder_decodeLength(buffer, ref len, bufPos, endPos);
 
             endPos = bufPos + len;
 
@@ -217,7 +217,7 @@ namespace IEDExplorer
                 byte tag = buffer[bufPos++];
                 int length = 0;
 
-                bufPos = OsiUtil.BerDecoder_decodeLength(buffer, ref length, bufPos, endPos);
+                bufPos = IsoUtil.BerDecoder_decodeLength(buffer, ref length, bufPos, endPos);
 
                 if (bufPos < 0)
                 {
@@ -230,7 +230,7 @@ namespace IEDExplorer
                     case 0x02: /* presentation-context-identifier */
                         logger.LogDebug("PRES: presentation-context-identifier");
                         {
-                            presentationSelector = (int)OsiUtil.BerDecoder_decodeUint32(buffer, length, bufPos);
+                            presentationSelector = (int)IsoUtil.BerDecoder_decodeUint32(buffer, length, bufPos);
                             nextContextId = (byte)presentationSelector;
                             bufPos += length;
                         }
@@ -276,12 +276,12 @@ namespace IEDExplorer
                 byte tag = buffer[bufPos++];
                 int len = 0;
 
-                bufPos = OsiUtil.BerDecoder_decodeLength(buffer, ref len, bufPos, endPos);
+                bufPos = IsoUtil.BerDecoder_decodeLength(buffer, ref len, bufPos, endPos);
 
                 switch (tag)
                 {
                     case 0x02: /* presentation-context-identifier */
-                        contextId = (int)OsiUtil.BerDecoder_decodeUint32(buffer, len, bufPos);
+                        contextId = (int)IsoUtil.BerDecoder_decodeUint32(buffer, len, bufPos);
                         bufPos += len;
                         break;
                     case 0x06: /* abstract-syntax-name */
@@ -357,7 +357,7 @@ namespace IEDExplorer
                 byte tag = buffer[bufPos++];
                 int len = 0;
 
-                bufPos = OsiUtil.BerDecoder_decodeLength(buffer, ref len, bufPos, endPos);
+                bufPos = IsoUtil.BerDecoder_decodeLength(buffer, ref len, bufPos, endPos);
 
                 switch (tag)
                 {
@@ -386,7 +386,7 @@ namespace IEDExplorer
                 byte tag = buffer[bufPos++];
                 int len = 0;
 
-                bufPos = OsiUtil.BerDecoder_decodeLength(buffer, ref len, bufPos, endPos);
+                bufPos = IsoUtil.BerDecoder_decodeLength(buffer, ref len, bufPos, endPos);
 
                 if (bufPos < 0)
                 {
@@ -444,13 +444,13 @@ namespace IEDExplorer
 
             int len = 0;
 
-            bufPos = OsiUtil.BerDecoder_decodeLength(buffer, ref len, bufPos, maxBufPos);
+            bufPos = IsoUtil.BerDecoder_decodeLength(buffer, ref len, bufPos, maxBufPos);
 
             while (bufPos < maxBufPos)
             {
                 byte tag = buffer[bufPos++];
 
-                bufPos = OsiUtil.BerDecoder_decodeLength(buffer, ref len, bufPos, maxBufPos);
+                bufPos = IsoUtil.BerDecoder_decodeLength(buffer, ref len, bufPos, maxBufPos);
 
                 if (bufPos < 0)
                 {
@@ -492,22 +492,22 @@ namespace IEDExplorer
         {
             int bufPos = 0;
 
-            int userDataLengthFieldSize = OsiUtil.BerEncoder_determineLengthSize((uint)payloadLength);
+            int userDataLengthFieldSize = IsoUtil.BerEncoder_determineLengthSize((uint)payloadLength);
 
             int pdvListLength = payloadLength + (userDataLengthFieldSize + 4);
 
-            int pdvListLengthFieldSize = OsiUtil.BerEncoder_determineLengthSize((uint)pdvListLength);
+            int pdvListLengthFieldSize = IsoUtil.BerEncoder_determineLengthSize((uint)pdvListLength);
             int presentationLength = pdvListLength + (pdvListLengthFieldSize + 1);
 
-            bufPos = OsiUtil.BerEncoder_encodeTL(0x61, (uint)presentationLength, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0x61, (uint)presentationLength, buffer, bufPos);
 
-            bufPos = OsiUtil.BerEncoder_encodeTL(0x30, (uint)pdvListLength, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0x30, (uint)pdvListLength, buffer, bufPos);
 
             buffer[bufPos++] = (byte)0x02;
             buffer[bufPos++] = (byte)0x01;
             buffer[bufPos++] = (byte)mmsContextId; /* mms context id */
 
-            bufPos = OsiUtil.BerEncoder_encodeTL(0xa0, (uint)payloadLength, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0xa0, (uint)payloadLength, buffer, bufPos);
 
             /*writeBuffer->partLength = bufPos;
             writeBuffer->length = bufPos + payloadLength;
@@ -521,22 +521,22 @@ namespace IEDExplorer
         {
             int bufPos = 0;
 
-            int userDataLengthFieldSize = OsiUtil.BerEncoder_determineLengthSize((uint)payloadLength);
+            int userDataLengthFieldSize = IsoUtil.BerEncoder_determineLengthSize((uint)payloadLength);
             ;
             int pdvListLength = payloadLength + (userDataLengthFieldSize + 4);
 
-            int pdvListLengthFieldSize = OsiUtil.BerEncoder_determineLengthSize((uint)pdvListLength);
+            int pdvListLengthFieldSize = IsoUtil.BerEncoder_determineLengthSize((uint)pdvListLength);
             int presentationLength = pdvListLength + (pdvListLengthFieldSize + 1);
 
-            bufPos = OsiUtil.BerEncoder_encodeTL(0x61, (uint)presentationLength, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0x61, (uint)presentationLength, buffer, bufPos);
 
-            bufPos = OsiUtil.BerEncoder_encodeTL(0x30, (uint)pdvListLength, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0x30, (uint)pdvListLength, buffer, bufPos);
 
             buffer[bufPos++] = (byte)0x02;
             buffer[bufPos++] = (byte)0x01;
             buffer[bufPos++] = (byte)acseContextId; /* ACSE context id */
 
-            bufPos = OsiUtil.BerEncoder_encodeTL(0xa0, (uint)payloadLength, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0xa0, (uint)payloadLength, buffer, bufPos);
 
             /*writeBuffer->partLength = bufPos;
             writeBuffer->length = bufPos + payloadLength;
@@ -558,12 +558,12 @@ namespace IEDExplorer
 
             int len = 0;
 
-            bufPos = OsiUtil.BerDecoder_decodeLength(buffer, ref len, bufPos, length);
+            bufPos = IsoUtil.BerDecoder_decodeLength(buffer, ref len, bufPos, length);
 
             if (buffer[bufPos++] != 0x30)
                 return 0;
 
-            bufPos = OsiUtil.BerDecoder_decodeLength(buffer, ref len, bufPos, length);
+            bufPos = IsoUtil.BerDecoder_decodeLength(buffer, ref len, bufPos, length);
 
             if (buffer[bufPos++] != 0x02)
                 return 0;
@@ -578,7 +578,7 @@ namespace IEDExplorer
 
             int userDataLength = 0;
 
-            bufPos = OsiUtil.BerDecoder_decodeLength(buffer, ref userDataLength, bufPos, length);
+            bufPos = IsoUtil.BerDecoder_decodeLength(buffer, ref userDataLength, bufPos, length);
 
             //ByteBuffer_wrap(&(nextPayload), buffer + bufPos, userDataLength, userDataLength);
             // ??????
@@ -603,7 +603,7 @@ namespace IEDExplorer
 
             int len = 0;
 
-            bufPos = OsiUtil.BerDecoder_decodeLength(buffer, ref len, bufPos, maxBufPos);
+            bufPos = IsoUtil.BerDecoder_decodeLength(buffer, ref len, bufPos, maxBufPos);
 
             logger.LogDebug(String.Format("PRES: CPType with len {0}", len));
 
@@ -611,7 +611,7 @@ namespace IEDExplorer
             {
                 byte tag = buffer[bufPos++];
 
-                bufPos = OsiUtil.BerDecoder_decodeLength(buffer, ref len, bufPos, maxBufPos);
+                bufPos = IsoUtil.BerDecoder_decodeLength(buffer, ref len, bufPos, maxBufPos);
 
                 if (bufPos < 0)
                 {
@@ -628,8 +628,8 @@ namespace IEDExplorer
                                 logger.LogDebug("PRES: mode-value of wrong type!");
                                 return 0;
                             }
-                            bufPos = OsiUtil.BerDecoder_decodeLength(buffer, ref len, bufPos, maxBufPos);
-                            uint modeSelector = OsiUtil.BerDecoder_decodeUint32(buffer, len, bufPos);
+                            bufPos = IsoUtil.BerDecoder_decodeLength(buffer, ref len, bufPos, maxBufPos);
+                            uint modeSelector = IsoUtil.BerDecoder_decodeUint32(buffer, len, bufPos);
                             logger.LogDebug(String.Format("PRES: modesel {0}", modeSelector));
                             bufPos += len;
                         }
@@ -654,7 +654,7 @@ namespace IEDExplorer
             return 1;
         }
 
-        public int createConnectPdu(OsiConnectionParameters parameters, byte[] buffer, byte[] payload, int payloadLength)
+        public int createConnectPdu(IsoConnectionParameters parameters, byte[] buffer, byte[] payload, int payloadLength)
         {
             acseContextId = 1;
             mmsContextId = 3;
@@ -669,11 +669,11 @@ namespace IEDExplorer
 
             contentLength = +encodeUserData(null, 0, payload, payloadLength, false, acseContextId);
 
-            contentLength += OsiUtil.BerEncoder_determineLengthSize((uint)contentLength) + 1;
+            contentLength += IsoUtil.BerEncoder_determineLengthSize((uint)contentLength) + 1;
 
             int bufPos = 0;
 
-            bufPos = OsiUtil.BerEncoder_encodeTL(0xa0, (uint)contentLength, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0xa0, (uint)contentLength, buffer, bufPos);
 
             /* encode user data */
             bufPos = encodeUserData(buffer, bufPos, payload, payloadLength, true, acseContextId);
@@ -703,28 +703,28 @@ namespace IEDExplorer
 
             contentLength += normalModeLength;
 
-            contentLength += OsiUtil.BerEncoder_determineLengthSize((uint)normalModeLength) + 1;
+            contentLength += IsoUtil.BerEncoder_determineLengthSize((uint)normalModeLength) + 1;
 
             int bufPos = 0;
 
-            bufPos = OsiUtil.BerEncoder_encodeTL(0x31, (uint)contentLength, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0x31, (uint)contentLength, buffer, bufPos);
 
             /* mode-selector */
-            bufPos = OsiUtil.BerEncoder_encodeTL(0xa0, 3, buffer, bufPos);
-            bufPos = OsiUtil.BerEncoder_encodeTL(0x80, 1, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0xa0, 3, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0x80, 1, buffer, bufPos);
             buffer[bufPos++] = 1; /* 1 = normal-mode */
 
             /* normal-mode-parameters */
-            bufPos = OsiUtil.BerEncoder_encodeTL(0xa2, (uint)normalModeLength, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0xa2, (uint)normalModeLength, buffer, bufPos);
 
             /* responding-presentation-selector */
-            bufPos = OsiUtil.BerEncoder_encodeTL(0x83, 4, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0x83, 4, buffer, bufPos);
             //memcpy(buffer + bufPos, calledPresentationSelector, 4);
             def_calledPresentationSelector.CopyTo(buffer, bufPos);
             bufPos += 4;
 
             /* context-definition-result-list */
-            bufPos = OsiUtil.BerEncoder_encodeTL(0xa5, 18, buffer, bufPos);
+            bufPos = IsoUtil.BerEncoder_encodeTL(0xa5, 18, buffer, bufPos);
             bufPos = encodeAcceptBer(buffer, bufPos); /* accept for acse */
             bufPos = encodeAcceptBer(buffer, bufPos); /* accept for mms */
 

@@ -119,8 +119,8 @@ namespace IEDExplorer
                 {
                     case TcpProtocolState.TCP_STATE_START:
                         iecs.logger.LogInfo("[TCP_STATE_START]");
-                        iecs.kstate = OsiTpktState.TPKT_RECEIVE_START;
-                        iecs.ostate = OsiProtocolState.OSI_STATE_START;
+                        iecs.kstate = IsoTpktState.TPKT_RECEIVE_START;
+                        iecs.ostate = IsoProtocolState.OSI_STATE_START;
                         iecs.istate = Iec61850lStateEnum.IEC61850_STATE_START;
                         TcpRw.StartClient(iecs);
                         break;
@@ -132,17 +132,17 @@ namespace IEDExplorer
                     case TcpProtocolState.TCP_CONNECTED:
                         switch (iecs.ostate)
                         {
-                            case OsiProtocolState.OSI_CONNECT_COTP:
+                            case IsoProtocolState.OSI_CONNECT_COTP:
                                 iecs.logger.LogInfo("[OSI_CONNECT_COTP]");
                                 iecs.osi.SendCOTPSessionInit(iecs);
-                                iecs.ostate = OsiProtocolState.OSI_CONNECT_COTP_WAIT;
+                                iecs.ostate = IsoProtocolState.OSI_CONNECT_COTP_WAIT;
                                 break;
-                            case OsiProtocolState.OSI_CONNECT_PRES:
+                            case IsoProtocolState.OSI_CONNECT_PRES:
                                 iecs.logger.LogInfo("[OSI_CONNECT_PRES]");
                                 iecs.osi.SendPresentationInit(iecs);
-                                iecs.ostate = OsiProtocolState.OSI_CONNECT_PRES_WAIT;
+                                iecs.ostate = IsoProtocolState.OSI_CONNECT_PRES_WAIT;
                                 break;
-                            case OsiProtocolState.OSI_CONNECTED:
+                            case IsoProtocolState.OSI_CONNECTED:
                                 //iecs.logger.LogInfo("[OSI_CONNECTED]");
                                 switch (iecs.istate)
                                 {
@@ -246,7 +246,7 @@ namespace IEDExplorer
                                         break;
                                 }
                                 break;
-                            case OsiProtocolState.OSI_STATE_SHUTDOWN:
+                            case IsoProtocolState.OSI_STATE_SHUTDOWN:
                                 TcpRw.StopClient(iecs);
                                 break;
                         }
@@ -258,8 +258,8 @@ namespace IEDExplorer
                 switch (waitres)
                 {
                     case 0:     // connect
-                        if (iecs.ostate == OsiProtocolState.OSI_STATE_START)
-                            iecs.ostate = OsiProtocolState.OSI_CONNECT_COTP;
+                        if (iecs.ostate == IsoProtocolState.OSI_STATE_START)
+                            iecs.ostate = IsoProtocolState.OSI_CONNECT_COTP;
                         iecs.connectDone.Reset();
                         TcpRw.Receive(iecs);    // issue a Receive call
                         break;

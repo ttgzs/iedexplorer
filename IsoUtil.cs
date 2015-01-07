@@ -5,7 +5,7 @@ using System.Text;
 
 namespace IEDExplorer
 {
-    static class OsiUtil
+    static class IsoUtil
     {
         public static int BerEncoder_encodeLength(uint length, byte[] buffer, int bufPos)
         {

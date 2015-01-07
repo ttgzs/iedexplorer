@@ -5,7 +5,7 @@ using System.Text;
 
 namespace IEDExplorer
 {
-    class OsiSess
+    class IsoSess
     {
         ushort callingSessionSelector;
         ushort calledSessionSelector;
@@ -16,7 +16,7 @@ namespace IEDExplorer
         Iec61850State iecs;
         Logger logger;
 
-        public OsiSess(Iec61850State iec)
+        public IsoSess(Iec61850State iec)
         {
             iecs = iec;
             logger = iecs.logger;
@@ -259,7 +259,7 @@ namespace IEDExplorer
             return offset;
         }
 
-        int createConnectSpdu(OsiConnectionParameters isoParameters, byte[] buffer, byte[] payload, byte payloadLength)
+        int createConnectSpdu(IsoConnectionParameters isoParameters, byte[] buffer, byte[] payload, byte payloadLength)
         {
             int offset = 0;
             int lengthOffset;

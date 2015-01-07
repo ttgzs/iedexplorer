@@ -26,7 +26,7 @@ namespace IEDExplorer
     /// <summary>
     /// TPKT Header parsing according to RFC1006 / OSI (COTP) mapping to TCP/IP
     /// </summary>
-    class OsiTpkt
+    class IsoTpkt
     {
         public const byte TPKT_START = 0x03;
         public const byte TPKT_RES = 0x00;
@@ -48,54 +48,54 @@ namespace IEDExplorer
 
             for (int i = 0; i < iecs.recvBytes; i++)
             {
-                if (iecs.kstate == OsiTpktState.TPKT_RECEIVE_ERROR)
+                if (iecs.kstate == IsoTpktState.TPKT_RECEIVE_ERROR)
                 {
-                    iecs.kstate = OsiTpktState.TPKT_RECEIVE_START;
+                    iecs.kstate = IsoTpktState.TPKT_RECEIVE_START;
                     tcps.logger.LogError("iec61850tpktState.IEC61850_RECEIVE_ERROR\n");
                     break;
                 }
                 switch (iecs.kstate)
                 {
-                    case OsiTpktState.TPKT_RECEIVE_START:
+                    case IsoTpktState.TPKT_RECEIVE_START:
                         if (iecs.recvBuffer[i] == TPKT_START)
                         {
-                            iecs.kstate = OsiTpktState.TPKT_RECEIVE_RES;
+                            iecs.kstate = IsoTpktState.TPKT_RECEIVE_RES;
                             iecs.dataBufferIndex = 0;
                         }
                         else
                         {
                             tcps.logger.LogError("Synchronization lost: TPKT START / VERSION!\n");
-                            iecs.kstate = OsiTpktState.TPKT_RECEIVE_ERROR;
+                            iecs.kstate = IsoTpktState.TPKT_RECEIVE_ERROR;
                         }
                         break;
-                    case OsiTpktState.TPKT_RECEIVE_RES:
+                    case IsoTpktState.TPKT_RECEIVE_RES:
                         if (iecs.recvBuffer[i] == TPKT_RES)
                         {
-                            iecs.kstate = OsiTpktState.TPKT_RECEIVE_LEN1;
+                            iecs.kstate = IsoTpktState.TPKT_RECEIVE_LEN1;
                         }
                         else
                         {
                             tcps.logger.LogError("Synchronization lost: TPKT RES!\n");
-                            iecs.kstate = OsiTpktState.TPKT_RECEIVE_ERROR;
+                            iecs.kstate = IsoTpktState.TPKT_RECEIVE_ERROR;
                         }
                         break;
-                    case OsiTpktState.TPKT_RECEIVE_LEN1:
+                    case IsoTpktState.TPKT_RECEIVE_LEN1:
                         iecs.TpktLen = iecs.recvBuffer[i] << 8;
-                        iecs.kstate = OsiTpktState.TPKT_RECEIVE_LEN2;
+                        iecs.kstate = IsoTpktState.TPKT_RECEIVE_LEN2;
                         break;
-                    case OsiTpktState.TPKT_RECEIVE_LEN2:
+                    case IsoTpktState.TPKT_RECEIVE_LEN2:
                         iecs.TpktLen |= iecs.recvBuffer[i];
                         if (iecs.TpktLen <= TPKT_MAXLEN)
                         {
-                            iecs.kstate = OsiTpktState.TPKT_RECEIVE_DATA_COPY;
+                            iecs.kstate = IsoTpktState.TPKT_RECEIVE_DATA_COPY;
                         }
                         else
                         {
                             tcps.logger.LogError("Synchronization lost: TPKT TPDU too long!\n");
-                            iecs.kstate = OsiTpktState.TPKT_RECEIVE_ERROR;
+                            iecs.kstate = IsoTpktState.TPKT_RECEIVE_ERROR;
                         }
                         break;
-                    case OsiTpktState.TPKT_RECEIVE_DATA_COPY:
+                    case IsoTpktState.TPKT_RECEIVE_DATA_COPY:
                         // OPTIMIZE!!!
                         //iecs.dataBuffer[iecs.dataBufferIndex++] = iecs.recvBuffer[i];
                         int copylen = Math.Min(/*available*/iecs.recvBytes - i, /*wanted*/iecs.TpktLen - TPKT_SIZEOF - iecs.dataBufferIndex);
@@ -105,7 +105,7 @@ namespace IEDExplorer
 
                         if (iecs.dataBufferIndex == iecs.TpktLen - TPKT_SIZEOF)
                         {
-                            iecs.kstate = OsiTpktState.TPKT_RECEIVE_START;
+                            iecs.kstate = IsoTpktState.TPKT_RECEIVE_START;
                             // Call OSI Layer
                             tcps.logger.LogDebug("TPKT sent to OSI");
                             iecs.osi.Receive(iecs);
@@ -121,9 +121,9 @@ namespace IEDExplorer
         public static void Send(TcpState tcps)
         {
             // TPKT
-            tcps.sendBuffer[OsiTpkt.TPKT_IDX_START] = OsiTpkt.TPKT_START;
-            tcps.sendBuffer[OsiTpkt.TPKT_IDX_RES] = OsiTpkt.TPKT_RES;
-            Array.Copy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)(tcps.sendBytes))), 0, tcps.sendBuffer, OsiTpkt.TPKT_IDX_LEN, 2);
+            tcps.sendBuffer[IsoTpkt.TPKT_IDX_START] = IsoTpkt.TPKT_START;
+            tcps.sendBuffer[IsoTpkt.TPKT_IDX_RES] = IsoTpkt.TPKT_RES;
+            Array.Copy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)(tcps.sendBytes))), 0, tcps.sendBuffer, IsoTpkt.TPKT_IDX_LEN, 2);
 
             TcpRw.Send(tcps);
         }

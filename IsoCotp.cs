@@ -7,7 +7,7 @@ using System.IO;
 
 namespace IEDExplorer
 {
-    class OsiCotp
+    class IsoCotp
     {
         private const int COTP_HDR_CR_SIZEOF = 6; //18;
         //public const int COTP_HDR_DT_SIZEOF = 15 + 2 + 2 + 3;
@@ -38,6 +38,14 @@ namespace IEDExplorer
             public TSelector(byte sz, int val) { size = sz; value = val; }
         }
 
+        public enum CotpReceiveResult
+        {
+            ERROR,
+            INIT,
+            DATA,
+            WAIT
+        }
+
         class CotpOptions
         {
             public TSelector tSelDst;
@@ -58,7 +66,7 @@ namespace IEDExplorer
 
         CotpOptions options;
 
-        public OsiCotp()
+        public IsoCotp()
         {
             Reset();
         }
@@ -71,9 +79,10 @@ namespace IEDExplorer
             options = new CotpOptions();
         }
 
-        public int Receive(Iec61850State iecs)
+        public CotpReceiveResult Receive(Iec61850State iecs)
         {
-            int ret = 0;
+            CotpReceiveResult res = CotpReceiveResult.ERROR;
+            int ret;
 
             iecs.logger.LogDebug("OsiCotp.Receive");
             if (iecs.dataBuffer[1] == COTP_CODE_DT)         // Data Transfer
@@ -82,10 +91,10 @@ namespace IEDExplorer
 
                 if ((iecs.dataBuffer[2] & 0x80) == 0)
                 {
-                    return 0;					// waiting for the rest of the datagram from other COTP frames
+                    return CotpReceiveResult.WAIT;			// waiting for the rest of the datagram from other COTP frames
                 }
                 iecs.logger.LogDebug(String.Format("Calling OsiAcse.Receive with data len {0}", iecs.msMMS.Length));
-                ret = iecs.osiAcse.Receive(iecs);
+                res = CotpReceiveResult.DATA;
             }
             else if (iecs.dataBuffer[1] == COTP_CODE_CC)    // Connect Confirmation
             {
@@ -93,27 +102,33 @@ namespace IEDExplorer
                 iecs.logger.LogDebug(String.Format("Calling ParseCOTPSessionInit with data len {0}", iecs.msMMS.Length));
                 ret = ParseCOTPSessionInit(iecs);
                 if (ret == 0)
-                    iecs.ostate = OsiProtocolState.OSI_CONNECT_PRES;
+                {
+                    iecs.ostate = IsoProtocolState.OSI_CONNECT_PRES;
+                    res = CotpReceiveResult.INIT;
+                }
                 else
-                    iecs.ostate = OsiProtocolState.OSI_STATE_SHUTDOWN;
+                {
+                    iecs.ostate = IsoProtocolState.OSI_STATE_SHUTDOWN;
+                    res = CotpReceiveResult.ERROR;
+                }
             }
 
             // Reset the stream
             iecs.msMMS = new MemoryStream();
-            return ret;
+            return res;
         }
 
         public int Send(Iec61850State iecs)
         {
             // Make COTP data telegramm
-            int offs = OsiTpkt.TPKT_SIZEOF;
+            int offs = IsoTpkt.TPKT_SIZEOF;
 
             iecs.sendBuffer[offs++] = 0x02; // cotp.hdrlen
             iecs.sendBuffer[offs++] = COTP_CODE_DT; // code
             iecs.sendBuffer[offs++] = 0x80; // number "complete" (suppose sending "short" datagrams only atm.)
 
             iecs.sendBytes += offs;
-            OsiTpkt.Send(iecs);
+            IsoTpkt.Send(iecs);
             return 0;
         }
 
@@ -158,7 +173,7 @@ namespace IEDExplorer
         public int SendCOTPSessionInit(Iec61850State iecs)
         {
             // Make COTP init telegramm
-            int offs = OsiTpkt.TPKT_SIZEOF;
+            int offs = IsoTpkt.TPKT_SIZEOF;
             int optof = 1;
 
             //unchecked
@@ -191,7 +206,7 @@ namespace IEDExplorer
 
             iecs.sendBytes = offs + COTP_HDR_CR_SIZEOF + 1 + options.getSize();
 
-            OsiTpkt.Send(iecs);
+            IsoTpkt.Send(iecs);
             return 0;
         }
 

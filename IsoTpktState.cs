@@ -19,14 +19,13 @@
 
 namespace IEDExplorer
 {
-        enum OsiProtocolState
+        enum IsoTpktState
         {
-            OSI_STATE_START,
-            OSI_STATE_SHUTDOWN,
-            OSI_CONNECT_COTP,
-            OSI_CONNECT_COTP_WAIT,
-            OSI_CONNECT_PRES,
-            OSI_CONNECT_PRES_WAIT,
-            OSI_CONNECTED,
+            TPKT_RECEIVE_START,
+            TPKT_RECEIVE_ERROR,
+            TPKT_RECEIVE_RES,
+            TPKT_RECEIVE_LEN1,
+            TPKT_RECEIVE_LEN2,
+            TPKT_RECEIVE_DATA_COPY
         }
 }

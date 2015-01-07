@@ -276,6 +276,7 @@
     <Compile Include="HexBox\NativeMethods.cs" />
     <Compile Include="HexBox\Util.cs" />
     <Compile Include="Iec61850Model.cs" />
+    <Compile Include="IsoLayers.cs" />
     <Compile Include="MMSCapture.cs" />
     <Compile Include="MMSCaptureDb.cs" />
     <Compile Include="NodeDO.cs" />
@@ -289,12 +290,12 @@
     <Compile Include="Dialogs\EditValue.Designer.cs">
       <DependentUpon>EditValue.cs</DependentUpon>
     </Compile>
-    <Compile Include="OsiAcse.cs" />
-    <Compile Include="OsiConnectionParameters.cs" />
-    <Compile Include="OsiCotp.cs" />
-    <Compile Include="OsiPres.cs" />
-    <Compile Include="OsiSess.cs" />
-    <Compile Include="OsiUtil.cs" />
+    <Compile Include="IsoAcse.cs" />
+    <Compile Include="IsoConnectionParameters.cs" />
+    <Compile Include="IsoCotp.cs" />
+    <Compile Include="IsoPres.cs" />
+    <Compile Include="IsoSess.cs" />
+    <Compile Include="IsoUtil.cs" />
     <Compile Include="SCLParser.cs" />
     <Compile Include="TreeViewAdv\BitmapHelper.cs" />
     <Compile Include="TreeViewAdv\GifDecoder.cs" />
@@ -552,12 +553,12 @@
     <Compile Include="Scsm_MMS.cs" />
     <Compile Include="NodeBase.cs" />
     <Compile Include="NodeTypeEnum.cs" />
-    <Compile Include="OsiProtocolState.cs" />
+    <Compile Include="IsoProtocolState.cs" />
     <Compile Include="scsm_MMS_TypeEnum.cs" />
     <Compile Include="TcpProtocolState.cs" />
     <Compile Include="OsiEmul.cs" />
     <Compile Include="TcpState.cs" />
-    <Compile Include="OsiTpktState.cs" />
+    <Compile Include="IsoTpktState.cs" />
     <Compile Include="Iec61850StateEnum.cs" />
     <Compile Include="TcpRw.cs" />
     <Compile Include="Iec61850State.cs" />
@@ -947,7 +948,7 @@
     <Compile Include="MMS_ASN1_Model\Write_Response.cs" />
     <Compile Include="Scsm_MMS_Worker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="OsiTpkt.cs" />
+    <Compile Include="IsoTpkt.cs" />
     <Compile Include="Views\MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>

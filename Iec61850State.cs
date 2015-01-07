@@ -51,11 +51,11 @@ namespace IEDExplorer
         /// <summary>
         /// TPKT Receive state
         /// </summary>
-        public OsiTpktState kstate = OsiTpktState.TPKT_RECEIVE_START;
+        public IsoTpktState kstate = IsoTpktState.TPKT_RECEIVE_START;
         /// <summary>
         /// OSI Receive state
         /// </summary>
-        public OsiProtocolState ostate = OsiProtocolState.OSI_STATE_START;
+        public IsoProtocolState ostate = IsoProtocolState.OSI_STATE_START;
         /// <summary>
         /// MMS File service state
         /// </summary>
@@ -65,17 +65,9 @@ namespace IEDExplorer
         /// </summary>
         public OsiEmul osi = new OsiEmul();
         /// <summary>
-        /// OSI Protocol COTP layer (new implementation)
+        /// OSI Protocol layers (new implementation)
         /// </summary>
-        public OsiCotp osiCotp = new OsiCotp();
-        /// <summary>
-        /// OSI Protocol ACSE layer (new implementation)
-        /// </summary>
-        public OsiAcse osiAcse = new OsiAcse();
-        /// <summary>
-        /// OSI Protocol PRES layer (new implementation)
-        /// </summary>
-        public OsiPres osiPres = new OsiPres();
+        public IsoLayers osi2;
         /// <summary>
         /// MMS Protocol
         /// </summary>
@@ -109,6 +101,7 @@ namespace IEDExplorer
         {
             DataModel = new Iec61850Model(this);
             CaptureDb = new MMSCaptureDb(this);
+            osi2 = new IsoLayers(this);
         }
 
         public void NextState()
