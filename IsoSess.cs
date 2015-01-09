@@ -22,7 +22,7 @@ namespace IEDExplorer
             logger = iecs.logger;
         }
 
-        enum IsoSessionIndication
+        public enum IsoSessionIndication
         {
             SESSION_OK,
             SESSION_ERROR,
@@ -259,7 +259,7 @@ namespace IEDExplorer
             return offset;
         }
 
-        int createConnectSpdu(IsoConnectionParameters isoParameters, byte[] buffer, byte[] payload, byte payloadLength)
+        public int createConnectSpdu(IsoConnectionParameters isoParameters, byte[] buffer, byte[] payload, int payloadLength)
         {
             int offset = 0;
             int lengthOffset;
@@ -279,17 +279,18 @@ namespace IEDExplorer
 
             offset = encodeCalledSessionSelector(buffer, offset);
 
-            offset = encodeSessionUserData(buffer, offset, payloadLength);
+            offset = encodeSessionUserData(buffer, offset, (byte)payloadLength);
 
             int spduLength = (offset - lengthOffset - 1) + payloadLength;
 
             buffer[lengthOffset] = (byte)spduLength;
 
-            payload.CopyTo(buffer, offset);
+            Array.Copy(payload, 0, buffer, offset, payloadLength); 
+
             return payloadLength + offset;
         }
 
-        int createAbortSpdu(byte[] buffer, byte[] payload, byte payloadLength)
+        public int createAbortSpdu(byte[] buffer, byte[] payload, byte payloadLength)
         {
             int offset = 0;
 
@@ -301,11 +302,11 @@ namespace IEDExplorer
             buffer[offset++] = 193; /* PGI-Code user data */
             buffer[offset++] = payloadLength; /* LI of user data */
 
-            payload.CopyTo(buffer, offset);
+            Array.Copy(payload, 0, buffer, offset, payloadLength);
             return payloadLength + offset;
         }
 
-        int createFinishSpdu(byte[] buffer, byte[] payload, byte payloadLength)
+        public int createFinishSpdu(byte[] buffer, byte[] payload, byte payloadLength)
         {
             int offset = 0;
 
@@ -318,11 +319,11 @@ namespace IEDExplorer
             buffer[offset++] = 193; /* PGI-Code user data */
             buffer[offset++] = payloadLength; /* LI of user data */
 
-            payload.CopyTo(buffer, offset);
+            Array.Copy(payload, 0, buffer, offset, payloadLength);
             return payloadLength + offset;
         }
 
-        int createDisconnectSpdu(byte[] buffer, byte[] payload, byte payloadLength)
+        public int createDisconnectSpdu(byte[] buffer, byte[] payload, byte payloadLength)
         {
             int offset = 0;
 
@@ -332,11 +333,11 @@ namespace IEDExplorer
             buffer[offset++] = 193; /* PGI-Code user data */
             buffer[offset++] = payloadLength; /* LI of user data */
 
-            payload.CopyTo(buffer, offset);
+            Array.Copy(payload, 0, buffer, offset, payloadLength);
             return payloadLength + offset;
         }
 
-        int IsoSession_createAcceptSpdu(byte[] buffer, byte[] payload, byte payloadLength)
+        public int IsoSession_createAcceptSpdu(byte[] buffer, byte[] payload, byte payloadLength)
         {
             int offset = 0;
             int lengthOffset;
@@ -357,7 +358,7 @@ namespace IEDExplorer
 
             buffer[lengthOffset] = (byte)spduLength;
 
-            payload.CopyTo(buffer, offset);
+            Array.Copy(payload, 0, buffer, offset, payloadLength);
             return payloadLength + offset;
         }
 
@@ -373,7 +374,7 @@ namespace IEDExplorer
             return userDataIndex;
         }
 
-        IsoSessionIndication parseMessage(byte[] buffer, int messageLength)
+        public IsoSessionIndication parseMessage(byte[] buffer, int messageLength)
         {
             byte id;
             byte length;

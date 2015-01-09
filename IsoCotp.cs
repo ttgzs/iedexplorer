@@ -36,6 +36,13 @@ namespace IEDExplorer
             public byte size; /** 0 .. 4 - 0 means T-selector is not present */
             public int value;
             public TSelector(byte sz, int val) { size = sz; value = val; }
+            public byte[] GetBytes()
+            {
+                byte[] b = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(value));
+                byte[] ret = new byte[size];
+                for (int i = 0; i < size; i++) ret[i] = b[i + 4 - size];
+                return ret;
+            }
         }
 
         public enum CotpReceiveResult
@@ -59,7 +66,7 @@ namespace IEDExplorer
             }
             public int getSize()
             {
-                int size = tSelDst.size + tSelSrc.size + 1;
+                int size = tSelDst.size + tSelSrc.size + 7;
                 return size;
             }
         }
@@ -103,12 +110,10 @@ namespace IEDExplorer
                 ret = ParseCOTPSessionInit(iecs);
                 if (ret == 0)
                 {
-                    iecs.ostate = IsoProtocolState.OSI_CONNECT_PRES;
                     res = CotpReceiveResult.INIT;
                 }
                 else
                 {
-                    iecs.ostate = IsoProtocolState.OSI_STATE_SHUTDOWN;
                     res = CotpReceiveResult.ERROR;
                 }
             }
@@ -136,7 +141,7 @@ namespace IEDExplorer
         {
             // Read COTP init response
 
-            int hdrlen = iecs.msMMS.ReadByte();  // hdrlen
+            iecs.msMMS.Seek(1, SeekOrigin.Begin); // skip hdrlen
             if (iecs.msMMS.ReadByte() != COTP_CODE_CC) return -1;    // code NOK
             iecs.msMMS.Seek(2, SeekOrigin.Current);  // skip dstref
             Byte[] b = new Byte[2];
@@ -156,15 +161,15 @@ namespace IEDExplorer
                 {
                     options.tSelSrc.size = (byte)iecs.msMMS.ReadByte();  // len
                     Byte[] b2 = new Byte[4];
-                    iecs.msMMS.Read(b, 0, options.tSelSrc.size);
-                    options.tSelSrc.value = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(b, 0));    // srcref
+                    iecs.msMMS.Read(b2, 0, options.tSelSrc.size);
+                    options.tSelSrc.value = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(b2, 0));    // srcref
                 }
                 else if (code == COTP_PCODE_SSAP)   // Source SAP = locally destination SAP
                 {
                     options.tSelDst.size = (byte)iecs.msMMS.ReadByte();  // len
                     Byte[] b2 = new Byte[4];
-                    iecs.msMMS.Read(b, 0, options.tSelDst.size);
-                    options.tSelDst.value = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(b, 0));    // dstref
+                    iecs.msMMS.Read(b2, 0, options.tSelDst.size);
+                    options.tSelDst.value = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(b2, 0));    // dstref
                 }
             }
             return 0;	//O.K.
@@ -174,7 +179,7 @@ namespace IEDExplorer
         {
             // Make COTP init telegramm
             int offs = IsoTpkt.TPKT_SIZEOF;
-            int optof = 1;
+            int optof = COTP_HDR_IDX_OPTION;
 
             //unchecked
             //{
@@ -183,25 +188,26 @@ namespace IEDExplorer
             iecs.sendBuffer[offs + COTP_HDR_IDX_CODE] = COTP_CODE_CR;
             Array.Copy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(m_COTP_dstref)), 0, iecs.sendBuffer, offs + COTP_HDR_IDX_DSTREF, 2);
             Array.Copy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(m_COTP_srcref)), 0, iecs.sendBuffer, offs + COTP_HDR_IDX_SRCREF, 2);
-            iecs.sendBuffer[offs + COTP_HDR_IDX_OPTION] = m_COTP_option;
+            iecs.sendBuffer[offs + optof++] = m_COTP_option;
 
             // Parameters
-            iecs.sendBuffer[offs + COTP_HDR_IDX_OPTION + optof++] = COTP_PCODE_TSIZ;
-            iecs.sendBuffer[offs + COTP_HDR_IDX_OPTION + optof++] = 1;
-            iecs.sendBuffer[offs + COTP_HDR_IDX_OPTION + optof++] = options.tpduSize;
+            iecs.sendBuffer[offs + optof++] = COTP_PCODE_TSIZ;
+            iecs.sendBuffer[offs + optof++] = 1;
+            iecs.sendBuffer[offs + optof++] = options.tpduSize;
             if (options.tSelDst.size > 0)
             {
-                iecs.sendBuffer[offs + COTP_HDR_IDX_OPTION + optof++] = COTP_PCODE_DSAP;
-                iecs.sendBuffer[offs + COTP_HDR_IDX_OPTION + optof++] = options.tSelDst.size;
-                Array.Copy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(options.tSelDst.value)), 0, iecs.sendBuffer, offs + COTP_HDR_IDX_OPTION + optof, options.tSelDst.size);
+                iecs.sendBuffer[offs + optof++] = COTP_PCODE_DSAP;
+                iecs.sendBuffer[offs + optof++] = options.tSelDst.size;
+                byte[] bt = options.tSelDst.GetBytes();
+                Array.Copy(bt, 0, iecs.sendBuffer, offs + optof, options.tSelDst.size);
                 optof += options.tSelDst.size;
             }
 
             if (options.tSelSrc.size > 0)
             {
-                iecs.sendBuffer[offs + COTP_HDR_IDX_OPTION + optof++] = COTP_PCODE_SSAP;
-                iecs.sendBuffer[offs + COTP_HDR_IDX_OPTION + optof++] = options.tSelSrc.size;
-                Array.Copy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(options.tSelSrc.value)), 0, iecs.sendBuffer, optof, options.tSelSrc.size);
+                iecs.sendBuffer[offs + optof++] = COTP_PCODE_SSAP;
+                iecs.sendBuffer[offs + optof++] = options.tSelSrc.size;
+                Array.Copy(options.tSelSrc.GetBytes(), 0, iecs.sendBuffer, offs + optof, options.tSelSrc.size);
             }
 
             iecs.sendBytes = offs + COTP_HDR_CR_SIZEOF + 1 + options.getSize();

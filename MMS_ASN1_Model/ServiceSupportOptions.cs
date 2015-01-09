@@ -23,7 +23,7 @@ namespace MMS_ASN1_Model {
 
             [ASN1BitString( Name = "ServiceSupportOptions") ]            
             
-            [ASN1SizeConstraint ( Max = 93L )]
+            //[ASN1SizeConstraint ( Max = 93L )] Pavel
         
             public BitString Value
             {

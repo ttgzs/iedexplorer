@@ -180,7 +180,7 @@ namespace IEDExplorer
             /* encode user data */
             bufPos = encodeUserData(buffer, bufPos, payload, payloadLength, true, acseContextId);
 
-            payload.CopyTo(buffer, bufPos);
+            Array.Copy(payload, 0, buffer, bufPos, payloadLength);
 
             /*
             writeBuffer->partLength = bufPos;
@@ -513,7 +513,7 @@ namespace IEDExplorer
             writeBuffer->length = bufPos + payloadLength;
             writeBuffer->nextPart = payload;*/
 
-            payload.CopyTo(buffer, bufPos);
+            Array.Copy(payload, 0, buffer, bufPos, payloadLength);
             return bufPos + payloadLength;
         }
 
@@ -542,7 +542,7 @@ namespace IEDExplorer
             writeBuffer->length = bufPos + payloadLength;
             writeBuffer->nextPart = payload;*/
 
-            payload.CopyTo(buffer, bufPos);
+            Array.Copy(payload, 0, buffer, bufPos, payloadLength);
             return bufPos + payloadLength;
         }
 
@@ -682,7 +682,7 @@ namespace IEDExplorer
             writeBuffer->length = bufPos + payload->length;
             writeBuffer->nextPart = payload;*/
 
-            payload.CopyTo(buffer, bufPos);
+            Array.Copy(payload, 0, buffer, bufPos, payloadLength);
             return bufPos + payloadLength;
         }
 
@@ -735,7 +735,7 @@ namespace IEDExplorer
             writeBuffer->length = bufPos + payload->length;
             writeBuffer->nextPart = payload;*/
 
-            payload.CopyTo(buffer, bufPos);
+            Array.Copy(payload, 0, buffer, bufPos, payloadLength);
             return bufPos + payloadLength;
         }
     }

@@ -1920,12 +1920,62 @@ namespace IEDExplorer
             return 0;
         }
 
+        public int SendInitiate(Iec61850State iecs)
+        {
+            MMSpdu mymmspdu = new MMSpdu();
+            iecs.msMMSout = new MemoryStream();
+
+            Initiate_RequestPDU ireq = new Initiate_RequestPDU();
+            Initiate_RequestPDU.InitRequestDetailSequenceType idet = new Initiate_RequestPDU.InitRequestDetailSequenceType();
+
+            idet.ProposedVersionNumber = new Integer16(1);
+            byte[] ppc = { 0xf1, 0x00 };
+            idet.ProposedParameterCBB = new ParameterSupportOptions(new BitString(ppc, 5));
+
+            byte[] ssc = { 0xee, 0x1c, 0x00, 0x00, 0x04, 0x08, 0x00, 0x00, 0x79, 0xef, 0x18};
+            idet.ServicesSupportedCalling = new MMS_ASN1_Model.ServiceSupportOptions(new BitString(ssc, 3));
+
+            ireq.InitRequestDetail = idet;
+
+            ireq.LocalDetailCalling = new Integer32(65000);
+            ireq.ProposedMaxServOutstandingCalling = new Integer16(10);
+            ireq.ProposedMaxServOutstandingCalled = new Integer16(10);
+            ireq.ProposedDataStructureNestingLevel = new Integer8(5);
+
+            mymmspdu.selectInitiate_RequestPDU(ireq);
+
+            encoder.encode<MMSpdu>(mymmspdu, iecs.msMMSout);
+
+            if (iecs.msMMSout.Length == 0)
+            {
+                iecs.logger.LogError("mms.SendInitiate: Encoding Error!");
+                return -1;
+            }
+            // Special case / initiate message is a part of other ISO layers associate messages, do not send it here!
+            //this.Send2(iecs, mymmspdu);
+            return 0;
+        }
+
+        private void Send2(Iec61850State iecs, MMSpdu pdu)
+        {
+            if (iecs.CaptureDb.CaptureActive)
+            {
+                MMSCapture cap;
+                iecs.msMMSout.Seek(0, SeekOrigin.Begin);
+                iecs.msMMSout.Read(iecs.sendBuffer, 0, (int)iecs.msMMSout.Length);
+                cap = new MMSCapture(iecs.sendBuffer, 0, iecs.msMMSout.Length, MMSCapture.CaptureDirection.Out);
+                cap.MMSPdu = pdu;
+                iecs.CaptureDb.AddPacket(cap);
+            }
+            iecs.osi2.Send(iecs);
+        }
+
         private void Send(Iec61850State iecs, MMSpdu pdu)
         {
             if (iecs.CaptureDb.CaptureActive)
             {
                 MMSCapture cap;
-                cap = new MMSCapture(iecs.sendBuffer, IsoTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes + IsoTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF,MMSCapture.CaptureDirection.Out);
+                cap = new MMSCapture(iecs.sendBuffer, IsoTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes + IsoTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, MMSCapture.CaptureDirection.Out);
                 cap.MMSPdu = pdu;
                 iecs.CaptureDb.AddPacket(cap);
             }

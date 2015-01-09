@@ -77,6 +77,10 @@ namespace IEDExplorer
         /// </summary>
         public MemoryStream msMMS = new MemoryStream();
         /// <summary>
+        /// Output stream of MMS coding
+        /// </summary>
+        public MemoryStream msMMSout;
+        /// <summary>
         /// Memory for continuation of requests
         /// </summary>
         public Identifier continueAfter;

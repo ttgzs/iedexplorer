@@ -481,7 +481,7 @@ namespace IEDExplorer
             writeBuffer.length = bufPos + payloadLength;
             writeBuffer.nextPart = payload;*/
 
-            payload.CopyTo(buffer, bufPos);
+            Array.Copy(payload, 0, buffer, bufPos, payloadLength);
             return bufPos + payloadLength;
         }
 
@@ -669,7 +669,7 @@ namespace IEDExplorer
             writeBuffer.length = bufPos + payload.length;
             writeBuffer.nextPart = payload;*/
 
-            payload.CopyTo(buffer, bufPos);
+            Array.Copy(payload, 0, buffer, bufPos, payloadLength);
             return bufPos + payloadLength;
         }
 

@@ -108,7 +108,7 @@ namespace IEDExplorer
                             iecs.kstate = IsoTpktState.TPKT_RECEIVE_START;
                             // Call OSI Layer
                             tcps.logger.LogDebug("TPKT sent to OSI");
-                            iecs.osi.Receive(iecs);
+                            iecs.osi2.Receive(iecs);
                         }
                         break;
                     default:

@@ -134,12 +134,13 @@ namespace IEDExplorer
                         {
                             case IsoProtocolState.OSI_CONNECT_COTP:
                                 iecs.logger.LogInfo("[OSI_CONNECT_COTP]");
-                                iecs.osi.SendCOTPSessionInit(iecs);
+                                //iecs.osi.SendCOTPSessionInit(iecs);
+                                iecs.osi2.SendCOTPSessionInit(iecs);
                                 iecs.ostate = IsoProtocolState.OSI_CONNECT_COTP_WAIT;
                                 break;
                             case IsoProtocolState.OSI_CONNECT_PRES:
                                 iecs.logger.LogInfo("[OSI_CONNECT_PRES]");
-                                iecs.osi.SendPresentationInit(iecs);
+                                iecs.osi2.SendPresentationInit(iecs);
                                 iecs.ostate = IsoProtocolState.OSI_CONNECT_PRES_WAIT;
                                 break;
                             case IsoProtocolState.OSI_CONNECTED:

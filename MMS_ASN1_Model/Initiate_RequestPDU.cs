@@ -115,7 +115,7 @@ namespace MMS_ASN1_Model {
           
 	private AdditionalSupportOptions additionalSupportedCalling_ ;
 	
-        [ASN1Element ( Name = "additionalSupportedCalling", IsOptional =  false , HasTag =  true, Tag = 3 , HasDefaultValue =  false )  ]
+        [ASN1Element ( Name = "additionalSupportedCalling", IsOptional =  true /*Pavel*/ , HasTag =  true, Tag = 3 , HasDefaultValue =  false )  ]
     
         public AdditionalSupportOptions AdditionalSupportedCalling
         {
@@ -127,7 +127,7 @@ namespace MMS_ASN1_Model {
           
 	private AdditionalCBBOptions additionalCbbSupportedCalling_ ;
 	
-        [ASN1Element ( Name = "additionalCbbSupportedCalling", IsOptional =  false , HasTag =  true, Tag = 4 , HasDefaultValue =  false )  ]
+        [ASN1Element ( Name = "additionalCbbSupportedCalling", IsOptional =  true /*Pavel*/ , HasTag =  true, Tag = 4 , HasDefaultValue =  false )  ]
     
         public AdditionalCBBOptions AdditionalCbbSupportedCalling
         {
@@ -140,7 +140,7 @@ namespace MMS_ASN1_Model {
 	private string privilegeClassIdentityCalling_ ;
 	[ASN1String( Name = "", 
         StringType =  UniversalTags.VisibleString , IsUCS = false )]
-        [ASN1Element ( Name = "privilegeClassIdentityCalling", IsOptional =  false , HasTag =  true, Tag = 5 , HasDefaultValue =  false )  ]
+        [ASN1Element ( Name = "privilegeClassIdentityCalling", IsOptional =  true /*Pavel*/ , HasTag =  true, Tag = 5 , HasDefaultValue =  false )  ]
     
         public string PrivilegeClassIdentityCalling
         {
