@@ -84,6 +84,17 @@ namespace IEDExplorer
                 Log(Severity.Debug, message);
         }
 
+        public void LogDebugBuffer(string message, byte[] buffer, long logFrom, long logLength)
+        {
+            if (verbosity == Severity.Debug)
+            {
+                string s = message + " (Len=" + logLength + ")>";
+                for (long i = logFrom; i < logLength; i++)
+                    s += String.Format("{0:x2} ", buffer[i]);
+                Log(Severity.Debug, s);
+            }
+        }
+
         public void LogInfo(string message)
         {
             if (verbosity <= Severity.Information)

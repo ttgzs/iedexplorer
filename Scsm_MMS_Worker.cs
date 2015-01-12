@@ -140,7 +140,8 @@ namespace IEDExplorer
                                 break;
                             case IsoProtocolState.OSI_CONNECT_PRES:
                                 iecs.logger.LogInfo("[OSI_CONNECT_PRES]");
-                                iecs.osi2.SendPresentationInit(iecs);
+                                //iecs.osi.SendPresentationInit(iecs);
+                                iecs.mms.SendInitiate(iecs);
                                 iecs.ostate = IsoProtocolState.OSI_CONNECT_PRES_WAIT;
                                 break;
                             case IsoProtocolState.OSI_CONNECTED:

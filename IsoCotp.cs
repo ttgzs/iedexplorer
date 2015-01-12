@@ -91,7 +91,7 @@ namespace IEDExplorer
             CotpReceiveResult res = CotpReceiveResult.ERROR;
             int ret;
 
-            iecs.logger.LogDebug("OsiCotp.Receive");
+            iecs.logger.LogDebug("IsoCotp.Receive");
             if (iecs.dataBuffer[1] == COTP_CODE_DT)         // Data Transfer
             {
                 iecs.msMMS.Write(iecs.dataBuffer, 3, iecs.dataBufferIndex - 3);
@@ -100,8 +100,8 @@ namespace IEDExplorer
                 {
                     return CotpReceiveResult.WAIT;			// waiting for the rest of the datagram from other COTP frames
                 }
-                iecs.logger.LogDebug(String.Format("Calling OsiAcse.Receive with data len {0}", iecs.msMMS.Length));
-                res = CotpReceiveResult.DATA;
+                //iecs.logger.LogDebug(String.Format("Calling IsoSess.Receive with data len {0}", iecs.msMMS.Length));
+                return res = CotpReceiveResult.DATA;
             }
             else if (iecs.dataBuffer[1] == COTP_CODE_CC)    // Connect Confirmation
             {
@@ -175,7 +175,7 @@ namespace IEDExplorer
             return 0;	//O.K.
         }
 
-        public int SendCOTPSessionInit(Iec61850State iecs)
+        public int SendInit(Iec61850State iecs)
         {
             // Make COTP init telegramm
             int offs = IsoTpkt.TPKT_SIZEOF;

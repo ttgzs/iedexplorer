@@ -160,7 +160,10 @@ namespace IEDExplorer
 
                         IsoTpkt.Parse(tcps);
                     }
-                    catch {}
+                    catch (Exception e)
+                    {
+                        tcps.logger.LogError(e.Message);
+                    }
                     // Signal that the data has been received.
                     tcps.receiveDone.Set();
                 }

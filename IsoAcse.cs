@@ -56,12 +56,10 @@ namespace IEDExplorer
         const int ACSE_RESULT_REJECT_TRANSIENT = 2;
 
         Iec61850State iecs;
-        Logger logger;
 
         public IsoAcse(Iec61850State iec)
         {
             iecs = iec;
-            logger = iecs.logger;
         }
 
         public int Receive(Iec61850State iecs)
@@ -124,7 +122,7 @@ namespace IEDExplorer
 
         int parseUserInformation(byte[] buffer, int bufPos, int maxBufPos, ref bool userInfoValid)
         {
-            logger.LogDebug(String.Format("ACSE: parseUserInformation {0} {1}", bufPos, maxBufPos));
+            iecs.logger.LogDebug(String.Format("ACSE: parseUserInformation {0} {1}", bufPos, maxBufPos));
 
             bool hasindirectReference = false;
             bool isDataValid = false;
@@ -162,9 +160,9 @@ namespace IEDExplorer
             }
 
 
-            if (!hasindirectReference) logger.LogDebug("ACSE: User data has no indirect reference!");
+            if (!hasindirectReference) iecs.logger.LogDebug("ACSE: User data has no indirect reference!");
 
-            if (!isDataValid) logger.LogDebug("ACSE: No valid user data");
+            if (!isDataValid) iecs.logger.LogDebug("ACSE: No valid user data");
 
             if (hasindirectReference && isDataValid)
                 userInfoValid = true;
@@ -176,7 +174,7 @@ namespace IEDExplorer
 
         AcseIndication parseAarePdu(byte[] buffer, int bufPos, int maxBufPos)
         {
-            logger.LogDebug("ACSE: parse AARE PDU");
+            iecs.logger.LogDebug("ACSE: parse AARE PDU");
 
             bool userInfoValid = false;
 
@@ -211,7 +209,7 @@ namespace IEDExplorer
                     case 0xbe: /* user information */
                         if (buffer[bufPos] != 0x28)
                         {
-                            logger.LogDebug("ACSE: invalid user info");
+                            iecs.logger.LogDebug("ACSE: invalid user info");
                             bufPos += len;
                         }
                         else
@@ -225,7 +223,7 @@ namespace IEDExplorer
                         break;
 
                     default: /* ignore unknown tag */
-                        logger.LogDebug(String.Format("ACSE: parseAarePdu: unknown tag 0x{0:X2}", tag));
+                        iecs.logger.LogDebug(String.Format("ACSE: parseAarePdu: unknown tag 0x{0:X2}", tag));
 
                         bufPos += len;
                         break;
@@ -243,7 +241,7 @@ namespace IEDExplorer
 
         AcseIndication parseAarqPdu(byte[] buffer, int bufPos, int maxBufPos)
         {
-            logger.LogDebug("ACSE: parse AARQ PDU\n");
+            iecs.logger.LogDebug("ACSE: parse AARQ PDU\n");
 
             int authValuePos = 0;
             int authValueLen = 0;
@@ -260,7 +258,7 @@ namespace IEDExplorer
 
                 if (bufPos < 0)
                 {
-                    logger.LogDebug("ACSE: parseAarqPdu: user info invalid!\n");
+                    iecs.logger.LogDebug("ACSE: parseAarqPdu: user info invalid!\n");
                     return AcseIndication.ACSE_ASSOCIATE_FAILED;
                 }
 
@@ -306,7 +304,7 @@ namespace IEDExplorer
                     case 0xbe: /* user information */
                         if (buffer[bufPos] != 0x28)
                         {
-                            logger.LogDebug("ACSE: invalid user info\n");
+                            iecs.logger.LogDebug("ACSE: invalid user info\n");
                             bufPos += len;
                         }
                         else
@@ -320,7 +318,7 @@ namespace IEDExplorer
                         break;
 
                     default: /* ignore unknown tag */
-                        logger.LogDebug(String.Format("ACSE: parseAarqPdu: unknown tag 0x{0:X2}", tag));
+                        iecs.logger.LogDebug(String.Format("ACSE: parseAarqPdu: unknown tag 0x{0:X2}", tag));
 
                         bufPos += len;
                         break;
@@ -329,14 +327,14 @@ namespace IEDExplorer
 
             if (checkAuthentication(buffer, authMechanismPos, authMechLen, authValuePos, authValueLen) == false)
             {
-                logger.LogDebug("ACSE: parseAarqPdu: check authentication failed!");
+                iecs.logger.LogDebug("ACSE: parseAarqPdu: check authentication failed!");
 
                 return AcseIndication.ACSE_ASSOCIATE_FAILED;
             }
 
             if (userInfoValid == false)
             {
-                logger.LogDebug("ACSE: parseAarqPdu: user info invalid!");
+                iecs.logger.LogDebug("ACSE: parseAarqPdu: user info invalid!");
 
                 return AcseIndication.ACSE_ASSOCIATE_FAILED;
             }
@@ -352,13 +350,13 @@ namespace IEDExplorer
             userDataBufferSize = 0;
         }
 
-        public AcseIndication parseMessage(byte[] buffer, int length)
+        public AcseIndication parseMessage(byte[] buffer, int offset, int length)
         {
             AcseIndication indication;
 
-            int messageSize = length;
+            int messageSize = offset + length;
 
-            int bufPos = 0;
+            int bufPos = offset;
 
             byte messageType = buffer[bufPos++];
 
@@ -368,7 +366,7 @@ namespace IEDExplorer
 
             if (bufPos < 0)
             {
-                logger.LogDebug("ACSE: AcseConnection_parseMessage: invalid ACSE message!");
+                iecs.logger.LogDebug("ACSE: AcseConnection_parseMessage: invalid ACSE message!");
 
                 return AcseIndication.ACSE_ERROR;
             }
@@ -391,7 +389,7 @@ namespace IEDExplorer
                     indication = AcseIndication.ACSE_ABORT;
                     break;
                 default:
-                    logger.LogDebug("ACSE: Unknown ACSE message\n");
+                    iecs.logger.LogDebug("ACSE: Unknown ACSE message\n");
                     indication = AcseIndication.ACSE_ERROR;
                     break;
             }

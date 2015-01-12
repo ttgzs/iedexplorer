@@ -16,12 +16,10 @@ namespace IEDExplorer
         int nextPayload_size;
 
         Iec61850State iecs;
-        Logger logger;
 
         public IsoPres(Iec61850State iec)
         {
             iecs = iec;
-            logger = iecs.logger;
         }
 
         public int Receive(Iec61850State iecs)
@@ -198,7 +196,7 @@ namespace IEDExplorer
 
             if (buffer[bufPos++] != 0x30)
             {
-                logger.LogDebug("PRES: user-data parse error");
+                iecs.logger.LogDebug("PRES: user-data parse error");
                 return -1;
             }
 
@@ -208,7 +206,7 @@ namespace IEDExplorer
 
             if (bufPos < 0)
             {
-                logger.LogDebug("PRES: wrong parameter length");
+                iecs.logger.LogDebug("PRES: wrong parameter length");
                 return -1;
             }
 
@@ -221,14 +219,14 @@ namespace IEDExplorer
 
                 if (bufPos < 0)
                 {
-                    logger.LogDebug("PRES: wrong parameter length");
+                    iecs.logger.LogDebug("PRES: wrong parameter length");
                     return -1;
                 }
 
                 switch (tag)
                 {
                     case 0x02: /* presentation-context-identifier */
-                        logger.LogDebug("PRES: presentation-context-identifier");
+                        iecs.logger.LogDebug("PRES: presentation-context-identifier");
                         {
                             presentationSelector = (int)IsoUtil.BerDecoder_decodeUint32(buffer, length, bufPos);
                             nextContextId = (byte)presentationSelector;
@@ -237,7 +235,7 @@ namespace IEDExplorer
                         break;
 
                     case 0xa0:
-                        logger.LogDebug("PRES: fully-encoded-data");
+                        iecs.logger.LogDebug("PRES: fully-encoded-data");
 
                         userDataPresent = true;
 
@@ -247,7 +245,7 @@ namespace IEDExplorer
                         bufPos += length;
                         break;
                     default:
-                        logger.LogDebug(String.Format("PRES: fed: unknown tag 0x{0:X2}", tag));
+                        iecs.logger.LogDebug(String.Format("PRES: fed: unknown tag 0x{0:X2}", tag));
 
                         bufPos += length;
                         break;
@@ -256,7 +254,7 @@ namespace IEDExplorer
 
             if (!userDataPresent)
             {
-                logger.LogDebug("PRES: user-data not present\n");
+                iecs.logger.LogDebug("PRES: user-data not present\n");
                 return -1;
             }
 
@@ -285,7 +283,7 @@ namespace IEDExplorer
                         bufPos += len;
                         break;
                     case 0x06: /* abstract-syntax-name */
-                        logger.LogDebug(String.Format("PRES: abstract-syntax-name with len {0}", len));
+                        iecs.logger.LogDebug(String.Format("PRES: abstract-syntax-name with len {0}", len));
 
                         if (len == 5)
                         {
@@ -310,12 +308,12 @@ namespace IEDExplorer
 
                         break;
                     case 0x30: /* transfer-syntax-name */
-                        logger.LogDebug("PRES: ignore transfer-syntax-name");
+                        iecs.logger.LogDebug("PRES: ignore transfer-syntax-name");
 
                         bufPos += len;
                         break;
                     default:
-                        logger.LogDebug("PRES: unknown tag in presentation-context-definition-list-entry");
+                        iecs.logger.LogDebug("PRES: unknown tag in presentation-context-definition-list-entry");
                         bufPos += len;
                         break;
                 }
@@ -323,13 +321,13 @@ namespace IEDExplorer
 
             if (contextId < 0)
             {
-                logger.LogDebug("PRES: ContextId not defined!");
+                iecs.logger.LogDebug("PRES: ContextId not defined!");
                 return -1;
             }
 
             if ((isAcse == false) && (isMms == false))
             {
-                logger.LogDebug("PRES: not an ACSE nor MMS context definition");
+                iecs.logger.LogDebug("PRES: not an ACSE nor MMS context definition");
 
                 return -1;
             }
@@ -337,12 +335,12 @@ namespace IEDExplorer
             if (isMms)
             {
                 mmsContextId = (byte)contextId;
-                logger.LogDebug(String.Format("PRES: MMS context id is {0}", contextId));
+                iecs.logger.LogDebug(String.Format("PRES: MMS context id is {0}", contextId));
             }
             else
             {
                 acseContextId = (byte)contextId;
-                logger.LogDebug(String.Format("PRES: ACSE context id is {0}", contextId));
+                iecs.logger.LogDebug(String.Format("PRES: ACSE context id is {0}", contextId));
             }
 
             return bufPos;
@@ -362,13 +360,13 @@ namespace IEDExplorer
                 switch (tag)
                 {
                     case 0x30:
-                        logger.LogDebug("PRES: parse pcd entry");
+                        iecs.logger.LogDebug("PRES: parse pcd entry");
                         bufPos = parsePCDLEntry(buffer, len, bufPos);
                         if (bufPos < 0)
                             return -1;
                         break;
                     default:
-                        logger.LogDebug("PRES: unknown tag in presentation-context-definition-list");
+                        iecs.logger.LogDebug("PRES: unknown tag in presentation-context-definition-list");
                         bufPos += len;
                         break;
                 }
@@ -390,26 +388,26 @@ namespace IEDExplorer
 
                 if (bufPos < 0)
                 {
-                    logger.LogDebug("PRES: wrong parameter length");
+                    iecs.logger.LogDebug("PRES: wrong parameter length");
                     return -1;
                 }
 
                 switch (tag)
                 {
                     case 0x81: /* calling-presentation-selector */
-                        logger.LogDebug("PRES: calling-pres-sel");
+                        iecs.logger.LogDebug("PRES: calling-pres-sel");
                         bufPos += len;
                         break;
                     case 0x82: /* calling-presentation-selector */
-                        logger.LogDebug("PRES: calling-pres-sel");
+                        iecs.logger.LogDebug("PRES: calling-pres-sel");
                         bufPos += len;
                         break;
                     case 0xa4: /* presentation-context-definition list */
-                        logger.LogDebug("PRES: pcd list");
+                        iecs.logger.LogDebug("PRES: pcd list");
                         bufPos = parsePresentationContextDefinitionList(buffer, len, bufPos);
                         break;
                     case 0x61: /* user data */
-                        logger.LogDebug("PRES: user-data");
+                        iecs.logger.LogDebug("PRES: user-data");
 
                         bufPos = parseFullyEncodedData(buffer, len, bufPos);
 
@@ -419,7 +417,7 @@ namespace IEDExplorer
                         break;
 
                     default:
-                        logger.LogDebug("PRES: unknown tag in normal-mode");
+                        iecs.logger.LogDebug("PRES: unknown tag in normal-mode");
                         bufPos += len;
                         break;
                 }
@@ -438,7 +436,7 @@ namespace IEDExplorer
 
             if (cpTag != 0x31)
             {
-                logger.LogDebug("PRES: not a CPA message\n");
+                iecs.logger.LogDebug("PRES: not a CPA message\n");
                 return 0;
             }
 
@@ -454,7 +452,7 @@ namespace IEDExplorer
 
                 if (bufPos < 0)
                 {
-                    logger.LogDebug("PRES: wrong parameter length\n");
+                    iecs.logger.LogDebug("PRES: wrong parameter length\n");
                     return 0;
                 }
 
@@ -468,13 +466,13 @@ namespace IEDExplorer
 
                         if (bufPos < 0)
                         {
-                            logger.LogDebug("PRES: error parsing normal-mode-parameters");
+                            iecs.logger.LogDebug("PRES: error parsing normal-mode-parameters");
                             return 0;
                         }
 
                         break;
                     default:
-                        logger.LogDebug(String.Format("PRES: CPA unknown tag {0}", tag));
+                        iecs.logger.LogDebug(String.Format("PRES: CPA unknown tag {0}", tag));
                         bufPos += len;
                         break;
                 }
@@ -546,9 +544,9 @@ namespace IEDExplorer
             return bufPos + payloadLength;
         }
 
-        public int parseUserData(byte[] buffer, int length)
+        public int parseUserData(byte[] buffer, int offset, int length)
         {
-            int bufPos = 0;
+            int bufPos = offset;
 
             if (length < 9)
                 return 0;
@@ -583,21 +581,21 @@ namespace IEDExplorer
             //ByteBuffer_wrap(&(nextPayload), buffer + bufPos, userDataLength, userDataLength);
             // ??????
             // data
-            return bufPos;
+            return bufPos - offset;
             //return 1;
         }
 
-        public int parseConnect(byte[] buffer, int length)
+        public int parseConnect(byte[] buffer, int offset, int length)
         {
-            int maxBufPos = length;
+            int maxBufPos = offset + length;
 
-            int bufPos = 0;
+            int bufPos = offset;
 
             byte cpTag = buffer[bufPos++];
 
             if (cpTag != 0x31)
             {
-                logger.LogDebug("PRES: not a CP type");
+                iecs.logger.LogDebug("PRES: not a CP type");
                 return 0;
             }
 
@@ -605,7 +603,7 @@ namespace IEDExplorer
 
             bufPos = IsoUtil.BerDecoder_decodeLength(buffer, ref len, bufPos, maxBufPos);
 
-            logger.LogDebug(String.Format("PRES: CPType with len {0}", len));
+            iecs.logger.LogDebug(String.Format("PRES: CPType with len {0}", len));
 
             while (bufPos < maxBufPos)
             {
@@ -615,7 +613,7 @@ namespace IEDExplorer
 
                 if (bufPos < 0)
                 {
-                    logger.LogDebug("PRES: wrong parameter length\n");
+                    iecs.logger.LogDebug("PRES: wrong parameter length\n");
                     return 0;
                 }
 
@@ -625,12 +623,12 @@ namespace IEDExplorer
                         {
                             if (buffer[bufPos++] != 0x80)
                             {
-                                logger.LogDebug("PRES: mode-value of wrong type!");
+                                iecs.logger.LogDebug("PRES: mode-value of wrong type!");
                                 return 0;
                             }
                             bufPos = IsoUtil.BerDecoder_decodeLength(buffer, ref len, bufPos, maxBufPos);
                             uint modeSelector = IsoUtil.BerDecoder_decodeUint32(buffer, len, bufPos);
-                            logger.LogDebug(String.Format("PRES: modesel {0}", modeSelector));
+                            iecs.logger.LogDebug(String.Format("PRES: modesel {0}", modeSelector));
                             bufPos += len;
                         }
                         break;
@@ -639,19 +637,19 @@ namespace IEDExplorer
 
                         if (bufPos < 0)
                         {
-                            logger.LogDebug("PRES: error parsing normal-mode-parameters");
+                            iecs.logger.LogDebug("PRES: error parsing normal-mode-parameters");
                             return 0;
                         }
 
                         break;
                     default: /* unsupported element */
-                        logger.LogDebug(String.Format("PRES: tag 0x{0:X2} not recognized\n", tag));
+                        iecs.logger.LogDebug(String.Format("PRES: tag 0x{0:X2} not recognized\n", tag));
                         bufPos += len;
                         break;
                 }
             }
 
-            return 1;
+            return bufPos;
         }
 
         public int createConnectPdu(IsoConnectionParameters parameters, byte[] buffer, byte[] payload, int payloadLength)

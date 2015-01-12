@@ -190,20 +190,11 @@ namespace IEDExplorer
         
         public int ReceiveData(Iec61850State iecs)
         {
-            iecs.logger.LogDebug("mms.ReceiveData: ");
-            long pos = iecs.msMMS.Position;
-            byte[] b = iecs.msMMS.ToArray();
-            string s = "";
-            for (long i = pos; i < b.Length; i++)
-                s += String.Format("0x{0:x} ", b[i]);
-            iecs.logger.LogDebug(s);
-            //Console.WriteLine();
-
-            // kvuli breaku
-            // if (iecs.istate == Iec61850lStateEnum.IEC61850_READ_MODEL_DATA_WAIT)
-            //    Console.WriteLine("Ahoj");
             if (iecs == null)
                 return -1;
+            
+            iecs.logger.LogDebugBuffer("mms.ReceiveData", iecs.msMMS.GetBuffer(), iecs.msMMS.Position, iecs.msMMS.Length - iecs.msMMS.Position);
+
             MMSpdu mymmspdu = null;
             try
             {
@@ -1951,8 +1942,8 @@ namespace IEDExplorer
                 iecs.logger.LogError("mms.SendInitiate: Encoding Error!");
                 return -1;
             }
-            // Special case / initiate message is a part of other ISO layers associate messages, do not send it here!
-            //this.Send2(iecs, mymmspdu);
+
+            this.Send2(iecs, mymmspdu);
             return 0;
         }
 

@@ -13,13 +13,13 @@ namespace IEDExplorer
         byte protocolOptions;
         int userDataIndex = 0;
 
+        public int UserDataIndex { get { return userDataIndex; } }
+
         Iec61850State iecs;
-        Logger logger;
 
         public IsoSess(Iec61850State iec)
         {
             iecs = iec;
-            logger = iecs.logger;
         }
 
         public enum IsoSessionIndication
@@ -56,46 +56,46 @@ namespace IEDExplorer
                         if (param_len != 1)
                             return -1;
                         protocolOptions = buffer[offset++];
-                        logger.LogDebug(String.Format("SESSION: Param - Protocol Options: 0x{0:X2}", protocolOptions));
+                        iecs.logger.LogDebug(String.Format("SESSION: Param - Protocol Options: 0x{0:X2}", protocolOptions));
                         hasProtocolOptions = 1;
                         break;
                     case 21: /* TSDU Maximum Size */
-                        logger.LogDebug("SESSION: Param - TODO TSDU Maximum Size");
+                        iecs.logger.LogDebug("SESSION: Param - TODO TSDU Maximum Size");
                         offset += 4;
                         break;
                     case 22: /* Version Number */
                         param_val = buffer[offset++];
-                        logger.LogDebug("SESSION: Param - Version number");
+                        iecs.logger.LogDebug("SESSION: Param - Version number");
                         if (param_val != 2)
                             return -1;
                         hasProtocolVersion = 1;
                         break;
                     case 23: /* Initial Serial Number */
-                        logger.LogDebug("SESSION: Param - TODO Initial Serial Number");
+                        iecs.logger.LogDebug("SESSION: Param - TODO Initial Serial Number");
                         offset += param_len;
                         break;
                     case 26: /* Token Setting Item */
                         param_val = buffer[offset++];
-                        logger.LogDebug(String.Format("SESSION: Param - Token Setting Item: 0x{0:X2}", param_val));
+                        iecs.logger.LogDebug(String.Format("SESSION: Param - Token Setting Item: 0x{0:X2}", param_val));
                         break;
                     case 55: /* Second Initial Serial Number */
-                        logger.LogDebug("SESSION: Param - TODO Second Initial Serial Number");
+                        iecs.logger.LogDebug("SESSION: Param - TODO Second Initial Serial Number");
                         offset += param_len;
                         break;
                     case 56: /* Upper Limit Serial Number */
-                        logger.LogDebug("SESSION: Param - TODO Upper Limit Serial Number");
+                        iecs.logger.LogDebug("SESSION: Param - TODO Upper Limit Serial Number");
                         offset += param_len;
                         break;
                     case 57: /* Large Initial Serial Number */
-                        logger.LogDebug("SESSION: Param - TODO Large Initial Serial Number");
+                        iecs.logger.LogDebug("SESSION: Param - TODO Large Initial Serial Number");
                         offset += param_len;
                         break;
                     case 58: /* Large Second Initial Serial Number */
-                        logger.LogDebug("SESSION: Param - TODO Large Second Initial Serial Number");
+                        iecs.logger.LogDebug("SESSION: Param - TODO Large Second Initial Serial Number");
                         offset += param_len;
                         break;
                     default:
-                        logger.LogDebug(String.Format("SESSION: Param - Invalid Parameter with ID 0x{0:X2}", pi));
+                        iecs.logger.LogDebug(String.Format("SESSION: Param - Invalid Parameter with ID 0x{0:X2}", pi));
                         break;
                 }
             }
@@ -120,12 +120,12 @@ namespace IEDExplorer
                 switch (pgi)
                 {
                     case 1: /* Connection Identifier */
-                        logger.LogDebug("SESSION: PGI - connection identifier");
+                        iecs.logger.LogDebug("SESSION: PGI - connection identifier");
 
                         offset += parameterLength;
                         break;
                     case 5: /* Connection/Accept Item */
-                        logger.LogDebug("SESSION: PGI - Connection/Accept Item");
+                        iecs.logger.LogDebug("SESSION: PGI - Connection/Accept Item");
 
                         int connectAcceptLen;
 
@@ -140,7 +140,7 @@ namespace IEDExplorer
                         offset += parameterLength;
                         break;
                     case 20: /* Session User Requirements */
-                        logger.LogDebug("SESSION: Parameter - Session User Req");
+                        iecs.logger.LogDebug("SESSION: Parameter - Session User Req");
                         if (parameterLength != 2)
                             return IsoSessionIndication.SESSION_ERROR;
 
@@ -154,7 +154,7 @@ namespace IEDExplorer
                         offset += parameterLength;
                         break;
                     case 51: /* Calling Session Selector */
-                        logger.LogDebug("SESSION: Parameter - Calling Session Selector");
+                        iecs.logger.LogDebug("SESSION: Parameter - Calling Session Selector");
 
                         if (parameterLength != 2)
                             return IsoSessionIndication.SESSION_ERROR;
@@ -163,7 +163,7 @@ namespace IEDExplorer
                         callingSessionSelector += buffer[offset++];
                         break;
                     case 52: /* Called Session Selector */
-                        logger.LogDebug("SESSION: Parameter - Called Session Selector");
+                        iecs.logger.LogDebug("SESSION: Parameter - Called Session Selector");
 
                         if (parameterLength != 2)
                             return IsoSessionIndication.SESSION_ERROR;
@@ -172,11 +172,11 @@ namespace IEDExplorer
                         calledSessionSelector += buffer[offset++];
                         break;
                     case 60: /* Data Overflow */
-                        logger.LogDebug("SESSION: Parameter - Data Overflow");
+                        iecs.logger.LogDebug("SESSION: Parameter - Data Overflow");
                         offset += parameterLength;
                         break;
                     case 193: /* User Data */
-                        logger.LogDebug("SESSION: PGI - user data");
+                        iecs.logger.LogDebug("SESSION: PGI - user data");
 
                         /* here we should return - the remaining data is for upper layers ! */
                         /*ByteBuffer_wrap(&session->userData, message->buffer + offset,
@@ -185,10 +185,10 @@ namespace IEDExplorer
                         return IsoSessionIndication.SESSION_OK;
 
                     case 194: /* Extended User Data */
-                        logger.LogDebug("SESSION: PGI - extended user data");
+                        iecs.logger.LogDebug("SESSION: PGI - extended user data");
                         break;
                     default:
-                        logger.LogDebug("SESSION: invalid parameter/PGI");
+                        iecs.logger.LogDebug("SESSION: invalid parameter/PGI");
                         break;
                 }
             }
@@ -396,7 +396,7 @@ namespace IEDExplorer
                         return IsoSessionIndication.SESSION_CONNECT;
                     else
                     {
-                        logger.LogDebug("SESSION: error parsing connect spdu");
+                        iecs.logger.LogDebug("SESSION: error parsing connect spdu");
                         return IsoSessionIndication.SESSION_ERROR;
                     }
                 case 14: /* ACCEPT SPDU */
@@ -406,7 +406,7 @@ namespace IEDExplorer
                         return IsoSessionIndication.SESSION_CONNECT;
                     else
                     {
-                        logger.LogDebug("SESSION: error parsing accept spdu");
+                        iecs.logger.LogDebug("SESSION: error parsing accept spdu");
                         return IsoSessionIndication.SESSION_ERROR;
                     }
                 case 1: /* Give token / data SPDU */
@@ -426,7 +426,7 @@ namespace IEDExplorer
                     return IsoSessionIndication.SESSION_NOT_FINISHED;
 
                 case 9: /* FINISH SPDU */
-                    logger.LogDebug("SESSION: recvd FINISH SPDU");
+                    iecs.logger.LogDebug("SESSION: recvd FINISH SPDU");
 
                     if (length != (messageLength - 2))
                         return IsoSessionIndication.SESSION_ERROR;
@@ -436,7 +436,7 @@ namespace IEDExplorer
                     else
                         return IsoSessionIndication.SESSION_ERROR;
                 case 10: /* DISCONNECT SPDU */
-                    logger.LogDebug("SESSION: recvd DISCONNECT SPDU");
+                    iecs.logger.LogDebug("SESSION: recvd DISCONNECT SPDU");
 
                     if (length != (messageLength - 2))
                         return IsoSessionIndication.SESSION_ERROR;
