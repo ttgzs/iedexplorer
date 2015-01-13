@@ -60,14 +60,14 @@ namespace IEDExplorer
         /// MMS File service state
         /// </summary>
         public FileTransferState fstate = FileTransferState.FILE_NO_ACTION;
-        /// <summary>
+ /*       /// <summary>
         /// OSI Protocol emulation
         /// </summary>
-        public OsiEmul osi = new OsiEmul();
+        public OsiEmul osi = new OsiEmul();*/
         /// <summary>
-        /// OSI Protocol layers (new implementation)
+        /// ISO Protocol layers (new implementation)
         /// </summary>
-        public IsoLayers osi2;
+        public IsoLayers iso;
         /// <summary>
         /// MMS Protocol
         /// </summary>
@@ -105,7 +105,7 @@ namespace IEDExplorer
         {
             DataModel = new Iec61850Model(this);
             CaptureDb = new MMSCaptureDb(this);
-            osi2 = new IsoLayers(this);
+            iso = new IsoLayers(this);
         }
 
         public void NextState()

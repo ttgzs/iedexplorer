@@ -21,7 +21,7 @@ namespace IEDExplorer
 
         private const byte COTP_CODE_CR = 0xe0;
         private const byte COTP_CODE_CC = 0xd0;
-        private const byte COTP_CODE_DT = 0xf0;
+        public const byte COTP_CODE_DT = 0xf0;
 
         private const byte COTP_PCODE_TSIZ = 0xc0;
         private const byte COTP_PCODE_DSAP = 0xc2;

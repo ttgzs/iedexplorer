@@ -187,12 +187,12 @@ namespace IEDExplorer
             conclude = 83,
             cancel = 84
         }
-        
+
         public int ReceiveData(Iec61850State iecs)
         {
             if (iecs == null)
                 return -1;
-            
+
             iecs.logger.LogDebugBuffer("mms.ReceiveData", iecs.msMMS.GetBuffer(), iecs.msMMS.Position, iecs.msMMS.Length - iecs.msMMS.Position);
 
             MMSpdu mymmspdu = null;
@@ -220,7 +220,10 @@ namespace IEDExplorer
                 iecs.logger.LogError("mms.ReceiveData: Parsing Error!");
                 return -1;
             }
-
+            else if (mymmspdu.Initiate_ResponsePDU != null)
+            {
+                ReceiveInitiate(iecs, mymmspdu.Initiate_ResponsePDU);
+            }
             else if (mymmspdu.Confirmed_ResponsePDU != null && mymmspdu.Confirmed_ResponsePDU.Service != null)
             {
                 iecs.logger.LogDebug("mymmspdu.Confirmed_ResponsePDU.Service exists!");
@@ -1068,25 +1071,17 @@ namespace IEDExplorer
             }
         }
 
-        public int ReceiveInitiate(Iec61850State iecs)
+        public int ReceiveInitiate(Iec61850State iecs, Initiate_ResponsePDU initiate_ResponsePDU)
         {
-            MMSpdu mymmspdu = decoder.decode<MMSpdu>(iecs.msMMS);
-
-            if (mymmspdu == null)
-            {
-                iecs.logger.LogError("mms.ReceiveInitiate: Parsing Error!");
-                return -1;
-            }
-
-            if (mymmspdu.Initiate_ResponsePDU != null)
+            if (initiate_ResponsePDU != null)
             {
                 iecs.logger.LogDebug("mymmspdu.Initiate_ResponsePDU exists!");
                 iecs.logger.LogDebug(String.Format("mymmspdu.Initiate_ResponsePDU.NegotiatedMaxServOutstandingCalled: {0}",
-                    mymmspdu.Initiate_ResponsePDU.NegotiatedMaxServOutstandingCalled.Value));
-                //StringBuilder sb = new StringBuilder();
+                    initiate_ResponsePDU.NegotiatedMaxServOutstandingCalled.Value));
+                
                 StringBuilder sb2 = new StringBuilder();
                 int j = 0;
-                foreach (byte b in mymmspdu.Initiate_ResponsePDU.InitResponseDetail.ServicesSupportedCalled.Value.Value)
+                foreach (byte b in initiate_ResponsePDU.InitResponseDetail.ServicesSupportedCalled.Value.Value)
                 {
                     for (int i = 7; i >= 0; i--)
                     {
@@ -1124,7 +1119,7 @@ namespace IEDExplorer
         public int SendIdentify(Iec61850State iecs)
         {
             MMSpdu mymmspdu = new MMSpdu();
-            MemoryStream ostream = new MemoryStream();
+            iecs.msMMSout = new MemoryStream();
 
             Confirmed_RequestPDU crreq = new Confirmed_RequestPDU();
             ConfirmedServiceRequest csrreq = new ConfirmedServiceRequest();
@@ -1140,17 +1135,13 @@ namespace IEDExplorer
 
             mymmspdu.selectConfirmed_RequestPDU(crreq);
 
-            encoder.encode<MMSpdu>(mymmspdu, ostream);
+            encoder.encode<MMSpdu>(mymmspdu, iecs.msMMSout);
 
-            if (ostream.Length == 0)
+            if (iecs.msMMSout.Length == 0)
             {
                 iecs.logger.LogError("mms.SendIdentify: Encoding Error!");
                 return -1;
             }
-
-            iecs.sendBytes = (int)ostream.Length;
-            ostream.Seek(0, SeekOrigin.Begin);
-            ostream.Read(iecs.sendBuffer, IsoTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
 
             this.Send(iecs, mymmspdu);
 
@@ -1160,7 +1151,7 @@ namespace IEDExplorer
         public int SendGetNameListDomain(Iec61850State iecs)
         {
             MMSpdu mymmspdu = new MMSpdu();
-            MemoryStream ostream = new MemoryStream();
+            iecs.msMMSout = new MemoryStream();
 
             Confirmed_RequestPDU crreq = new Confirmed_RequestPDU();
             ConfirmedServiceRequest csrreq = new ConfirmedServiceRequest();
@@ -1179,17 +1170,13 @@ namespace IEDExplorer
 
             mymmspdu.selectConfirmed_RequestPDU(crreq);
 
-            encoder.encode<MMSpdu>(mymmspdu, ostream);
+            encoder.encode<MMSpdu>(mymmspdu, iecs.msMMSout);
 
-            if (ostream.Length == 0)
+            if (iecs.msMMSout.Length == 0)
             {
                 iecs.logger.LogError("mms.SendGetNameListDomain: Encoding Error!");
                 return -1;
             }
-
-            iecs.sendBytes = (int)ostream.Length;
-            ostream.Seek(0, SeekOrigin.Begin);
-            ostream.Read(iecs.sendBuffer, IsoTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
 
             this.Send(iecs, mymmspdu);
 
@@ -1199,7 +1186,7 @@ namespace IEDExplorer
         public int SendGetNameListVariables(Iec61850State iecs)
         {
             MMSpdu mymmspdu = new MMSpdu();
-            MemoryStream ostream = new MemoryStream();
+            iecs.msMMSout = new MemoryStream();
 
             Confirmed_RequestPDU crreq = new Confirmed_RequestPDU();
             ConfirmedServiceRequest csrreq = new ConfirmedServiceRequest();
@@ -1219,17 +1206,13 @@ namespace IEDExplorer
 
             mymmspdu.selectConfirmed_RequestPDU(crreq);
 
-            encoder.encode<MMSpdu>(mymmspdu, ostream);
+            encoder.encode<MMSpdu>(mymmspdu, iecs.msMMSout);
 
-            if (ostream.Length == 0)
+            if (iecs.msMMSout.Length == 0)
             {
                 iecs.logger.LogError("mms.SendGetNameListVariables: Encoding Error!");
                 return -1;
             }
-
-            iecs.sendBytes = (int)ostream.Length;
-            ostream.Seek(0, SeekOrigin.Begin);
-            ostream.Read(iecs.sendBuffer, IsoTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
 
             this.Send(iecs, mymmspdu);
 
@@ -1239,7 +1222,7 @@ namespace IEDExplorer
         public int SendGetNameListNamedVariableList(Iec61850State iecs)
         {
             MMSpdu mymmspdu = new MMSpdu();
-            MemoryStream ostream = new MemoryStream();
+            iecs.msMMSout = new MemoryStream();
 
             Confirmed_RequestPDU crreq = new Confirmed_RequestPDU();
             ConfirmedServiceRequest csrreq = new ConfirmedServiceRequest();
@@ -1259,17 +1242,13 @@ namespace IEDExplorer
 
             mymmspdu.selectConfirmed_RequestPDU(crreq);
 
-            encoder.encode<MMSpdu>(mymmspdu, ostream);
+            encoder.encode<MMSpdu>(mymmspdu, iecs.msMMSout);
 
-            if (ostream.Length == 0)
+            if (iecs.msMMSout.Length == 0)
             {
                 iecs.logger.LogError("mms.SendGetNameListVariables: Encoding Error!");
                 return -1;
             }
-
-            iecs.sendBytes = (int)ostream.Length;
-            ostream.Seek(0, SeekOrigin.Begin);
-            ostream.Read(iecs.sendBuffer, IsoTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
 
             this.Send(iecs, mymmspdu);
 
@@ -1279,7 +1258,7 @@ namespace IEDExplorer
         public int SendGetVariableAccessAttributes(Iec61850State iecs)
         {
             MMSpdu mymmspdu = new MMSpdu();
-            MemoryStream ostream = new MemoryStream();
+            iecs.msMMSout = new MemoryStream();
 
             Confirmed_RequestPDU crreq = new Confirmed_RequestPDU();
             ConfirmedServiceRequest csrreq = new ConfirmedServiceRequest();
@@ -1303,17 +1282,13 @@ namespace IEDExplorer
 
             mymmspdu.selectConfirmed_RequestPDU(crreq);
 
-            encoder.encode<MMSpdu>(mymmspdu, ostream);
+            encoder.encode<MMSpdu>(mymmspdu, iecs.msMMSout);
 
-            if (ostream.Length == 0)
+            if (iecs.msMMSout.Length == 0)
             {
                 iecs.logger.LogError("mms.SendGetVariableAccessAttributes: Encoding Error!");
                 return -1;
             }
-
-            iecs.sendBytes = (int)ostream.Length;
-            ostream.Seek(0, SeekOrigin.Begin);
-            ostream.Read(iecs.sendBuffer, IsoTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
 
             this.Send(iecs, mymmspdu);
 
@@ -1323,7 +1298,7 @@ namespace IEDExplorer
         public int SendGetNamedVariableListAttributes(Iec61850State iecs)
         {
             MMSpdu mymmspdu = new MMSpdu();
-            MemoryStream ostream = new MemoryStream();
+            iecs.msMMSout = new MemoryStream();
 
             Confirmed_RequestPDU crreq = new Confirmed_RequestPDU();
             ConfirmedServiceRequest csrreq = new ConfirmedServiceRequest();
@@ -1354,17 +1329,13 @@ namespace IEDExplorer
 
             mymmspdu.selectConfirmed_RequestPDU(crreq);
 
-            encoder.encode<MMSpdu>(mymmspdu, ostream);
+            encoder.encode<MMSpdu>(mymmspdu, iecs.msMMSout);
 
-            if (ostream.Length == 0)
+            if (iecs.msMMSout.Length == 0)
             {
                 iecs.logger.LogError("mms.SendGetNamedVariableListAttributes: Encoding Error!");
                 return -1;
             }
-
-            iecs.sendBytes = (int)ostream.Length;
-            ostream.Seek(0, SeekOrigin.Begin);
-            ostream.Read(iecs.sendBuffer, IsoTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
 
             this.Send(iecs, mymmspdu);
 
@@ -1374,7 +1345,7 @@ namespace IEDExplorer
         public int SendRead(Iec61850State iecs, WriteQueueElement el)
         {
             MMSpdu mymmspdu = new MMSpdu();
-            MemoryStream ostream = new MemoryStream();
+            iecs.msMMSout = new MemoryStream();
 
             Confirmed_RequestPDU crreq = new Confirmed_RequestPDU();
             ConfirmedServiceRequest csrreq = new ConfirmedServiceRequest();
@@ -1415,17 +1386,13 @@ namespace IEDExplorer
 
             mymmspdu.selectConfirmed_RequestPDU(crreq);
 
-            encoder.encode<MMSpdu>(mymmspdu, ostream);
+            encoder.encode<MMSpdu>(mymmspdu, iecs.msMMSout);
 
-            if (ostream.Length == 0)
+            if (iecs.msMMSout.Length == 0)
             {
                 iecs.logger.LogError("mms.SendRead: Encoding Error!");
                 return -1;
             }
-
-            iecs.sendBytes = (int)ostream.Length;
-            ostream.Seek(0, SeekOrigin.Begin);
-            ostream.Read(iecs.sendBuffer, IsoTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
 
             this.Send(iecs, mymmspdu);
 
@@ -1435,7 +1402,7 @@ namespace IEDExplorer
         public int SendWrite(Iec61850State iecs, WriteQueueElement el)
         {
             MMSpdu mymmspdu = new MMSpdu();
-            MemoryStream ostream = new MemoryStream();
+            iecs.msMMSout = new MemoryStream();
 
             Confirmed_RequestPDU crreq = new Confirmed_RequestPDU();
             ConfirmedServiceRequest csrreq = new ConfirmedServiceRequest();
@@ -1504,17 +1471,13 @@ namespace IEDExplorer
 
             mymmspdu.selectConfirmed_RequestPDU(crreq);
 
-            encoder.encode<MMSpdu>(mymmspdu, ostream);
+            encoder.encode<MMSpdu>(mymmspdu, iecs.msMMSout);
 
-            if (ostream.Length == 0)
+            if (iecs.msMMSout.Length == 0)
             {
                 iecs.logger.LogError("mms.SendWrite: Encoding Error!");
                 return -1;
             }
-
-            iecs.sendBytes = (int)ostream.Length;
-            ostream.Seek(0, SeekOrigin.Begin);
-            ostream.Read(iecs.sendBuffer, IsoTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
 
             this.Send(iecs, mymmspdu);
             return 0;
@@ -1523,7 +1486,7 @@ namespace IEDExplorer
         public int SendWriteAsStructure(Iec61850State iecs, WriteQueueElement el)
         {
             MMSpdu mymmspdu = new MMSpdu();
-            MemoryStream ostream = new MemoryStream();
+            iecs.msMMSout = new MemoryStream();
 
             Confirmed_RequestPDU crreq = new Confirmed_RequestPDU();
             ConfirmedServiceRequest csrreq = new ConfirmedServiceRequest();
@@ -1549,7 +1512,7 @@ namespace IEDExplorer
 
             dat_Seq.selectStructure(datList_Struct);
             datList_Seq.Add(dat_Seq);
-            
+
             wreq.VariableAccessSpecification = new VariableAccessSpecification();
             wreq.VariableAccessSpecification.selectListOfVariable(vasl);
             wreq.ListOfData = datList_Seq;
@@ -1562,17 +1525,13 @@ namespace IEDExplorer
 
             mymmspdu.selectConfirmed_RequestPDU(crreq);
 
-            encoder.encode<MMSpdu>(mymmspdu, ostream);
+            encoder.encode<MMSpdu>(mymmspdu, iecs.msMMSout);
 
-            if (ostream.Length == 0)
+            if (iecs.msMMSout.Length == 0)
             {
                 iecs.logger.LogError("mms.SendWriteAsStructure: Encoding Error!");
                 return -1;
             }
-
-            iecs.sendBytes = (int)ostream.Length;
-            ostream.Seek(0, SeekOrigin.Begin);
-            ostream.Read(iecs.sendBuffer, IsoTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
 
             this.Send(iecs, mymmspdu);
             return 0;
@@ -1626,7 +1585,7 @@ namespace IEDExplorer
         public int SendDefineNVL(Iec61850State iecs, WriteQueueElement el)
         {
             MMSpdu mymmspdu = new MMSpdu();
-            MemoryStream ostream = new MemoryStream();
+            iecs.msMMSout = new MemoryStream();
 
             Confirmed_RequestPDU crreq = new Confirmed_RequestPDU();
             ConfirmedServiceRequest csrreq = new ConfirmedServiceRequest();
@@ -1663,17 +1622,13 @@ namespace IEDExplorer
 
             mymmspdu.selectConfirmed_RequestPDU(crreq);
 
-            encoder.encode<MMSpdu>(mymmspdu, ostream);
+            encoder.encode<MMSpdu>(mymmspdu, iecs.msMMSout);
 
-            if (ostream.Length == 0)
+            if (iecs.msMMSout.Length == 0)
             {
                 iecs.logger.LogError("mms.SendDefineNVL: Encoding Error!");
                 return -1;
             }
-
-            iecs.sendBytes = (int)ostream.Length;
-            ostream.Seek(0, SeekOrigin.Begin);
-            ostream.Read(iecs.sendBuffer, IsoTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
 
             this.Send(iecs, mymmspdu);
             return 0;
@@ -1682,7 +1637,7 @@ namespace IEDExplorer
         public int SendDeleteNVL(Iec61850State iecs, WriteQueueElement el)
         {
             MMSpdu mymmspdu = new MMSpdu();
-            MemoryStream ostream = new MemoryStream();
+            iecs.msMMSout = new MemoryStream();
 
             Confirmed_RequestPDU crreq = new Confirmed_RequestPDU();
             ConfirmedServiceRequest csrreq = new ConfirmedServiceRequest();
@@ -1711,17 +1666,13 @@ namespace IEDExplorer
 
             mymmspdu.selectConfirmed_RequestPDU(crreq);
 
-            encoder.encode<MMSpdu>(mymmspdu, ostream);
+            encoder.encode<MMSpdu>(mymmspdu, iecs.msMMSout);
 
-            if (ostream.Length == 0)
+            if (iecs.msMMSout.Length == 0)
             {
                 iecs.logger.LogError("mms.SendDeleteNVL: Encoding Error!");
                 return -1;
             }
-
-            iecs.sendBytes = (int)ostream.Length;
-            ostream.Seek(0, SeekOrigin.Begin);
-            ostream.Read(iecs.sendBuffer, IsoTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
 
             this.Send(iecs, mymmspdu);
             return 0;
@@ -1730,7 +1681,7 @@ namespace IEDExplorer
         public int SendFileDirectory(Iec61850State iecs, WriteQueueElement el)
         {
             MMSpdu mymmspdu = new MMSpdu();
-            MemoryStream ostream = new MemoryStream();
+            iecs.msMMSout = new MemoryStream();
 
             Confirmed_RequestPDU crreq = new Confirmed_RequestPDU();
             ConfirmedServiceRequest csrreq = new ConfirmedServiceRequest();
@@ -1763,17 +1714,13 @@ namespace IEDExplorer
 
             mymmspdu.selectConfirmed_RequestPDU(crreq);
 
-            encoder.encode<MMSpdu>(mymmspdu, ostream);
+            encoder.encode<MMSpdu>(mymmspdu, iecs.msMMSout);
 
-            if (ostream.Length == 0)
+            if (iecs.msMMSout.Length == 0)
             {
                 iecs.logger.LogError("mms.SendFileDirectory: Encoding Error!");
                 return -1;
             }
-
-            iecs.sendBytes = (int)ostream.Length;
-            ostream.Seek(0, SeekOrigin.Begin);
-            ostream.Read(iecs.sendBuffer, IsoTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
 
             this.Send(iecs, mymmspdu);
             return 0;
@@ -1782,7 +1729,7 @@ namespace IEDExplorer
         public int SendFileOpen(Iec61850State iecs, WriteQueueElement el)
         {
             MMSpdu mymmspdu = new MMSpdu();
-            MemoryStream ostream = new MemoryStream();
+            iecs.msMMSout = new MemoryStream();
 
             Confirmed_RequestPDU crreq = new Confirmed_RequestPDU();
             ConfirmedServiceRequest csrreq = new ConfirmedServiceRequest();
@@ -1810,17 +1757,13 @@ namespace IEDExplorer
 
             mymmspdu.selectConfirmed_RequestPDU(crreq);
 
-            encoder.encode<MMSpdu>(mymmspdu, ostream);
+            encoder.encode<MMSpdu>(mymmspdu, iecs.msMMSout);
 
-            if (ostream.Length == 0)
+            if (iecs.msMMSout.Length == 0)
             {
                 iecs.logger.LogError("mms.SendFileOpen: Encoding Error!");
                 return -1;
             }
-
-            iecs.sendBytes = (int)ostream.Length;
-            ostream.Seek(0, SeekOrigin.Begin);
-            ostream.Read(iecs.sendBuffer, IsoTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
 
             this.Send(iecs, mymmspdu);
             return 0;
@@ -1829,7 +1772,7 @@ namespace IEDExplorer
         public int SendFileRead(Iec61850State iecs, WriteQueueElement el)
         {
             MMSpdu mymmspdu = new MMSpdu();
-            MemoryStream ostream = new MemoryStream();
+            iecs.msMMSout = new MemoryStream();
 
             Confirmed_RequestPDU crreq = new Confirmed_RequestPDU();
             ConfirmedServiceRequest csrreq = new ConfirmedServiceRequest();
@@ -1852,17 +1795,13 @@ namespace IEDExplorer
 
             mymmspdu.selectConfirmed_RequestPDU(crreq);
 
-            encoder.encode<MMSpdu>(mymmspdu, ostream);
+            encoder.encode<MMSpdu>(mymmspdu, iecs.msMMSout);
 
-            if (ostream.Length == 0)
+            if (iecs.msMMSout.Length == 0)
             {
                 iecs.logger.LogError("mms.SendFileRead: Encoding Error!");
                 return -1;
             }
-
-            iecs.sendBytes = (int)ostream.Length;
-            ostream.Seek(0, SeekOrigin.Begin);
-            ostream.Read(iecs.sendBuffer, IsoTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
 
             this.Send(iecs, mymmspdu);
             return 0;
@@ -1871,7 +1810,7 @@ namespace IEDExplorer
         public int SendFileClose(Iec61850State iecs, WriteQueueElement el)
         {
             MMSpdu mymmspdu = new MMSpdu();
-            MemoryStream ostream = new MemoryStream();
+            iecs.msMMSout = new MemoryStream();
 
             Confirmed_RequestPDU crreq = new Confirmed_RequestPDU();
             ConfirmedServiceRequest csrreq = new ConfirmedServiceRequest();
@@ -1895,17 +1834,13 @@ namespace IEDExplorer
 
             mymmspdu.selectConfirmed_RequestPDU(crreq);
 
-            encoder.encode<MMSpdu>(mymmspdu, ostream);
+            encoder.encode<MMSpdu>(mymmspdu, iecs.msMMSout);
 
-            if (ostream.Length == 0)
+            if (iecs.msMMSout.Length == 0)
             {
                 iecs.logger.LogError("mms.SendCloseFile: Encoding Error!");
                 return -1;
             }
-
-            iecs.sendBytes = (int)ostream.Length;
-            ostream.Seek(0, SeekOrigin.Begin);
-            ostream.Read(iecs.sendBuffer, IsoTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes);
 
             this.Send(iecs, mymmspdu);
             return 0;
@@ -1923,7 +1858,7 @@ namespace IEDExplorer
             byte[] ppc = { 0xf1, 0x00 };
             idet.ProposedParameterCBB = new ParameterSupportOptions(new BitString(ppc, 5));
 
-            byte[] ssc = { 0xee, 0x1c, 0x00, 0x00, 0x04, 0x08, 0x00, 0x00, 0x79, 0xef, 0x18};
+            byte[] ssc = { 0xee, 0x1c, 0x00, 0x00, 0x04, 0x08, 0x00, 0x00, 0x79, 0xef, 0x18 };
             idet.ServicesSupportedCalling = new MMS_ASN1_Model.ServiceSupportOptions(new BitString(ssc, 3));
 
             ireq.InitRequestDetail = idet;
@@ -1943,11 +1878,11 @@ namespace IEDExplorer
                 return -1;
             }
 
-            this.Send2(iecs, mymmspdu);
+            this.Send(iecs, mymmspdu);
             return 0;
         }
 
-        private void Send2(Iec61850State iecs, MMSpdu pdu)
+        private void Send(Iec61850State iecs, MMSpdu pdu)
         {
             if (iecs.CaptureDb.CaptureActive)
             {
@@ -1958,22 +1893,10 @@ namespace IEDExplorer
                 cap.MMSPdu = pdu;
                 iecs.CaptureDb.AddPacket(cap);
             }
-            iecs.osi2.Send(iecs);
+            iecs.iso.Send(iecs);
         }
 
-        private void Send(Iec61850State iecs, MMSpdu pdu)
-        {
-            if (iecs.CaptureDb.CaptureActive)
-            {
-                MMSCapture cap;
-                cap = new MMSCapture(iecs.sendBuffer, IsoTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, iecs.sendBytes + IsoTpkt.TPKT_SIZEOF + OsiEmul.COTP_HDR_DT_SIZEOF, MMSCapture.CaptureDirection.Out);
-                cap.MMSPdu = pdu;
-                iecs.CaptureDb.AddPacket(cap);
-            }
-            iecs.osi.Send(iecs);
-        }
-
-        void AddIecAddress(Iec61850State iecs, string addr)
+         void AddIecAddress(Iec61850State iecs, string addr)
         {
             string[] parts = addr.Split(new char[] { '$' });
             NodeBase curld = iecs.DataModel.ied.GetActualChildNode();

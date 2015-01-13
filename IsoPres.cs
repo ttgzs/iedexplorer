@@ -15,6 +15,8 @@ namespace IEDExplorer
         int nextPayload_bufferIndex;
         int nextPayload_size;
 
+        public int UserDataIndex { get { return nextPayload_bufferIndex; } }
+
         Iec61850State iecs;
 
         public IsoPres(Iec61850State iec)
@@ -426,11 +428,18 @@ namespace IEDExplorer
             return bufPos;
         }
 
-        public int parseAcceptMessage(byte[] buffer, int length)
+        /// <summary>
+        /// Parses Iso presentation accept message
+        /// </summary>
+        /// <param name="buffer">Data buffer</param>
+        /// <param name="offset">Index of the first message byte</param>
+        /// <param name="length">Length of the buffer from offset to end</param>
+        /// <returns>Index to the user data (payload) in the absolute numbering (from the buffer index 0)</returns>
+        public int parseAcceptMessage(byte[] buffer, int offset, int length)
         {
-            int maxBufPos = length;
+            int maxBufPos = offset + length;
 
-            int bufPos = 0;
+            int bufPos = offset;
 
             byte cpTag = buffer[bufPos++];
 
@@ -478,7 +487,7 @@ namespace IEDExplorer
                 }
             }
 
-            return 1;
+            return bufPos;
         }
 
         public void init()
@@ -486,9 +495,9 @@ namespace IEDExplorer
 
         }
 
-        public int createUserData(byte[] buffer, byte[] payload, int payloadLength)
+        public int createUserData(byte[] buffer, int offset, int payloadLength)
         {
-            int bufPos = 0;
+            int bufPos = offset;
 
             int userDataLengthFieldSize = IsoUtil.BerEncoder_determineLengthSize((uint)payloadLength);
 
@@ -511,8 +520,8 @@ namespace IEDExplorer
             writeBuffer->length = bufPos + payloadLength;
             writeBuffer->nextPart = payload;*/
 
-            Array.Copy(payload, 0, buffer, bufPos, payloadLength);
-            return bufPos + payloadLength;
+            //Array.Copy(payload, 0, buffer, bufPos, payloadLength);
+            return bufPos;
         }
 
         public int createUserDataACSE(byte[] buffer, byte[] payload, int payloadLength)
@@ -520,7 +529,7 @@ namespace IEDExplorer
             int bufPos = 0;
 
             int userDataLengthFieldSize = IsoUtil.BerEncoder_determineLengthSize((uint)payloadLength);
-            ;
+ 
             int pdvListLength = payloadLength + (userDataLengthFieldSize + 4);
 
             int pdvListLengthFieldSize = IsoUtil.BerEncoder_determineLengthSize((uint)pdvListLength);
@@ -544,6 +553,13 @@ namespace IEDExplorer
             return bufPos + payloadLength;
         }
 
+        /// <summary>
+        /// Parses Iso presentation user data message
+        /// </summary>
+        /// <param name="buffer">Data buffer</param>
+        /// <param name="offset">Index of the first message byte</param>
+        /// <param name="length">Length of the buffer from offset to end</param>
+        /// <returns>Index to the user data (payload) in the absolute numbering (from the buffer index 0)</returns>
         public int parseUserData(byte[] buffer, int offset, int length)
         {
             int bufPos = offset;
@@ -578,13 +594,16 @@ namespace IEDExplorer
 
             bufPos = IsoUtil.BerDecoder_decodeLength(buffer, ref userDataLength, bufPos, length);
 
-            //ByteBuffer_wrap(&(nextPayload), buffer + bufPos, userDataLength, userDataLength);
-            // ??????
-            // data
-            return bufPos - offset;
-            //return 1;
+            return bufPos;
         }
 
+        /// <summary>
+        /// Parses Iso presentation connect message
+        /// </summary>
+        /// <param name="buffer">Data buffer</param>
+        /// <param name="offset">Index of the first message byte</param>
+        /// <param name="length">Length of the buffer from offset to end</param>
+        /// <returns>Index to the user data (payload) in the absolute numbering (from the buffer index 0)</returns>
         public int parseConnect(byte[] buffer, int offset, int length)
         {
             int maxBufPos = offset + length;

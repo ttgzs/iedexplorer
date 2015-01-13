@@ -89,7 +89,7 @@ namespace IEDExplorer
             if (verbosity == Severity.Debug)
             {
                 string s = message + " (Len=" + logLength + ")>";
-                for (long i = logFrom; i < logLength; i++)
+                for (long i = logFrom; i < logFrom + logLength; i++)
                     s += String.Format("{0:x2} ", buffer[i]);
                 Log(Severity.Debug, s);
             }

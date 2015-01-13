@@ -198,14 +198,11 @@ namespace IEDExplorer
 
         byte[] dataSpdu = { 0x01, 0x00, 0x01, 0x00 };
 
-        /*void
-        IsoSession_createDataSpdu(IsoSession* session, BufferChain buffer, BufferChain payload)
+        public int createDataSpdu(byte[] buffer, int offset)
         {
-            buffer->buffer = (byte*) dataSpdu;
-            buffer->partLength = 4;
-            buffer->length = 4 + payload->length;
-            buffer->nextPart = payload;
-        }*/
+            dataSpdu.CopyTo(buffer, offset);
+            return offset + 4;
+        }
 
         int encodeConnectAcceptItem(byte[] buf, int offset, byte options)
         {

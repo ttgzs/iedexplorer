@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Net;
 
 namespace IEDExplorer
 {
@@ -10,7 +11,6 @@ namespace IEDExplorer
     {
         // ISO layers TPKT, COTP, SESS, PRES, ACSE coordinations
         Iec61850State iecs;
-        Logger logger;
         /// <summary>
         /// OSI Protocol ACSE layer (new implementation)
         /// </summary>
@@ -54,9 +54,8 @@ namespace IEDExplorer
             byte[] b1 = new byte[1024];
             byte[] b2 = new byte[1024];
             IsoConnectionParameters cp = new IsoConnectionParameters();
-            bool dbg = true;    // local debug enable var
+            bool dbg = false;    // local debug enable var
 
-            //iecs.mms.SendInitiate(iecs);
             // MMS Initiate already encoded in iecs.msMMSout
             if (dbg) iecs.logger.LogDebugBuffer("Send MMS", iecs.msMMSout.GetBuffer(), 0, iecs.msMMSout.Length);
 
@@ -77,6 +76,67 @@ namespace IEDExplorer
 
         int SendData(Iec61850State iecs)
         {
+            //fastSend(iecs);
+            layeredSend(iecs);
+
+            return 0;
+        }
+
+        int layeredSend(Iec61850State iecs)
+        {
+            // Make COTP data telegramm directly
+            // MMS already encoded in iecs.msMMSout
+            iecs.sendBytes = (int)iecs.msMMSout.Length;
+
+            int spos = isoSess.createDataSpdu(iecs.sendBuffer, IsoCotp.COTP_HDR_DT_SIZEOF + IsoTpkt.TPKT_SIZEOF);
+
+            int dpos = isoPres.createUserData(iecs.sendBuffer, spos, iecs.sendBytes);
+
+            iecs.msMMSout.Seek(0, SeekOrigin.Begin);
+            iecs.msMMSout.Read(iecs.sendBuffer, dpos, iecs.sendBytes);
+
+            iecs.sendBytes += dpos - IsoCotp.COTP_HDR_DT_SIZEOF - IsoTpkt.TPKT_SIZEOF;
+
+            isoCotp.Send(iecs);
+            return 0;
+        }
+
+        int fastSend(Iec61850State iecs)
+        {
+            // Make COTP data telegramm directly
+            int offs = IsoTpkt.TPKT_SIZEOF;
+            // MMS already encoded in iecs.msMMSout
+            iecs.sendBytes = (int)iecs.msMMSout.Length;
+
+            iecs.sendBuffer[offs++] = 0x02; // cotp.hdrlen
+            iecs.sendBuffer[offs++] = IsoCotp.COTP_CODE_DT; // code
+            iecs.sendBuffer[offs++] = 0x80; // number "complete"
+            iecs.sendBuffer[offs++] = 0x01; // giveTokensPDU.type
+            iecs.sendBuffer[offs++] = 0x00; // giveTokensPDU.hdrlen
+            iecs.sendBuffer[offs++] = 0x01; // dataTransferPDU.type
+            iecs.sendBuffer[offs++] = 0x00; // dataTransferPDU.hdrlen
+
+            iecs.sendBuffer[offs++] = 0x61; // pres.dtpdu_tag
+            iecs.sendBuffer[offs++] = 0x82; // pres.dtpdu_len_code
+            Array.Copy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)(iecs.sendBytes + 15 - 4))), 0, iecs.sendBuffer, offs, 2); // pres.dtpdu_len
+            offs += 2;
+            iecs.sendBuffer[offs++] = 0x30; // pres.sequ_tag
+            iecs.sendBuffer[offs++] = 0x82; // pres.sequ_len_code
+            Array.Copy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)(iecs.sendBytes + 15 - 8))), 0, iecs.sendBuffer, offs, 2); // pres.sequ_len
+            offs += 2;
+            iecs.sendBuffer[offs++] = 0x02; // pres.context_tag
+            iecs.sendBuffer[offs++] = 0x01; // pres.context_len
+            iecs.sendBuffer[offs++] = 0x03; // pres.context_val
+            iecs.sendBuffer[offs++] = 0xa0; // pres.data_tag
+            iecs.sendBuffer[offs++] = 0x82; // pres.data_len_code
+            Array.Copy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)(iecs.sendBytes))), 0, iecs.sendBuffer, offs, 2); // pres.sequ_len
+            offs += 2;
+
+            iecs.msMMSout.Seek(0, SeekOrigin.Begin);
+            iecs.msMMSout.Read(iecs.sendBuffer, offs, iecs.sendBytes);
+
+            iecs.sendBytes += offs;
+            IsoTpkt.Send(iecs);
             return 0;
         }
 
@@ -86,6 +146,7 @@ namespace IEDExplorer
             IsoCotp.CotpReceiveResult res = isoCotp.Receive(iecs);
             byte[] buffer = iecs.msMMS.GetBuffer();
             long len = iecs.msMMS.Length;
+            iecs.logger.LogDebugBuffer("Rec buffer", buffer, 0, len);
             if (res == IsoCotp.CotpReceiveResult.DATA)
             {
                 // Incoming data
@@ -96,7 +157,8 @@ namespace IEDExplorer
                     int dataPos = isoPres.parseUserData(buffer, (int)isoSess.UserDataIndex, (int)(len - isoSess.UserDataIndex));
                     if (dataPos > 0)
                     {
-                        iecs.msMMS.Seek(isoSess.UserDataIndex + dataPos, SeekOrigin.Begin);
+                        // Adjust the stream position to the MMS message start
+                        iecs.msMMS.Seek(dataPos, SeekOrigin.Begin);
                         iecs.mms.ReceiveData(iecs);
                     }
                     else
@@ -107,14 +169,17 @@ namespace IEDExplorer
                 else if (sess == IsoSess.IsoSessionIndication.SESSION_CONNECT)
                 {
                     iecs.ostate = IsoProtocolState.OSI_STATE_SHUTDOWN;
-                    int dataPosPres = isoPres.parseConnect(buffer, (int)isoSess.UserDataIndex, (int)(len - isoSess.UserDataIndex));
+                    int dataPosPres = isoPres.parseAcceptMessage(buffer, isoSess.UserDataIndex, (int)(len - isoSess.UserDataIndex));
                     if (dataPosPres > 0)
                     {
-                        isoAcse.parseMessage(buffer, (int)(isoSess.UserDataIndex + dataPosPres), (int)(len - (isoSess.UserDataIndex + dataPosPres)));
-
-                        iecs.msMMS.Seek(isoSess.UserDataIndex + dataPosPres, SeekOrigin.Begin);
-                        iecs.mms.ReceiveData(iecs);
-                        iecs.ostate = IsoProtocolState.OSI_CONNECTED;
+                        IsoAcse.AcseIndication acseRes = isoAcse.parseMessage(buffer, isoPres.UserDataIndex, (int)(len - isoPres.UserDataIndex));
+                        if (acseRes == IsoAcse.AcseIndication.ACSE_ASSOCIATE)
+                        {
+                            iecs.msMMS.Seek(isoAcse.UserDataIndex, SeekOrigin.Begin);
+                            iecs.logger.LogDebug("Read at " + isoAcse.UserDataIndex);
+                            iecs.mms.ReceiveData(iecs);
+                            iecs.ostate = IsoProtocolState.OSI_CONNECTED;
+                        }
                     }
                 }
                 else

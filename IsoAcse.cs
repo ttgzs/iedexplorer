@@ -51,6 +51,8 @@ namespace IEDExplorer
         AcseAuthenticationParameter authentication;
         string password;
 
+        public int UserDataIndex { get { return userDataBufferIndex; } }
+
         const int ACSE_RESULT_ACCEPT = 0;
         const int ACSE_RESULT_REJECT_PERMANENT = 1;
         const int ACSE_RESULT_REJECT_TRANSIENT = 2;

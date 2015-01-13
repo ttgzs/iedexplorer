@@ -556,7 +556,6 @@
     <Compile Include="IsoProtocolState.cs" />
     <Compile Include="scsm_MMS_TypeEnum.cs" />
     <Compile Include="TcpProtocolState.cs" />
-    <Compile Include="OsiEmul.cs" />
     <Compile Include="TcpState.cs" />
     <Compile Include="IsoTpktState.cs" />
     <Compile Include="Iec61850StateEnum.cs" />
