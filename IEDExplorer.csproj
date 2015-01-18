@@ -92,6 +92,12 @@
       <DependentUpon>CommandDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="CommandParams.cs" />
+    <Compile Include="Dialogs\ConnParamDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ConnParamDialog.Designer.cs">
+      <DependentUpon>ConnParamDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Docking\AutoHideStripBase.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -975,6 +981,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\CommandDialog.resx">
       <DependentUpon>CommandDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\ConnParamDialog.resx">
+      <DependentUpon>ConnParamDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Docking\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
