@@ -192,5 +192,11 @@ namespace IEDExplorer.Views
             //ad.Close();
         }
 
+        private void toolStripButtonConnParam_Click(object sender, EventArgs e)
+        {
+            ConnParamDialog cd = new ConnParamDialog(new IsoConnectionParameters());
+            cd.Show();
+        }
+
     }
 }

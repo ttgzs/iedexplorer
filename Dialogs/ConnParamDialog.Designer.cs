@@ -32,6 +32,10 @@
             this.comboBoxIED = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.comboBoxRemoteTSel = new System.Windows.Forms.ComboBox();
+            this.label16 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.textBoxPassword = new System.Windows.Forms.TextBox();
             this.radioButtonPassword = new System.Windows.Forms.RadioButton();
             this.radioButtonNone = new System.Windows.Forms.RadioButton();
             this.checkBoxAuth = new System.Windows.Forms.CheckBox();
@@ -46,7 +50,7 @@
             this.label14 = new System.Windows.Forms.Label();
             this.textBoxLocalAPID = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.textBoxRemoteTSel = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.textBoxRemoteSSel = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
@@ -61,11 +65,9 @@
             this.textBoxIP = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.textBoxName = new System.Windows.Forms.TextBox();
-            this.label15 = new System.Windows.Forms.Label();
-            this.textBoxPassword = new System.Windows.Forms.TextBox();
-            this.label16 = new System.Windows.Forms.Label();
             this.buttonOK = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
+            this.comboBoxLocalTSel = new System.Windows.Forms.ComboBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -88,6 +90,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.comboBoxLocalTSel);
+            this.groupBox1.Controls.Add(this.comboBoxRemoteTSel);
             this.groupBox1.Controls.Add(this.label16);
             this.groupBox1.Controls.Add(this.label15);
             this.groupBox1.Controls.Add(this.textBoxPassword);
@@ -105,7 +109,7 @@
             this.groupBox1.Controls.Add(this.label14);
             this.groupBox1.Controls.Add(this.textBoxLocalAPID);
             this.groupBox1.Controls.Add(this.label9);
-            this.groupBox1.Controls.Add(this.textBox1);
+            this.groupBox1.Controls.Add(this.textBoxRemoteTSel);
             this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.textBoxRemoteSSel);
             this.groupBox1.Controls.Add(this.label7);
@@ -126,6 +130,46 @@
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "IED";
+            // 
+            // comboBoxRemoteTSel
+            // 
+            this.comboBoxRemoteTSel.FormattingEnabled = true;
+            this.comboBoxRemoteTSel.Items.AddRange(new object[] {
+            "1 octet",
+            "2 octets",
+            "3 octets",
+            "4 octets"});
+            this.comboBoxRemoteTSel.Location = new System.Drawing.Point(362, 206);
+            this.comboBoxRemoteTSel.Name = "comboBoxRemoteTSel";
+            this.comboBoxRemoteTSel.Size = new System.Drawing.Size(62, 21);
+            this.comboBoxRemoteTSel.TabIndex = 34;
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(9, 388);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(113, 13);
+            this.label16.TabIndex = 33;
+            this.label16.Text = "Authentication method";
+            this.label16.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(44, 412);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(78, 13);
+            this.label15.TabIndex = 32;
+            this.label15.Text = "Auth Password";
+            this.label15.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // textBoxPassword
+            // 
+            this.textBoxPassword.Location = new System.Drawing.Point(136, 409);
+            this.textBoxPassword.Name = "textBoxPassword";
+            this.textBoxPassword.Size = new System.Drawing.Size(288, 20);
+            this.textBoxPassword.TabIndex = 31;
             // 
             // radioButtonPassword
             // 
@@ -174,7 +218,7 @@
             // 
             this.textBoxLocalTSel.Location = new System.Drawing.Point(136, 337);
             this.textBoxLocalTSel.Name = "textBoxLocalTSel";
-            this.textBoxLocalTSel.Size = new System.Drawing.Size(288, 20);
+            this.textBoxLocalTSel.Size = new System.Drawing.Size(220, 20);
             this.textBoxLocalTSel.TabIndex = 26;
             // 
             // label11
@@ -255,12 +299,12 @@
             this.label9.Text = "Remote T Selector";
             this.label9.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
-            // textBox1
+            // textBoxRemoteTSel
             // 
-            this.textBox1.Location = new System.Drawing.Point(136, 206);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(288, 20);
-            this.textBox1.TabIndex = 16;
+            this.textBoxRemoteTSel.Location = new System.Drawing.Point(136, 206);
+            this.textBoxRemoteTSel.Name = "textBoxRemoteTSel";
+            this.textBoxRemoteTSel.Size = new System.Drawing.Size(220, 20);
+            this.textBoxRemoteTSel.TabIndex = 16;
             // 
             // label8
             // 
@@ -381,33 +425,6 @@
             this.textBoxName.Size = new System.Drawing.Size(288, 20);
             this.textBoxName.TabIndex = 0;
             // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(44, 412);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(78, 13);
-            this.label15.TabIndex = 32;
-            this.label15.Text = "Auth Password";
-            this.label15.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
-            // textBoxPassword
-            // 
-            this.textBoxPassword.Location = new System.Drawing.Point(136, 409);
-            this.textBoxPassword.Name = "textBoxPassword";
-            this.textBoxPassword.Size = new System.Drawing.Size(288, 20);
-            this.textBoxPassword.TabIndex = 31;
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(9, 388);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(113, 13);
-            this.label16.TabIndex = 33;
-            this.label16.Text = "Authentication method";
-            this.label16.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
             // buttonOK
             // 
             this.buttonOK.Location = new System.Drawing.Point(142, 497);
@@ -426,6 +443,19 @@
             this.buttonCancel.TabIndex = 4;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
+            // 
+            // comboBoxLocalTSel
+            // 
+            this.comboBoxLocalTSel.FormattingEnabled = true;
+            this.comboBoxLocalTSel.Items.AddRange(new object[] {
+            "1 octet",
+            "2 octets",
+            "3 octets",
+            "4 octets"});
+            this.comboBoxLocalTSel.Location = new System.Drawing.Point(362, 337);
+            this.comboBoxLocalTSel.Name = "comboBoxLocalTSel";
+            this.comboBoxLocalTSel.Size = new System.Drawing.Size(62, 21);
+            this.comboBoxLocalTSel.TabIndex = 35;
             // 
             // ConnParamDialog
             // 
@@ -469,7 +499,7 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox textBoxRemoteSSel;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox textBoxRemoteTSel;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.TextBox textBoxLocalTSel;
         private System.Windows.Forms.Label label11;
@@ -488,5 +518,7 @@
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Button buttonOK;
         private System.Windows.Forms.Button buttonCancel;
+        private System.Windows.Forms.ComboBox comboBoxRemoteTSel;
+        private System.Windows.Forms.ComboBox comboBoxLocalTSel;
     }
 }

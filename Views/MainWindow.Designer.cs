@@ -55,6 +55,7 @@
             this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
             this.toolStripButtonOpenSCL = new System.Windows.Forms.ToolStripSplitButton();
             this.dockPanel1 = new WeifenLuo.WinFormsUI.Docking.DockPanel();
+            this.toolStripButtonConnParam = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -67,6 +68,7 @@
             this.toolStripButtonAbout,
             this.toolStripComboBoxLoggingLevel,
             this.toolStripLabel1,
+            this.toolStripButtonConnParam,
             this.toolStripSeparator1,
             this.toolStripLabel2,
             this.toolStripButtonOpenSCL});
@@ -207,6 +209,16 @@
             this.dockPanel1.Skin = dockPanelSkin1;
             this.dockPanel1.TabIndex = 8;
             // 
+            // toolStripButtonConnParam
+            // 
+            this.toolStripButtonConnParam.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonConnParam.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonConnParam.Image")));
+            this.toolStripButtonConnParam.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonConnParam.Name = "toolStripButtonConnParam";
+            this.toolStripButtonConnParam.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButtonConnParam.Text = "toolStripButton1";
+            this.toolStripButtonConnParam.Click += new System.EventHandler(this.toolStripButtonConnParam_Click);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -239,5 +251,6 @@
         private System.Windows.Forms.ToolStripLabel toolStripLabel2;
         private System.Windows.Forms.ToolStripSplitButton toolStripButtonOpenSCL;
         private System.Windows.Forms.ToolStripButton toolStripButtonAbout;
+        private System.Windows.Forms.ToolStripButton toolStripButtonConnParam;
     }
 }

@@ -27,7 +27,10 @@ namespace IEDExplorer
         /// OSI Protocol COTP layer (new implementation)
         /// </summary>
         public IsoCotp isoCotp;
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="iec"></param>
         public IsoLayers(Iec61850State iec)
         {
             iecs = iec;
@@ -39,7 +42,7 @@ namespace IEDExplorer
             isoAcse = new IsoAcse(iecs);
             isoPres = new IsoPres(iecs);
             isoSess = new IsoSess(iecs);
-            isoCotp = new IsoCotp();
+            isoCotp = new IsoCotp(iecs.cp);
         }
 
         public int SendCOTPSessionInit(Iec61850State iecs)
@@ -53,19 +56,19 @@ namespace IEDExplorer
             // Make session & present. init telegramm
             byte[] b1 = new byte[1024];
             byte[] b2 = new byte[1024];
-            IsoConnectionParameters cp = new IsoConnectionParameters();
+            //cp = new IsoConnectionParameters();
             bool dbg = false;    // local debug enable var
 
             // MMS Initiate already encoded in iecs.msMMSout
             if (dbg) iecs.logger.LogDebugBuffer("Send MMS", iecs.msMMSout.GetBuffer(), 0, iecs.msMMSout.Length);
 
-            int len = isoAcse.createAssociateRequestMessage(cp, b1, 0, iecs.msMMSout.GetBuffer(), (int)iecs.msMMSout.Length, null);
+            int len = isoAcse.createAssociateRequestMessage(iecs.cp, b1, 0, iecs.msMMSout.GetBuffer(), (int)iecs.msMMSout.Length, null);
             if (dbg) iecs.logger.LogDebugBuffer("Send Acse", b1, 0, len);
 
-            len = isoPres.createConnectPdu(cp, b2, b1, len);
+            len = isoPres.createConnectPdu(iecs.cp, b2, b1, len);
             if (dbg) iecs.logger.LogDebugBuffer("Send Pres", b2, 0, len);
 
-            len = isoSess.createConnectSpdu(cp, b1, b2, len);
+            len = isoSess.createConnectSpdu(iecs.cp, b1, b2, len);
             if (dbg) iecs.logger.LogDebugBuffer("Send Sess", b1, 0, len);
 
             b1.CopyTo(iecs.sendBuffer, IsoCotp.COTP_HDR_DT_SIZEOF + IsoTpkt.TPKT_SIZEOF);

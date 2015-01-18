@@ -58,11 +58,20 @@ namespace IEDExplorer
             public TSelector tSelDst;
             public TSelector tSelSrc;
             public byte tpduSize;
-            public CotpOptions()
+            public CotpOptions(IsoConnectionParameters cp)
             {
-                tSelDst = new TSelector(2, 0x0001);
-                tSelSrc = new TSelector(2, 0x0000);
-                tpduSize = 0x0a;	// 1024 byte max PDU size
+                if (cp == null)
+                {
+                    tSelDst = new TSelector(2, 0x0001);
+                    tSelSrc = new TSelector(2, 0x0000);
+                    tpduSize = 0x0a;	// 1024 byte max PDU size
+                }
+                else
+                {
+                    tSelDst = cp.remoteTSelector;
+                    tSelSrc = cp.localTSelector;
+                    tpduSize = 0x0a;	// 1024 byte max PDU size
+                }
             }
             public int getSize()
             {
@@ -73,17 +82,17 @@ namespace IEDExplorer
 
         CotpOptions options;
 
-        public IsoCotp()
+        public IsoCotp(IsoConnectionParameters cp)
         {
-            Reset();
+            Reset(cp);
         }
 
-        void Reset()
+        void Reset(IsoConnectionParameters cp)
         {
             m_COTP_dstref = 0x0000;
             m_COTP_srcref = 0x0008;
             m_COTP_option = 0x00;
-            options = new CotpOptions();
+            options = new CotpOptions(cp);
         }
 
         public CotpReceiveResult Receive(Iec61850State iecs)

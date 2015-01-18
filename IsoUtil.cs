@@ -199,5 +199,65 @@ namespace IEDExplorer
             }
         }
 
+        public static int BerEncoder_encodeOIDToBuffer(string oidString, byte[] buffer, int maxBufLen)
+        {
+            int encodedBytes = 0;
+
+            string[] parts = oidString.Split(new char[] { ',', '.' });
+            int partsIdx = 0;
+
+            int x;
+            if (!int.TryParse(parts[partsIdx++], out x))
+                return 0;
+
+            if (parts.Length < 2) return 0;
+
+            int y;
+            if (!int.TryParse(parts[partsIdx++], out y))
+                return 0;
+
+            int val = x * 40 + y;
+
+            if (encodedBytes < maxBufLen)
+                buffer[encodedBytes] = (byte)val;
+            else
+                return 0;
+
+            encodedBytes++;
+
+            while (partsIdx < parts.Length)
+            {
+                if (!int.TryParse(parts[partsIdx++], out val))
+                    break;
+
+                int requiredBytes = 0;
+
+                int val2 = val;
+                while (val2 > 0)
+                {
+                    requiredBytes++;
+                    val2 = val2 >> 7;
+                }
+
+                while (requiredBytes > 0)
+                {
+                    val2 = val >> (7 * (requiredBytes - 1));
+
+                    val2 = val2 & 0x7f;
+
+                    if (requiredBytes > 1)
+                        val2 += 128;
+
+                    if (encodedBytes == maxBufLen)
+                        return 0;
+
+                    buffer[encodedBytes++] = (byte)val2;
+
+                    requiredBytes--;
+                }
+            }
+
+            return encodedBytes;
+        }
     }
 }

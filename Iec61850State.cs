@@ -69,6 +69,10 @@ namespace IEDExplorer
         /// </summary>
         public IsoLayers iso;
         /// <summary>
+        /// ISO Layers connection parameters
+        /// </summary>
+        public IsoConnectionParameters cp;
+        /// <summary>
         /// MMS Protocol
         /// </summary>
         public Scsm_MMS mms = new Scsm_MMS();
