@@ -34,40 +34,40 @@ namespace IEDExplorer
     {
         private Thread _workerThread;
         private bool _run;
-        private string _hostname;
-        private int _port;
+        //private string _hostname;
+        //private int _port;
+        private IsoConnectionParameters isoParameters;
         private Env _env;
         WaitHandle[] _waitHandles = new WaitHandle[5];
         public Iec61850State iecs;
         Logger logger = Logger.getLogger();
 
-        public Scsm_MMS_Worker(string hostname, int port, Env env)
+        /*public Scsm_MMS_Worker(string hostname, int port, Env env)
         {
             _hostname = hostname;
             _port = port;
             _env = env;
-        }
+        }*/
 
         public Scsm_MMS_Worker(Env env)
         {
             _env = env;
         }
 
-        public int Start(string hostname, int port)
+        public int Start(IsoConnectionParameters par) //string hostname, int port)
         {
-            _hostname = hostname;
-            _port = port;
+            isoParameters = par;
             return Start();
         }
 
-        public int Start()
+        int Start()
         {
             //// Run Thread
             if (!_run && _workerThread == null)
             {
                 _run = true;
                 _workerThread = new Thread(new ParameterizedThreadStart(WorkerThreadProc));
-                logger.LogInfo(String.Format("Starting new communication, hostname = {0}, port = {1}.", _hostname, _port));
+                logger.LogInfo(String.Format("Starting new communication, hostname = {0}, port = {1}.", isoParameters.hostname, isoParameters.port));
                 _workerThread.Start(this);
             }
             else
@@ -83,7 +83,7 @@ namespace IEDExplorer
                 (_waitHandles[3] as ManualResetEvent).Set();
                 //_workerThread.Join();
                 _workerThread = null;
-                logger.LogInfo(String.Format("Communication to hostname = {0}, port = {1} stopped.", _hostname, _port));
+                logger.LogInfo(String.Format("Communication to hostname = {0}, port = {1} stopped.", isoParameters.hostname, isoParameters.port));
             }
         }
 
@@ -97,8 +97,9 @@ namespace IEDExplorer
             Scsm_MMS_Worker self = (Scsm_MMS_Worker)obj;
 
             iecs = new Iec61850State();
-            iecs.hostname = self._hostname;
-            iecs.port = self._port;
+            iecs.hostname = self.isoParameters.hostname;    // due to tcps inheritance
+            iecs.port = self.isoParameters.port;            // due to tcps inheritance
+            iecs.cp = self.isoParameters;
             iecs.logger = Logger.getLogger();
             _env.winMgr.BindToCapture(iecs);
 

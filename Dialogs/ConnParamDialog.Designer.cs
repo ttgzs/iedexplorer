@@ -32,6 +32,7 @@
             this.comboBoxIED = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.comboBoxLocalTSel = new System.Windows.Forms.ComboBox();
             this.comboBoxRemoteTSel = new System.Windows.Forms.ComboBox();
             this.label16 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
@@ -67,26 +68,25 @@
             this.textBoxName = new System.Windows.Forms.TextBox();
             this.buttonOK = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
-            this.comboBoxLocalTSel = new System.Windows.Forms.ComboBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // comboBoxIED
             // 
             this.comboBoxIED.FormattingEnabled = true;
-            this.comboBoxIED.Location = new System.Drawing.Point(129, 12);
+            this.comboBoxIED.Location = new System.Drawing.Point(148, 12);
             this.comboBoxIED.Name = "comboBoxIED";
-            this.comboBoxIED.Size = new System.Drawing.Size(307, 21);
+            this.comboBoxIED.Size = new System.Drawing.Size(288, 21);
             this.comboBoxIED.TabIndex = 0;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(23, 15);
+            this.label1.Location = new System.Drawing.Point(70, 15);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(70, 13);
+            this.label1.Size = new System.Drawing.Size(64, 13);
             this.label1.TabIndex = 1;
-            this.label1.Text = "Selected IED";
+            this.label1.Text = "Saved IEDs";
             // 
             // groupBox1
             // 
@@ -131,8 +131,23 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "IED";
             // 
+            // comboBoxLocalTSel
+            // 
+            this.comboBoxLocalTSel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxLocalTSel.FormattingEnabled = true;
+            this.comboBoxLocalTSel.Items.AddRange(new object[] {
+            "1 octet",
+            "2 octets",
+            "3 octets",
+            "4 octets"});
+            this.comboBoxLocalTSel.Location = new System.Drawing.Point(362, 337);
+            this.comboBoxLocalTSel.Name = "comboBoxLocalTSel";
+            this.comboBoxLocalTSel.Size = new System.Drawing.Size(62, 21);
+            this.comboBoxLocalTSel.TabIndex = 35;
+            // 
             // comboBoxRemoteTSel
             // 
+            this.comboBoxRemoteTSel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxRemoteTSel.FormattingEnabled = true;
             this.comboBoxRemoteTSel.Items.AddRange(new object[] {
             "1 octet",
@@ -174,6 +189,7 @@
             // radioButtonPassword
             // 
             this.radioButtonPassword.AutoSize = true;
+            this.radioButtonPassword.Checked = true;
             this.radioButtonPassword.Location = new System.Drawing.Point(136, 386);
             this.radioButtonPassword.Name = "radioButtonPassword";
             this.radioButtonPassword.Size = new System.Drawing.Size(88, 17);
@@ -181,6 +197,7 @@
             this.radioButtonPassword.TabStop = true;
             this.radioButtonPassword.Text = "PASSWORD";
             this.radioButtonPassword.UseVisualStyleBackColor = true;
+            this.radioButtonPassword.CheckedChanged += new System.EventHandler(this.radioButtonPassword_CheckedChanged);
             // 
             // radioButtonNone
             // 
@@ -189,9 +206,9 @@
             this.radioButtonNone.Name = "radioButtonNone";
             this.radioButtonNone.Size = new System.Drawing.Size(56, 17);
             this.radioButtonNone.TabIndex = 29;
-            this.radioButtonNone.TabStop = true;
             this.radioButtonNone.Text = "NONE";
             this.radioButtonNone.UseVisualStyleBackColor = true;
+            this.radioButtonNone.CheckedChanged += new System.EventHandler(this.radioButtonNone_CheckedChanged);
             // 
             // checkBoxAuth
             // 
@@ -203,6 +220,7 @@
             this.checkBoxAuth.TabIndex = 28;
             this.checkBoxAuth.Text = "Authentication Enabled";
             this.checkBoxAuth.UseVisualStyleBackColor = true;
+            this.checkBoxAuth.CheckedChanged += new System.EventHandler(this.checkBoxAuth_CheckedChanged);
             // 
             // label10
             // 
@@ -427,12 +445,14 @@
             // 
             // buttonOK
             // 
+            this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.buttonOK.Location = new System.Drawing.Point(142, 497);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(81, 31);
             this.buttonOK.TabIndex = 3;
             this.buttonOK.Text = "OK";
             this.buttonOK.UseVisualStyleBackColor = true;
+            this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
             // 
             // buttonCancel
             // 
@@ -443,19 +463,6 @@
             this.buttonCancel.TabIndex = 4;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
-            // 
-            // comboBoxLocalTSel
-            // 
-            this.comboBoxLocalTSel.FormattingEnabled = true;
-            this.comboBoxLocalTSel.Items.AddRange(new object[] {
-            "1 octet",
-            "2 octets",
-            "3 octets",
-            "4 octets"});
-            this.comboBoxLocalTSel.Location = new System.Drawing.Point(362, 337);
-            this.comboBoxLocalTSel.Name = "comboBoxLocalTSel";
-            this.comboBoxLocalTSel.Size = new System.Drawing.Size(62, 21);
-            this.comboBoxLocalTSel.TabIndex = 35;
             // 
             // ConnParamDialog
             // 
@@ -471,7 +478,7 @@
             this.Controls.Add(this.comboBoxIED);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ConnParamDialog";
-            this.Text = "Connection Parameters";
+            this.Text = "ISO Connection Parameters";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);

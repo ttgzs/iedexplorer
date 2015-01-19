@@ -142,7 +142,9 @@ namespace IEDExplorer.Views
             }
             toolStripButton_Run.Enabled = false;
             AddAndSaveMruIp();
-            worker.Start(toolStripComboBox_Hostname.Text, 102); //.SelectedItem.ToString(), 102);
+            IsoConnectionParameters par = new IsoConnectionParameters(null);
+            par.hostname = toolStripComboBox_Hostname.Text;
+            worker.Start(par); //.SelectedItem.ToString(), 102);
         }
 
         private void toolStripButton_Stop_Click(object sender, EventArgs e)
@@ -194,8 +196,8 @@ namespace IEDExplorer.Views
 
         private void toolStripButtonConnParam_Click(object sender, EventArgs e)
         {
-            ConnParamDialog cd = new ConnParamDialog(new IsoConnectionParameters());
-            cd.Show();
+            ConnParamDialog cd = new ConnParamDialog(new IsoConnectionParameters(null));
+            cd.ShowDialog();
         }
 
     }

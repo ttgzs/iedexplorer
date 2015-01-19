@@ -9,6 +9,10 @@ namespace IEDExplorer
     {
         public IsoAcse.AcseAuthenticationParameter acseAuthParameter;
 
+        public string name;
+        public string hostname;
+        public int port;
+
         public byte[] remoteApTitle = new byte[10];
         public string remoteApTitleS = "";
         public int remoteApTitleLen;
@@ -25,15 +29,19 @@ namespace IEDExplorer
         public ushort localSSelector;
         public IsoCotp.TSelector localTSelector;
 
-        public IsoConnectionParameters()
+        public IsoConnectionParameters(IsoAcse.AcseAuthenticationParameter acseAuthPar)
         {
             // Defaults
+            hostname = "localhost";
+            port = 102;
+            name = hostname + ":" + port;
             IsoCotp.TSelector selector1 = new IsoCotp.TSelector(2, 0);
             IsoCotp.TSelector selector2 = new IsoCotp.TSelector(2, 0);
             setLocalAddresses(1, 1, selector1);
             setLocalApTitle("1.1.1.999", 12);
             setRemoteAddresses(1, 1, selector2);
             setRemoteApTitle("1.1.1.999.1", 12);
+            acseAuthParameter = acseAuthPar;
         }
         public void setLocalAddresses(uint pSelector, ushort sSelector, IsoCotp.TSelector tSelector)
         {

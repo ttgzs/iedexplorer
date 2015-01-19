@@ -18,6 +18,7 @@ namespace IEDExplorer
             public AcseAuthenticationMechanism mechanism;
             public byte[] paswordOctetString;
             public int passwordLength;
+            public string password;
         }
 
         byte[] appContextNameMms = { 0x28, 0xca, 0x22, 0x02, 0x03 };
