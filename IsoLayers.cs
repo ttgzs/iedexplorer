@@ -62,7 +62,7 @@ namespace IEDExplorer
             // MMS Initiate already encoded in iecs.msMMSout
             if (dbg) iecs.logger.LogDebugBuffer("Send MMS", iecs.msMMSout.GetBuffer(), 0, iecs.msMMSout.Length);
 
-            int len = isoAcse.createAssociateRequestMessage(iecs.cp, b1, 0, iecs.msMMSout.GetBuffer(), (int)iecs.msMMSout.Length, null);
+            int len = isoAcse.createAssociateRequestMessage(iecs.cp, b1, 0, iecs.msMMSout.GetBuffer(), (int)iecs.msMMSout.Length);
             if (dbg) iecs.logger.LogDebugBuffer("Send Acse", b1, 0, len);
 
             len = isoPres.createConnectPdu(iecs.cp, b2, b1, len);

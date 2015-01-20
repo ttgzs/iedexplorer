@@ -64,8 +64,6 @@
             this.textBoxPort = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.textBoxIP = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.textBoxName = new System.Windows.Forms.TextBox();
             this.buttonOK = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
@@ -122,11 +120,9 @@
             this.groupBox1.Controls.Add(this.textBoxPort);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.textBoxIP);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.textBoxName);
             this.groupBox1.Location = new System.Drawing.Point(12, 54);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(448, 435);
+            this.groupBox1.Size = new System.Drawing.Size(448, 423);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "IED";
@@ -140,7 +136,7 @@
             "2 octets",
             "3 octets",
             "4 octets"});
-            this.comboBoxLocalTSel.Location = new System.Drawing.Point(362, 337);
+            this.comboBoxLocalTSel.Location = new System.Drawing.Point(362, 317);
             this.comboBoxLocalTSel.Name = "comboBoxLocalTSel";
             this.comboBoxLocalTSel.Size = new System.Drawing.Size(62, 21);
             this.comboBoxLocalTSel.TabIndex = 35;
@@ -154,7 +150,7 @@
             "2 octets",
             "3 octets",
             "4 octets"});
-            this.comboBoxRemoteTSel.Location = new System.Drawing.Point(362, 206);
+            this.comboBoxRemoteTSel.Location = new System.Drawing.Point(362, 186);
             this.comboBoxRemoteTSel.Name = "comboBoxRemoteTSel";
             this.comboBoxRemoteTSel.Size = new System.Drawing.Size(62, 21);
             this.comboBoxRemoteTSel.TabIndex = 34;
@@ -162,7 +158,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(9, 388);
+            this.label16.Location = new System.Drawing.Point(9, 368);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(113, 13);
             this.label16.TabIndex = 33;
@@ -172,7 +168,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(44, 412);
+            this.label15.Location = new System.Drawing.Point(44, 392);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(78, 13);
             this.label15.TabIndex = 32;
@@ -181,7 +177,7 @@
             // 
             // textBoxPassword
             // 
-            this.textBoxPassword.Location = new System.Drawing.Point(136, 409);
+            this.textBoxPassword.Location = new System.Drawing.Point(136, 389);
             this.textBoxPassword.Name = "textBoxPassword";
             this.textBoxPassword.Size = new System.Drawing.Size(288, 20);
             this.textBoxPassword.TabIndex = 31;
@@ -190,7 +186,7 @@
             // 
             this.radioButtonPassword.AutoSize = true;
             this.radioButtonPassword.Checked = true;
-            this.radioButtonPassword.Location = new System.Drawing.Point(136, 386);
+            this.radioButtonPassword.Location = new System.Drawing.Point(136, 366);
             this.radioButtonPassword.Name = "radioButtonPassword";
             this.radioButtonPassword.Size = new System.Drawing.Size(88, 17);
             this.radioButtonPassword.TabIndex = 30;
@@ -202,7 +198,7 @@
             // radioButtonNone
             // 
             this.radioButtonNone.AutoSize = true;
-            this.radioButtonNone.Location = new System.Drawing.Point(230, 386);
+            this.radioButtonNone.Location = new System.Drawing.Point(230, 366);
             this.radioButtonNone.Name = "radioButtonNone";
             this.radioButtonNone.Size = new System.Drawing.Size(56, 17);
             this.radioButtonNone.TabIndex = 29;
@@ -214,7 +210,7 @@
             // 
             this.checkBoxAuth.AutoSize = true;
             this.checkBoxAuth.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxAuth.Location = new System.Drawing.Point(14, 364);
+            this.checkBoxAuth.Location = new System.Drawing.Point(14, 344);
             this.checkBoxAuth.Name = "checkBoxAuth";
             this.checkBoxAuth.Size = new System.Drawing.Size(136, 17);
             this.checkBoxAuth.TabIndex = 28;
@@ -225,7 +221,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(37, 340);
+            this.label10.Location = new System.Drawing.Point(37, 320);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(85, 13);
             this.label10.TabIndex = 27;
@@ -234,7 +230,7 @@
             // 
             // textBoxLocalTSel
             // 
-            this.textBoxLocalTSel.Location = new System.Drawing.Point(136, 337);
+            this.textBoxLocalTSel.Location = new System.Drawing.Point(136, 317);
             this.textBoxLocalTSel.Name = "textBoxLocalTSel";
             this.textBoxLocalTSel.Size = new System.Drawing.Size(220, 20);
             this.textBoxLocalTSel.TabIndex = 26;
@@ -242,7 +238,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(37, 314);
+            this.label11.Location = new System.Drawing.Point(37, 294);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(85, 13);
             this.label11.TabIndex = 25;
@@ -251,7 +247,7 @@
             // 
             // textBoxLocalSSel
             // 
-            this.textBoxLocalSSel.Location = new System.Drawing.Point(136, 311);
+            this.textBoxLocalSSel.Location = new System.Drawing.Point(136, 291);
             this.textBoxLocalSSel.Name = "textBoxLocalSSel";
             this.textBoxLocalSSel.Size = new System.Drawing.Size(288, 20);
             this.textBoxLocalSSel.TabIndex = 24;
@@ -259,7 +255,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(37, 288);
+            this.label12.Location = new System.Drawing.Point(37, 268);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(85, 13);
             this.label12.TabIndex = 23;
@@ -268,7 +264,7 @@
             // 
             // textBoxLocalPSel
             // 
-            this.textBoxLocalPSel.Location = new System.Drawing.Point(136, 285);
+            this.textBoxLocalPSel.Location = new System.Drawing.Point(136, 265);
             this.textBoxLocalPSel.Name = "textBoxLocalPSel";
             this.textBoxLocalPSel.Size = new System.Drawing.Size(288, 20);
             this.textBoxLocalPSel.TabIndex = 22;
@@ -276,7 +272,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(31, 262);
+            this.label13.Location = new System.Drawing.Point(31, 242);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(91, 13);
             this.label13.TabIndex = 21;
@@ -285,7 +281,7 @@
             // 
             // textBoxLocalAEQ
             // 
-            this.textBoxLocalAEQ.Location = new System.Drawing.Point(136, 259);
+            this.textBoxLocalAEQ.Location = new System.Drawing.Point(136, 239);
             this.textBoxLocalAEQ.Name = "textBoxLocalAEQ";
             this.textBoxLocalAEQ.Size = new System.Drawing.Size(288, 20);
             this.textBoxLocalAEQ.TabIndex = 20;
@@ -293,7 +289,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(58, 236);
+            this.label14.Location = new System.Drawing.Point(58, 216);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(64, 13);
             this.label14.TabIndex = 19;
@@ -302,7 +298,7 @@
             // 
             // textBoxLocalAPID
             // 
-            this.textBoxLocalAPID.Location = new System.Drawing.Point(136, 233);
+            this.textBoxLocalAPID.Location = new System.Drawing.Point(136, 213);
             this.textBoxLocalAPID.Name = "textBoxLocalAPID";
             this.textBoxLocalAPID.Size = new System.Drawing.Size(288, 20);
             this.textBoxLocalAPID.TabIndex = 18;
@@ -310,7 +306,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(26, 209);
+            this.label9.Location = new System.Drawing.Point(26, 189);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(96, 13);
             this.label9.TabIndex = 17;
@@ -319,7 +315,7 @@
             // 
             // textBoxRemoteTSel
             // 
-            this.textBoxRemoteTSel.Location = new System.Drawing.Point(136, 206);
+            this.textBoxRemoteTSel.Location = new System.Drawing.Point(136, 186);
             this.textBoxRemoteTSel.Name = "textBoxRemoteTSel";
             this.textBoxRemoteTSel.Size = new System.Drawing.Size(220, 20);
             this.textBoxRemoteTSel.TabIndex = 16;
@@ -327,7 +323,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(26, 183);
+            this.label8.Location = new System.Drawing.Point(26, 163);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(96, 13);
             this.label8.TabIndex = 15;
@@ -336,7 +332,7 @@
             // 
             // textBoxRemoteSSel
             // 
-            this.textBoxRemoteSSel.Location = new System.Drawing.Point(136, 180);
+            this.textBoxRemoteSSel.Location = new System.Drawing.Point(136, 160);
             this.textBoxRemoteSSel.Name = "textBoxRemoteSSel";
             this.textBoxRemoteSSel.Size = new System.Drawing.Size(288, 20);
             this.textBoxRemoteSSel.TabIndex = 14;
@@ -344,7 +340,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(26, 157);
+            this.label7.Location = new System.Drawing.Point(26, 137);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(96, 13);
             this.label7.TabIndex = 13;
@@ -353,7 +349,7 @@
             // 
             // textBoxRemotePSel
             // 
-            this.textBoxRemotePSel.Location = new System.Drawing.Point(136, 154);
+            this.textBoxRemotePSel.Location = new System.Drawing.Point(136, 134);
             this.textBoxRemotePSel.Name = "textBoxRemotePSel";
             this.textBoxRemotePSel.Size = new System.Drawing.Size(288, 20);
             this.textBoxRemotePSel.TabIndex = 12;
@@ -361,7 +357,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(20, 131);
+            this.label6.Location = new System.Drawing.Point(20, 111);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(102, 13);
             this.label6.TabIndex = 11;
@@ -370,7 +366,7 @@
             // 
             // textBoxRemoteAEQ
             // 
-            this.textBoxRemoteAEQ.Location = new System.Drawing.Point(136, 128);
+            this.textBoxRemoteAEQ.Location = new System.Drawing.Point(136, 108);
             this.textBoxRemoteAEQ.Name = "textBoxRemoteAEQ";
             this.textBoxRemoteAEQ.Size = new System.Drawing.Size(288, 20);
             this.textBoxRemoteAEQ.TabIndex = 10;
@@ -378,7 +374,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(47, 105);
+            this.label5.Location = new System.Drawing.Point(47, 85);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(75, 13);
             this.label5.TabIndex = 9;
@@ -387,7 +383,7 @@
             // 
             // textBoxRemoteAPID
             // 
-            this.textBoxRemoteAPID.Location = new System.Drawing.Point(136, 102);
+            this.textBoxRemoteAPID.Location = new System.Drawing.Point(136, 82);
             this.textBoxRemoteAPID.Name = "textBoxRemoteAPID";
             this.textBoxRemoteAPID.Size = new System.Drawing.Size(288, 20);
             this.textBoxRemoteAPID.TabIndex = 8;
@@ -395,7 +391,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(72, 79);
+            this.label4.Location = new System.Drawing.Point(72, 59);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(50, 13);
             this.label4.TabIndex = 7;
@@ -404,7 +400,7 @@
             // 
             // textBoxPort
             // 
-            this.textBoxPort.Location = new System.Drawing.Point(136, 76);
+            this.textBoxPort.Location = new System.Drawing.Point(136, 56);
             this.textBoxPort.Name = "textBoxPort";
             this.textBoxPort.Size = new System.Drawing.Size(288, 20);
             this.textBoxPort.TabIndex = 6;
@@ -412,7 +408,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(64, 53);
+            this.label3.Location = new System.Drawing.Point(64, 33);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(58, 13);
             this.label3.TabIndex = 5;
@@ -421,27 +417,10 @@
             // 
             // textBoxIP
             // 
-            this.textBoxIP.Location = new System.Drawing.Point(136, 50);
+            this.textBoxIP.Location = new System.Drawing.Point(136, 30);
             this.textBoxIP.Name = "textBoxIP";
             this.textBoxIP.Size = new System.Drawing.Size(288, 20);
             this.textBoxIP.TabIndex = 4;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(87, 27);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(35, 13);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Name";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
-            // textBoxName
-            // 
-            this.textBoxName.Location = new System.Drawing.Point(136, 24);
-            this.textBoxName.Name = "textBoxName";
-            this.textBoxName.Size = new System.Drawing.Size(288, 20);
-            this.textBoxName.TabIndex = 0;
             // 
             // buttonOK
             // 
@@ -491,8 +470,6 @@
         private System.Windows.Forms.ComboBox comboBoxIED;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBoxName;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox textBoxIP;
         private System.Windows.Forms.Label label4;

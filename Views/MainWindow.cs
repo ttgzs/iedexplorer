@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using org.mkulu.config;
 using IEDExplorer.Dialogs;
+using System.Collections.Specialized;
 
 namespace IEDExplorer.Views
 {
@@ -18,8 +19,12 @@ namespace IEDExplorer.Views
         WindowManager wm;
         Env env;
         IniFileManager ini;
+        IniFileManager ieds;
+        Dictionary<string, IsoConnectionParameters> iedsDb = new Dictionary<string, IsoConnectionParameters>();
+
         Scsm_MMS_Worker worker;
         const int maxHistory = 20;
+        IsoConnectionParameters isoPar;
 
         private WeifenLuo.WinFormsUI.Docking.VS2012LightTheme vS2012LightTheme1 = new VS2012LightTheme();
 
@@ -37,13 +42,23 @@ namespace IEDExplorer.Views
             logger.LogInfo("Starting main program ...");
 
             ini = new IniFileManager(System.IO.Path.GetDirectoryName(Application.ExecutablePath) + "\\mruip.ini");
+            ieds = new IniFileManager(System.IO.Path.GetDirectoryName(Application.ExecutablePath) + "\\ieds.ini");
             GetMruIp();
             GetMruFiles();
+            GetIedsDb();
             if (toolStripComboBox_Hostname.Items.Count > 0)
                 toolStripComboBox_Hostname.SelectedIndex = 0;
             toolStripComboBoxLoggingLevel.Items.AddRange(Enum.GetNames(typeof(Logger.Severity)));
             toolStripComboBoxLoggingLevel.SelectedItem = logger.Verbosity.ToString();
             toolStripButtonOpenSCL.DropDownItemClicked += new ToolStripItemClickedEventHandler(toolStripButtonOpenSCL_DropDownItemClicked);
+        }
+
+        private void GetIedsDb()
+        {
+            foreach (string section in ieds.getSections())
+            {
+                iedsDb.Add(section, new IsoConnectionParameters(ieds.getSection(section)));
+            }
         }
 
         void AddAndSaveMruIp()
@@ -142,9 +157,12 @@ namespace IEDExplorer.Views
             }
             toolStripButton_Run.Enabled = false;
             AddAndSaveMruIp();
-            IsoConnectionParameters par = new IsoConnectionParameters(null);
-            par.hostname = toolStripComboBox_Hostname.Text;
-            worker.Start(par); //.SelectedItem.ToString(), 102);
+            if (isoPar == null)
+            {
+                isoPar = new IsoConnectionParameters((IsoAcse.AcseAuthenticationParameter)null);
+                isoPar.hostname = toolStripComboBox_Hostname.Text;
+            }
+            worker.Start(isoPar);
         }
 
         private void toolStripButton_Stop_Click(object sender, EventArgs e)
@@ -158,6 +176,7 @@ namespace IEDExplorer.Views
         {
             if (toolStripComboBox_Hostname.SelectedItem != null)
                 toolStripComboBox_Hostname.SelectedItem.ToString();
+            //isoPar = null;
         }
 
         private void toolStripComboBoxLoggingLevel_SelectedIndexChanged(object sender, EventArgs e)
@@ -196,8 +215,24 @@ namespace IEDExplorer.Views
 
         private void toolStripButtonConnParam_Click(object sender, EventArgs e)
         {
-            ConnParamDialog cd = new ConnParamDialog(new IsoConnectionParameters(null));
-            cd.ShowDialog();
+            if (isoPar == null)
+            {
+                isoPar = new IsoConnectionParameters((IsoAcse.AcseAuthenticationParameter)null);
+                isoPar.hostname = toolStripComboBox_Hostname.Text;
+            }
+
+            ConnParamDialog cd = new ConnParamDialog(isoPar, iedsDb);
+            DialogResult res = cd.ShowDialog();
+            if (res == System.Windows.Forms.DialogResult.OK)
+            {
+                StringDictionary std = new StringDictionary();
+                isoPar.Save(std);
+                foreach (string key in std.Keys)
+                {
+                    ieds.writeString(std["hostname"], key, std[key]);
+                }
+                iedsDb[std["hostname"]] = isoPar;
+            }
         }
 
     }

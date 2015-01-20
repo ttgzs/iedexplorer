@@ -13,12 +13,19 @@ namespace IEDExplorer.Dialogs
     {
         IsoConnectionParameters par;
 
-        public ConnParamDialog(IsoConnectionParameters param)
+        public ConnParamDialog(IsoConnectionParameters param, Dictionary<string, IsoConnectionParameters> iedsDb)
         {
             InitializeComponent();
 
             par = param;
-            this.textBoxName.Text = par.name;
+
+            foreach (string s in iedsDb.Keys)
+            {
+                comboBoxIED.Items.Add(s);
+            }
+            if (iedsDb.ContainsKey(par.hostname))
+                comboBoxIED.SelectedItem = iedsDb[par.hostname];
+
             this.textBoxIP.Text = par.hostname;
             this.textBoxPort.Text = par.port.ToString();
             this.textBoxLocalAPID.Text = par.localApTitleS;
@@ -98,7 +105,6 @@ namespace IEDExplorer.Dialogs
         {
             try
             {
-                par.name = this.textBoxName.Text;
                 par.hostname = this.textBoxIP.Text;
                 par.port = int.Parse(this.textBoxPort.Text);
                 par.localApTitleS = this.textBoxLocalAPID.Text;

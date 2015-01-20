@@ -486,8 +486,7 @@ namespace IEDExplorer
             return bufPos + payloadLength;
         }
 
-        public int createAssociateRequestMessage(IsoConnectionParameters isoParameters, byte[] buffer, int bufIndex, byte[] payload, int payloadLength,
-                AcseAuthenticationParameter authParameter)
+        public int createAssociateRequestMessage(IsoConnectionParameters isoParameters, byte[] buffer, int bufIndex, byte[] payload, int payloadLength)
         {
             int authValueLength;
             int authValueStringLength = 0;
@@ -526,7 +525,7 @@ namespace IEDExplorer
                 contentLength += (4 + callingAEQualifierLength);
             }
 
-            if (authParameter != null)
+            if (isoParameters.acseAuthParameter != null)
             {
 
                 /* sender ACSE requirements */
@@ -536,13 +535,13 @@ namespace IEDExplorer
                 contentLength += 5;
 
                 /* authentication value */
-                if (authParameter.mechanism == AcseAuthenticationMechanism.ACSE_AUTH_PASSWORD)
+                if (isoParameters.acseAuthParameter.mechanism == AcseAuthenticationMechanism.ACSE_AUTH_PASSWORD)
                 {
                     contentLength += 2;
 
                     //if (authParameter.value.password.passwordLength == 0)
 
-                    passwordLength = authParameter.passwordLength;
+                    passwordLength = isoParameters.acseAuthParameter.passwordLength;
 
                     authValueStringLength = IsoUtil.BerEncoder_determineLengthSize((uint)passwordLength);
 
@@ -625,13 +624,13 @@ namespace IEDExplorer
                 bufPos = IsoUtil.BerEncoder_encodeUInt32((uint)isoParameters.localAEQualifier, buffer, bufPos);
             }
 
-            if (authParameter != null)
+            if (isoParameters.acseAuthParameter != null)
             {
                 /* sender requirements */
                 bufPos = IsoUtil.BerEncoder_encodeTL(0x8a, 2, buffer, bufPos);
                 buffer[bufPos++] = 0x04;
 
-                if (authParameter.mechanism == AcseAuthenticationMechanism.ACSE_AUTH_PASSWORD)
+                if (isoParameters.acseAuthParameter.mechanism == AcseAuthenticationMechanism.ACSE_AUTH_PASSWORD)
                 {
                     buffer[bufPos++] = requirements_authentication[0];
 
@@ -644,7 +643,7 @@ namespace IEDExplorer
                     bufPos = IsoUtil.BerEncoder_encodeTL(0xac, (uint)(authValueStringLength + passwordLength + 1), buffer, bufPos);
                     bufPos = IsoUtil.BerEncoder_encodeTL(0x80, (uint)passwordLength, buffer, bufPos);
                     //memcpy(buffer + bufPos, authParameter.paswordOctetString, passwordLength);
-                    authParameter.paswordOctetString.CopyTo(buffer, bufPos);
+                    isoParameters.acseAuthParameter.paswordOctetString.CopyTo(buffer, bufPos);
                     bufPos += passwordLength;
                 }
                 else

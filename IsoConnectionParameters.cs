@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Collections.Specialized;
 
 namespace IEDExplorer
 {
@@ -9,7 +10,6 @@ namespace IEDExplorer
     {
         public IsoAcse.AcseAuthenticationParameter acseAuthParameter;
 
-        public string name;
         public string hostname;
         public int port;
 
@@ -31,10 +31,15 @@ namespace IEDExplorer
 
         public IsoConnectionParameters(IsoAcse.AcseAuthenticationParameter acseAuthPar)
         {
+            init(acseAuthPar);
+        }
+
+        void init(IsoAcse.AcseAuthenticationParameter acseAuthPar)
+        {
             // Defaults
             hostname = "localhost";
             port = 102;
-            name = hostname + ":" + port;
+
             IsoCotp.TSelector selector1 = new IsoCotp.TSelector(2, 0);
             IsoCotp.TSelector selector2 = new IsoCotp.TSelector(2, 0);
             setLocalAddresses(1, 1, selector1);
@@ -43,6 +48,100 @@ namespace IEDExplorer
             setRemoteApTitle("1.1.1.999.1", 12);
             acseAuthParameter = acseAuthPar;
         }
+
+        public IsoConnectionParameters(StringDictionary stringDictionary)
+        {
+            init(null);
+            int remoteTSelectorVal = remoteTSelector.value;
+            int remoteTSelectorSize = remoteTSelector.value;
+            foreach (string key in stringDictionary.Keys)
+            {
+                switch (key)
+                {
+                    case "hostname":
+                        hostname = stringDictionary[key];
+                        break;
+                    case "port":
+                        int.TryParse(stringDictionary[key], out port);
+                        break;
+                    case "remoteApTitle":
+                        remoteApTitleS = stringDictionary[key];
+                        remoteApTitleLen = IsoUtil.BerEncoder_encodeOIDToBuffer(remoteApTitleS, remoteApTitle, 10);
+                        break;
+                    case "remoteAEQualifier":
+                        int.TryParse(stringDictionary[key], out remoteAEQualifier);
+                        break;
+                    case "remotePSelector":
+                        uint.TryParse(stringDictionary[key], out remotePSelector);
+                        break;
+                    case "remoteSSelector":
+                        ushort.TryParse(stringDictionary[key], out remoteSSelector);
+                        break;
+                    case "remoteTSelectorValue":
+                        int.TryParse(stringDictionary[key], out remoteTSelector.value);
+                        break;
+                    case "remoteTSelectorSize":
+                        byte.TryParse(stringDictionary[key], out remoteTSelector.size);
+                        break;
+                    case "localApTitle":
+                        localApTitleS = stringDictionary[key];
+                        localApTitleLen = IsoUtil.BerEncoder_encodeOIDToBuffer(localApTitleS, localApTitle, 10);
+                        break;
+                    case "localAEQualifier":
+                        int.TryParse(stringDictionary[key], out localAEQualifier);
+                        break;
+                    case "localPSelector":
+                        uint.TryParse(stringDictionary[key], out localPSelector);
+                        break;
+                    case "localSSelector":
+                        ushort.TryParse(stringDictionary[key], out localSSelector);
+                        break;
+                    case "localTSelectorValue":
+                        int.TryParse(stringDictionary[key], out localTSelector.value);
+                        break;
+                    case "localTSelectorSize":
+                        byte.TryParse(stringDictionary[key], out localTSelector.size);
+                        break;
+                    case "authenticationMechanism":
+                        if (acseAuthParameter == null) acseAuthParameter = new IsoAcse.AcseAuthenticationParameter();
+                        Enum.TryParse<IsoAcse.AcseAuthenticationMechanism>(stringDictionary[key], out acseAuthParameter.mechanism);
+                        break;
+                    case "authenticationPassword":
+                        if (acseAuthParameter == null) acseAuthParameter = new IsoAcse.AcseAuthenticationParameter();
+                        acseAuthParameter.password = stringDictionary[key];
+                        acseAuthParameter.paswordOctetString = Encoding.ASCII.GetBytes(acseAuthParameter.password);
+                        acseAuthParameter.passwordLength = acseAuthParameter.paswordOctetString.Length;
+                        break;
+                }
+            }
+        }
+
+        public void Save(StringDictionary stringDictionary)
+        {
+            if (stringDictionary == null) stringDictionary = new StringDictionary();
+            stringDictionary.Clear();
+            stringDictionary.Add("hostname", hostname);
+            stringDictionary.Add("port", port.ToString());
+            stringDictionary.Add("remoteApTitle", remoteApTitleS);
+            stringDictionary.Add("remoteAEQualifier", remoteAEQualifier.ToString());
+            stringDictionary.Add("remotePSelector", remotePSelector.ToString());
+            stringDictionary.Add("remoteSSelector", remoteSSelector.ToString());
+            stringDictionary.Add("remoteTSelectorValue", remoteTSelector.value.ToString());
+            stringDictionary.Add("remoteTSelectorSize", remoteTSelector.size.ToString());
+            stringDictionary.Add("localApTitle", localApTitleS);
+            stringDictionary.Add("localAEQualifier", localAEQualifier.ToString());
+            stringDictionary.Add("localPSelector", localPSelector.ToString());
+            stringDictionary.Add("localSSelector", localSSelector.ToString());
+            stringDictionary.Add("localTSelectorValue", localTSelector.value.ToString());
+            stringDictionary.Add("localTSelectorSize", localTSelector.size.ToString());
+            if (acseAuthParameter != null)
+            {
+                stringDictionary.Add("authenticationMechanism", acseAuthParameter.mechanism.ToString());
+                if (acseAuthParameter.mechanism == IsoAcse.AcseAuthenticationMechanism.ACSE_AUTH_PASSWORD)
+                    stringDictionary.Add("authenticationPassword", acseAuthParameter.password);
+            }
+        }
+
         public void setLocalAddresses(uint pSelector, ushort sSelector, IsoCotp.TSelector tSelector)
         {
             localPSelector = pSelector;
