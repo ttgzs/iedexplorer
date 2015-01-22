@@ -56,7 +56,7 @@ namespace IEDExplorer
             int remoteTSelectorSize = remoteTSelector.value;
             foreach (string key in stringDictionary.Keys)
             {
-                switch (key)
+                switch (key.ToLower())
                 {
                     case "hostname":
                         hostname = stringDictionary[key];
@@ -64,49 +64,49 @@ namespace IEDExplorer
                     case "port":
                         int.TryParse(stringDictionary[key], out port);
                         break;
-                    case "remoteApTitle":
+                    case "remoteaptitle":
                         remoteApTitleS = stringDictionary[key];
                         remoteApTitleLen = IsoUtil.BerEncoder_encodeOIDToBuffer(remoteApTitleS, remoteApTitle, 10);
                         break;
-                    case "remoteAEQualifier":
+                    case "remoteaequalifier":
                         int.TryParse(stringDictionary[key], out remoteAEQualifier);
                         break;
-                    case "remotePSelector":
+                    case "remotepselector":
                         uint.TryParse(stringDictionary[key], out remotePSelector);
                         break;
-                    case "remoteSSelector":
+                    case "remotesselector":
                         ushort.TryParse(stringDictionary[key], out remoteSSelector);
                         break;
-                    case "remoteTSelectorValue":
+                    case "remotetselectorvalue":
                         int.TryParse(stringDictionary[key], out remoteTSelector.value);
                         break;
-                    case "remoteTSelectorSize":
+                    case "remotetselectorsize":
                         byte.TryParse(stringDictionary[key], out remoteTSelector.size);
                         break;
-                    case "localApTitle":
+                    case "localaptitle":
                         localApTitleS = stringDictionary[key];
                         localApTitleLen = IsoUtil.BerEncoder_encodeOIDToBuffer(localApTitleS, localApTitle, 10);
                         break;
-                    case "localAEQualifier":
+                    case "localaequalifier":
                         int.TryParse(stringDictionary[key], out localAEQualifier);
                         break;
-                    case "localPSelector":
+                    case "localpselector":
                         uint.TryParse(stringDictionary[key], out localPSelector);
                         break;
-                    case "localSSelector":
+                    case "localsselector":
                         ushort.TryParse(stringDictionary[key], out localSSelector);
                         break;
-                    case "localTSelectorValue":
+                    case "localtselectorvalue":
                         int.TryParse(stringDictionary[key], out localTSelector.value);
                         break;
-                    case "localTSelectorSize":
+                    case "localtselectorsize":
                         byte.TryParse(stringDictionary[key], out localTSelector.size);
                         break;
-                    case "authenticationMechanism":
+                    case "authenticationmechanism":
                         if (acseAuthParameter == null) acseAuthParameter = new IsoAcse.AcseAuthenticationParameter();
                         Enum.TryParse<IsoAcse.AcseAuthenticationMechanism>(stringDictionary[key], out acseAuthParameter.mechanism);
                         break;
-                    case "authenticationPassword":
+                    case "authenticationpassword":
                         if (acseAuthParameter == null) acseAuthParameter = new IsoAcse.AcseAuthenticationParameter();
                         acseAuthParameter.password = stringDictionary[key];
                         acseAuthParameter.paswordOctetString = Encoding.ASCII.GetBytes(acseAuthParameter.password);

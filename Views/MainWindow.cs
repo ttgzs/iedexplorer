@@ -157,6 +157,8 @@ namespace IEDExplorer.Views
             }
             toolStripButton_Run.Enabled = false;
             AddAndSaveMruIp();
+            try { isoPar = iedsDb[toolStripComboBox_Hostname.Text]; }  // read parameters of the current ied
+            catch { isoPar = null; }
             if (isoPar == null)
             {
                 isoPar = new IsoConnectionParameters((IsoAcse.AcseAuthenticationParameter)null);
@@ -215,6 +217,8 @@ namespace IEDExplorer.Views
 
         private void toolStripButtonConnParam_Click(object sender, EventArgs e)
         {
+            try { isoPar = iedsDb[toolStripComboBox_Hostname.Text]; }
+            catch { isoPar = null; }   // read parameters of the current ied
             if (isoPar == null)
             {
                 isoPar = new IsoConnectionParameters((IsoAcse.AcseAuthenticationParameter)null);
@@ -226,7 +230,7 @@ namespace IEDExplorer.Views
             if (res == System.Windows.Forms.DialogResult.OK)
             {
                 StringDictionary std = new StringDictionary();
-                isoPar.Save(std);
+                isoPar.Save(std);   // Write parameters to dictionary
                 foreach (string key in std.Keys)
                 {
                     ieds.writeString(std["hostname"], key, std[key]);

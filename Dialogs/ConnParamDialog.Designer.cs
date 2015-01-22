@@ -66,16 +66,19 @@
             this.textBoxIP = new System.Windows.Forms.TextBox();
             this.buttonOK = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // comboBoxIED
             // 
+            this.comboBoxIED.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxIED.FormattingEnabled = true;
             this.comboBoxIED.Location = new System.Drawing.Point(148, 12);
             this.comboBoxIED.Name = "comboBoxIED";
             this.comboBoxIED.Size = new System.Drawing.Size(288, 21);
             this.comboBoxIED.TabIndex = 0;
+            this.comboBoxIED.SelectedIndexChanged += new System.EventHandler(this.comboBoxIED_SelectedIndexChanged);
             // 
             // label1
             // 
@@ -408,11 +411,11 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(64, 33);
+            this.label3.Location = new System.Drawing.Point(5, 33);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(58, 13);
+            this.label3.Size = new System.Drawing.Size(117, 13);
             this.label3.TabIndex = 5;
-            this.label3.Text = "IP Address";
+            this.label3.Text = "Hostname / IP Address";
             this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // textBoxIP
@@ -443,6 +446,15 @@
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(70, 38);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(264, 13);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "Saved IEDs are identified by its hostname / IP address";
+            // 
             // ConnParamDialog
             // 
             this.AcceptButton = this.buttonOK;
@@ -450,6 +462,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(507, 540);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOK);
             this.Controls.Add(this.groupBox1);
@@ -504,5 +517,6 @@
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.ComboBox comboBoxRemoteTSel;
         private System.Windows.Forms.ComboBox comboBoxLocalTSel;
+        private System.Windows.Forms.Label label2;
     }
 }

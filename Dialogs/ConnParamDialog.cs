@@ -12,20 +12,28 @@ namespace IEDExplorer.Dialogs
     partial class ConnParamDialog : Form
     {
         IsoConnectionParameters par;
+        Dictionary<string, IsoConnectionParameters> iedsDb;
 
-        public ConnParamDialog(IsoConnectionParameters param, Dictionary<string, IsoConnectionParameters> iedsDb)
+        public ConnParamDialog(IsoConnectionParameters param, Dictionary<string, IsoConnectionParameters> ieds)
         {
             InitializeComponent();
-
+            iedsDb = ieds;
             par = param;
 
+            comboBoxIED.Items.Add("");
             foreach (string s in iedsDb.Keys)
             {
                 comboBoxIED.Items.Add(s);
             }
             if (iedsDb.ContainsKey(par.hostname))
-                comboBoxIED.SelectedItem = iedsDb[par.hostname];
+            {
+                comboBoxIED.SelectedItem = par.hostname;
+            }
+            initValues();
+        }
 
+        private void initValues()
+        {
             this.textBoxIP.Text = par.hostname;
             this.textBoxPort.Text = par.port.ToString();
             this.textBoxLocalAPID.Text = par.localApTitleS;
@@ -146,6 +154,15 @@ namespace IEDExplorer.Dialogs
                 this.DialogResult = System.Windows.Forms.DialogResult.None;
             }
 
+        }
+
+        private void comboBoxIED_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (iedsDb.ContainsKey((string)comboBoxIED.SelectedItem))
+            {
+                par = iedsDb[(string)comboBoxIED.SelectedItem];
+                initValues();
+            }
         }
 
     }
