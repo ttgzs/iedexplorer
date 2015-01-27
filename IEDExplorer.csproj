@@ -1112,6 +1112,7 @@
     <Content Include="Docking\Resources\LostFocusTab_Close.bmp" />
     <Content Include="Resources\calculator.png" />
     <Content Include="Resources\computer.png" />
+    <Content Include="Resources\README.txt" />
     <Content Include="TreeViewAdv\Resources\check.bmp" />
     <Content Include="TreeViewAdv\Resources\DVSplit.cur" />
     <Content Include="TreeViewAdv\Resources\Folder.bmp" />

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SCLView));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.treeViewSCL = new System.Windows.Forms.TreeView();
@@ -38,6 +39,8 @@
             this.column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.toolStripButtonCollapseAll = new System.Windows.Forms.ToolStripButton();
+            this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -47,6 +50,8 @@
             // 
             // toolStrip1
             // 
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripButtonCollapseAll});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(634, 25);
@@ -138,6 +143,16 @@
             this.column7.Name = "column7";
             this.column7.Width = 69;
             // 
+            // toolStripButtonCollapseAll
+            // 
+            this.toolStripButtonCollapseAll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButtonCollapseAll.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonCollapseAll.Image")));
+            this.toolStripButtonCollapseAll.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonCollapseAll.Name = "toolStripButtonCollapseAll";
+            this.toolStripButtonCollapseAll.Size = new System.Drawing.Size(73, 22);
+            this.toolStripButtonCollapseAll.Text = "Collapse All";
+            this.toolStripButtonCollapseAll.Click += new System.EventHandler(this.toolStripButtonCollapseAll_Click);
+            // 
             // SCLView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -148,6 +163,8 @@
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Name = "SCLView";
             this.Text = "SCLView";
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
@@ -170,5 +187,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn column6;
         private System.Windows.Forms.DataGridViewTextBoxColumn column7;
         private MyDataGridView dataGridView_data;
+        private System.Windows.Forms.ToolStripButton toolStripButtonCollapseAll;
     }
 }

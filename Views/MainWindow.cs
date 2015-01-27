@@ -37,7 +37,7 @@ namespace IEDExplorer.Views
             worker = new Scsm_MMS_Worker(env);
 
             wm = new WindowManager(dockPanel1, env, this);
-            this.Text = "IED Explorer 0.71";
+            this.Text = "IED Explorer 0.72";
 
             logger.LogInfo("Starting main program ...");
 
@@ -195,6 +195,15 @@ namespace IEDExplorer.Views
         private void toolStripButtonOpenSCL_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Title = "Open a SCL File";
+            ofd.AddExtension = true;
+            ofd.AutoUpgradeEnabled = true;
+            ofd.Filter =
+                "SCD Files(*.icd, *.ssd, *.scd, *.cid, *.iid, *.sed)|*.icd;*.ssd;*.scd;*.cid;*.iid;*.sed";
+            ofd.ReadOnlyChecked = true;
+            ofd.CheckFileExists = true;
+            ofd.CheckPathExists = true;
+
             DialogResult res = ofd.ShowDialog();
             if (res == System.Windows.Forms.DialogResult.OK)
             {

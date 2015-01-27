@@ -23,7 +23,14 @@ namespace IEDExplorer.Views
         {
             filename = fname;
             InitializeComponent();
-            dataModel = SCLParser.CreateTree(filename);
+            try
+            {
+                dataModel = SCLParser.CreateTree(filename);
+            }
+            catch (Exception e)
+            {
+                Logger.getLogger().LogError(" Reading SCL: " + e.Message);
+            }
             makeTree(dataModel);
             string[] fparts = filename.Split(new char[] { '/', '\\' });
             filename_short  = fparts[fparts.Length - 1];
@@ -110,6 +117,11 @@ namespace IEDExplorer.Views
                 tn4.ImageIndex = 3;
                 tn4.SelectedImageIndex = 3;
                 makeTree_fileNode(nb, tn4);
+                TreeNode tn5 = n.Nodes.Add("Enums");
+                tn5.Tag = dataModel.enums;
+                tn5.ImageIndex = 3;
+                tn5.SelectedImageIndex = 3;
+                makeTree_enumNode(nb, tn5);
             
         }
 
@@ -121,8 +133,6 @@ namespace IEDExplorer.Views
                 TreeNode tn2 = tn.Nodes.Add(b.Name);
                 tn2.Tag = b;
                 b.Tag = tn2;
-                //Node_StateChanged(b, new EventArgs());
-                //b.StateChanged += new EventHandler(Node_StateChanged);
 
                 if (b.FC.Count > 0)
                 {
@@ -152,8 +162,6 @@ namespace IEDExplorer.Views
                     tn3.Tag = b2;
                     tn3.ImageIndex = 7;
                     tn3.SelectedImageIndex = 7;
-                    /*Node_StateChanged(b2, new EventArgs());
-                    b2.StateChanged += new EventHandler(Node_StateChanged);*/
                 }
             }
         }
@@ -173,8 +181,6 @@ namespace IEDExplorer.Views
                     tn3.Tag = b2;
                     tn3.ImageIndex = 7;
                     tn3.SelectedImageIndex = 7;
-                    /*Node_StateChanged(b2, new EventArgs());
-                    b2.StateChanged += new EventHandler(Node_StateChanged);*/
                 }
             }
         }
@@ -196,8 +202,26 @@ namespace IEDExplorer.Views
                     tn2.ImageIndex = 4;
                     tn2.SelectedImageIndex = 4;
                 }
-                //(b as NodeFile).DirectoryUpdated += Node_DirectoryUpdated;
                 makeTree_fileNode(b, tn2);
+            }
+        }
+
+        private void makeTree_enumNode(NodeBase nb, TreeNode tn)
+        {
+            foreach (NodeBase b in nb.GetChildNodes())
+            {
+                TreeNode tn2 = tn.Nodes.Add(b.Name);
+                tn2.Tag = b;
+                b.Tag = tn2;
+                tn2.ImageIndex = 3;
+                tn2.SelectedImageIndex = 3;
+                foreach (NodeBase b2 in b.GetChildNodes())
+                {
+                    TreeNode tn3 = tn2.Nodes.Add(String.Concat(b2.Name));
+                    tn3.Tag = b2;
+                    tn3.ImageIndex = 3;
+                    tn3.SelectedImageIndex = 3;
+                }
             }
         }
 
@@ -249,12 +273,6 @@ namespace IEDExplorer.Views
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            /*foreach (DataGridViewRow r in dataGridView_data.Rows)
-            {
-                if (r.Tag is TreeNode)
-                    if ((r.Tag as TreeNode).Tag is NodeData)
-                        ((r.Tag as TreeNode).Tag as NodeData).ValueChanged -= new EventHandler(Node_ValueChanged);
-            }*/
             dataGridView_data.Rows.Clear();
             var n = (NodeBase)e.Node.Tag;
 
@@ -329,9 +347,7 @@ namespace IEDExplorer.Views
                         n.Address, type, val,
                         n.CommAddress.Domain, n.CommAddress.LogicalNode, n.CommAddress.VariablePath
                     };
-                //(n as NodeData).ValueChanged += new EventHandler(Node_ValueChanged);
                 (n as NodeData).ValueTag = dgvr;
-                //lvi.SubItems[2].Text;
                 return dgvr;
             }
             else if (n is NodeVL)
@@ -359,5 +375,11 @@ namespace IEDExplorer.Views
             return null;
         }
 
+        private void toolStripButtonCollapseAll_Click(object sender, EventArgs e)
+        {
+            dataGridView_data.Rows.Clear();
+            treeViewSCL.CollapseAll();
+            dataGridView_data.Focus();
+        }
     }
 }
