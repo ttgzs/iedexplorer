@@ -683,6 +683,7 @@ namespace IEDExplorer.Views
             NodeVL vl = (NodeVL)(sender as ToolStripItem).Tag;
             NodeBase ur = null;
             Iec61850State iecs = vl.GetIecs();
+            bool retry;
             if (iecs != null)
             {
                 do
@@ -693,8 +694,17 @@ namespace IEDExplorer.Views
                         MessageBox.Show("Suitable URCB not found, list cannot be activated!");
                         return;
                     }
-                } while (!ur.Parent.Name.ToLower().Contains("rcb"));
-                vl.urcb = (NodeData)ur;
+                    retry = !ur.Parent.Name.ToLower().Contains("rcb");
+                    vl.urcb = (NodeData)ur;
+                    NodeData d = (NodeData)vl.urcb.Parent;
+                    NodeData b;
+                    if ((b = (NodeData)d.FindChildNode("Resv")) != null)
+                    {
+                        // Resv is always a boolean
+                        // If true then the rcb is occupied and we need to find another one
+                        if ((bool)b.DataValue) retry = true;
+                    }
+                } while (retry);
 
                 if (vl.urcb != null)
                 {
