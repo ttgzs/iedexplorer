@@ -95,4 +95,10 @@ Packet capture finished. New UI.
 Rev 0.71 2014/12/07
 SCL File View added thanks to Joel Kaiser.
 
+Rev 0.72 2015/01/27
+ISO layers are fully implemented now - ported from libiec61850. Thanks to the original author Michael Zillgith.
+It is possible to set parameters for ISO COTP, Session and Presentation layers.
+SCL View enhanced, resp. added some features from Joel Kaiser's version.
 
+Rev 0.73 2015/02/17
+Minor debug release / File Directory dialogs

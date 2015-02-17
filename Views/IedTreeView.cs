@@ -318,14 +318,14 @@ namespace IEDExplorer.Views
                             item.Click += new EventHandler(OnDeleteNVLClick);
                         }
                     }
-                    else if (e.Node.Text == "lists" && n.GetIecs().DataModel.ied.DefineNVL)
+                    else if (e.Node.Text == "DataSets" && n.GetIecs().DataModel.ied.DefineNVL)
                     {
                         item = menu.Items.Add("Add New Name List");
                         item.Tag = n;
                         listsNode = e.Node;
                         item.Click += new EventHandler(OnAddNVLClick);
                     }
-                    else if (e.Node.Text == "files")
+                    else if (e.Node.Text == "Files")
                     {
                         item = menu.Items.Add("Read File List");
                         item.Tag = n;
