@@ -20,6 +20,7 @@ namespace IEDExplorer
         public IsoSess(Iec61850State iec)
         {
             iecs = iec;
+            init();
         }
 
         public enum IsoSessionIndication

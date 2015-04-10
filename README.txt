@@ -102,3 +102,7 @@ SCL View enhanced, resp. added some features from Joel Kaiser's version.
 
 Rev 0.73 2015/02/17
 Minor debug release / File Directory dialogs
+
+Rev 0.74 2015/04/10
+Minor debug release / ISO Session initialization
+

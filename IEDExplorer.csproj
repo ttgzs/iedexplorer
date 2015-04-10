@@ -1110,9 +1110,9 @@
     <Content Include="Docking\Resources\InactiveTabHover_Close.bmp" />
     <Content Include="Docking\Resources\LostFocusTabHover_Close.bmp" />
     <Content Include="Docking\Resources\LostFocusTab_Close.bmp" />
+    <Content Include="README.txt" />
     <Content Include="Resources\calculator.png" />
     <Content Include="Resources\computer.png" />
-    <Content Include="Resources\README.txt" />
     <Content Include="TreeViewAdv\Resources\check.bmp" />
     <Content Include="TreeViewAdv\Resources\DVSplit.cur" />
     <Content Include="TreeViewAdv\Resources\Folder.bmp" />
