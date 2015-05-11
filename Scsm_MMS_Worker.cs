@@ -278,11 +278,14 @@ namespace IEDExplorer
                         break;
                     case 4:     // send data
                         iecs.sendQueueWritten.Reset();
-                        lock (iecs.SendQueue)
-                        {
-                            while (iecs.SendQueue.Count > 0)
+                        Logger.getLogger().LogDebug("SendQueue Waiting for lock in Worker!");
+                        //lock (iecs.SendQueue)
+                        //{
+                            //Logger.getLogger().LogDebug("SendQueue locked in Worker!");
+                        WriteQueueElement el;
+                            while (iecs.SendQueue.TryDequeue(out el))
                             {
-                                WriteQueueElement el = iecs.SendQueue.Dequeue();
+                                // = iecs.SendQueue.Dequeue();
                                 switch (el.Action)
                                 {
                                     case ActionRequested.Write:
@@ -314,7 +317,8 @@ namespace IEDExplorer
                                         break;
                                 }
                             }
-                        }
+                        //} // lock
+                        //Logger.getLogger().LogDebug("SendQueue UNlocked in Worker!");
                         break;                    
                     case WaitHandle.WaitTimeout:
                         break;

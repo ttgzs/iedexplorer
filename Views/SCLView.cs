@@ -23,13 +23,13 @@ namespace IEDExplorer.Views
         {
             filename = fname;
             InitializeComponent();
-            try
+            //try
             {
                 dataModel = SCLParser.CreateTree(filename);
             }
-            catch (Exception e)
+            //catch (Exception e)
             {
-                Logger.getLogger().LogError(" Reading SCL: " + e.Message);
+            //    Logger.getLogger().LogError(" Reading SCL: " + e.Message);
             }
             makeTree(dataModel);
             string[] fparts = filename.Split(new char[] { '/', '\\' });

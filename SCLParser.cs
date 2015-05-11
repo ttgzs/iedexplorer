@@ -178,13 +178,30 @@ namespace IEDExplorer
             logicalNode.TypeId = type;
 
             Hashtable functionalConstraints = new Hashtable();
-
-            var nodeType = _nodeTypes.Single(nt => nt.Name.Equals(type));
+            NodeBase nodeType;
+            try
+            {
+                nodeType = _nodeTypes.Single(nt => nt.Name.Equals(type));
+            }
+            catch (Exception e)
+            {
+                logger.LogError("SCL Parser: LN type template not found: " + type.ToString() + ", for Node: " + name.ToString() + ", Exception: " + e.Message);
+                return null;
+            }
 
             // for each DO in the LNodeType
             foreach (var dataObject in nodeType.GetChildNodes())
             {
-                var doType = _dataObjectTypes.Single(dot => dot.Name.Equals((dataObject as NodeDO).Type));
+                NodeBase doType = null;
+                try
+                {
+                    doType = _dataObjectTypes.Single(dot => dot.Name.Equals((dataObject as NodeDO).Type));
+                }
+                catch (Exception e)
+                {
+                    logger.LogError("SCL Parser: DO type template not found: " + (dataObject as NodeDO).Type + ", for LN type: " + nodeType.Name + ", in node: " + name.ToString() + ", Exception: " + e.Message);
+                    continue;
+                }
 
                 // for each DA in the DOType
                 foreach (var dataAttribute in doType.GetChildNodes())

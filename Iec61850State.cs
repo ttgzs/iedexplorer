@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading;
 using MMS_ASN1_Model;
+using System.Collections.Concurrent;
 
 namespace IEDExplorer
 {
@@ -99,7 +100,7 @@ namespace IEDExplorer
         /// <summary>
         /// Queue for sending data from another threads
         /// </summary>
-        public Queue<WriteQueueElement> SendQueue = new Queue<WriteQueueElement>();
+        public ConcurrentQueue<WriteQueueElement> SendQueue = new ConcurrentQueue<WriteQueueElement>();
         public ManualResetEvent sendQueueWritten = new ManualResetEvent(false);
         public NodeBase[] lastOperationData = null;
 
@@ -119,10 +120,13 @@ namespace IEDExplorer
         public void Send(NodeBase[] Data, CommAddress Address, ActionRequested Action)
         {
             WriteQueueElement el = new WriteQueueElement(Data, Address, Action);
-            lock (SendQueue)
-            {
+            //Logger.getLogger().LogDebug("SendQueue Waiting for lock in Send!");
+            //lock (SendQueue.SyncRoot)
+            //{
+                //Logger.getLogger().LogDebug("SendQueue locked in Send!");
                 SendQueue.Enqueue(el);
-            }
+            //}
+            //Logger.getLogger().LogDebug("SendQueue unlocked in Send!");
             sendQueueWritten.Set();
         }
     }

@@ -98,6 +98,7 @@ namespace IEDExplorer
 
         public NodeBase AddChildNode(NodeBase Node)
         {
+            if (Node == null) return null;       // defensive
             foreach (NodeBase n in _childNodes)
             {
                 if (Node.Name == n.Name)
