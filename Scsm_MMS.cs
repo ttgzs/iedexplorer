@@ -97,6 +97,7 @@ namespace IEDExplorer
 
         //Unsigned32 InvokeID = new Unsigned32();
         int InvokeID = 0;
+        int MaxCalls = 10;
 
         bool[] ServiceSupportOptions = new bool[96];
         enum ServiceSupportOptionsEnum
@@ -1076,31 +1077,31 @@ namespace IEDExplorer
             if (initiate_ResponsePDU != null)
             {
                 iecs.logger.LogDebug("mymmspdu.Initiate_ResponsePDU exists!");
-                iecs.logger.LogDebug(String.Format("mymmspdu.Initiate_ResponsePDU.NegotiatedMaxServOutstandingCalled: {0}",
-                    initiate_ResponsePDU.NegotiatedMaxServOutstandingCalled.Value));
-                
+                int cing = initiate_ResponsePDU.NegotiatedMaxServOutstandingCalling.Value;
+                int ced  = initiate_ResponsePDU.NegotiatedMaxServOutstandingCalled.Value;
+                iecs.logger.LogDebug(String.Format("mymmspdu.Initiate_ResponsePDU.NegotiatedMaxServOutstandingCalling: {0}, Called: {1}",
+                    cing, ced));
+
+                MaxCalls = cing < ced ? cing : ced;
+
                 StringBuilder sb2 = new StringBuilder();
                 int j = 0;
                 foreach (byte b in initiate_ResponsePDU.InitResponseDetail.ServicesSupportedCalled.Value.Value)
                 {
                     for (int i = 7; i >= 0; i--)
                     {
-                        //sb.Append((b >> i) & 1);
                         ServiceSupportOptions[j] = ((b >> i) & 1) == 1;
                         if (ServiceSupportOptions[j]) sb2.Append(Enum.GetName(typeof(ServiceSupportOptionsEnum), (ServiceSupportOptionsEnum)j) + ',');
                         j++;
                     }
-                    //sb.Append(' ');
                 }
-                //iecs.logger.LogInfo("mymmspdu.Initiate_ResponsePDU.InitResponseDetail.ServicesSupportedCalled.Value: " + sb.ToString());
                 iecs.logger.LogInfo("Services Supported: " + sb2.ToString());
-                //if ((mymmspdu.Initiate_ResponsePDU.InitResponseDetail.ServicesSupportedCalled.Value.Value[1] & 0x10) == 0x10)
+
                 if (ServiceSupportOptions[(int)ServiceSupportOptionsEnum.defineNamedVariableList])
                 {
                     iecs.DataModel.ied.DefineNVL = true;
                 }
                 if (ServiceSupportOptions[(int)ServiceSupportOptionsEnum.identify])
-                //if ((mymmspdu.Initiate_ResponsePDU.InitResponseDetail.ServicesSupportedCalled.Value.Value[0] & 0x20) == 0x20)
                 {
                     iecs.DataModel.ied.Identify = true;
                 }
@@ -1896,7 +1897,7 @@ namespace IEDExplorer
             iecs.iso.Send(iecs);
         }
 
-         void AddIecAddress(Iec61850State iecs, string addr)
+        private void AddIecAddress(Iec61850State iecs, string addr)
         {
             string[] parts = addr.Split(new char[] { '$' });
             NodeBase curld = iecs.DataModel.ied.GetActualChildNode();
@@ -1929,5 +1930,35 @@ namespace IEDExplorer
             TimeSpan diff = date - origin;
             return (long)Math.Floor(diff.TotalSeconds);
         }
+
+        private int insertCall(Iec61850State iecs, int InvokeIdInc, NodeBase[] OperationData)
+        {
+            if (iecs.OutstandingCalls.Count >= MaxCalls)
+            {
+                Logger.getLogger().LogWarning("Cannot send a request to client, " + MaxCalls + " calls pending for InvokeId " + (InvokeIdInc - 1).ToString());
+                return -1;
+            }
+            if (!iecs.OutstandingCalls.TryAdd(InvokeIdInc - 1, OperationData)) return -2;
+            return 0;
+        }
+
+        private NodeBase[] removeCall(Iec61850State iecs, int InvokeId)
+        {
+            NodeBase[] ret;
+            if (!iecs.OutstandingCalls.TryRemove(InvokeId, out ret)) return null;
+            return ret;
+        }
+
+        private void checkCalls(Iec61850State iecs, int InvokeId)
+        {
+            // If we do not believe we have caught all received ids
+            NodeBase[] ret;
+            foreach (int id in iecs.OutstandingCalls.Keys)
+            {
+                if (id + MaxCalls < InvokeId)
+                    iecs.OutstandingCalls.TryRemove(id, out ret);
+            }
+        }
+
     }
 }

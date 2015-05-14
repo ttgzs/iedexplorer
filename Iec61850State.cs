@@ -103,6 +103,7 @@ namespace IEDExplorer
         public ConcurrentQueue<WriteQueueElement> SendQueue = new ConcurrentQueue<WriteQueueElement>();
         public ManualResetEvent sendQueueWritten = new ManualResetEvent(false);
         public NodeBase[] lastOperationData = null;
+        public ConcurrentDictionary<int, NodeBase[]> OutstandingCalls;
 
         public MMSCaptureDb CaptureDb;
 
@@ -111,6 +112,7 @@ namespace IEDExplorer
             DataModel = new Iec61850Model(this);
             CaptureDb = new MMSCaptureDb(this);
             iso = new IsoLayers(this);
+            OutstandingCalls = new ConcurrentDictionary<int, NodeBase[]>(2, 10);
         }
 
         public void NextState()
@@ -120,13 +122,7 @@ namespace IEDExplorer
         public void Send(NodeBase[] Data, CommAddress Address, ActionRequested Action)
         {
             WriteQueueElement el = new WriteQueueElement(Data, Address, Action);
-            //Logger.getLogger().LogDebug("SendQueue Waiting for lock in Send!");
-            //lock (SendQueue.SyncRoot)
-            //{
-                //Logger.getLogger().LogDebug("SendQueue locked in Send!");
-                SendQueue.Enqueue(el);
-            //}
-            //Logger.getLogger().LogDebug("SendQueue unlocked in Send!");
+            SendQueue.Enqueue(el);
             sendQueueWritten.Set();
         }
     }

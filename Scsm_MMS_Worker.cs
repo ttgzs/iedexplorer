@@ -150,7 +150,8 @@ namespace IEDExplorer
                                 switch (iecs.istate)
                                 {
                                     case Iec61850lStateEnum.IEC61850_STATE_START:
-                                        if (iecs.DataModel.ied.Identify) {
+                                        if (iecs.DataModel.ied.Identify)
+                                        {
                                             iecs.logger.LogInfo("[IEC61850_STATE_START] (Send IdentifyRequest)");
                                             iecs.mms.SendIdentify(iecs);
                                             iecs.istate = Iec61850lStateEnum.IEC61850_CONNECT_MMS_WAIT;
@@ -224,7 +225,7 @@ namespace IEDExplorer
                                         switch (iecs.fstate)
                                         {
                                             case FileTransferState.FILE_DIRECTORY:
-                                                if (iecs.lastOperationData[0] is NodeIed) 
+                                                if (iecs.lastOperationData[0] is NodeIed)
                                                     //self._env.mainWindow.makeTree(iecs);
                                                     self._env.winMgr.MakeIedTree(iecs);
                                                 iecs.fstate = FileTransferState.FILE_NO_ACTION;
@@ -279,47 +280,41 @@ namespace IEDExplorer
                     case 4:     // send data
                         iecs.sendQueueWritten.Reset();
                         Logger.getLogger().LogDebug("SendQueue Waiting for lock in Worker!");
-                        //lock (iecs.SendQueue)
-                        //{
-                            //Logger.getLogger().LogDebug("SendQueue locked in Worker!");
                         WriteQueueElement el;
-                            while (iecs.SendQueue.TryDequeue(out el))
+                        while (iecs.SendQueue.TryDequeue(out el))
+                        {
+                            switch (el.Action)
                             {
-                                // = iecs.SendQueue.Dequeue();
-                                switch (el.Action)
-                                {
-                                    case ActionRequested.Write:
-                                        iecs.mms.SendWrite(iecs, el);
-                                        break;
-                                    case ActionRequested.WriteAsStructure:
-                                        iecs.mms.SendWriteAsStructure(iecs, el);
-                                        break;
-                                    case ActionRequested.Read:
-                                        iecs.mms.SendRead(iecs, el);
-                                        break;
-                                    case ActionRequested.DefineNVL:
-                                        iecs.mms.SendDefineNVL(iecs, el);
-                                        break;
-                                    case ActionRequested.DeleteNVL:
-                                        iecs.mms.SendDeleteNVL(iecs, el);
-                                        break;
-                                    case ActionRequested.GetDirectory:
-                                        iecs.mms.SendFileDirectory(iecs, el);
-                                        break;
-                                    case ActionRequested.OpenFile:
-                                        iecs.mms.SendFileOpen(iecs, el);
-                                        break;
-                                    case ActionRequested.ReadFile:
-                                        iecs.mms.SendFileRead(iecs, el);
-                                        break;
-                                    case ActionRequested.CloseFile:
-                                        iecs.mms.SendFileClose(iecs, el);
-                                        break;
-                                }
+                                case ActionRequested.Write:
+                                    iecs.mms.SendWrite(iecs, el);
+                                    break;
+                                case ActionRequested.WriteAsStructure:
+                                    iecs.mms.SendWriteAsStructure(iecs, el);
+                                    break;
+                                case ActionRequested.Read:
+                                    iecs.mms.SendRead(iecs, el);
+                                    break;
+                                case ActionRequested.DefineNVL:
+                                    iecs.mms.SendDefineNVL(iecs, el);
+                                    break;
+                                case ActionRequested.DeleteNVL:
+                                    iecs.mms.SendDeleteNVL(iecs, el);
+                                    break;
+                                case ActionRequested.GetDirectory:
+                                    iecs.mms.SendFileDirectory(iecs, el);
+                                    break;
+                                case ActionRequested.OpenFile:
+                                    iecs.mms.SendFileOpen(iecs, el);
+                                    break;
+                                case ActionRequested.ReadFile:
+                                    iecs.mms.SendFileRead(iecs, el);
+                                    break;
+                                case ActionRequested.CloseFile:
+                                    iecs.mms.SendFileClose(iecs, el);
+                                    break;
                             }
-                        //} // lock
-                        //Logger.getLogger().LogDebug("SendQueue UNlocked in Worker!");
-                        break;                    
+                        }
+                        break;
                     case WaitHandle.WaitTimeout:
                         break;
                 }
