@@ -387,7 +387,7 @@ namespace IEDExplorer.Views
             Iec61850State iecs = nvl.GetIecs();
             NodeBase[] ndarr = new NodeBase[1];
             ndarr[0] = nvl;
-            iecs.Send(ndarr, nvl.CommAddress, ActionRequested.DefineNVL);
+            iecs.Send(ndarr, nvl.CommAddress, ActionRequested.DeleteNVL);
         }
 
         void OnFileListClick(object sender, EventArgs e)
