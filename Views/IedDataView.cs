@@ -14,11 +14,13 @@ namespace IEDExplorer.Views
     {
         delegate void OnValueCallback(object sender, EventArgs e);
         public Env environment;
+        NodeBase actualNode;
 
         public IedDataView(Env env)
         {
             environment = env;
             InitializeComponent();
+            toolStripComboBox_autoUpdate.SelectedIndex = 2;
         }
 
         internal void SelectNode(TreeNode tn)
@@ -31,14 +33,14 @@ namespace IEDExplorer.Views
             }
             this.listView_data.Items.Clear();
             ListViewItem li;
-            NodeBase n = (NodeBase)tn.Tag;
+            actualNode = (NodeBase)tn.Tag;
 
-            li = this.listView_data.Items.Add(makeRow(n));
+            li = this.listView_data.Items.Add(makeRow(actualNode));
             li.Tag = tn;
-            if (n.GetChildNodes().Length > 0)
+            if (actualNode.GetChildNodes().Length > 0)
             {
                 this.listView_data.Items.Add(new ListViewItem(new string[] { "------------- CHILD NODES -------------", "-------------", "-------------", "-------------" }));
-                recursiveAddLine(n, tn);
+                recursiveAddLine(actualNode, tn);
             }
         }
 
@@ -150,6 +152,62 @@ namespace IEDExplorer.Views
             {
                 if (li.Tag != null) (li.Tag as TreeNode).EnsureVisible();
             }
+        }
+
+        private void toolStripButton_RunAu_Click(object sender, EventArgs e)
+        {
+            setInterval_Au();
+            timer_Au.Enabled = true;
+            toolStripButton_RunAu.Enabled = false;
+            toolStripButton_StopAu.Enabled = true;
+        }
+
+        private void setInterval_Au()
+        {
+            int interval = 1000;
+            if (!int.TryParse(toolStripComboBox_autoUpdate.Text, out interval)) toolStripComboBox_autoUpdate.Text = interval.ToString();
+            if (interval < 100)
+            {
+                interval = 100;
+                toolStripComboBox_autoUpdate.Text = interval.ToString();
+            }
+            timer_Au.Interval = interval;
+        }
+
+        private void toolStripButton_StopAu_Click(object sender, EventArgs e)
+        {
+            timer_Au.Enabled = false;
+            toolStripButton_RunAu.Enabled = true;
+            toolStripButton_StopAu.Enabled = false;
+        }
+
+        private void timer_Au_Tick(object sender, EventArgs e)
+        {
+            // Issue reads
+            if (actualNode == null) return;
+            Iec61850State iecs = actualNode.GetIecs();
+            NodeBase[] ndarr = null;// = new NodeBase[1];
+            if (actualNode is NodeData || actualNode is NodeDO || actualNode is NodeFC || actualNode is NodeLN)
+            {
+                ndarr = new NodeBase[1];
+                ndarr[0] = actualNode;
+            }
+            if (actualNode is NodeLD)
+            {
+                List<NodeBase> nblist = new List<NodeBase>();
+                foreach (NodeBase nb in actualNode.GetChildNodes())
+                {
+                    nblist.Add(nb);
+                }
+                ndarr = nblist.ToArray();
+            }
+            if (ndarr != null)
+                iecs.Send(ndarr, actualNode.CommAddress, ActionRequested.Read);
+        }
+
+        private void toolStripComboBox_autoUpdate_TextChanged(object sender, EventArgs e)
+        {
+            setInterval_Au();
         }
 
     }

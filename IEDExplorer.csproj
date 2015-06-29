@@ -450,6 +450,12 @@
     <Compile Include="Views\CaptureView.Designer.cs">
       <DependentUpon>CaptureView.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\WatchDataView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\WatchDataView.Designer.cs">
+      <DependentUpon>WatchDataView.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\IedDataView.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1041,6 +1047,10 @@
     <EmbeddedResource Include="Views\CaptureView.resx">
       <DependentUpon>CaptureView.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Views\WatchDataView.resx">
+      <DependentUpon>WatchDataView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Views\IedDataView.resx">
       <DependentUpon>IedDataView.cs</DependentUpon>
     </EmbeddedResource>
@@ -1127,6 +1137,8 @@
     <Content Include="README.txt" />
     <Content Include="Resources\calculator.png" />
     <Content Include="Resources\computer.png" />
+    <None Include="Resources\page_white_database.png" />
+    <None Include="Resources\page_white_put.png" />
     <Content Include="TreeViewAdv\Resources\check.bmp" />
     <Content Include="TreeViewAdv\Resources\DVSplit.cur" />
     <Content Include="TreeViewAdv\Resources\Folder.bmp" />

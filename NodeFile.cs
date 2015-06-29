@@ -39,7 +39,8 @@ namespace IEDExplorer
         public bool isDir { get; private set; }
 
         private bool fileReady;
-        public bool FileReady {
+        public bool FileReady
+        {
             get
             {
                 return fileReady;
@@ -49,7 +50,22 @@ namespace IEDExplorer
                 fileReady = value;
                 if (DirectoryUpdated != null)
                     DirectoryUpdated(this, new EventArgs());
-            } 
+            }
+        }
+
+        private bool fileSaved;
+        public bool FileSaved
+        {
+            get
+            {
+                return fileSaved;
+            }
+            set
+            {
+                fileSaved = value;
+                if (DirectoryUpdated != null)
+                    DirectoryUpdated(this, new EventArgs());
+            }
         }
 
         public int frsmId { get; set; }
@@ -97,6 +113,14 @@ namespace IEDExplorer
             FileStream outst = File.Create(FileName);
             outst.Write(data, 0, data.Length);
             outst.Close();
+            FileSaved = true;
+        }
+
+        public void Reset()
+        {
+            data = null;
+            FileSaved = false;
+            FileReady = false;
         }
     }
 }

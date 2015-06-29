@@ -102,7 +102,7 @@ namespace IEDExplorer
         /// </summary>
         public ConcurrentQueue<WriteQueueElement> SendQueue = new ConcurrentQueue<WriteQueueElement>();
         public ManualResetEvent sendQueueWritten = new ManualResetEvent(false);
-        public NodeBase[] lastOperationData = null;
+        public NodeBase[] lastFileOperationData = null;
         public ConcurrentDictionary<int, NodeBase[]> OutstandingCalls;
 
         public MMSCaptureDb CaptureDb;

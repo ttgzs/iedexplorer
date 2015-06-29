@@ -26,7 +26,7 @@ namespace IEDExplorer.Views
         {
             this.dockPanel = dockPanel;
             env = envir;
-            envir.winMgr = this;
+            env.winMgr = this;
             mainWindow = mWin;
             //Create toolwindows
             iedWindow = new IedTreeView(this);
@@ -87,6 +87,14 @@ namespace IEDExplorer.Views
             if (iedWindow != null)
             {
                 iedWindow.makeTree(iecs);
+            }
+        }
+
+        internal void MakeFileTree(Iec61850State iecs)
+        {
+            if (iedWindow != null)
+            {
+                iedWindow.Node_DirectoryUpdated(iecs.DataModel.files, null);
             }
         }
 

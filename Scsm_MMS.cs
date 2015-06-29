@@ -189,6 +189,182 @@ namespace IEDExplorer
             cancel = 84
         }
 
+        enum DataAccessError
+        {
+            objectInvalidated = 0,
+            hardwareFault = 1,
+            temporarilyUnavailable = 2,
+            objectAccessDenied = 3,
+            objectUndefined = 4,
+            invalidAddress = 5,
+            typeUnsupported = 6,
+            typeInconsistent = 7,
+            objectAttributeInconsistent = 8,
+            objectAccessUnsupported = 9,
+            objectNonexistent = 10,
+            objectValueInvalid = 11
+        }
+
+        enum RejectPDU_rejectReason_confirmedRequestPDU
+        {
+            other = 0,
+            unrecognizedService = 1,
+            unrecognizedModifier = 2,
+            invalidInvokeID = 3,
+            invalidArgument = 4,
+            invalidModifier = 5,
+            maxServOutstandingEexceeded = 6,
+            maxRecursionExceeded = 8,
+            valueOutOfRange = 9
+        }
+        enum RejectPDU_rejectReason_confirmedResponsePDU
+        {
+            other = 0,
+            unrecognizedService = 1,
+            invalidInvokeID = 2,
+            invalidResult = 3,
+            maxRecursionExceeded = 5,
+            valueOutOfRange = 6
+        }
+        enum RejectPDU_rejectReason_confirmedErrorPDU
+        {
+            other = 0,
+            unrecognizedService = 1,
+            invalidInvokeID = 2,
+            invalidServiceError = 3,
+            valueOutOfRange = 4
+        }
+        enum RejectPDU_rejectReason_unconfirmedPDU
+        {
+            other = 0,
+            unrecognizedService = 1,
+            invalidArgument = 2,
+            maxRecursionExceeded = 3,
+            valueOutOfRange = 4
+        }
+        enum RejectPDU_rejectReason_pduError
+        {
+            unknownPduType = 0,
+            invalidPdu = 1,
+            illegalAcseMapping = 2
+        }
+        enum RejectPDU_rejectReason_concludeRequestPDU
+        {
+            other = 0,
+            invalidArgument = 1
+        }
+        enum RejectPDU_rejectReason_concludeResponsePDU
+        {
+            other = 0,
+            invalidResult = 1
+        }
+        enum RejectPDU_rejectReason_concludeErrorPDU
+        {
+            other = 0,
+            invalidServiceError = 1,
+            valueOutOfRange = 2
+        }
+
+        enum ServiceError_errorClass_vmdstate
+        {
+            other = 0,
+            vmdstateconflict = 1,
+            vmdoperationalproblem = 2,
+            domaintransferproblem = 3,
+            statemachineidinvalid = 4
+        }
+        enum ServiceError_errorClass_applicationreference
+        {
+            other = 0,
+            aplicationunreachable = 1,
+            connectionlost = 2,
+            applicationreferenceinvalid = 3,
+            contextunsupported = 4
+        }
+        enum ServiceError_errorClass_definition
+        {
+            other = 0,
+            objectundefined = 1,
+            invalidaddress = 2,
+            typeunsupported = 3,
+            typeinconsistent = 4,
+            objectexists = 5,
+            objectattributeinconsistent = 6
+        }
+        enum ServiceError_errorClass_resource
+        {
+            other = 0,
+            memoryunavailable = 1,
+            processorresourceunavailable = 2,
+            massstorageunavailable = 3,
+            capabilityunavailable = 4,
+            capabilityunknown = 5
+        }
+        enum ServiceError_errorClass_service
+        {
+            other = 0,
+            primitivesoutofsequence = 1,
+            objectstateconflict = 2,
+            pdusize = 3,
+            continuationinvalid = 4,
+            objectconstraintconflict = 5
+        }
+        enum ServiceError_errorClass_servicepreempt
+        {
+            other = 0,
+            timeout = 1,
+            deadlock = 2,
+            cancel = 3
+        }
+        enum ServiceError_errorClass_timeresolution
+        {
+            other = 0,
+            unsupportabletimeresolution = 1
+        }
+        enum ServiceError_errorClass_access
+        {
+            other = 0,
+            objectaccessunsupported = 1,
+            objectnonexistent = 2,
+            objectaccessdenied = 3,
+            objectinvalidated = 4
+        }
+        enum ServiceError_errorClass_initiate
+        {
+            other = 0,
+            versionincompatible = 1,
+            maxsegmentinsufficient = 2,
+            maxservicesoutstandingcallinginsufficient = 3,
+            maxservicesoutstandingcalledinsufficient = 4,
+            serviceCBBinsufficient = 5,
+            parameterCBBinsufficient = 6,
+            nestinglevelinsufficient = 7
+        }
+        enum ServiceError_errorClass_conclude
+        {
+            other = 0,
+            furthercommunicationrequired = 1
+        }
+        enum ServiceError_errorClass_cancel
+        {
+            other = 0,
+            invokeidunknown = 1,
+            cancelnotpossible = 2
+        }
+        enum ServiceError_errorClass_file
+        {
+            other = 0,
+            filenameambiguous = 1,
+            filebusy = 2,
+            filenamesyntaxError = 3,
+            contenttypeinvalid = 4,
+            positioninvalid = 5,
+            fileaccesdenied = 6,
+            filenonexistent = 7,
+            duplicatefilename = 8,
+            insufficientspaceinfilestore = 9
+        }
+
         public int ReceiveData(Iec61850State iecs)
         {
             if (iecs == null)
@@ -223,11 +399,14 @@ namespace IEDExplorer
             }
             else if (mymmspdu.Initiate_ResponsePDU != null)
             {
+                removeCall(iecs, -1);
                 ReceiveInitiate(iecs, mymmspdu.Initiate_ResponsePDU);
             }
             else if (mymmspdu.Confirmed_ResponsePDU != null && mymmspdu.Confirmed_ResponsePDU.Service != null)
             {
                 iecs.logger.LogDebug("mymmspdu.Confirmed_ResponsePDU.Service exists!");
+                NodeBase[] operData = removeCall(iecs, mymmspdu.Confirmed_ResponsePDU.InvokeID.Value);
+
                 if (mymmspdu.Confirmed_ResponsePDU.Service.Identify != null)
                 {
                     ReceiveIdentify(iecs, mymmspdu.Confirmed_ResponsePDU.Service.Identify);
@@ -246,11 +425,11 @@ namespace IEDExplorer
                 }
                 else if (mymmspdu.Confirmed_ResponsePDU.Service.Read != null)
                 {
-                    ReceiveRead(iecs, mymmspdu.Confirmed_ResponsePDU.Service.Read);
+                    ReceiveRead(iecs, mymmspdu.Confirmed_ResponsePDU.Service.Read, operData);
                 }
                 else if (mymmspdu.Confirmed_ResponsePDU.Service.DefineNamedVariableList != null)
                 {
-                    ReceiveDefineNamedVariableList(iecs, mymmspdu.Confirmed_ResponsePDU.Service.DefineNamedVariableList);
+                    ReceiveDefineNamedVariableList(iecs, mymmspdu.Confirmed_ResponsePDU.Service.DefineNamedVariableList, operData);
                 }
                 else if (mymmspdu.Confirmed_ResponsePDU.Service.FileDirectory != null)
                 {
@@ -275,10 +454,12 @@ namespace IEDExplorer
             }
             else if (mymmspdu.RejectPDU != null)
             {
-                iecs.logger.LogError("RejectPDU received - requested operation rejected!!");
+                NodeBase[] operData = removeCall(iecs, mymmspdu.RejectPDU.OriginalInvokeID.Value);
+                ReceiveRejectPDU(iecs, mymmspdu);
             }
             else if (mymmspdu.Confirmed_ErrorPDU != null)
             {
+                NodeBase[] operData = removeCall(iecs, mymmspdu.Confirmed_ErrorPDU.InvokeID.Value);
                 iecs.logger.LogError("Confirmed_ErrorPDU received - requested operation not possible!!");
             }
             else
@@ -287,6 +468,65 @@ namespace IEDExplorer
             }
 
             return 0;
+        }
+
+        private void ReceiveRejectPDU(Iec61850State iecs, MMSpdu mymmspdu)
+        {
+            string operation = "unknown", reason = "unknown";
+
+            if (mymmspdu.RejectPDU.RejectReason.isCancel_errorPDUSelected())
+            {
+                operation = "Cancel_errorPDU";
+            }
+            else if (mymmspdu.RejectPDU.RejectReason.isCancel_requestPDUSelected())
+            {
+                operation = "Cancel_requestPDU";
+            }
+            else if (mymmspdu.RejectPDU.RejectReason.isCancel_responsePDUSelected())
+            {
+                operation = "Cancel_responsePDU";
+            }
+            else if (mymmspdu.RejectPDU.RejectReason.isConclude_errorPDUSelected())
+            {
+                operation = "Conclude_errorPDU";
+                reason = ((RejectPDU_rejectReason_concludeErrorPDU)mymmspdu.RejectPDU.RejectReason.Conclude_errorPDU).ToString();
+            }
+            else if (mymmspdu.RejectPDU.RejectReason.isConclude_requestPDUSelected())
+            {
+                operation = "Conclude_requestPDU";
+                reason = ((RejectPDU_rejectReason_concludeRequestPDU)mymmspdu.RejectPDU.RejectReason.Conclude_requestPDU).ToString();
+            }
+            else if (mymmspdu.RejectPDU.RejectReason.isConclude_responsePDUSelected())
+            {
+                operation = "Conclude_responsePDU";
+                reason = ((RejectPDU_rejectReason_concludeResponsePDU)mymmspdu.RejectPDU.RejectReason.Conclude_responsePDU).ToString();
+            }
+            else if (mymmspdu.RejectPDU.RejectReason.isConfirmed_errorPDUSelected())
+            {
+                operation = "Confirmed_errorPDU";
+                reason = ((RejectPDU_rejectReason_confirmedErrorPDU)mymmspdu.RejectPDU.RejectReason.Confirmed_errorPDU).ToString();
+            }
+            else if (mymmspdu.RejectPDU.RejectReason.isConfirmed_requestPDUSelected())
+            {
+                operation = "Confirmed_requestPDU";
+                reason = ((RejectPDU_rejectReason_confirmedRequestPDU)mymmspdu.RejectPDU.RejectReason.Confirmed_requestPDU).ToString();
+            }
+            else if (mymmspdu.RejectPDU.RejectReason.isConfirmed_responsePDUSelected())
+            {
+                operation = "Confirmed_responsePDU";
+                reason = ((RejectPDU_rejectReason_confirmedResponsePDU)mymmspdu.RejectPDU.RejectReason.Confirmed_responsePDU).ToString();
+            }
+            else if (mymmspdu.RejectPDU.RejectReason.isPdu_errorSelected())
+            {
+                operation = "Pdu_error";
+                reason = ((RejectPDU_rejectReason_pduError)mymmspdu.RejectPDU.RejectReason.Pdu_error).ToString();
+            }
+            else if (mymmspdu.RejectPDU.RejectReason.isUnconfirmedPDUSelected())
+            {
+                operation = "UnconfirmedPDU";
+                reason = ((RejectPDU_rejectReason_unconfirmedPDU)mymmspdu.RejectPDU.RejectReason.UnconfirmedPDU).ToString();
+            }
+            iecs.logger.LogError("RejectPDU received - requested operation " + operation + " rejected!! Reason code: " + reason);
         }
 
         private void ReceiveFileDirectory(Iec61850State iecs, FileDirectory_Response dir)
@@ -310,14 +550,14 @@ namespace IEDExplorer
                         }
                         NodeFile nf = new NodeFile(name, isdir);
                         nf.ReportedSize = de.FileAttributes.SizeOfFile.Value;
-                        (iecs.lastOperationData[0]).AddChildNode(nf);
+                        (iecs.lastFileOperationData[0]).AddChildNode(nf);
                         //iecs.logger.LogInfo("FileName: " + name);
                     }
                     else
                         iecs.logger.LogInfo("Empty FileName in FileDirectory PDU!!");
                 }
-                if (iecs.lastOperationData[0] is NodeFile)
-                    (iecs.lastOperationData[0] as NodeFile).FileReady = true;
+                if (iecs.lastFileOperationData[0] is NodeFile)
+                    (iecs.lastFileOperationData[0] as NodeFile).FileReady = true;
                 iecs.fstate = FileTransferState.FILE_DIRECTORY;
             }
             else
@@ -327,11 +567,11 @@ namespace IEDExplorer
         private void ReceiveFileOpen(Iec61850State iecs, FileOpen_Response fileopn)
         {
             iecs.logger.LogInfo("FileOpen PDU received!!");
-            if (iecs.lastOperationData[0] is NodeFile)
+            if (iecs.lastFileOperationData[0] is NodeFile)
             {
-                (iecs.lastOperationData[0] as NodeFile).frsmId = fileopn.FrsmID.Value;
+                (iecs.lastFileOperationData[0] as NodeFile).frsmId = fileopn.FrsmID.Value;
                 iecs.fstate = FileTransferState.FILE_OPENED;
-                iecs.logger.LogInfo("FileOpened: " + (iecs.lastOperationData[0] as NodeFile).FullName +
+                iecs.logger.LogInfo("FileOpened: " + (iecs.lastFileOperationData[0] as NodeFile).FullName +
                     " Size: " + fileopn.FileAttributes.SizeOfFile.Value.ToString());
             }
         }
@@ -339,15 +579,15 @@ namespace IEDExplorer
         private void ReceiveFileRead(Iec61850State iecs, FileRead_Response filerd)
         {
             iecs.logger.LogInfo("FileRead PDU received!!");
-            if (iecs.lastOperationData[0] is NodeFile)
+            if (iecs.lastFileOperationData[0] is NodeFile)
             {
-                (iecs.lastOperationData[0] as NodeFile).AppendData(filerd.FileData);
+                (iecs.lastFileOperationData[0] as NodeFile).AppendData(filerd.FileData);
                 if (filerd.MoreFollows)
                     iecs.fstate = FileTransferState.FILE_READ;
                 else
                 {
                     iecs.fstate = FileTransferState.FILE_COMPLETE;
-                    (iecs.lastOperationData[0] as NodeFile).FileReady = true;
+                    (iecs.lastFileOperationData[0] as NodeFile).FileReady = true;
                 }
             }
         }
@@ -358,9 +598,9 @@ namespace IEDExplorer
             iecs.fstate = FileTransferState.FILE_NO_ACTION;
         }
 
-        private void ReceiveDefineNamedVariableList(Iec61850State iecs, DefineNamedVariableList_Response dnvl)
+        private void ReceiveDefineNamedVariableList(Iec61850State iecs, DefineNamedVariableList_Response dnvl, NodeBase[] lastOperationData)
         {
-            (iecs.lastOperationData[0] as NodeVL).Defined = true;
+            (lastOperationData[0] as NodeVL).Defined = true;
         }
 
         private void ReceiveInformationReport(Iec61850State iecs, InformationReport Report)
@@ -568,7 +808,7 @@ namespace IEDExplorer
             }
         }
 
-        private void ReceiveRead(Iec61850State iecs, Read_Response Read)
+        private void ReceiveRead(Iec61850State iecs, Read_Response Read, NodeBase[] lastOperationData)
         {
             iecs.logger.LogDebug("Read != null");
             if (Read.VariableAccessSpecification != null)
@@ -611,27 +851,27 @@ namespace IEDExplorer
                     int i = 0;
                     // libiec61850 correction
                     // one read of a node is equal to separate reads to node children
-                    if (Read.ListOfAccessResult.Count > iecs.lastOperationData.Length)
-                        if (Read.ListOfAccessResult.Count == iecs.lastOperationData[0].GetChildNodes().Length)
+                    if (Read.ListOfAccessResult.Count > lastOperationData.Length)
+                        if (Read.ListOfAccessResult.Count == lastOperationData[0].GetChildNodes().Length)
                         {
-                            iecs.lastOperationData = iecs.lastOperationData[0].GetChildNodes();
+                            lastOperationData = lastOperationData[0].GetChildNodes();
                         }
                     // libiec61850 correction end
                     foreach (AccessResult ar in Read.ListOfAccessResult)
                     {
-                        if (i <= iecs.lastOperationData.GetUpperBound(0))
+                        if (i <= lastOperationData.GetUpperBound(0))
                         {
                             if (ar.Success != null)
                             {
-                                iecs.logger.LogDebug("Reading Actual variable value: " + iecs.lastOperationData[i].Address);
-                                recursiveReadData(iecs, ar.Success, iecs.lastOperationData[i], NodeState.Read);
+                                iecs.logger.LogDebug("Reading Actual variable value: " + lastOperationData[i].Address);
+                                recursiveReadData(iecs, ar.Success, lastOperationData[i], NodeState.Read);
                                 i++;
                             }
                         }
                         else
                             iecs.logger.LogError("Not matching read structure in ReceiveRead");
                     }
-                    iecs.lastOperationData = null;
+                    lastOperationData = null;
                 }
             if (iecs.istate == Iec61850lStateEnum.IEC61850_READ_MODEL_DATA_WAIT)
             {
@@ -1078,7 +1318,7 @@ namespace IEDExplorer
             {
                 iecs.logger.LogDebug("mymmspdu.Initiate_ResponsePDU exists!");
                 int cing = initiate_ResponsePDU.NegotiatedMaxServOutstandingCalling.Value;
-                int ced  = initiate_ResponsePDU.NegotiatedMaxServOutstandingCalled.Value;
+                int ced = initiate_ResponsePDU.NegotiatedMaxServOutstandingCalled.Value;
                 iecs.logger.LogDebug(String.Format("mymmspdu.Initiate_ResponsePDU.NegotiatedMaxServOutstandingCalling: {0}, Called: {1}",
                     cing, ced));
 
@@ -1144,7 +1384,7 @@ namespace IEDExplorer
                 return -1;
             }
 
-            this.Send(iecs, mymmspdu);
+            this.Send(iecs, mymmspdu, InvokeID, null);
 
             return 0;
         }
@@ -1179,7 +1419,7 @@ namespace IEDExplorer
                 return -1;
             }
 
-            this.Send(iecs, mymmspdu);
+            this.Send(iecs, mymmspdu, InvokeID, null);
 
             return 0;
         }
@@ -1215,7 +1455,7 @@ namespace IEDExplorer
                 return -1;
             }
 
-            this.Send(iecs, mymmspdu);
+            this.Send(iecs, mymmspdu, InvokeID, null);
 
             return 0;
         }
@@ -1251,7 +1491,7 @@ namespace IEDExplorer
                 return -1;
             }
 
-            this.Send(iecs, mymmspdu);
+            this.Send(iecs, mymmspdu, InvokeID, null);
 
             return 0;
         }
@@ -1291,7 +1531,7 @@ namespace IEDExplorer
                 return -1;
             }
 
-            this.Send(iecs, mymmspdu);
+            this.Send(iecs, mymmspdu, InvokeID, null);
 
             return 0;
         }
@@ -1338,7 +1578,7 @@ namespace IEDExplorer
                 return -1;
             }
 
-            this.Send(iecs, mymmspdu);
+            this.Send(iecs, mymmspdu, InvokeID, null);
 
             return 0;
         }
@@ -1373,7 +1613,7 @@ namespace IEDExplorer
                 vasl.Add(vas);
             }
 
-            iecs.lastOperationData = el.Data;
+            //iecs.lastOperationData = el.Data;
 
             rreq.VariableAccessSpecification = new VariableAccessSpecification();
             rreq.VariableAccessSpecification.selectListOfVariable(vasl);
@@ -1395,7 +1635,7 @@ namespace IEDExplorer
                 return -1;
             }
 
-            this.Send(iecs, mymmspdu);
+            this.Send(iecs, mymmspdu, InvokeID, el.Data);
 
             return 0;
         }
@@ -1480,7 +1720,7 @@ namespace IEDExplorer
                 return -1;
             }
 
-            this.Send(iecs, mymmspdu);
+            this.Send(iecs, mymmspdu, InvokeID, el.Data);
             return 0;
         }
 
@@ -1534,7 +1774,7 @@ namespace IEDExplorer
                 return -1;
             }
 
-            this.Send(iecs, mymmspdu);
+            this.Send(iecs, mymmspdu, InvokeID, el.Data);
             return 0;
         }
 
@@ -1607,7 +1847,7 @@ namespace IEDExplorer
 
             NodeBase[] nvl = new NodeBase[1];
             nvl[0] = el.Address.owner;
-            iecs.lastOperationData = nvl;
+            //iecs.lastOperationData = nvl;
 
             nvlreq.ListOfVariable = dnvl;
             nvlreq.VariableListName = new ObjectName();
@@ -1631,7 +1871,7 @@ namespace IEDExplorer
                 return -1;
             }
 
-            this.Send(iecs, mymmspdu);
+            this.Send(iecs, mymmspdu, InvokeID, nvl);
             return 0;
         }
 
@@ -1675,7 +1915,7 @@ namespace IEDExplorer
                 return -1;
             }
 
-            this.Send(iecs, mymmspdu);
+            this.Send(iecs, mymmspdu, InvokeID, el.Data);
             return 0;
         }
 
@@ -1705,7 +1945,7 @@ namespace IEDExplorer
                 filedreq.ContinueAfter = conafter;
             }
 
-            iecs.lastOperationData = el.Data;
+            iecs.lastFileOperationData = el.Data;
 
             csrreq.selectFileDirectory(filedreq);
 
@@ -1723,7 +1963,7 @@ namespace IEDExplorer
                 return -1;
             }
 
-            this.Send(iecs, mymmspdu);
+            this.Send(iecs, mymmspdu, InvokeID, el.Data);
             return 0;
         }
 
@@ -1748,7 +1988,7 @@ namespace IEDExplorer
             fileoreq.FileName = filename;
             fileoreq.InitialPosition = new Unsigned32(0);
 
-            iecs.lastOperationData[0] = el.Data[0];
+            iecs.lastFileOperationData[0] = el.Data[0];
 
             csrreq.selectFileOpen(fileoreq);
 
@@ -1766,7 +2006,7 @@ namespace IEDExplorer
                 return -1;
             }
 
-            this.Send(iecs, mymmspdu);
+            this.Send(iecs, mymmspdu, InvokeID, el.Data);
             return 0;
         }
 
@@ -1786,7 +2026,7 @@ namespace IEDExplorer
                 return -1;
             }
 
-            iecs.lastOperationData[0] = el.Data[0];
+            iecs.lastFileOperationData[0] = el.Data[0];
 
             csrreq.selectFileRead(filerreq);
 
@@ -1804,7 +2044,7 @@ namespace IEDExplorer
                 return -1;
             }
 
-            this.Send(iecs, mymmspdu);
+            this.Send(iecs, mymmspdu, InvokeID, el.Data);
             return 0;
         }
 
@@ -1825,7 +2065,7 @@ namespace IEDExplorer
                 return -1;
             }
 
-            iecs.lastOperationData[0] = el.Data[0];
+            iecs.lastFileOperationData[0] = el.Data[0];
 
             csrreq.selectFileClose(filecreq);
 
@@ -1843,7 +2083,7 @@ namespace IEDExplorer
                 return -1;
             }
 
-            this.Send(iecs, mymmspdu);
+            this.Send(iecs, mymmspdu, InvokeID, el.Data);
             return 0;
         }
 
@@ -1879,11 +2119,11 @@ namespace IEDExplorer
                 return -1;
             }
 
-            this.Send(iecs, mymmspdu);
+            this.Send(iecs, mymmspdu, 0, null);
             return 0;
         }
 
-        private void Send(Iec61850State iecs, MMSpdu pdu)
+        private void Send(Iec61850State iecs, MMSpdu pdu, int InvokeIdInc, NodeBase[] OperationData)
         {
             if (iecs.CaptureDb.CaptureActive)
             {
@@ -1894,6 +2134,7 @@ namespace IEDExplorer
                 cap.MMSPdu = pdu;
                 iecs.CaptureDb.AddPacket(cap);
             }
+            insertCall(iecs, InvokeIdInc, OperationData);
             iecs.iso.Send(iecs);
         }
 

@@ -23,6 +23,7 @@ namespace IEDExplorer.Views
         TreeNode listsNode;
         long m_ctlNum = 0;
         WindowManager winMgr;
+        System.Threading.Timer delayTimer;
 
         public IedTreeView(WindowManager wm)
         {
@@ -71,6 +72,8 @@ namespace IEDExplorer.Views
                 treeViewIed.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DO6"))));
                 treeViewIed.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DA6"))));
                 treeViewIed.ImageList.Images.Add(((System.Drawing.Image)(resources.GetObject("folder"))));
+                treeViewIed.ImageList.Images.Add(((System.Drawing.Image)(resources.GetObject("page_white_database"))));
+                treeViewIed.ImageList.Images.Add(((System.Drawing.Image)(resources.GetObject("page_white_put"))));
                 treeViewIed.Nodes.Clear();
                 TreeNode n = treeViewIed.Nodes.Add(iecs.DataModel.ied.Name + " = " + iecs.hostname +
                                                  ", Vendor = " + (iecs.DataModel.ied as NodeIed).VendorName +
@@ -116,6 +119,7 @@ namespace IEDExplorer.Views
                 tn4.Tag = iecs.DataModel.files;
                 tn4.ImageIndex = 3;
                 tn4.SelectedImageIndex = 3;
+                nb.Tag = tn4;
                 makeTree_fileNode(nb, tn4);
             }
         }
@@ -187,27 +191,52 @@ namespace IEDExplorer.Views
 
         void makeTree_fileNode(NodeBase nb, TreeNode tn)
         {
-            foreach (NodeBase b in nb.GetChildNodes())
+            tn.Nodes.Clear();
+            if ((nb is NodeIed) || (nb as NodeFile).isDir)
             {
-                TreeNode tn2 = tn.Nodes.Add(b.Name);
-                tn2.Tag = b;
-                b.Tag = tn2;
-                if (b is NodeFile && (b as NodeFile).isDir)
+                foreach (NodeBase b in nb.GetChildNodes())
                 {
-                    tn2.ImageIndex = 29;
-                    tn2.SelectedImageIndex = 29;
+                    TreeNode tn2 = tn.Nodes.Add(b.Name);
+                    tn2.Tag = b;
+                    b.Tag = tn2;
+                    if (b is NodeFile && (b as NodeFile).isDir)
+                    {
+                        tn2.ImageIndex = 29;
+                        tn2.SelectedImageIndex = 29;
+                    }
+                    else
+                    {
+                            tn2.ImageIndex = 4;
+                            tn2.SelectedImageIndex = 4;
+                    }
+                    (b as NodeFile).DirectoryUpdated += Node_DirectoryUpdated;
+                    makeTree_fileNode(b, tn2);
                 }
-                else
-                {
-                    tn2.ImageIndex = 4;
-                    tn2.SelectedImageIndex = 4;
-                }
-                (b as NodeFile).DirectoryUpdated += Node_DirectoryUpdated;
-                makeTree_fileNode(b, tn2);
+            }
+            else
+                updateTree_fileNode(nb, tn);
+        }
+
+        void updateTree_fileNode(NodeBase nb, TreeNode tn)
+        {
+            if ((nb as NodeFile).FileReady)
+            {
+                tn.ImageIndex = 31;
+                tn.SelectedImageIndex = 31;
+            }
+            else if ((nb as NodeFile).FileSaved)
+            {
+                tn.ImageIndex = 30;
+                tn.SelectedImageIndex = 30;
+            }
+            else
+            {
+                tn.ImageIndex = 4;
+                tn.SelectedImageIndex = 4;
             }
         }
 
-        void Node_DirectoryUpdated(object sender, EventArgs e)
+        public void Node_DirectoryUpdated(object sender, EventArgs e)
         {
             if (treeViewIed.InvokeRequired)
             {
@@ -218,7 +247,7 @@ namespace IEDExplorer.Views
             }
             else
             {
-                makeTree_fileNode((sender as NodeFile), (TreeNode)(sender as NodeBase).Tag);
+                makeTree_fileNode((sender as NodeBase), (TreeNode)(sender as NodeBase).Tag);
             }
         }
 
@@ -420,6 +449,7 @@ namespace IEDExplorer.Views
             CommAddress ad = new CommAddress();
             NodeBase[] ndarr = new NodeBase[1];
             ndarr[0] = nfi;
+            (nfi as NodeFile).Reset();
             iecs.Send(ndarr, ad, ActionRequested.OpenFile);
         }
 
@@ -648,10 +678,14 @@ namespace IEDExplorer.Views
             if (r == DialogResult.OK)
             {
                 iecs.Send(ndarr, data.Parent.CommAddress, ActionRequested.Write);
-                Thread.Sleep(300);
-                ndarr = new NodeData[1];
-                ndarr[0] = data;
-                iecs.Send(ndarr, data.CommAddress, ActionRequested.Read);
+
+                //Thread.Sleep(300);
+                delayTimer = new System.Threading.Timer(obj =>
+                {
+                    ndarr = new NodeData[1];
+                    ndarr[0] = data;
+                    iecs.Send(ndarr, data.CommAddress, ActionRequested.Read);
+                }, null, 1000, System.Threading.Timeout.Infinite);
             }
         }
 

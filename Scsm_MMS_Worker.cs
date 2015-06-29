@@ -225,20 +225,21 @@ namespace IEDExplorer
                                         switch (iecs.fstate)
                                         {
                                             case FileTransferState.FILE_DIRECTORY:
-                                                if (iecs.lastOperationData[0] is NodeIed)
+                                                if (iecs.lastFileOperationData[0] is NodeIed)
                                                     //self._env.mainWindow.makeTree(iecs);
-                                                    self._env.winMgr.MakeIedTree(iecs);
+                                                    //self._env.winMgr.MakeIedTree(iecs);
+                                                    self._env.winMgr.MakeFileTree(iecs);
                                                 iecs.fstate = FileTransferState.FILE_NO_ACTION;
                                                 break;
                                             case FileTransferState.FILE_OPENED:
                                             case FileTransferState.FILE_READ:
                                                 // issue a read
-                                                iecs.Send(iecs.lastOperationData, ad, ActionRequested.ReadFile);
+                                                iecs.Send(iecs.lastFileOperationData, ad, ActionRequested.ReadFile);
                                                 iecs.fstate = FileTransferState.FILE_NO_ACTION;
                                                 break;
                                             case FileTransferState.FILE_COMPLETE:
                                                 // issue a close
-                                                iecs.Send(iecs.lastOperationData, ad, ActionRequested.CloseFile);
+                                                iecs.Send(iecs.lastFileOperationData, ad, ActionRequested.CloseFile);
                                                 /*if (iecs.lastOperationData[0] is NodeFile)
                                                 {
                                                     (iecs.lastOperationData[0] as NodeFile).SaveFile((iecs.lastOperationData[0] as NodeFile).Name);
