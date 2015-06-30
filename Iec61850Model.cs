@@ -18,7 +18,11 @@ namespace IEDExplorer
         /// <summary>
         /// Server RP blocks (reports)
         /// </summary>
-        public NodeIed reports = new NodeIed("reports");
+        public NodeIed urcbs = new NodeIed("urcbs");
+        /// <summary>
+        /// Server BR blocks (reports)
+        /// </summary>
+        public NodeIed brcbs = new NodeIed("brcbs");
         /// <summary>
         /// Server files
         /// </summary>
@@ -32,7 +36,7 @@ namespace IEDExplorer
             (ied as NodeIed).iecs = iecs;
             (lists as NodeIed).iecs = iecs;
             (files as NodeIed).iecs = iecs;
-            (reports as NodeIed).iecs = iecs;
+            (urcbs as NodeIed).iecs = iecs;
         }
     }
 }

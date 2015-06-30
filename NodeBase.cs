@@ -96,6 +96,11 @@ namespace IEDExplorer
             return (NodeBase[])_childNodes.ToArray();
         }
 
+        public int GetChildCount()
+        {
+            return _childNodes.Count;
+        }
+
         public NodeBase AddChildNode(NodeBase Node)
         {
             if (Node == null) return null;       // defensive
@@ -118,7 +123,8 @@ namespace IEDExplorer
 
         public NodeBase LinkChildNode(NodeBase Node)
         {
-            foreach (var n in _childNodes.Where(n => Node.Name == n.Name))
+            //foreach (var n in _childNodes.Where(n => Node.Name == n.Name))
+            foreach (var n in _childNodes.Where(n => Node.CommAddress.Variable == n.CommAddress.Variable))
             {
                 return n;
             }
@@ -256,6 +262,16 @@ namespace IEDExplorer
                         commAddress.VariablePath = String.Concat(commAddress.VariablePath, "$", parts[i]);
                     }
                 }
+                return commAddress;
+            }
+        }
+
+        public CommAddress CommAddressDots
+        {
+            get
+            {
+                CommAddress commAddress = CommAddress;
+                commAddress.Variable = commAddress.Variable.Replace('$', '.');
                 return commAddress;
             }
         }

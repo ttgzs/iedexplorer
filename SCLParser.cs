@@ -455,7 +455,7 @@ namespace IEDExplorer
             var deviceName = "";
             var lnName = "";
             _dataModel.lists = new NodeIed("lists");
-            _dataModel.reports = new NodeIed("reports");
+            _dataModel.urcbs = new NodeIed("reports");
             while (reader.Read())
             {
                 if (reader.IsStartElement())
@@ -482,7 +482,7 @@ namespace IEDExplorer
                             parent.AddChildNode(CreateDataSet(reader.ReadSubtree(), lnName, deviceName));
                             break;
                         case "ReportControl":
-                            parent = _dataModel.reports.AddChildNode(new NodeBase(String.Concat(iedName, deviceName))); // will return if already exists
+                            parent = _dataModel.urcbs.AddChildNode(new NodeBase(String.Concat(iedName, deviceName))); // will return if already exists
                             parent.AddChildNode(CreateReport(reader.ReadSubtree(), lnName, deviceName));
                             break;
                     }
@@ -532,11 +532,11 @@ namespace IEDExplorer
         /// <param name="nodeName"></param>
         /// <param name="deviceName"></param>
         /// <returns> a RP node </returns>
-        private static NodeRP CreateReport(XmlReader reader, string nodeName, string deviceName)
+        private static NodeRCB CreateReport(XmlReader reader, string nodeName, string deviceName)
         {
             reader.Read();
 
-            NodeRP nodeRP = new NodeRP(String.Concat(nodeName, "$RP$", reader.GetAttribute("name")));
+            NodeRCB nodeRP = new NodeRCB(String.Concat(nodeName, "$RP$", reader.GetAttribute("name")));
 
             // rptID
             NodeData RptId = new NodeData("RptID");

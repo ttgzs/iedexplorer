@@ -40,6 +40,9 @@
             this.treeViewIed.TabIndex = 0;
             this.treeViewIed.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewIed_AfterSelect);
             this.treeViewIed.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeViewIed_NodeMouseClick);
+            this.treeViewIed.MouseDown += new System.Windows.Forms.MouseEventHandler(this.treeViewIed_MouseDown);
+            this.treeViewIed.MouseMove += new System.Windows.Forms.MouseEventHandler(this.treeViewIed_MouseMove);
+            this.treeViewIed.MouseUp += new System.Windows.Forms.MouseEventHandler(this.treeViewIed_MouseUp);
             // 
             // IedTreeView
             // 

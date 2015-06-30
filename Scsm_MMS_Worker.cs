@@ -293,7 +293,10 @@ namespace IEDExplorer
                                     iecs.mms.SendWriteAsStructure(iecs, el);
                                     break;
                                 case ActionRequested.Read:
-                                    iecs.mms.SendRead(iecs, el);
+                                    if (el.Data[0] is NodeVL)
+                                        iecs.mms.SendReadVL(iecs, el);
+                                    else
+                                        iecs.mms.SendRead(iecs, el);
                                     break;
                                 case ActionRequested.DefineNVL:
                                     iecs.mms.SendDefineNVL(iecs, el);

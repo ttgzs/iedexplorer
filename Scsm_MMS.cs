@@ -844,6 +844,32 @@ namespace IEDExplorer
                         }
                     }
                 }
+                else if (Read.VariableAccessSpecification.VariableListName != null)
+                {
+                    // reading a NVL read
+                    iecs.logger.LogDebug("Read.VariableAccessSpecification.ListOfVariable != null");
+                    if (Read.ListOfAccessResult != null)
+                    {
+                        // Find the NVL by name
+                        if (Read.VariableAccessSpecification.VariableListName.Domain_specific != null)
+                        {
+                            string domain = Read.VariableAccessSpecification.VariableListName.Domain_specific.DomainID.Value;
+                            string address = Read.VariableAccessSpecification.VariableListName.Domain_specific.ItemID.Value;
+                            NodeBase nb = iecs.DataModel.lists.FindNodeByAddress(domain, address, true);
+                            // TODO
+                            if (nb != null && nb.GetChildCount() == Read.ListOfAccessResult.Count)
+                            {
+                                NodeBase[] data = nb.GetChildNodes();
+
+                                for (int i = 0; i < data.Length; i++)
+                                {
+                                    iecs.logger.LogDebug("Reading variable: " + data[i].Address);
+                                    recursiveReadData(iecs, (Read.ListOfAccessResult as List<AccessResult>)[i].Success, data[i], NodeState.Read);
+                                }
+                            }
+                        }
+                    }
+                }
             }
             else    // When VariableAccessSpecification is missing, try to read to actual variable
                 if (Read.ListOfAccessResult != null)
@@ -1221,11 +1247,13 @@ namespace IEDExplorer
                         NodeBase newActualNode = new NodeData(s.ComponentName.Value);
                         newActualNode = actualNode.AddChildNode(newActualNode);
                         RecursiveReadTypeDescription(iecs, newActualNode, s.ComponentType.TypeDescription);
-                        if (actualNode is NodeFC && actualNode.Name == "RP")
+                        if (actualNode is NodeFC && (actualNode.Name == "RP" || actualNode.Name == "BR"))
                         {
                             // Having RCB
-                            NodeBase nrpied = iecs.DataModel.reports.AddChildNode(new NodeLD(iecs.DataModel.ied.GetActualChildNode().Name));
-                            NodeBase nrp = new NodeRP(newActualNode.CommAddress.Variable);
+                            NodeBase nrpied;
+                            if (actualNode.Name == "RP") nrpied = iecs.DataModel.urcbs.AddChildNode(new NodeLD(iecs.DataModel.ied.GetActualChildNode().Name));
+                            else nrpied = iecs.DataModel.brcbs.AddChildNode(new NodeLD(iecs.DataModel.ied.GetActualChildNode().Name));
+                            NodeBase nrp = new NodeRCB(newActualNode.CommAddress.Variable);
                             nrpied.AddChildNode(nrp);
                             foreach (NodeBase nb in newActualNode.GetChildNodes())
                             {
@@ -1617,6 +1645,50 @@ namespace IEDExplorer
 
             rreq.VariableAccessSpecification = new VariableAccessSpecification();
             rreq.VariableAccessSpecification.selectListOfVariable(vasl);
+            rreq.SpecificationWithResult = true;
+
+            csrreq.selectRead(rreq);
+
+            crreq.InvokeID = new Unsigned32(InvokeID++);
+
+            crreq.Service = csrreq;
+
+            mymmspdu.selectConfirmed_RequestPDU(crreq);
+
+            encoder.encode<MMSpdu>(mymmspdu, iecs.msMMSout);
+
+            if (iecs.msMMSout.Length == 0)
+            {
+                iecs.logger.LogError("mms.SendRead: Encoding Error!");
+                return -1;
+            }
+
+            this.Send(iecs, mymmspdu, InvokeID, el.Data);
+
+            return 0;
+        }
+
+        public int SendReadVL(Iec61850State iecs, WriteQueueElement el)
+        {
+            MMSpdu mymmspdu = new MMSpdu();
+            iecs.msMMSout = new MemoryStream();
+
+            Confirmed_RequestPDU crreq = new Confirmed_RequestPDU();
+            ConfirmedServiceRequest csrreq = new ConfirmedServiceRequest();
+            Read_Request rreq = new Read_Request();
+
+            NodeBase b = el.Data[0];    // Must be NodeVL
+
+            ObjectName on = new ObjectName();
+            ObjectName.Domain_specificSequenceType dst = new ObjectName.Domain_specificSequenceType();
+
+            dst.DomainID = new Identifier(b.CommAddress.Domain);
+            dst.ItemID = new Identifier(b.CommAddress.Variable);
+            iecs.logger.LogDebug("SendRead: Reading with NVL: " + dst.ItemID.Value);
+            on.selectDomain_specific(dst);
+
+            rreq.VariableAccessSpecification = new VariableAccessSpecification();
+            rreq.VariableAccessSpecification.selectVariableListName(on);
             rreq.SpecificationWithResult = true;
 
             csrreq.selectRead(rreq);

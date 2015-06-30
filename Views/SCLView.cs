@@ -101,7 +101,7 @@ namespace IEDExplorer.Views
                         tn3.SelectedImageIndex = 3;
                         makeTree_listNode(lb, tn3);
                     }
-                    NodeBase rb = dataModel.reports.FindChildNode(b.Name);
+                    NodeBase rb = dataModel.urcbs.FindChildNode(b.Name);
                     if (rb != null)
                     {
                         tn3 = tn2.Nodes.Add("Reports");

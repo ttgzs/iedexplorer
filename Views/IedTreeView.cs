@@ -21,9 +21,8 @@ namespace IEDExplorer.Views
         Rectangle dragBoxFromMouseDown;
         TreeNode nodeToDrag;
         TreeNode listsNode;
-        long m_ctlNum = 0;
         WindowManager winMgr;
-        System.Threading.Timer delayTimer;
+        Iec61850Controller ctrl = null;
 
         public IedTreeView(WindowManager wm)
         {
@@ -33,6 +32,7 @@ namespace IEDExplorer.Views
 
         internal void makeTree(Iec61850State iecs)
         {
+            ctrl = iecs.Controller;
             if (treeViewIed.InvokeRequired)
             {
                 OnNodeCallback d = new OnNodeCallback(makeTree);
@@ -104,14 +104,23 @@ namespace IEDExplorer.Views
                         tn3.SelectedImageIndex = 3;
                         makeTree_listNode(lb, tn3);
                     }
-                    NodeBase rb = iecs.DataModel.reports.FindChildNode(b.Name);
-                    if (rb != null)
+                    NodeBase ur = iecs.DataModel.urcbs.FindChildNode(b.Name);
+                    if (ur != null)
                     {
-                        tn3 = tn2.Nodes.Add("Reports");
-                        tn3.Tag = rb;
+                        tn3 = tn2.Nodes.Add("Unbuffered Reports");
+                        tn3.Tag = ur;
                         tn3.ImageIndex = 3;
                         tn3.SelectedImageIndex = 3;
-                        makeTree_reportNode(rb, tn3);
+                        makeTree_reportNode(ur, tn3);
+                    }
+                    NodeBase br = iecs.DataModel.brcbs.FindChildNode(b.Name);
+                    if (br != null)
+                    {
+                        tn3 = tn2.Nodes.Add("Buffered Reports");
+                        tn3.Tag = br;
+                        tn3.ImageIndex = 3;
+                        tn3.SelectedImageIndex = 3;
+                        makeTree_reportNode(br, tn3);
                     }
                 }
                 nb = iecs.DataModel.files;
@@ -391,7 +400,7 @@ namespace IEDExplorer.Views
                         item.Tag = n;
                         item.Click += new EventHandler(OnSendCommandAsStructureClick);
                     }
-                    if (n is NodeData || n is NodeFC)
+                    if (n is NodeData || n is NodeFC || n is NodeVL)
                     {
                         item = menu.Items.Add("Read Data");
                         item.Tag = n;
@@ -412,45 +421,17 @@ namespace IEDExplorer.Views
 
         void OnDeleteNVLClick(object sender, EventArgs e)
         {
-            NodeVL nvl = (NodeVL)(sender as ToolStripItem).Tag;
-            Iec61850State iecs = nvl.GetIecs();
-            NodeBase[] ndarr = new NodeBase[1];
-            ndarr[0] = nvl;
-            iecs.Send(ndarr, nvl.CommAddress, ActionRequested.DeleteNVL);
+            ctrl.DeleteNVL((NodeVL)(sender as ToolStripItem).Tag);
         }
 
         void OnFileListClick(object sender, EventArgs e)
         {
-            NodeBase nfi = (NodeBase)(sender as ToolStripItem).Tag;
-            Iec61850State iecs = nfi.GetIecs();
-            CommAddress ad = new CommAddress();
-            NodeBase[] ndarr = new NodeBase[1];
-            ndarr[0] = nfi;
-            if (!(nfi is NodeFile))
-            {
-                NodeData nd = new NodeData("x");
-                nd.DataType = scsm_MMS_TypeEnum.visible_string;
-                nd.DataValue = "/";
-                EditValue ev = new EditValue(nd);
-                DialogResult r = ev.ShowDialog();
-                if (r == DialogResult.OK)
-                {
-                    ad.Variable = nd.StringValue;
-                }
-            }
-
-            iecs.Send(ndarr, ad, ActionRequested.GetDirectory);
+            ctrl.GetFileList((NodeBase)(sender as ToolStripItem).Tag);
         }
 
         void OnFileGetClick(object sender, EventArgs e)
         {
-            NodeBase nfi = (NodeBase)(sender as ToolStripItem).Tag;
-            Iec61850State iecs = nfi.GetIecs();
-            CommAddress ad = new CommAddress();
-            NodeBase[] ndarr = new NodeBase[1];
-            ndarr[0] = nfi;
-            (nfi as NodeFile).Reset();
-            iecs.Send(ndarr, ad, ActionRequested.OpenFile);
+            ctrl.GetFile((NodeFile)(sender as ToolStripItem).Tag);
         }
 
         void OnFileSaveClick(object sender, EventArgs e)
@@ -474,218 +455,51 @@ namespace IEDExplorer.Views
 
         void OnDefineNVLClick(object sender, EventArgs e)
         {
-            NodeVL nvl = (NodeVL)(sender as ToolStripItem).Tag;
-            Iec61850State iecs = nvl.GetIecs();
-            List<NodeBase> ndar = new List<NodeBase>();
-            foreach (NodeBase n in nvl.GetChildNodes())
-            {
-                ndar.Add(n);
-            }
-            iecs.Send(ndar.ToArray(), nvl.CommAddress, ActionRequested.DefineNVL);
+            ctrl.DefineNVL((NodeVL)(sender as ToolStripItem).Tag);
         }
 
         void OnSendCommandClick(object sender, EventArgs e)
         {
             NodeBase data = (NodeBase)(sender as ToolStripItem).Tag;
-            Iec61850State iecs = data.GetIecs();
-            NodeBase[] ndarr = new NodeBase[1];
-
-            SendCommand(data, iecs, ActionRequested.Write);
+            CommandParams cPar = ctrl.PrepareSendCommand((NodeBase)(sender as ToolStripItem).Tag);
+            if (cPar != null)
+            {
+                CommandDialog cdlg = new CommandDialog(cPar);
+                if (cdlg.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
+                {
+                    ctrl.SendCommand(data, cPar, ActionRequested.Write);
+                }
+            }
         }
 
         void OnSendCommandAsStructureClick(object sender, EventArgs e)
         {
             NodeBase data = (NodeBase)(sender as ToolStripItem).Tag;
-            Iec61850State iecs = data.GetIecs();
-            NodeBase[] ndarr = new NodeBase[1];
-
-            SendCommand(data, iecs, ActionRequested.WriteAsStructure);
-        }
-
-        private void SendCommand(NodeBase data, Iec61850State iecs, ActionRequested how)
-        {
-            if (data != null)
+            CommandParams cPar = ctrl.PrepareSendCommand((NodeBase)(sender as ToolStripItem).Tag);
+            if (cPar != null)
             {
-                NodeData d = (NodeData)data.Parent;
-                if (d != null)
+                CommandDialog cdlg = new CommandDialog(cPar);
+                if (cdlg.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
                 {
-                    NodeBase b, c;
-                    CommandParams cPar = new CommandParams();
-                    cPar.CommType = CommandType.SingleCommand;
-                    if ((b = d.FindChildNode("ctlVal")) != null)
-                    {
-                        cPar.DataType = ((NodeData)b).DataType;
-                        cPar.Address = b.Address;
-                        cPar.ctlVal = ((NodeData)b).DataValue;
-                    }
-                    cPar.T = DateTime.MinValue;
-                    cPar.interlockCheck = true;
-                    cPar.synchroCheck = true;
-                    cPar.orCat = OrCat.STATION_CONTROL;
-                    cPar.orIdent = "IEDEXPLORER";
-                    //cPar.orIdent = "ET03: 192.168.001.001 R001 K189 Origin:128";
-                    cPar.CommandFlowFlag = CommandCtrlModel.Unknown;
-                    b = data;
-                    List<string> path = new List<string>();
-                    do
-                    {
-                        b = b.Parent;
-                        path.Add(b.Name);
-                    } while (!(b is NodeFC));
-                    path[0] = "ctlModel";
-                    path[path.Count - 1] = "CF";
-                    b = b.Parent;
-                    for (int i = path.Count - 1; i >= 0; i--)
-                    {
-                        if ((b = b.FindChildNode(path[i])) == null)
-                            break;
-                    }
-                    if (b != null)
-                        if (b is NodeData)
-                            cPar.CommandFlowFlag = (CommandCtrlModel)((long)((b as NodeData).DataValue));
-
-                    CommandDialog dlg = new CommandDialog(cPar);
-                    DialogResult res = dlg.ShowDialog(this);
-
-                    if (res == DialogResult.Cancel)
-                        return;
-
-                    List<NodeData> ndar = new List<NodeData>();
-                    //char *nameo[] = {"$Oper$ctlVal", "$Oper$origin$orCat", "$Oper$origin$orIdent", "$Oper$ctlNum", "$Oper$T", "$Oper$Test", "$Oper$Check"};
-                    if ((b = d.FindChildNode("ctlVal")) != null)
-                    {
-                        NodeData n = new NodeData(b.Name);
-                        n.DataType = ((NodeData)b).DataType;
-                        n.DataValue = cPar.ctlVal;
-                        ndar.Add(n);
-                    }
-                    if ((b = d.FindChildNode("origin")) != null)
-                    {
-                        if (how == ActionRequested.WriteAsStructure)
-                        {
-                            NodeData n = new NodeData(b.Name);
-                            n.DataType = scsm_MMS_TypeEnum.structure;
-                            n.DataValue = 2;
-                            ndar.Add(n);
-                            if ((c = b.FindChildNode("orCat")) != null)
-                            {
-                                NodeData n2 = new NodeData(b.Name + "$" + c.Name);
-                                n2.DataType = ((NodeData)c).DataType;
-                                n2.DataValue = (long)cPar.orCat;
-                                n.AddChildNode(n2);
-                            }
-                            if ((c = b.FindChildNode("orIdent")) != null)
-                            {
-                                NodeData n2 = new NodeData(b.Name + "$" + c.Name);
-                                n2.DataType = ((NodeData)c).DataType;
-                                byte[] bytes = new byte[cPar.orIdent.Length];
-                                int tmp1, tmp2; bool tmp3;
-                                Encoder ascii = (new ASCIIEncoding()).GetEncoder();
-                                ascii.Convert(cPar.orIdent.ToCharArray(), 0, cPar.orIdent.Length, bytes, 0, cPar.orIdent.Length, true, out tmp1, out tmp2, out tmp3);
-                                n2.DataValue = bytes;
-                                n.AddChildNode(n2);
-                            }
-                        }
-                        else
-                        {
-                            if ((c = b.FindChildNode("orCat")) != null)
-                            {
-                                NodeData n = new NodeData(b.Name + "$" + c.Name);
-                                n.DataType = ((NodeData)c).DataType;
-                                n.DataValue = (long)cPar.orCat;
-                                ndar.Add(n);
-                            }
-                            if ((c = b.FindChildNode("orIdent")) != null)
-                            {
-                                NodeData n = new NodeData(b.Name + "$" + c.Name);
-                                n.DataType = ((NodeData)c).DataType;
-                                byte[] bytes = new byte[cPar.orIdent.Length];
-                                int tmp1, tmp2; bool tmp3;
-                                Encoder ascii = (new ASCIIEncoding()).GetEncoder();
-                                ascii.Convert(cPar.orIdent.ToCharArray(), 0, cPar.orIdent.Length, bytes, 0, cPar.orIdent.Length, true, out tmp1, out tmp2, out tmp3);
-                                n.DataValue = bytes;
-                                ndar.Add(n);
-                            }
-                        }
-                    }
-                    if ((b = d.FindChildNode("ctlNum")) != null)
-                    {
-                        NodeData n = new NodeData(b.Name);
-                        n.DataType = ((NodeData)b).DataType;
-                        n.DataValue = m_ctlNum++;
-                        ndar.Add(n);
-                    }
-                    if ((b = d.FindChildNode("T")) != null)
-                    {
-                        NodeData n = new NodeData(b.Name);
-                        n.DataType = ((NodeData)b).DataType;
-                        byte[] btm = new byte[] { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };
-                        n.DataValue = btm;
-
-                        if (cPar.T != DateTime.MinValue)
-                        {
-                            int t = (int)Scsm_MMS.ConvertToUnixTimestamp(cPar.T);
-                            byte[] uib = BitConverter.GetBytes(t);
-                            btm[0] = uib[3];
-                            btm[1] = uib[2];
-                            btm[2] = uib[1];
-                            btm[3] = uib[0];
-                        }
-                        ndar.Add(n);
-                    }
-                    if ((b = d.FindChildNode("Test")) != null)
-                    {
-                        NodeData n = new NodeData(b.Name);
-                        n.DataType = ((NodeData)b).DataType;
-                        n.DataValue = false;
-                        ndar.Add(n);
-                    }
-                    if ((b = d.FindChildNode("Check")) != null)
-                    {
-                        NodeData n = new NodeData(b.Name);
-                        n.DataType = ((NodeData)b).DataType;
-                        n.DataValue = new byte[] { 0x40 };
-                        n.DataParam = ((NodeData)b).DataParam;
-                        ndar.Add(n);
-                    }
-                    iecs.Send(ndar.ToArray(), d.CommAddress, how);
+                    ctrl.SendCommand(data, cPar, ActionRequested.WriteAsStructure);
                 }
-                else
-                    MessageBox.Show("Basic structure not found!");
             }
         }
 
         void OnReadDataClick(object sender, EventArgs e)
         {
-            NodeBase data = (NodeBase)(sender as ToolStripItem).Tag;
-            Iec61850State iecs = data.GetIecs();
-            NodeBase[] ndarr = new NodeBase[1];
-            ndarr[0] = data;
-            iecs.Send(ndarr, data.CommAddress, ActionRequested.Read);
+            ctrl.ReadData((NodeBase)(sender as ToolStripItem).Tag);
         }
 
         void OnWriteDataClick(object sender, EventArgs e)
         {
-            NodeData data = (NodeData)(sender as ToolStripItem).Tag;
-            Iec61850State iecs = data.GetIecs();
-            NodeData[] ndarr = new NodeData[1];
-            ndarr[0] = new NodeData(data.Name);
-            ndarr[0].DataType = data.DataType;
-            ndarr[0].DataValue = data.DataValue;
-            ndarr[0].DataParam = data.DataParam;
-            EditValue ev = new EditValue(ndarr[0]);
+            NodeData data = ctrl.PrepareWriteData((NodeData)(sender as ToolStripItem).Tag);
+
+            EditValue ev = new EditValue(data);
             DialogResult r = ev.ShowDialog();
             if (r == DialogResult.OK)
             {
-                iecs.Send(ndarr, data.Parent.CommAddress, ActionRequested.Write);
-
-                //Thread.Sleep(300);
-                delayTimer = new System.Threading.Timer(obj =>
-                {
-                    ndarr = new NodeData[1];
-                    ndarr[0] = data;
-                    iecs.Send(ndarr, data.CommAddress, ActionRequested.Read);
-                }, null, 1000, System.Threading.Timeout.Infinite);
+                ctrl.WriteData(data, true);
             }
         }
 
@@ -831,7 +645,7 @@ namespace IEDExplorer.Views
                 MessageBox.Show("Basic structure not found!");
         }
 
-        private void treeView1_MouseDown(object sender, MouseEventArgs e)
+        private void treeViewIed_MouseDown(object sender, MouseEventArgs e)
         {
             nodeToDrag = ((TreeView)sender).GetNodeAt(e.Location);
             if (e.Button == MouseButtons.Left && nodeToDrag != null && nodeToDrag.Tag is NodeData)
@@ -850,7 +664,7 @@ namespace IEDExplorer.Views
                 dragBoxFromMouseDown = Rectangle.Empty;
         }
 
-        private void treeView1_MouseMove(object sender, MouseEventArgs e)
+        private void treeViewIed_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
                 // If the mouse moves outside the rectangle, start the drag.
@@ -861,7 +675,7 @@ namespace IEDExplorer.Views
                 }
         }
 
-        private void treeView1_MouseUp(object sender, MouseEventArgs e)
+        private void treeViewIed_MouseUp(object sender, MouseEventArgs e)
         {
             // Reset the drag rectangle when the mouse button is raised.
             dragBoxFromMouseDown = Rectangle.Empty;

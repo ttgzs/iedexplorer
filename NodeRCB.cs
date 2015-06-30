@@ -24,12 +24,12 @@ using System.Text;
 
 namespace IEDExplorer
 {
-    class NodeRP: NodeBase
+    class NodeRCB: NodeBase
     {
         bool _deletable = false;
         bool _defined = false;
 
-        public NodeRP(string Name)
+        public NodeRCB(string Name)
             : base(Name)
         {
             Activated = false;

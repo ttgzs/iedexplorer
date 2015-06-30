@@ -106,6 +106,7 @@ namespace IEDExplorer
         public ConcurrentDictionary<int, NodeBase[]> OutstandingCalls;
 
         public MMSCaptureDb CaptureDb;
+        public Iec61850Controller Controller;
 
         public Iec61850State()
         {
@@ -113,6 +114,7 @@ namespace IEDExplorer
             CaptureDb = new MMSCaptureDb(this);
             iso = new IsoLayers(this);
             OutstandingCalls = new ConcurrentDictionary<int, NodeBase[]>(2, 10);
+            Controller = new Iec61850Controller(this, DataModel);
         }
 
         public void NextState()

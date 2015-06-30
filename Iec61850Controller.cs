@@ -1,0 +1,262 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace IEDExplorer
+{
+    class Iec61850Controller
+    {
+        Iec61850State iecs;
+        Iec61850Model model;
+        long m_ctlNum = 0;
+        System.Threading.Timer delayTimer;
+
+        public Iec61850Controller(Iec61850State iecs, Iec61850Model model)
+        {
+            this.iecs = iecs;
+            this.model = model;
+        }
+
+        public void DeleteNVL(NodeVL nvl)
+        {
+            NodeBase[] ndarr = new NodeBase[1];
+            ndarr[0] = nvl;
+            iecs.Send(ndarr, nvl.CommAddress, ActionRequested.DeleteNVL);
+        }
+
+        public void GetFileList(NodeBase nfi)
+        {
+            CommAddress ad = new CommAddress();
+            ad.Variable = "/";  // for the case of reading root
+            NodeBase[] ndarr = new NodeBase[1];
+            ndarr[0] = nfi;
+            /* if (!(nfi is NodeFile))
+            {
+                NodeData nd = new NodeData("x");
+                nd.DataType = scsm_MMS_TypeEnum.visible_string;
+                nd.DataValue = "/";
+                EditValue ev = new EditValue(nd);
+                DialogResult r = ev.ShowDialog();
+                if (r == DialogResult.OK)
+                {
+                    ad.Variable = nd.StringValue;
+                }
+            } */
+            iecs.Send(ndarr, ad, ActionRequested.GetDirectory);
+        }
+
+        public void GetFile(NodeFile nfi)
+        {
+            CommAddress ad = new CommAddress();
+            NodeBase[] ndarr = new NodeBase[1];
+            ndarr[0] = nfi;
+            nfi.Reset();
+            iecs.Send(ndarr, ad, ActionRequested.OpenFile);
+        }
+
+        public void DefineNVL(NodeVL nvl)
+        {
+            List<NodeBase> ndar = new List<NodeBase>();
+            foreach (NodeBase n in nvl.GetChildNodes())
+            {
+                ndar.Add(n);
+            }
+            iecs.Send(ndar.ToArray(), nvl.CommAddress, ActionRequested.DefineNVL);
+        }
+
+        public CommandParams PrepareSendCommand(NodeBase data)
+        {
+            if (data != null)
+            {
+                NodeData d = (NodeData)data.Parent;
+                if (d != null)
+                {
+                    NodeBase b, c;
+                    CommandParams cPar = new CommandParams();
+                    cPar.CommType = CommandType.SingleCommand;
+                    if ((b = d.FindChildNode("ctlVal")) != null)
+                    {
+                        cPar.DataType = ((NodeData)b).DataType;
+                        cPar.Address = b.Address;
+                        cPar.ctlVal = ((NodeData)b).DataValue;
+                    }
+                    cPar.T = DateTime.MinValue;
+                    cPar.interlockCheck = true;
+                    cPar.synchroCheck = true;
+                    cPar.orCat = OrCat.STATION_CONTROL;
+                    cPar.orIdent = "IEDEXPLORER";
+                    cPar.CommandFlowFlag = CommandCtrlModel.Unknown;
+                    b = data;
+                    List<string> path = new List<string>();
+                    do
+                    {
+                        b = b.Parent;
+                        path.Add(b.Name);
+                    } while (!(b is NodeFC));
+                    path[0] = "ctlModel";
+                    path[path.Count - 1] = "CF";
+                    b = b.Parent;
+                    for (int i = path.Count - 1; i >= 0; i--)
+                    {
+                        if ((b = b.FindChildNode(path[i])) == null)
+                            break;
+                    }
+                    if (b != null)
+                        if (b is NodeData)
+                            cPar.CommandFlowFlag = (CommandCtrlModel)((long)((b as NodeData).DataValue));
+                    return cPar;
+                }
+                else
+                    Logger.getLogger().LogError("Basic structure for a command not found at " + data.Address + "!");
+            }
+            return null;
+        }
+
+        public void SendCommand(NodeBase data, CommandParams cPar, ActionRequested how)
+        {
+            if (data != null)
+            {
+                NodeData d = (NodeData)data.Parent;
+                if (d != null)
+                {
+                    NodeBase b, c;
+
+                    List<NodeData> ndar = new List<NodeData>();
+                    //char *nameo[] = {"$Oper$ctlVal", "$Oper$origin$orCat", "$Oper$origin$orIdent", "$Oper$ctlNum", "$Oper$T", "$Oper$Test", "$Oper$Check"};
+                    if ((b = d.FindChildNode("ctlVal")) != null)
+                    {
+                        NodeData n = new NodeData(b.Name);
+                        n.DataType = ((NodeData)b).DataType;
+                        n.DataValue = cPar.ctlVal;
+                        ndar.Add(n);
+                    }
+                    if ((b = d.FindChildNode("origin")) != null)
+                    {
+                        if (how == ActionRequested.WriteAsStructure)
+                        {
+                            NodeData n = new NodeData(b.Name);
+                            n.DataType = scsm_MMS_TypeEnum.structure;
+                            n.DataValue = 2;
+                            ndar.Add(n);
+                            if ((c = b.FindChildNode("orCat")) != null)
+                            {
+                                NodeData n2 = new NodeData(b.Name + "$" + c.Name);
+                                n2.DataType = ((NodeData)c).DataType;
+                                n2.DataValue = (long)cPar.orCat;
+                                n.AddChildNode(n2);
+                            }
+                            if ((c = b.FindChildNode("orIdent")) != null)
+                            {
+                                NodeData n2 = new NodeData(b.Name + "$" + c.Name);
+                                n2.DataType = ((NodeData)c).DataType;
+                                byte[] bytes = new byte[cPar.orIdent.Length];
+                                int tmp1, tmp2; bool tmp3;
+                                Encoder ascii = (new ASCIIEncoding()).GetEncoder();
+                                ascii.Convert(cPar.orIdent.ToCharArray(), 0, cPar.orIdent.Length, bytes, 0, cPar.orIdent.Length, true, out tmp1, out tmp2, out tmp3);
+                                n2.DataValue = bytes;
+                                n.AddChildNode(n2);
+                            }
+                        }
+                        else
+                        {
+                            if ((c = b.FindChildNode("orCat")) != null)
+                            {
+                                NodeData n = new NodeData(b.Name + "$" + c.Name);
+                                n.DataType = ((NodeData)c).DataType;
+                                n.DataValue = (long)cPar.orCat;
+                                ndar.Add(n);
+                            }
+                            if ((c = b.FindChildNode("orIdent")) != null)
+                            {
+                                NodeData n = new NodeData(b.Name + "$" + c.Name);
+                                n.DataType = ((NodeData)c).DataType;
+                                byte[] bytes = new byte[cPar.orIdent.Length];
+                                int tmp1, tmp2; bool tmp3;
+                                Encoder ascii = (new ASCIIEncoding()).GetEncoder();
+                                ascii.Convert(cPar.orIdent.ToCharArray(), 0, cPar.orIdent.Length, bytes, 0, cPar.orIdent.Length, true, out tmp1, out tmp2, out tmp3);
+                                n.DataValue = bytes;
+                                ndar.Add(n);
+                            }
+                        }
+                    }
+                    if ((b = d.FindChildNode("ctlNum")) != null)
+                    {
+                        NodeData n = new NodeData(b.Name);
+                        n.DataType = ((NodeData)b).DataType;
+                        n.DataValue = m_ctlNum++;
+                        ndar.Add(n);
+                    }
+                    if ((b = d.FindChildNode("T")) != null)
+                    {
+                        NodeData n = new NodeData(b.Name);
+                        n.DataType = ((NodeData)b).DataType;
+                        byte[] btm = new byte[] { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };
+                        n.DataValue = btm;
+
+                        if (cPar.T != DateTime.MinValue)
+                        {
+                            int t = (int)Scsm_MMS.ConvertToUnixTimestamp(cPar.T);
+                            byte[] uib = BitConverter.GetBytes(t);
+                            btm[0] = uib[3];
+                            btm[1] = uib[2];
+                            btm[2] = uib[1];
+                            btm[3] = uib[0];
+                        }
+                        ndar.Add(n);
+                    }
+                    if ((b = d.FindChildNode("Test")) != null)
+                    {
+                        NodeData n = new NodeData(b.Name);
+                        n.DataType = ((NodeData)b).DataType;
+                        n.DataValue = false;
+                        ndar.Add(n);
+                    }
+                    if ((b = d.FindChildNode("Check")) != null)
+                    {
+                        NodeData n = new NodeData(b.Name);
+                        n.DataType = ((NodeData)b).DataType;
+                        n.DataValue = new byte[] { 0x40 };
+                        n.DataParam = ((NodeData)b).DataParam;
+                        ndar.Add(n);
+                    }
+                    iecs.Send(ndar.ToArray(), d.CommAddress, how);
+                }
+                else
+                    Logger.getLogger().LogError("Basic structure for a command not found at " + data.Address + "!");
+            }
+        }
+
+        public NodeData PrepareWriteData(NodeData data)
+        {
+            NodeData nd = new NodeData(data.Name);
+            nd.DataType = data.DataType;
+            nd.DataValue = data.DataValue;
+            nd.DataParam = data.DataParam;
+            return nd;
+        }
+
+        public void WriteData(NodeData data, bool reRead)
+        {
+            NodeData[] ndarr = new NodeData[1];
+            ndarr[0] = data;
+            iecs.Send(ndarr, data.Parent.CommAddress, ActionRequested.Write);
+
+            if (reRead)
+            {
+                delayTimer = new System.Threading.Timer(obj =>
+                {
+                    ReadData(data);
+                }, null, 1000, System.Threading.Timeout.Infinite);
+            }
+        }
+
+        public void ReadData(NodeBase data)
+        {
+            NodeBase[] ndarr = new NodeBase[1];
+            ndarr[0] = data;
+            iecs.Send(ndarr, data.CommAddress, ActionRequested.Read);
+        }
+
+    }
+}
