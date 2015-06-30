@@ -345,20 +345,20 @@ namespace IEDExplorer.Views
                         }
                         else
                         {
-                            item = menu.Items.Add("Send Define Report Request");
+                            item = menu.Items.Add("Send Define DataSet Request");
                             item.Tag = n;
                             item.Click += new EventHandler(OnDefineNVLClick);
                         }
-                        if ((n as NodeVL).Deletable)
+                        if ((n as NodeVL).Deletable && !(n as NodeVL).Activated)
                         {
-                            item = menu.Items.Add("Delete Report");
+                            item = menu.Items.Add("Delete DataSet");
                             item.Tag = n;
                             item.Click += new EventHandler(OnDeleteNVLClick);
                         }
                     }
                     else if (e.Node.Text == "DataSets" && n.GetIecs().DataModel.ied.DefineNVL)
                     {
-                        item = menu.Items.Add("Add New Name List");
+                        item = menu.Items.Add("Add New DataSet");
                         item.Tag = n;
                         listsNode = e.Node;
                         item.Click += new EventHandler(OnAddNVLClick);
@@ -419,11 +419,6 @@ namespace IEDExplorer.Views
             }
         }
 
-        void OnDeleteNVLClick(object sender, EventArgs e)
-        {
-            ctrl.DeleteNVL((NodeVL)(sender as ToolStripItem).Tag);
-        }
-
         void OnFileListClick(object sender, EventArgs e)
         {
             ctrl.GetFileList((NodeBase)(sender as ToolStripItem).Tag);
@@ -451,11 +446,6 @@ namespace IEDExplorer.Views
                     MessageBox.Show("An error saving MMS file " + nfi.FullName + " to file " + fd.FileName);
                 }
             }
-        }
-
-        void OnDefineNVLClick(object sender, EventArgs e)
-        {
-            ctrl.DefineNVL((NodeVL)(sender as ToolStripItem).Tag);
         }
 
         void OnSendCommandClick(object sender, EventArgs e)
@@ -493,12 +483,14 @@ namespace IEDExplorer.Views
 
         void OnWriteDataClick(object sender, EventArgs e)
         {
-            NodeData data = ctrl.PrepareWriteData((NodeData)(sender as ToolStripItem).Tag);
+            NodeData data = (NodeData)(sender as ToolStripItem).Tag;
+            NodeData newdata = ctrl.PrepareWriteData(data);
 
-            EditValue ev = new EditValue(data);
+            EditValue ev = new EditValue(newdata);
             DialogResult r = ev.ShowDialog();
             if (r == DialogResult.OK)
             {
+                data.DataValue = newdata.DataValue;
                 ctrl.WriteData(data, true);
             }
         }
@@ -506,7 +498,7 @@ namespace IEDExplorer.Views
         void OnAddNVLClick(object sender, EventArgs e)
         {
             NodeBase lists = (NodeBase)(sender as ToolStripItem).Tag;
-            NodeVL newnode = new NodeVL("NewNamedVariableList");
+            NodeVL newnode = new NodeVL("NewDataSet");
             newnode.Parent = lists;
             AddNVLDialog d = new AddNVLDialog(newnode, lists, listsNode, OnNVListChanged);
             d.Show();
@@ -514,9 +506,9 @@ namespace IEDExplorer.Views
 
         void OnNVListChanged(object sender, EventArgs e)
         {
-            //MessageBox.Show("NVLIST Changed");
             TreeNode n = new TreeNode((sender as AddNVLDialog).List.Name);
             n.Tag = (sender as AddNVLDialog).List;
+            (sender as AddNVLDialog).List.Tag = n;
             ((sender as AddNVLDialog).ListsNode).Nodes.Add(n);
             foreach (NodeBase nb in (sender as AddNVLDialog).List.GetChildNodes())
             {
@@ -526,123 +518,32 @@ namespace IEDExplorer.Views
             }
         }
 
+        void OnDefineNVLClick(object sender, EventArgs e)
+        {
+            ctrl.DefineNVL((NodeVL)(sender as ToolStripItem).Tag);
+        }
+
+        void OnDeleteNVLClick(object sender, EventArgs e)
+        {
+            NodeVL nvl = (NodeVL)(sender as ToolStripItem).Tag;
+            if (nvl.Defined)
+            {
+                ctrl.DeleteNVL(nvl);
+            }
+            // TODO Propagate from SCSM after! delete acknowledged!
+            (nvl.Tag as TreeNode).Remove();
+            nvl.Remove();
+
+        }
+
         void OnActivateNVLClick(object sender, EventArgs e)
         {
-            NodeVL vl = (NodeVL)(sender as ToolStripItem).Tag;
-            NodeBase ur = null;
-            Iec61850State iecs = vl.GetIecs();
-            bool retry;
-            if (iecs != null)
-            {
-                do
-                {
-                    ur = (NodeData)iecs.DataModel.ied.FindNodeByValue(scsm_MMS_TypeEnum.visible_string, vl.Address, ref ur);
-                    if (ur == null)
-                    {
-                        MessageBox.Show("Suitable URCB not found, list cannot be activated!");
-                        return;
-                    }
-                    retry = !ur.Parent.Name.ToLower().Contains("rcb");
-                    vl.urcb = (NodeData)ur;
-                    NodeData d = (NodeData)vl.urcb.Parent;
-                    NodeData b;
-                    if ((b = (NodeData)d.FindChildNode("Resv")) != null)
-                    {
-                        // Resv is always a boolean
-                        // If true then the rcb is occupied and we need to find another one
-                        if ((bool)b.DataValue) retry = true;
-                    }
-                } while (retry);
-
-                if (vl.urcb != null)
-                {
-                    NodeData d = (NodeData)vl.urcb.Parent;
-                    List<NodeData> ndar = new List<NodeData>();
-                    NodeBase b;
-                    if ((b = d.FindChildNode("Resv")) != null)
-                    {
-                        NodeData n = new NodeData(b.Name);
-                        n.DataType = ((NodeData)b).DataType;
-                        n.DataValue = true;
-                        ndar.Add(n);
-                    }
-                    if ((b = d.FindChildNode("DatSet")) != null)
-                    {
-                        NodeData n = new NodeData(b.Name);
-                        n.DataType = ((NodeData)b).DataType;
-                        n.DataValue = ((NodeData)b).DataValue;
-                        ndar.Add(n);
-                    }
-                    if ((b = d.FindChildNode("OptFlds")) != null)
-                    {
-                        NodeData n = new NodeData(b.Name);
-                        n.DataType = ((NodeData)b).DataType;
-                        n.DataValue = new byte[] { 0x7c, 0x00 };
-                        n.DataParam = 6;
-                        ndar.Add(n);
-                    }
-                    if ((b = d.FindChildNode("TrgOps")) != null)
-                    {
-                        NodeData n = new NodeData(b.Name);
-                        n.DataType = ((NodeData)b).DataType;
-                        n.DataValue = new byte[] { 0x74 };
-                        n.DataParam = 2;
-                        ndar.Add(n);
-                    }
-                    if ((b = d.FindChildNode("RptEna")) != null)
-                    {
-                        NodeData n = new NodeData(b.Name);
-                        n.DataType = ((NodeData)b).DataType;
-                        n.DataValue = true;
-                        ndar.Add(n);
-                    }
-                    if ((b = d.FindChildNode("GI")) != null)
-                    {
-                        NodeData n = new NodeData(b.Name);
-                        n.DataType = ((NodeData)b).DataType;
-                        n.DataValue = true;
-                        ndar.Add(n);
-                    }
-                    iecs.Send(ndar.ToArray(), d.CommAddress, ActionRequested.Write);
-                    vl.Activated = true;
-                }
-            }
-            else
-                MessageBox.Show("Basic structure not found!");
+            ctrl.ActivateNVL((NodeVL)(sender as ToolStripItem).Tag);
         }
 
         void OnDeactivateNVLClick(object sender, EventArgs e)
         {
-            NodeVL vl = (NodeVL)(sender as ToolStripItem).Tag;
-            Iec61850State iecs = vl.GetIecs();
-            if (iecs != null)
-            {
-                if (vl.urcb != null)
-                {
-                    NodeData d = (NodeData)vl.urcb.Parent;
-                    List<NodeData> ndar = new List<NodeData>();
-                    NodeBase b;
-                    if ((b = d.FindChildNode("RptEna")) != null)
-                    {
-                        NodeData n = new NodeData(b.Name);
-                        n.DataType = ((NodeData)b).DataType;
-                        n.DataValue = false;
-                        ndar.Add(n);
-                    }
-                    if ((b = d.FindChildNode("GI")) != null)
-                    {
-                        NodeData n = new NodeData(b.Name);
-                        n.DataType = ((NodeData)b).DataType;
-                        n.DataValue = false;
-                        ndar.Add(n);
-                    }
-                    iecs.Send(ndar.ToArray(), d.CommAddress, ActionRequested.Write);
-                    vl.Activated = false;
-                    vl.urcb = null;
-                }
-            }
-            else
-                MessageBox.Show("Basic structure not found!");
+            ctrl.DeactivateNVL((NodeVL)(sender as ToolStripItem).Tag);
         }
 
         private void treeViewIed_MouseDown(object sender, MouseEventArgs e)

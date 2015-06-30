@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+//using System.Linq;
 using System.Text;
 
 namespace IEDExplorer
@@ -233,6 +233,7 @@ namespace IEDExplorer
             nd.DataType = data.DataType;
             nd.DataValue = data.DataValue;
             nd.DataParam = data.DataParam;
+            nd.Parent = data.Parent;
             return nd;
         }
 
@@ -256,6 +257,123 @@ namespace IEDExplorer
             NodeBase[] ndarr = new NodeBase[1];
             ndarr[0] = data;
             iecs.Send(ndarr, data.CommAddress, ActionRequested.Read);
+        }
+
+        public void ActivateNVL(NodeVL vl)
+        {
+            NodeBase ur = null;
+            Iec61850State iecs = vl.GetIecs();
+            bool retry;
+            if (iecs != null)
+            {
+                do
+                {
+                    ur = (NodeData)iecs.DataModel.ied.FindNodeByValue(scsm_MMS_TypeEnum.visible_string, vl.Address, ref ur);
+                    if (ur == null)
+                    {
+                        Logger.getLogger().LogError("Suitable URCB not found, list cannot be activated!");
+                        return;
+                    }
+                    retry = !ur.Parent.Name.ToLower().Contains("rcb");
+                    vl.urcb = (NodeData)ur;
+                    NodeData d = (NodeData)vl.urcb.Parent;
+                    NodeData b;
+                    if ((b = (NodeData)d.FindChildNode("Resv")) != null)
+                    {
+                        // Resv is always a boolean
+                        // If true then the rcb is occupied and we need to find another one
+                        if ((bool)b.DataValue) retry = true;
+                    }
+                } while (retry);
+
+                if (vl.urcb != null)
+                {
+                    NodeData d = (NodeData)vl.urcb.Parent;
+                    List<NodeData> ndar = new List<NodeData>();
+                    NodeBase b;
+                    if ((b = d.FindChildNode("Resv")) != null)
+                    {
+                        NodeData n = new NodeData(b.Name);
+                        n.DataType = ((NodeData)b).DataType;
+                        n.DataValue = true;
+                        ndar.Add(n);
+                    }
+                    if ((b = d.FindChildNode("DatSet")) != null)
+                    {
+                        NodeData n = new NodeData(b.Name);
+                        n.DataType = ((NodeData)b).DataType;
+                        n.DataValue = ((NodeData)b).DataValue;
+                        ndar.Add(n);
+                    }
+                    if ((b = d.FindChildNode("OptFlds")) != null)
+                    {
+                        NodeData n = new NodeData(b.Name);
+                        n.DataType = ((NodeData)b).DataType;
+                        n.DataValue = new byte[] { 0x7c, 0x00 };
+                        n.DataParam = 6;
+                        ndar.Add(n);
+                    }
+                    if ((b = d.FindChildNode("TrgOps")) != null)
+                    {
+                        NodeData n = new NodeData(b.Name);
+                        n.DataType = ((NodeData)b).DataType;
+                        n.DataValue = new byte[] { 0x74 };
+                        n.DataParam = 2;
+                        ndar.Add(n);
+                    }
+                    if ((b = d.FindChildNode("RptEna")) != null)
+                    {
+                        NodeData n = new NodeData(b.Name);
+                        n.DataType = ((NodeData)b).DataType;
+                        n.DataValue = true;
+                        ndar.Add(n);
+                    }
+                    if ((b = d.FindChildNode("GI")) != null)
+                    {
+                        NodeData n = new NodeData(b.Name);
+                        n.DataType = ((NodeData)b).DataType;
+                        n.DataValue = true;
+                        ndar.Add(n);
+                    }
+                    iecs.Send(ndar.ToArray(), d.CommAddress, ActionRequested.Write);
+                    vl.Activated = true;
+                }
+            }
+            else
+                Logger.getLogger().LogError("Basic structure not found!");
+        }
+
+        public void DeactivateNVL(NodeVL vl)
+        {
+            Iec61850State iecs = vl.GetIecs();
+            if (iecs != null)
+            {
+                if (vl.urcb != null)
+                {
+                    NodeData d = (NodeData)vl.urcb.Parent;
+                    List<NodeData> ndar = new List<NodeData>();
+                    NodeBase b;
+                    if ((b = d.FindChildNode("RptEna")) != null)
+                    {
+                        NodeData n = new NodeData(b.Name);
+                        n.DataType = ((NodeData)b).DataType;
+                        n.DataValue = false;
+                        ndar.Add(n);
+                    }
+                    if ((b = d.FindChildNode("GI")) != null)
+                    {
+                        NodeData n = new NodeData(b.Name);
+                        n.DataType = ((NodeData)b).DataType;
+                        n.DataValue = false;
+                        ndar.Add(n);
+                    }
+                    iecs.Send(ndar.ToArray(), d.CommAddress, ActionRequested.Write);
+                    vl.Activated = false;
+                    vl.urcb = null;
+                }
+            }
+            else
+                Logger.getLogger().LogError("Basic structure not found!");
         }
 
     }

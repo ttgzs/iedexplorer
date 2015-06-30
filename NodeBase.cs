@@ -148,6 +148,12 @@ namespace IEDExplorer
             _childNodes.Remove(Node);
         }
 
+        public void Remove()
+        {
+            _childNodes.Clear();
+            if (Parent != null) Parent.RemoveChildNode(this);
+        }
+
         public NodeBase GetActualChildNode()
         {
             if (_childNodes.Count <= _actualChildNode) return null;
