@@ -35,25 +35,25 @@ namespace IEDExplorer
         // Protocol IEC6850 - definitions
         // OptFlds - report Optional Fields
         // 1st Byte
-        const byte OptFldsReserved = 0x80; // bit "0" in MMS interpretation
-        const byte OptFldsSeqNum = 0x40;
-        const byte OptFldsTimeOfEntry = 0x20;
-        const byte OptFldsReasonCode = 0x10;
-        const byte OptFldsDataSet = 0x08;
-        const byte OptFldsDataReference = 0x04;
-        const byte rptOptsOvfl = 0x02;
-        const byte OptFldsEntryID = 0x01;
+        public const byte OptFldsReserved = 0x80; // bit "0" in MMS interpretation
+        public const byte OptFldsSeqNum = 0x40;
+        public const byte OptFldsTimeOfEntry = 0x20;
+        public const byte OptFldsReasonCode = 0x10;
+        public const byte OptFldsDataSet = 0x08;
+        public const byte OptFldsDataReference = 0x04;
+        public const byte OptFldsOvfl = 0x02;
+        public const byte OptFldsEntryID = 0x01;
         // 2nd Byte
-        const byte OptFldsConfRev = 0x80;
-        const byte OptFldsMoreSegments = 0x40; // bit "10" in MMS interpretation
+        public const byte OptFldsConfRev = 0x80;
+        public const byte OptFldsMoreSegments = 0x40; // bit "10" in MMS interpretation
 
         // TrgOps - report Trigger Options
-        const byte TrgOpsReserved = 0x80;	// bit "0" in MMS interpretation
-        const byte TrgOpsDataChange = 0x40;
-        const byte TrgOpsQualChange = 0x20;
-        const byte TrgOpsDataActual = 0x10;
-        const byte TrgOpsIntegrity = 0x08;
-        const byte TrgOpsGI = 0x04; // bit "6" in MMS interpretation
+        public const byte TrgOpsReserved = 0x80;	// bit "0" in MMS interpretation
+        public const byte TrgOpsDataChange = 0x40;
+        public const byte TrgOpsQualChange = 0x20;
+        public const byte TrgOpsDataActual = 0x10;
+        public const byte TrgOpsIntegrity = 0x08;
+        public const byte TrgOpsGI = 0x04; // bit "6" in MMS interpretation
 
         // DatQual - Data Quality Codes
         const byte DatQualValidity0 = 0x80; // bit "0" in MMS interpretation
@@ -682,7 +682,7 @@ namespace IEDExplorer
                                 if (phase == phsBufOvfl)
                                 { // Is this phase active, e.g. is this bit set in OptFlds??
                                     phase++;
-                                    if ((rptOpts[0] & rptOptsOvfl) != 0)
+                                    if ((rptOpts[0] & OptFldsOvfl) != 0)
                                     {
                                         // No evaluation of rptOptsOvfl
                                         continue;

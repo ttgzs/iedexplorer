@@ -153,10 +153,9 @@ namespace IEDExplorer
                         case scsm_MMS_TypeEnum.utc_time:
                             if (DataParam != null)
                             {
+                                val = DataValue.ToString() + "." + ((DateTime)(DataValue)).Millisecond.ToString();
                                 if (((byte)(DataParam) & 0x40) > 0)     // TimQualTimeBaseErr
-                                    val = DataValue.ToString() + "." + ((DateTime)(DataValue)).Millisecond.ToString() + " TimQualTimeBaseErr";
-                                else
-                                    val = DataValue.ToString() + "." + ((DateTime)(DataValue)).Millisecond.ToString();
+                                    val += " TimQualTimeBaseErr";
                             }
                                 break;
                         case scsm_MMS_TypeEnum.bit_string:
@@ -175,6 +174,17 @@ namespace IEDExplorer
                                         sb.Append(0);     //.Insert(0, 0);
                                 }
                                 val = sb.ToString();
+                            }
+                            break;
+                        case scsm_MMS_TypeEnum.binary_time:
+                            if (DataValue != null)
+                            {
+                                StringBuilder sbos = new StringBuilder(32);
+                                foreach (byte b in (byte[])DataValue)
+                                {
+                                    sbos.AppendFormat("X", b);
+                                }
+                                val = sbos.ToString();
                             }
                             break;
                         default:

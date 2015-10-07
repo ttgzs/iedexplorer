@@ -72,7 +72,7 @@ namespace IEDExplorer
                 NodeData d = (NodeData)data.Parent;
                 if (d != null)
                 {
-                    NodeBase b, c;
+                    NodeBase b;//, c;
                     CommandParams cPar = new CommandParams();
                     cPar.CommType = CommandType.SingleCommand;
                     if ((b = d.FindChildNode("ctlVal")) != null)
