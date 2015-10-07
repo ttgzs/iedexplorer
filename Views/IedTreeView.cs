@@ -412,6 +412,12 @@ namespace IEDExplorer.Views
                         item.Tag = n;
                         item.Click += new EventHandler(OnWriteDataClick);
                     }
+                    if (n is NodeRCB && n.GetChildNodes().Length > 0)
+                    {
+                        item = menu.Items.Add("Configure RCB");
+                        item.Tag = n;
+                        item.Click += new EventHandler(OnConfigureRcb);
+                    }
                 }
 
                 if (menu.Items.Count > 0)
@@ -492,6 +498,20 @@ namespace IEDExplorer.Views
             {
                 data.DataValue = newdata.DataValue;
                 ctrl.WriteData(data, true);
+            }
+        }
+
+        void OnConfigureRcb(object sender, EventArgs e)
+        {
+            NodeRCB rcb = (NodeRCB)(sender as ToolStripItem).Tag;
+            RcbActivateParams par=new RcbActivateParams();
+            par.self = rcb;
+
+            RcbActivateDialog rad = new RcbActivateDialog(par);
+            DialogResult r = rad.ShowDialog();
+            if (r == DialogResult.OK)
+            {
+                ctrl.WriteRcb(par, true);
             }
         }
 

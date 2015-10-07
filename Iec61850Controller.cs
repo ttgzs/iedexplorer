@@ -252,6 +252,19 @@ namespace IEDExplorer
             }
         }
 
+        public void WriteRcb(RcbActivateParams rpar, bool reRead)
+        {
+            iecs.Send(rpar.getWriteArray(), rpar.self.CommAddress, ActionRequested.Write);
+
+            if (reRead)
+            {
+                delayTimer = new System.Threading.Timer(obj =>
+                {
+                    ReadData(rpar.self);
+                }, null, 1000, System.Threading.Timeout.Infinite);
+            }
+        }
+
         public void ReadData(NodeBase data)
         {
             NodeBase[] ndarr = new NodeBase[1];

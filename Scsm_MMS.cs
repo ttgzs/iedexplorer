@@ -1726,51 +1726,56 @@ namespace IEDExplorer
 
             foreach (NodeData d in el.Data)
             {
-                VariableAccessSpecification.ListOfVariableSequenceType vas = new VariableAccessSpecification.ListOfVariableSequenceType();
-                Data dat = new Data();
-
-                ObjectName on = new ObjectName();
-                ObjectName.Domain_specificSequenceType dst = new ObjectName.Domain_specificSequenceType();
-                dst.DomainID = new Identifier(el.Address.Domain);
-                dst.ItemID = new Identifier(el.Address.Variable + "$" + d.Name);
-                on.selectDomain_specific(dst);
-
-                vas.VariableSpecification = new VariableSpecification();
-                vas.VariableSpecification.selectName(on);
-
-                vasl.Add(vas);
-
-                switch (d.DataType)
+                if (d != null)
                 {
-                    case scsm_MMS_TypeEnum.boolean:
-                        dat.selectBoolean((bool)d.DataValue);
-                        break;
-                    case scsm_MMS_TypeEnum.visible_string:
-                        dat.selectVisible_string((string)d.DataValue);
-                        break;
-                    case scsm_MMS_TypeEnum.octet_string:
-                        dat.selectOctet_string((byte[])d.DataValue);
-                        break;
-                    case scsm_MMS_TypeEnum.utc_time:
-                        UtcTime val = new UtcTime((byte[])d.DataValue);
-                        dat.selectUtc_time(val);
-                        break;
-                    case scsm_MMS_TypeEnum.bit_string:
-                        dat.selectBit_string(new BitString((byte[])d.DataValue, (int)d.DataParam));
-                        break;
-                    case scsm_MMS_TypeEnum.unsigned:
-                        dat.selectUnsigned((long)d.DataValue);
-                        break;
-                    case scsm_MMS_TypeEnum.integer:
-                        dat.selectInteger((long)d.DataValue);
-                        break;
-                    default:
-                        iecs.logger.LogError("mms.SendWrite: Cannot send unknown datatype!");
-                        return 1;
-                }
-                datl.Add(dat);
+                    VariableAccessSpecification.ListOfVariableSequenceType vas = new VariableAccessSpecification.ListOfVariableSequenceType();
+                    Data dat = new Data();
 
-                iecs.logger.LogDebug("SendWrite: Writing: " + dst.ItemID.Value);
+                    ObjectName on = new ObjectName();
+                    ObjectName.Domain_specificSequenceType dst = new ObjectName.Domain_specificSequenceType();
+                    dst.DomainID = new Identifier(el.Address.Domain);
+                    dst.ItemID = new Identifier(el.Address.Variable + "$" + d.Name);
+                    on.selectDomain_specific(dst);
+
+                    vas.VariableSpecification = new VariableSpecification();
+                    vas.VariableSpecification.selectName(on);
+
+                    vasl.Add(vas);
+
+                    switch (d.DataType)
+                    {
+                        case scsm_MMS_TypeEnum.boolean:
+                            dat.selectBoolean((bool)d.DataValue);
+                            break;
+                        case scsm_MMS_TypeEnum.visible_string:
+                            dat.selectVisible_string((string)d.DataValue);
+                            break;
+                        case scsm_MMS_TypeEnum.octet_string:
+                            dat.selectOctet_string((byte[])d.DataValue);
+                            break;
+                        case scsm_MMS_TypeEnum.utc_time:
+                            UtcTime val = new UtcTime((byte[])d.DataValue);
+                            dat.selectUtc_time(val);
+                            break;
+                        case scsm_MMS_TypeEnum.bit_string:
+                            dat.selectBit_string(new BitString((byte[])d.DataValue, (int)d.DataParam));
+                            break;
+                        case scsm_MMS_TypeEnum.unsigned:
+                            dat.selectUnsigned((long)d.DataValue);
+                            break;
+                        case scsm_MMS_TypeEnum.integer:
+                            dat.selectInteger((long)d.DataValue);
+                            break;
+                        default:
+                            iecs.logger.LogError("mms.SendWrite: Cannot send unknown datatype!");
+                            return 1;
+                    }
+                    datl.Add(dat);
+
+                    iecs.logger.LogDebug("SendWrite: Writing: " + dst.ItemID.Value);
+                }
+                else
+                    iecs.logger.LogWarning("SendWrite: Null in data for write for: " + el.Address.Variable);
             }
             wreq.VariableAccessSpecification = new VariableAccessSpecification();
             wreq.VariableAccessSpecification.selectListOfVariable(vasl);

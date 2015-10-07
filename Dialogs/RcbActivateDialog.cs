@@ -40,6 +40,9 @@ namespace IEDExplorer
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
+            // test
+            RCBpar.self.GI = false;
+            RCBpar.self.RptEna = true;
         }
 
     }
