@@ -36,6 +36,41 @@ namespace IEDExplorer
         {
             RCBpar = rcbpar;
             InitializeComponent();
+
+            if (RCBpar.self.RptID_present)
+            {
+                textBoxRptID.Text = RCBpar.self.RptID;
+                checkBoxRptID_send.Checked = RCBpar.sendRptID;
+                if (!checkBoxRptID_send.Checked)
+                    textBoxRptID.Enabled = false;
+            }
+            else
+            {
+                textBoxRptID.Enabled = false;
+                checkBoxRptID_send.Enabled = false;
+            }
+            if (RCBpar.self.DatSet_present)
+            {
+                comboBoxDatSet.Text = RCBpar.self.DatSet;
+                try
+                {
+                    string myld = RCBpar.self.Parent.Name;
+                    NodeBase[] nba = RCBpar.self.GetIecs().DataModel.lists.FindChildNode(myld).GetChildNodes();
+                    foreach (NodeBase nb in nba)
+                    {
+                        comboBoxDatSet.Items.Add(nb.Name);
+                    }
+                }
+                catch { }
+                checkBoxDatSet_send.Checked = RCBpar.sendDatSet;
+                if (!checkBoxDatSet_send.Checked)
+                    comboBoxDatSet.Enabled = false;
+            }
+            else
+            {
+                comboBoxDatSet.Enabled = false;
+                checkBoxDatSet_send.Enabled = false;
+            }
         }
 
         private void buttonOK_Click(object sender, EventArgs e)
@@ -43,6 +78,22 @@ namespace IEDExplorer
             // test
             RCBpar.self.GI = false;
             RCBpar.self.RptEna = true;
+        }
+
+        private void checkBoxRptID_send_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!checkBoxRptID_send.Checked)
+                textBoxRptID.Enabled = false;
+            else
+                textBoxRptID.Enabled = true;
+        }
+
+        private void checkBoxDatSet_send_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!checkBoxDatSet_send.Checked)
+                comboBoxDatSet.Enabled = false;
+            else
+                comboBoxDatSet.Enabled = true;
         }
 
     }

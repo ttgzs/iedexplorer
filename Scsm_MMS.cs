@@ -56,25 +56,25 @@ namespace IEDExplorer
         public const byte TrgOpsGI = 0x04; // bit "6" in MMS interpretation
 
         // DatQual - Data Quality Codes
-        const byte DatQualValidity0 = 0x80; // bit "0" in MMS interpretation
-        const byte DatQualValidity1 = 0x40;
-        const byte DatQualOverflow = 0x20;
-        const byte DatQualOutOfRange = 0x10;
-        const byte DatQualBadReference = 0x08;
-        const byte DatQualOscillatory = 0x04;
-        const byte DatQualFailure = 0x02;
-        const byte DatQualOldData = 0x01;
+        public const byte DatQualValidity0 = 0x80; // bit "0" in MMS interpretation
+        public const byte DatQualValidity1 = 0x40;
+        public const byte DatQualOverflow = 0x20;
+        public const byte DatQualOutOfRange = 0x10;
+        public const byte DatQualBadReference = 0x08;
+        public const byte DatQualOscillatory = 0x04;
+        public const byte DatQualFailure = 0x02;
+        public const byte DatQualOldData = 0x01;
         // 2nd Byte
-        const byte DatQualInconsistent = 0x80;
-        const byte DatQualInaccurate = 0x40;
-        const byte DatQualSource = 0x20;
-        const byte DatQualTest = 0x10;
-        const byte DatQualOperatorBlocked = 0x08; // bit "12" in MMS interpretation
+        public const byte DatQualInconsistent = 0x80;
+        public const byte DatQualInaccurate = 0x40;
+        public const byte DatQualSource = 0x20;
+        public const byte DatQualTest = 0x10;
+        public const byte DatQualOperatorBlocked = 0x08; // bit "12" in MMS interpretation
 
         // TimQual - Time Quality Codes
-        const byte TimQualExtraSeconds = 0x80; // bit "0" in MMS interpretation
-        const byte TimQualTimeBaseErr = 0x40;
-        const byte TimQualNotSynchronized = 0x20; // bit "2". Bits 3-7=time precision encoding
+        public const byte TimQualExtraSeconds = 0x80; // bit "0" in MMS interpretation
+        public const byte TimQualTimeBaseErr = 0x40;
+        public const byte TimQualNotSynchronized = 0x20; // bit "2". Bits 3-7=time precision encoding
 
         // Report Reading Phases
         const int phsRptID = 0;

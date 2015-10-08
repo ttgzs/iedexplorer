@@ -45,7 +45,7 @@ namespace IEDExplorer
         {
             get
             {
-                if (_RptID == null) _RptID = (NodeData)FindChildNode("rptID");
+                if (_RptID == null) _RptID = (NodeData)FindChildNode("RptID");
                 if (_RptID != null)
                     return (string)_RptID.DataValue;
                 else
@@ -53,7 +53,7 @@ namespace IEDExplorer
             }
             set
             {
-                if (_RptID == null) _RptID = (NodeData)FindChildNode("rptID");
+                if (_RptID == null) _RptID = (NodeData)FindChildNode("RptID");
                 if (_RptID != null)
                     _RptID.DataValue = value;
             }
@@ -63,7 +63,7 @@ namespace IEDExplorer
             get
             {
                 if (_RptID != null) return true;
-                _RptID = (NodeData)FindChildNode("rptID");
+                _RptID = (NodeData)FindChildNode("RptID");
                 if (_RptID != null)
                     return true;
                 else
@@ -549,7 +549,7 @@ namespace IEDExplorer
         CONF_REV = 128
     }
 
-    public static class Extensions
+    public static class OptionsEnumExtensions
     {
         public static ReportOptions fromBytes(this ReportOptions res, byte[] value)
         {

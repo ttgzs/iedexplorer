@@ -173,6 +173,31 @@ namespace IEDExplorer
                                     else
                                         sb.Append(0);     //.Insert(0, 0);
                                 }
+
+                                switch (Name)    
+                                {
+                                    case "q":       // Quality descriptor
+                                        DataQuality dq = DataQuality.NONE;
+                                        dq = dq.fromBytes(bbval);
+                                        sb.Append(" [");
+                                        sb.Append(dq.ToString());
+                                        sb.Append("]");
+                                        break;
+                                    case "TrgOps":  // Trigger Options
+                                        TriggerOptions tr = TriggerOptions.NONE;
+                                        tr = tr.fromBytes(bbval);
+                                        sb.Append(" [");
+                                        sb.Append(tr.ToString());
+                                        sb.Append("]");
+                                        break;
+                                    case "OptFlds":  // Optional fields
+                                        ReportOptions ro = ReportOptions.NONE;
+                                        ro = ro.fromBytes(bbval);
+                                        sb.Append(" [");
+                                        sb.Append(ro.ToString());
+                                        sb.Append("]");
+                                        break;
+                                }
                                 val = sb.ToString();
                             }
                             break;
@@ -236,6 +261,70 @@ namespace IEDExplorer
                     }
                 }
             }
+        }
+    }
+
+    [Flags]
+    public enum DataQuality
+    {
+        NONE = 0,
+        VALIDITY0 = 0x01, // BIT "0" IN MMS INTERPRETATION
+        VALIDITY1 = 0x02,
+        OVERFLOW = 0x04,
+        OUT_OF_RANGE = 0x08,
+        BAD_REFERENCE = 0x10,
+        OSCILLATORY = 0x20,
+        FAILURE = 0x40,
+        OLD_DATA = 0x80,
+        // byte border
+        INCONSISTENT = 0x100,
+        INACCURATE = 0x200,
+        SOURCE = 0x400,
+        TEST = 0x800,
+        OPERATOR_BLOCKED = 0x1000, // BIT "12" IN MMS INTERPRETATION
+    }
+
+    public static class DataEnumExtensions
+    {
+        public static DataQuality fromBytes(this DataQuality res, byte[] value)
+        {
+            res = DataQuality.NONE;
+            if (value == null || value.Length < 1) return res;
+            if ((value[0] & Scsm_MMS.DatQualValidity0) == Scsm_MMS.DatQualValidity0) res |= DataQuality.VALIDITY0;
+            if ((value[0] & Scsm_MMS.DatQualValidity1) == Scsm_MMS.DatQualValidity1) res |= DataQuality.VALIDITY1;
+            if ((value[0] & Scsm_MMS.DatQualOverflow) == Scsm_MMS.DatQualOverflow) res |= DataQuality.OVERFLOW;
+            if ((value[0] & Scsm_MMS.DatQualOutOfRange) == Scsm_MMS.DatQualOutOfRange) res |= DataQuality.OUT_OF_RANGE;
+            if ((value[0] & Scsm_MMS.DatQualBadReference) == Scsm_MMS.DatQualBadReference) res |= DataQuality.BAD_REFERENCE;
+            if ((value[0] & Scsm_MMS.DatQualOscillatory) == Scsm_MMS.DatQualOscillatory) res |= DataQuality.OSCILLATORY;
+            if ((value[0] & Scsm_MMS.DatQualFailure) == Scsm_MMS.DatQualFailure) res |= DataQuality.FAILURE;
+            if ((value[0] & Scsm_MMS.DatQualOldData) == Scsm_MMS.DatQualOldData) res |= DataQuality.OLD_DATA;
+            if (value.Length < 2) return res;
+            if ((value[1] & Scsm_MMS.DatQualInconsistent) == Scsm_MMS.DatQualInconsistent) res |= DataQuality.INCONSISTENT;
+            if ((value[1] & Scsm_MMS.DatQualInaccurate) == Scsm_MMS.DatQualInaccurate) res |= DataQuality.INACCURATE;
+            if ((value[1] & Scsm_MMS.DatQualSource) == Scsm_MMS.DatQualSource) res |= DataQuality.SOURCE;
+            if ((value[1] & Scsm_MMS.DatQualTest) == Scsm_MMS.DatQualTest) res |= DataQuality.TEST;
+            if ((value[1] & Scsm_MMS.DatQualOperatorBlocked) == Scsm_MMS.DatQualOperatorBlocked) res |= DataQuality.OPERATOR_BLOCKED;
+            return res;
+        }
+
+        public static byte[] toBytes(this DataQuality inp)
+        {
+            byte[] res = new byte[2];
+
+            if ((inp & DataQuality.VALIDITY0) == DataQuality.VALIDITY0) res[0] |= Scsm_MMS.DatQualValidity0;
+            if ((inp & DataQuality.VALIDITY1) == DataQuality.VALIDITY1) res[0] |= Scsm_MMS.DatQualValidity1;
+            if ((inp & DataQuality.OVERFLOW) == DataQuality.OVERFLOW) res[0] |= Scsm_MMS.DatQualOverflow;
+            if ((inp & DataQuality.OUT_OF_RANGE) == DataQuality.OUT_OF_RANGE) res[0] |= Scsm_MMS.DatQualOutOfRange;
+            if ((inp & DataQuality.BAD_REFERENCE) == DataQuality.BAD_REFERENCE) res[0] |= Scsm_MMS.DatQualBadReference;
+            if ((inp & DataQuality.OSCILLATORY) == DataQuality.OSCILLATORY) res[0] |= Scsm_MMS.DatQualOscillatory;
+            if ((inp & DataQuality.FAILURE) == DataQuality.FAILURE) res[0] |= Scsm_MMS.DatQualFailure;
+            if ((inp & DataQuality.OLD_DATA) == DataQuality.OLD_DATA) res[0] |= Scsm_MMS.DatQualOldData;
+            if ((inp & DataQuality.INCONSISTENT) == DataQuality.INCONSISTENT) res[1] |= Scsm_MMS.DatQualInconsistent;
+            if ((inp & DataQuality.INACCURATE) == DataQuality.INACCURATE) res[1] |= Scsm_MMS.DatQualInaccurate;
+            if ((inp & DataQuality.SOURCE) == DataQuality.SOURCE) res[1] |= Scsm_MMS.DatQualSource;
+            if ((inp & DataQuality.TEST) == DataQuality.TEST) res[1] |= Scsm_MMS.DatQualTest;
+            if ((inp & DataQuality.OPERATOR_BLOCKED) == DataQuality.OPERATOR_BLOCKED) res[1] |= Scsm_MMS.DatQualOperatorBlocked;
+            return res;
         }
     }
 }

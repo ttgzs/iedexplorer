@@ -25,18 +25,30 @@ namespace IEDExplorer
         public NodeData[] getWriteArray()
         {
             List<NodeData> nlst = new List<NodeData>();
-            if (sendRptID) nlst.Add((NodeData)self.FindChildNode("RptID"));
-            if (sendRptEna) nlst.Add((NodeData)self.FindChildNode("RptEna"));
-            if (sendResv) nlst.Add((NodeData)self.FindChildNode("Resv"));
-            if (sendDatSet) nlst.Add((NodeData)self.FindChildNode("DatSet"));
-            if (sendOptFlds) nlst.Add((NodeData)self.FindChildNode("OptFlds"));
-            if (sendBufTm) nlst.Add((NodeData)self.FindChildNode("BufTm"));
-            if (sendTrgOps) nlst.Add((NodeData)self.FindChildNode("TrgOps"));
-            if (sendIntgPd) nlst.Add((NodeData)self.FindChildNode("IntgPd"));
-            if (sendGI) nlst.Add((NodeData)self.FindChildNode("GI"));
-            if (sendPurgeBuf) nlst.Add((NodeData)self.FindChildNode("PurgeBuf"));
-            if (sendResvTms) nlst.Add((NodeData)self.FindChildNode("ResvTms"));
-            if (sendEntryId) nlst.Add((NodeData)self.FindChildNode("EntryId"));
+            NodeBase fcn = self.FindChildNode("RptID");
+            if (sendRptID && fcn != null) nlst.Add((NodeData)fcn);
+            fcn = self.FindChildNode("RptEna");
+            if (sendRptEna && fcn != null) nlst.Add((NodeData)fcn);
+            fcn = self.FindChildNode("Resv");
+            if (sendResv && fcn != null) nlst.Add((NodeData)fcn);
+            fcn = self.FindChildNode("DatSet");
+            if (sendDatSet && fcn != null) nlst.Add((NodeData)fcn);
+            fcn = self.FindChildNode("OptFlds");
+            if (sendOptFlds && fcn != null) nlst.Add((NodeData)fcn);
+            fcn = self.FindChildNode("BufTm");
+            if (sendBufTm && fcn != null) nlst.Add((NodeData)fcn);
+            fcn = self.FindChildNode("TrgOps");
+            if (sendTrgOps && fcn != null) nlst.Add((NodeData)fcn);
+            fcn = self.FindChildNode("IntgPd");
+            if (sendIntgPd && fcn != null) nlst.Add((NodeData)fcn);
+            fcn = self.FindChildNode("GI");
+            if (sendGI && fcn != null) nlst.Add((NodeData)fcn);
+            fcn = self.FindChildNode("PurgeBuf");
+            if (sendPurgeBuf && fcn != null) nlst.Add((NodeData)fcn);
+            fcn = self.FindChildNode("ResvTms");
+            if (sendResvTms && fcn != null) nlst.Add((NodeData)fcn);
+            fcn = self.FindChildNode("EntryId");
+            if (sendEntryId && fcn != null) nlst.Add((NodeData)fcn);
             return nlst.ToArray();
         }
     }
