@@ -55,12 +55,13 @@ namespace IEDExplorer
             this.comboBoxDatSet = new System.Windows.Forms.ComboBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.checkBoxTrgIOps_GI = new System.Windows.Forms.CheckBox();
-            this.checkBoxTrgIOps_Integrity = new System.Windows.Forms.CheckBox();
-            this.checkBoxTrgIOps_DataUpdate = new System.Windows.Forms.CheckBox();
-            this.checkBoxTrgIOps_QualityChange = new System.Windows.Forms.CheckBox();
-            this.checkBoxTrgIOps_DataChange = new System.Windows.Forms.CheckBox();
+            this.checkBoxTrgOps_GI = new System.Windows.Forms.CheckBox();
+            this.checkBoxTrgOps_Integrity = new System.Windows.Forms.CheckBox();
+            this.checkBoxTrgOps_DataUpdate = new System.Windows.Forms.CheckBox();
+            this.checkBoxTrgOps_QualityChange = new System.Windows.Forms.CheckBox();
+            this.checkBoxTrgOps_DataChange = new System.Windows.Forms.CheckBox();
             this.checkBoxTrgOps_send = new System.Windows.Forms.CheckBox();
+            this.label12 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.checkBoxOptFlds_ConfRev = new System.Windows.Forms.CheckBox();
             this.checkBoxOptFlds_EntryID = new System.Windows.Forms.CheckBox();
@@ -100,17 +101,23 @@ namespace IEDExplorer
             this.textBoxEntryID = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
             this.checkBoxEntryID_send = new System.Windows.Forms.CheckBox();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.labelReportType = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.labelReportName = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox5.SuspendLayout();
+            this.groupBox6.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonOK
             // 
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(65, 538);
+            this.buttonOK.Location = new System.Drawing.Point(65, 592);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(79, 33);
             this.buttonOK.TabIndex = 1;
@@ -121,7 +128,7 @@ namespace IEDExplorer
             // buttonCancel
             // 
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(271, 538);
+            this.buttonCancel.Location = new System.Drawing.Point(271, 592);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(79, 33);
             this.buttonCancel.TabIndex = 2;
@@ -161,6 +168,7 @@ namespace IEDExplorer
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.groupBox4);
+            this.groupBox2.Controls.Add(this.label12);
             this.groupBox2.Controls.Add(this.groupBox1);
             this.groupBox2.Controls.Add(this.checkBoxGI);
             this.groupBox2.Controls.Add(this.checkBoxRptEna);
@@ -180,7 +188,7 @@ namespace IEDExplorer
             this.groupBox2.Controls.Add(this.labelBufTm);
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.label3);
-            this.groupBox2.Location = new System.Drawing.Point(12, 12);
+            this.groupBox2.Location = new System.Drawing.Point(12, 66);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(389, 350);
             this.groupBox2.TabIndex = 12;
@@ -189,11 +197,11 @@ namespace IEDExplorer
             // 
             // groupBox4
             // 
-            this.groupBox4.Controls.Add(this.checkBoxTrgIOps_GI);
-            this.groupBox4.Controls.Add(this.checkBoxTrgIOps_Integrity);
-            this.groupBox4.Controls.Add(this.checkBoxTrgIOps_DataUpdate);
-            this.groupBox4.Controls.Add(this.checkBoxTrgIOps_QualityChange);
-            this.groupBox4.Controls.Add(this.checkBoxTrgIOps_DataChange);
+            this.groupBox4.Controls.Add(this.checkBoxTrgOps_GI);
+            this.groupBox4.Controls.Add(this.checkBoxTrgOps_Integrity);
+            this.groupBox4.Controls.Add(this.checkBoxTrgOps_DataUpdate);
+            this.groupBox4.Controls.Add(this.checkBoxTrgOps_QualityChange);
+            this.groupBox4.Controls.Add(this.checkBoxTrgOps_DataChange);
             this.groupBox4.Controls.Add(this.checkBoxTrgOps_send);
             this.groupBox4.Location = new System.Drawing.Point(9, 197);
             this.groupBox4.Name = "groupBox4";
@@ -202,60 +210,60 @@ namespace IEDExplorer
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "TrgOps (Trigger Options)";
             // 
-            // checkBoxTrgIOps_GI
+            // checkBoxTrgOps_GI
             // 
-            this.checkBoxTrgIOps_GI.AutoSize = true;
-            this.checkBoxTrgIOps_GI.Location = new System.Drawing.Point(123, 42);
-            this.checkBoxTrgIOps_GI.Name = "checkBoxTrgIOps_GI";
-            this.checkBoxTrgIOps_GI.Size = new System.Drawing.Size(37, 17);
-            this.checkBoxTrgIOps_GI.TabIndex = 23;
-            this.checkBoxTrgIOps_GI.Tag = "Active";
-            this.checkBoxTrgIOps_GI.Text = "GI";
-            this.checkBoxTrgIOps_GI.UseVisualStyleBackColor = true;
+            this.checkBoxTrgOps_GI.AutoSize = true;
+            this.checkBoxTrgOps_GI.Location = new System.Drawing.Point(123, 42);
+            this.checkBoxTrgOps_GI.Name = "checkBoxTrgOps_GI";
+            this.checkBoxTrgOps_GI.Size = new System.Drawing.Size(37, 17);
+            this.checkBoxTrgOps_GI.TabIndex = 23;
+            this.checkBoxTrgOps_GI.Tag = "Active";
+            this.checkBoxTrgOps_GI.Text = "GI";
+            this.checkBoxTrgOps_GI.UseVisualStyleBackColor = true;
             // 
-            // checkBoxTrgIOps_Integrity
+            // checkBoxTrgOps_Integrity
             // 
-            this.checkBoxTrgIOps_Integrity.AutoSize = true;
-            this.checkBoxTrgIOps_Integrity.Location = new System.Drawing.Point(9, 42);
-            this.checkBoxTrgIOps_Integrity.Name = "checkBoxTrgIOps_Integrity";
-            this.checkBoxTrgIOps_Integrity.Size = new System.Drawing.Size(63, 17);
-            this.checkBoxTrgIOps_Integrity.TabIndex = 22;
-            this.checkBoxTrgIOps_Integrity.Tag = "Active";
-            this.checkBoxTrgIOps_Integrity.Text = "Integrity";
-            this.checkBoxTrgIOps_Integrity.UseVisualStyleBackColor = true;
+            this.checkBoxTrgOps_Integrity.AutoSize = true;
+            this.checkBoxTrgOps_Integrity.Location = new System.Drawing.Point(9, 42);
+            this.checkBoxTrgOps_Integrity.Name = "checkBoxTrgOps_Integrity";
+            this.checkBoxTrgOps_Integrity.Size = new System.Drawing.Size(63, 17);
+            this.checkBoxTrgOps_Integrity.TabIndex = 22;
+            this.checkBoxTrgOps_Integrity.Tag = "Active";
+            this.checkBoxTrgOps_Integrity.Text = "Integrity";
+            this.checkBoxTrgOps_Integrity.UseVisualStyleBackColor = true;
             // 
-            // checkBoxTrgIOps_DataUpdate
+            // checkBoxTrgOps_DataUpdate
             // 
-            this.checkBoxTrgIOps_DataUpdate.AutoSize = true;
-            this.checkBoxTrgIOps_DataUpdate.Location = new System.Drawing.Point(229, 19);
-            this.checkBoxTrgIOps_DataUpdate.Name = "checkBoxTrgIOps_DataUpdate";
-            this.checkBoxTrgIOps_DataUpdate.Size = new System.Drawing.Size(84, 17);
-            this.checkBoxTrgIOps_DataUpdate.TabIndex = 19;
-            this.checkBoxTrgIOps_DataUpdate.Tag = "Active";
-            this.checkBoxTrgIOps_DataUpdate.Text = "DataUpdate";
-            this.checkBoxTrgIOps_DataUpdate.UseVisualStyleBackColor = true;
+            this.checkBoxTrgOps_DataUpdate.AutoSize = true;
+            this.checkBoxTrgOps_DataUpdate.Location = new System.Drawing.Point(229, 19);
+            this.checkBoxTrgOps_DataUpdate.Name = "checkBoxTrgOps_DataUpdate";
+            this.checkBoxTrgOps_DataUpdate.Size = new System.Drawing.Size(84, 17);
+            this.checkBoxTrgOps_DataUpdate.TabIndex = 19;
+            this.checkBoxTrgOps_DataUpdate.Tag = "Active";
+            this.checkBoxTrgOps_DataUpdate.Text = "DataUpdate";
+            this.checkBoxTrgOps_DataUpdate.UseVisualStyleBackColor = true;
             // 
-            // checkBoxTrgIOps_QualityChange
+            // checkBoxTrgOps_QualityChange
             // 
-            this.checkBoxTrgIOps_QualityChange.AutoSize = true;
-            this.checkBoxTrgIOps_QualityChange.Location = new System.Drawing.Point(123, 19);
-            this.checkBoxTrgIOps_QualityChange.Name = "checkBoxTrgIOps_QualityChange";
-            this.checkBoxTrgIOps_QualityChange.Size = new System.Drawing.Size(95, 17);
-            this.checkBoxTrgIOps_QualityChange.TabIndex = 16;
-            this.checkBoxTrgIOps_QualityChange.Tag = "Active";
-            this.checkBoxTrgIOps_QualityChange.Text = "QualityChange";
-            this.checkBoxTrgIOps_QualityChange.UseVisualStyleBackColor = true;
+            this.checkBoxTrgOps_QualityChange.AutoSize = true;
+            this.checkBoxTrgOps_QualityChange.Location = new System.Drawing.Point(123, 19);
+            this.checkBoxTrgOps_QualityChange.Name = "checkBoxTrgOps_QualityChange";
+            this.checkBoxTrgOps_QualityChange.Size = new System.Drawing.Size(95, 17);
+            this.checkBoxTrgOps_QualityChange.TabIndex = 16;
+            this.checkBoxTrgOps_QualityChange.Tag = "Active";
+            this.checkBoxTrgOps_QualityChange.Text = "QualityChange";
+            this.checkBoxTrgOps_QualityChange.UseVisualStyleBackColor = true;
             // 
-            // checkBoxTrgIOps_DataChange
+            // checkBoxTrgOps_DataChange
             // 
-            this.checkBoxTrgIOps_DataChange.AutoSize = true;
-            this.checkBoxTrgIOps_DataChange.Location = new System.Drawing.Point(9, 19);
-            this.checkBoxTrgIOps_DataChange.Name = "checkBoxTrgIOps_DataChange";
-            this.checkBoxTrgIOps_DataChange.Size = new System.Drawing.Size(86, 17);
-            this.checkBoxTrgIOps_DataChange.TabIndex = 17;
-            this.checkBoxTrgIOps_DataChange.Tag = "Active";
-            this.checkBoxTrgIOps_DataChange.Text = "DataChange";
-            this.checkBoxTrgIOps_DataChange.UseVisualStyleBackColor = true;
+            this.checkBoxTrgOps_DataChange.AutoSize = true;
+            this.checkBoxTrgOps_DataChange.Location = new System.Drawing.Point(9, 19);
+            this.checkBoxTrgOps_DataChange.Name = "checkBoxTrgOps_DataChange";
+            this.checkBoxTrgOps_DataChange.Size = new System.Drawing.Size(86, 17);
+            this.checkBoxTrgOps_DataChange.TabIndex = 17;
+            this.checkBoxTrgOps_DataChange.Tag = "Active";
+            this.checkBoxTrgOps_DataChange.Text = "DataChange";
+            this.checkBoxTrgOps_DataChange.UseVisualStyleBackColor = true;
             // 
             // checkBoxTrgOps_send
             // 
@@ -265,6 +273,16 @@ namespace IEDExplorer
             this.checkBoxTrgOps_send.Size = new System.Drawing.Size(15, 14);
             this.checkBoxTrgOps_send.TabIndex = 15;
             this.checkBoxTrgOps_send.UseVisualStyleBackColor = true;
+            this.checkBoxTrgOps_send.CheckedChanged += new System.EventHandler(this.checkBoxTrgOps_send_CheckedChanged);
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(354, 7);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(32, 13);
+            this.label12.TabIndex = 0;
+            this.label12.Text = "Send";
             // 
             // groupBox1
             // 
@@ -380,6 +398,7 @@ namespace IEDExplorer
             this.checkBoxOptFlds_send.Size = new System.Drawing.Size(15, 14);
             this.checkBoxOptFlds_send.TabIndex = 15;
             this.checkBoxOptFlds_send.UseVisualStyleBackColor = true;
+            this.checkBoxOptFlds_send.CheckedChanged += new System.EventHandler(this.checkBoxOptFlds_send_CheckedChanged);
             // 
             // checkBoxGI
             // 
@@ -421,6 +440,7 @@ namespace IEDExplorer
             this.checkBoxGI_send.Size = new System.Drawing.Size(15, 14);
             this.checkBoxGI_send.TabIndex = 12;
             this.checkBoxGI_send.UseVisualStyleBackColor = true;
+            this.checkBoxGI_send.CheckedChanged += new System.EventHandler(this.checkBoxGI_send_CheckedChanged);
             // 
             // checkBoxRptEna_send
             // 
@@ -430,6 +450,7 @@ namespace IEDExplorer
             this.checkBoxRptEna_send.Size = new System.Drawing.Size(15, 14);
             this.checkBoxRptEna_send.TabIndex = 12;
             this.checkBoxRptEna_send.UseVisualStyleBackColor = true;
+            this.checkBoxRptEna_send.CheckedChanged += new System.EventHandler(this.checkBoxRptEna_send_CheckedChanged);
             // 
             // checkBoxIntgPd_send
             // 
@@ -439,6 +460,7 @@ namespace IEDExplorer
             this.checkBoxIntgPd_send.Size = new System.Drawing.Size(15, 14);
             this.checkBoxIntgPd_send.TabIndex = 12;
             this.checkBoxIntgPd_send.UseVisualStyleBackColor = true;
+            this.checkBoxIntgPd_send.CheckedChanged += new System.EventHandler(this.checkBoxIntgPd_send_CheckedChanged);
             // 
             // checkBoxBufTm_send
             // 
@@ -448,6 +470,7 @@ namespace IEDExplorer
             this.checkBoxBufTm_send.Size = new System.Drawing.Size(15, 14);
             this.checkBoxBufTm_send.TabIndex = 12;
             this.checkBoxBufTm_send.UseVisualStyleBackColor = true;
+            this.checkBoxBufTm_send.CheckedChanged += new System.EventHandler(this.checkBoxBufTm_send_CheckedChanged);
             // 
             // checkBoxRptID_send
             // 
@@ -525,7 +548,7 @@ namespace IEDExplorer
             this.groupBox3.Controls.Add(this.label6);
             this.groupBox3.Controls.Add(this.checkBoxResv_send);
             this.groupBox3.Controls.Add(this.checkBoxResv);
-            this.groupBox3.Location = new System.Drawing.Point(12, 368);
+            this.groupBox3.Location = new System.Drawing.Point(12, 422);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(389, 54);
             this.groupBox3.TabIndex = 9;
@@ -550,6 +573,7 @@ namespace IEDExplorer
             this.checkBoxResv_send.Size = new System.Drawing.Size(15, 14);
             this.checkBoxResv_send.TabIndex = 12;
             this.checkBoxResv_send.UseVisualStyleBackColor = true;
+            this.checkBoxResv_send.CheckedChanged += new System.EventHandler(this.checkBoxResv_send_CheckedChanged);
             // 
             // checkBoxResv
             // 
@@ -573,7 +597,7 @@ namespace IEDExplorer
             this.groupBox5.Controls.Add(this.textBoxEntryID);
             this.groupBox5.Controls.Add(this.label9);
             this.groupBox5.Controls.Add(this.checkBoxEntryID_send);
-            this.groupBox5.Location = new System.Drawing.Point(12, 428);
+            this.groupBox5.Location = new System.Drawing.Point(12, 482);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(389, 104);
             this.groupBox5.TabIndex = 20;
@@ -598,6 +622,7 @@ namespace IEDExplorer
             this.checkBoxPurgeBuf_send.Size = new System.Drawing.Size(15, 14);
             this.checkBoxPurgeBuf_send.TabIndex = 12;
             this.checkBoxPurgeBuf_send.UseVisualStyleBackColor = true;
+            this.checkBoxPurgeBuf_send.CheckedChanged += new System.EventHandler(this.checkBoxPurgeBuf_send_CheckedChanged);
             // 
             // checkBoxPurgeBuf
             // 
@@ -623,9 +648,9 @@ namespace IEDExplorer
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.label8.Location = new System.Drawing.Point(15, 71);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(124, 13);
+            this.label8.Size = new System.Drawing.Size(127, 13);
             this.label8.TabIndex = 5;
-            this.label8.Text = "ResvTms (Reseve Time)";
+            this.label8.Text = "ResvTms (Reserve Time)";
             // 
             // checkBoxResvTms_send
             // 
@@ -635,6 +660,7 @@ namespace IEDExplorer
             this.checkBoxResvTms_send.Size = new System.Drawing.Size(15, 14);
             this.checkBoxResvTms_send.TabIndex = 12;
             this.checkBoxResvTms_send.UseVisualStyleBackColor = true;
+            this.checkBoxResvTms_send.CheckedChanged += new System.EventHandler(this.checkBoxResvTms_send_CheckedChanged);
             // 
             // textBoxEntryID
             // 
@@ -661,12 +687,67 @@ namespace IEDExplorer
             this.checkBoxEntryID_send.Size = new System.Drawing.Size(15, 14);
             this.checkBoxEntryID_send.TabIndex = 12;
             this.checkBoxEntryID_send.UseVisualStyleBackColor = true;
+            this.checkBoxEntryID_send.CheckedChanged += new System.EventHandler(this.checkBoxEntryID_send_CheckedChanged);
+            // 
+            // groupBox6
+            // 
+            this.groupBox6.Controls.Add(this.labelReportType);
+            this.groupBox6.Controls.Add(this.label11);
+            this.groupBox6.Controls.Add(this.labelReportName);
+            this.groupBox6.Controls.Add(this.label10);
+            this.groupBox6.Location = new System.Drawing.Point(12, 15);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(388, 51);
+            this.groupBox6.TabIndex = 21;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "Report Control Block";
+            // 
+            // labelReportType
+            // 
+            this.labelReportType.AutoSize = true;
+            this.labelReportType.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.labelReportType.Location = new System.Drawing.Point(310, 24);
+            this.labelReportType.Name = "labelReportType";
+            this.labelReportType.Size = new System.Drawing.Size(33, 15);
+            this.labelReportType.TabIndex = 0;
+            this.labelReportType.Text = "Type";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(273, 24);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(31, 13);
+            this.label11.TabIndex = 0;
+            this.label11.Text = "Type";
+            // 
+            // labelReportName
+            // 
+            this.labelReportName.AutoSize = true;
+            this.labelReportName.BackColor = System.Drawing.SystemColors.Control;
+            this.labelReportName.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.labelReportName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.labelReportName.Location = new System.Drawing.Point(69, 22);
+            this.labelReportName.Name = "labelReportName";
+            this.labelReportName.Size = new System.Drawing.Size(37, 15);
+            this.labelReportName.TabIndex = 0;
+            this.labelReportName.Text = "Name";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(18, 24);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(35, 13);
+            this.label10.TabIndex = 0;
+            this.label10.Text = "Name";
             // 
             // RcbActivateDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(413, 579);
+            this.ClientSize = new System.Drawing.Size(413, 635);
+            this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
@@ -685,6 +766,8 @@ namespace IEDExplorer
             this.groupBox3.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
+            this.groupBox6.ResumeLayout(false);
+            this.groupBox6.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -715,11 +798,11 @@ namespace IEDExplorer
         private System.Windows.Forms.TextBox textBoxBufTm;
         private System.Windows.Forms.Label labelBufTm;
         private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.CheckBox checkBoxTrgIOps_GI;
-        private System.Windows.Forms.CheckBox checkBoxTrgIOps_Integrity;
-        private System.Windows.Forms.CheckBox checkBoxTrgIOps_DataUpdate;
-        private System.Windows.Forms.CheckBox checkBoxTrgIOps_QualityChange;
-        private System.Windows.Forms.CheckBox checkBoxTrgIOps_DataChange;
+        private System.Windows.Forms.CheckBox checkBoxTrgOps_GI;
+        private System.Windows.Forms.CheckBox checkBoxTrgOps_Integrity;
+        private System.Windows.Forms.CheckBox checkBoxTrgOps_DataUpdate;
+        private System.Windows.Forms.CheckBox checkBoxTrgOps_QualityChange;
+        private System.Windows.Forms.CheckBox checkBoxTrgOps_DataChange;
         private System.Windows.Forms.CheckBox checkBoxTrgOps_send;
         private System.Windows.Forms.CheckBox checkBoxIntgPd_send;
         private System.Windows.Forms.TextBox textBoxIntgPd;
@@ -743,5 +826,11 @@ namespace IEDExplorer
         private System.Windows.Forms.TextBox textBoxEntryID;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.CheckBox checkBoxEntryID_send;
+        private System.Windows.Forms.GroupBox groupBox6;
+        private System.Windows.Forms.Label labelReportType;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label labelReportName;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label12;
     }
 }

@@ -236,7 +236,7 @@ namespace IEDExplorer
             {
                 if (_BufTm == null) _BufTm = (NodeData)FindChildNode("BufTm");
                 if (_BufTm != null)
-                    return (uint)_BufTm.DataValue;
+                    return Convert.ToUInt32(_BufTm.DataValue);
                 else
                     return 0;
             }
@@ -244,7 +244,7 @@ namespace IEDExplorer
             {
                 if (_BufTm == null) _BufTm = (NodeData)FindChildNode("BufTm");
                 if (_BufTm != null)
-                    _BufTm.DataValue = value;
+                    _BufTm.DataValue = (long)value;
             }
         }
         public bool BufTm_present
@@ -310,6 +310,19 @@ namespace IEDExplorer
             }
         }
 
+        public bool TrgOps_present
+        {
+            get
+            {
+                if (_TrgOps != null) return true;
+                _TrgOps = (NodeData)FindChildNode("TrgOps");
+                if (_TrgOps != null)
+                    return true;
+                else
+                    return false;
+            }
+        }
+
         NodeData _IntgPd;
         public uint IntgPd
         {
@@ -317,7 +330,7 @@ namespace IEDExplorer
             {
                 if (_IntgPd == null) _IntgPd = (NodeData)FindChildNode("IntgPd");
                 if (_IntgPd != null)
-                    return (uint)_IntgPd.DataValue;
+                    return Convert.ToUInt32(_IntgPd.DataValue);
                 else
                     return 0;
             }
@@ -325,7 +338,7 @@ namespace IEDExplorer
             {
                 if (_IntgPd == null) _IntgPd = (NodeData)FindChildNode("IntgPd");
                 if (_IntgPd != null)
-                    _IntgPd.DataValue = value;
+                    _IntgPd.DataValue = (long)value;
             }
         }
         public bool IntgPd_present

@@ -20,7 +20,7 @@ namespace IEDExplorer
         public bool sendGI = true;
         public bool sendPurgeBuf = false;
         public bool sendResvTms = false;
-        public bool sendEntryId = false;
+        public bool sendEntryID = false;
 
         public NodeData[] getWriteArray()
         {
@@ -47,8 +47,8 @@ namespace IEDExplorer
             if (sendPurgeBuf && fcn != null) nlst.Add((NodeData)fcn);
             fcn = self.FindChildNode("ResvTms");
             if (sendResvTms && fcn != null) nlst.Add((NodeData)fcn);
-            fcn = self.FindChildNode("EntryId");
-            if (sendEntryId && fcn != null) nlst.Add((NodeData)fcn);
+            fcn = self.FindChildNode("EntryID");
+            if (sendEntryID && fcn != null) nlst.Add((NodeData)fcn);
             return nlst.ToArray();
         }
     }
