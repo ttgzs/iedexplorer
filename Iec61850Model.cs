@@ -37,6 +37,7 @@ namespace IEDExplorer
             (lists as NodeIed).iecs = iecs;
             (files as NodeIed).iecs = iecs;
             (urcbs as NodeIed).iecs = iecs;
+            (brcbs as NodeIed).iecs = iecs;
         }
     }
 }

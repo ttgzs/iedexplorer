@@ -612,6 +612,8 @@ namespace IEDExplorer
             int phase = phsRptID;
             int datanum = 0;
             int datacnt = 0;
+            int reasoncnt = 0;
+            int[] listmap = null;
 
             iecs.logger.LogDebug("Report != null");
             if (Report.VariableAccessSpecification != null && Report.VariableAccessSpecification.VariableListName != null &&
@@ -732,6 +734,8 @@ namespace IEDExplorer
                                         incBstr = list[i].Success.Bit_string.Value;
                                         int effbytes = incBstr.Length - (int)(list[i].Success.Bit_string.TrailBitsCnt / 8);
                                         int effpadding = list[i].Success.Bit_string.TrailBitsCnt % 8;
+                                        listmap = new int[incBstr.Length * 8];   // for each data in report includes its index into variable list
+                                        int listidx = 0;
                                         for (int j = 0; j < effbytes; j++)
                                         {
                                             int l = 0x0;
@@ -739,7 +743,12 @@ namespace IEDExplorer
                                                 l = 1 << (effpadding - 1);
                                             for (int k = 0x80; k > l; k = k >> 1)
                                             {
-                                                if ((incBstr[j] & k) > 0) datanum++;
+                                                if ((incBstr[j] & k) > 0)
+                                                {
+                                                    listmap[datanum] = listidx;
+                                                    datanum++;
+                                                }
+                                                listidx++;
                                             }
                                         }
                                         iecs.logger.LogDebug("Report Inclusion Bitstring = " + datanum.ToString());
@@ -765,7 +774,7 @@ namespace IEDExplorer
                                         }
                                         // Evaluation of OptFldsDataReference
                                         if (datacnt == datanum)
-                                            break;
+                                            phase += 2;   // phsReasonCodes
                                         else
                                             continue;
                                     }
@@ -775,7 +784,7 @@ namespace IEDExplorer
                                 // here we will be only if report is received without variable names
                                 if (phase == phsValues)
                                 {
-                                    // Report WIHOUT references:
+                                    // Report WITHOUT references:
                                     // Need to investigate report members
                                     NodeBase lvb = iecs.DataModel.lists.FindNodeByAddress(datName, true);
                                     if (lvb != null)
@@ -784,22 +793,30 @@ namespace IEDExplorer
                                         //for (int j = 0; j < nba.Length; j++)
                                         if (datacnt < nba.Length)
                                         {
-                                            //if (included in phsInclusionBitstring string TODO
                                             if (!(nba[datacnt] is NodeFC))
                                             {
                                                 Data dataref = list[i].Success;
                                                 if (list[i].Success != null)
-                                                    recursiveReadData(iecs, dataref, nba[datacnt], NodeState.Reported);
+                                                    recursiveReadData(iecs, dataref, nba[listmap[datacnt]], NodeState.Reported);
                                             }
                                             datacnt++;
                                         }
                                         else break;
-                                        // Evaluation of OptFldsDataReference
+                                        // End or continue?
                                         if (datacnt == datanum)
-                                            break;
+                                            phase++;  // phsReasonCodes
                                         else
                                             continue;
                                     }
+                                }
+                                if (phase == phsReasonCodes)
+                                {
+                                    reasoncnt++;
+                                    // End or continue?
+                                    if (reasoncnt == datanum)
+                                        break;  // phsReasonCodes
+                                    else
+                                        continue;
                                 }
                             }
                         }

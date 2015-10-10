@@ -506,7 +506,7 @@ namespace IEDExplorer
             {
                 if (_ResvTms == null) _ResvTms = (NodeData)FindChildNode("ResvTms");
                 if (_ResvTms != null)
-                    return (uint)_ResvTms.DataValue;
+                    return Convert.ToUInt32(_ResvTms.DataValue);
                 else
                     return 0;
             }
@@ -514,7 +514,7 @@ namespace IEDExplorer
             {
                 if (_ResvTms == null) _ResvTms = (NodeData)FindChildNode("ResvTms");
                 if (_ResvTms != null)
-                    _ResvTms.DataValue = value;
+                    _ResvTms.DataValue = (long)value;
             }
         }
         public bool ResvTms_present
