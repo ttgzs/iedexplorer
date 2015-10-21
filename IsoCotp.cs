@@ -22,6 +22,7 @@ namespace IEDExplorer
         private const byte COTP_CODE_CR = 0xe0;
         private const byte COTP_CODE_CC = 0xd0;
         public const byte COTP_CODE_DT = 0xf0;
+        public const byte COTP_CODE_DR = 0x80;
 
         private const byte COTP_PCODE_TSIZ = 0xc0;
         private const byte COTP_PCODE_DSAP = 0xc2;
@@ -126,6 +127,11 @@ namespace IEDExplorer
                     res = CotpReceiveResult.ERROR;
                 }
             }
+            else if (iecs.dataBuffer[1] == COTP_CODE_DR)    // DisConnect Request
+            {
+                iecs.logger.LogDebug(String.Format("COTP Disconnect Request received, error"));
+                res = CotpReceiveResult.ERROR;
+            }
 
             // Reset the stream
             iecs.msMMS = new MemoryStream();
@@ -136,13 +142,49 @@ namespace IEDExplorer
         {
             // Make COTP data telegramm
             int offs = IsoTpkt.TPKT_SIZEOF;
+            int maxLen = 1 << options.tpduSize; // max COTP len
+            const int sizeof_cotp_hdr = 0x03;
+            int maxDataLen = maxLen - sizeof_cotp_hdr; // max DATA len
 
-            iecs.sendBuffer[offs++] = 0x02; // cotp.hdrlen
-            iecs.sendBuffer[offs++] = COTP_CODE_DT; // code
-            iecs.sendBuffer[offs++] = 0x80; // number "complete" (suppose sending "short" datagrams only atm.)
+            if (iecs.sendBytes <= maxDataLen)
+            {
+                // Original handling, same as before
+                iecs.sendBuffer[offs++] = sizeof_cotp_hdr - 1; // cotp.hdrlen wihout this field
+                iecs.sendBuffer[offs++] = COTP_CODE_DT; // code
+                iecs.sendBuffer[offs++] = 0x80; // number "complete" (suppose sending "short" datagrams only atm.)
 
-            iecs.sendBytes += offs;
-            IsoTpkt.Send(iecs);
+                iecs.sendBytes += offs;
+                IsoTpkt.Send(iecs);
+            }
+            else
+            {
+                // Long data, need to fragment to TPKT + COTP fragments
+                // Technique: allocate a new buffer. Keep the original data.
+                // Copy original data "per partes" to the new buffer, adding TPKT and COTP headers
+                // and sending the fragments via TCP.
+                // Last COTP fragments must be marked 0x80, others 0x00
+                int dLen = iecs.sendBytes;  // Actual data length
+                int sLen = 0;               // Actual sent data length
+                byte[] originalData = iecs.sendBuffer;
+                iecs.sendBuffer = new byte[iecs.sendBuffer.Length];    // New buffer with same length
+                const int dOffs = IsoTpkt.TPKT_SIZEOF + sizeof_cotp_hdr;
+
+                while (dLen > 0)
+                {
+                    iecs.sendBytes = Math.Min(dLen, maxDataLen);
+                    Array.Copy(originalData, dOffs + sLen, iecs.sendBuffer, dOffs, iecs.sendBytes);
+                    dLen -= iecs.sendBytes;
+                    sLen += iecs.sendBytes;
+
+                    offs = IsoTpkt.TPKT_SIZEOF;
+                    iecs.sendBuffer[offs++] = sizeof_cotp_hdr - 1; // cotp.hdrlen wihout this field
+                    iecs.sendBuffer[offs++] = COTP_CODE_DT; // code
+                    iecs.sendBuffer[offs++] = (byte)((dLen > 0) ? 0x00 : 0x80); // number "fragment" or "complete"
+
+                    iecs.sendBytes += offs;
+                    IsoTpkt.Send(iecs);
+                }
+            }
             return 0;
         }
 

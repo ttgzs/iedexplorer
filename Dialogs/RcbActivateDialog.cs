@@ -141,7 +141,7 @@ namespace IEDExplorer
             }
             if (RCBpar.self.RptEna_present)
             {
-                checkBoxRptEna.Text = RCBpar.self.RptEna.ToString();
+                checkBoxRptEna.Checked = RCBpar.self.RptEna;
                 checkBoxRptEna_send.Checked = RCBpar.sendRptEna;
                 if (!checkBoxRptEna_send.Checked)
                     checkBoxRptEna.Enabled = false;
@@ -153,7 +153,7 @@ namespace IEDExplorer
             }
             if (RCBpar.self.GI_present)
             {
-                checkBoxGI.Text = RCBpar.self.GI.ToString();
+                checkBoxGI.Checked = RCBpar.self.GI;
                 checkBoxGI_send.Checked = RCBpar.sendGI;
                 if (!checkBoxGI_send.Checked)
                     checkBoxGI.Enabled = false;
@@ -165,7 +165,7 @@ namespace IEDExplorer
             }
             if (RCBpar.self.Resv_present)
             {
-                checkBoxResv.Text = RCBpar.self.Resv.ToString();
+                checkBoxResv.Checked = RCBpar.self.Resv;
                 checkBoxResv_send.Checked = RCBpar.sendResv;
                 if (!checkBoxResv_send.Checked)
                     checkBoxResv.Enabled = false;
@@ -177,7 +177,7 @@ namespace IEDExplorer
             }
             if (RCBpar.self.PurgeBuf_present)
             {
-                checkBoxPurgeBuf.Text = RCBpar.self.PurgeBuf.ToString();
+                checkBoxPurgeBuf.Checked = RCBpar.self.PurgeBuf;
                 checkBoxPurgeBuf_send.Checked = RCBpar.sendPurgeBuf;
                 if (!checkBoxPurgeBuf_send.Checked)
                     checkBoxPurgeBuf.Enabled = false;
