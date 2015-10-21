@@ -1,8 +1,10 @@
 IEDExplorer TODO
 rev 0. 6.2.2015
-1. COTP - send long data (longer than 1 segment size)
+rev 1. 21.10.2015
+1. [DONE] COTP - send long data (longer than 1 segment size)
 2. Watch window - select data (dropped from tree), possibility to start/stop pooling at selected interval
-3. TreeView - refactor - extract data operations like report activation, commands etc. to the model
-4. Improve the report activation logic, enable an activation from the report list (currently from NVL list)
+3. [DONE] TreeView - refactor - extract data operations like report activation, commands etc. to the model
+4a Improve the report activation logic from named variable list
+4b [DONE] enable an activation from the report control blocks
 5. Finish the dynamic named variable list creation and activation logic
 6. Write Value dialog - generalize, finish

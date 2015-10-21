@@ -106,3 +106,19 @@ Minor debug release / File Directory dialogs
 Rev 0.74 2015/04/10
 Minor debug release / ISO Session initialization
 
+Rev 0.75 2015/10/21
+* ISO COTP implemented sending of long data
+* Report inclusion string - improved reading of reports
+* New RCB Activation Dialog with Right/click on (U)RCB
+* UI insulation (some internal refactoring)
+* Support for buffered reports
+* Reading of values with variable list
+* File handling - icons
+* Auto update for data window
+* Delete NVL action - bugfix
+* Enabled concurrent queries - InvokeId dictionary transactions queue
+* Multithreading enabled for Write
+* LogView context menu re-enabled (victim of internal refactoring)
+
+
+

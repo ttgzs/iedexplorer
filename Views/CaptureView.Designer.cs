@@ -40,12 +40,14 @@
             this.MMSServiceCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SizeCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.hexBoxHEX = new Be.Windows.Forms.HexBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.textBoxXML = new System.Windows.Forms.TextBox();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.treeViewXML = new System.Windows.Forms.TreeView();
+            this.hexBoxHEX = new Be.Windows.Forms.HexBox();
+            this.toolStripButton_StartCapture = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton_StopCapture = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -63,6 +65,8 @@
             // toolStrip1
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripButton_StartCapture,
+            this.toolStripButton_StopCapture,
             this.toolStripButtonClear});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
@@ -98,7 +102,7 @@
             this.splitContainer1.SplitterDistance = 245;
             this.splitContainer1.TabIndex = 2;
             // 
-            // listView1
+            // listViewPackets
             // 
             this.listViewPackets.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.PacketNrCol,
@@ -110,7 +114,7 @@
             this.listViewPackets.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listViewPackets.FullRowSelect = true;
             this.listViewPackets.Location = new System.Drawing.Point(0, 0);
-            this.listViewPackets.Name = "listView1";
+            this.listViewPackets.Name = "listViewPackets";
             this.listViewPackets.Size = new System.Drawing.Size(837, 245);
             this.listViewPackets.TabIndex = 0;
             this.listViewPackets.UseCompatibleStateImageBehavior = false;
@@ -164,23 +168,6 @@
             this.splitContainer2.SplitterDistance = 416;
             this.splitContainer2.TabIndex = 0;
             // 
-            // hexBox1
-            // 
-            this.hexBoxHEX.BytesPerLine = 8;
-            this.hexBoxHEX.ColumnInfoVisible = true;
-            this.hexBoxHEX.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.hexBoxHEX.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.hexBoxHEX.LineInfoVisible = true;
-            this.hexBoxHEX.Location = new System.Drawing.Point(0, 0);
-            this.hexBoxHEX.Name = "hexBox1";
-            this.hexBoxHEX.ReadOnly = true;
-            this.hexBoxHEX.ShadowSelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(60)))), ((int)(((byte)(188)))), ((int)(((byte)(255)))));
-            this.hexBoxHEX.Size = new System.Drawing.Size(417, 251);
-            this.hexBoxHEX.StringViewVisible = true;
-            this.hexBoxHEX.TabIndex = 0;
-            this.hexBoxHEX.UseFixedBytesPerLine = true;
-            this.hexBoxHEX.VScrollBarVisible = true;
-            // 
             // tabControl1
             // 
             this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -205,17 +192,6 @@
             this.tabPage1.Text = "XML Text";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // tabPage2
-            // 
-            this.tabPage2.Controls.Add(this.treeViewXML);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(403, 222);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "XML Tree";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
             // textBoxXML
             // 
             this.textBoxXML.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -230,15 +206,64 @@
             this.textBoxXML.TabIndex = 1;
             this.textBoxXML.WordWrap = false;
             // 
-            // treeView1
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.treeViewXML);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(403, 222);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "XML Tree";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // treeViewXML
             // 
             this.treeViewXML.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.treeViewXML.Location = new System.Drawing.Point(0, 0);
-            this.treeViewXML.Name = "treeView1";
+            this.treeViewXML.Name = "treeViewXML";
             this.treeViewXML.Size = new System.Drawing.Size(403, 222);
             this.treeViewXML.TabIndex = 0;
+            // 
+            // hexBoxHEX
+            // 
+            this.hexBoxHEX.BytesPerLine = 8;
+            this.hexBoxHEX.ColumnInfoVisible = true;
+            this.hexBoxHEX.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.hexBoxHEX.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.hexBoxHEX.LineInfoVisible = true;
+            this.hexBoxHEX.Location = new System.Drawing.Point(0, 0);
+            this.hexBoxHEX.Name = "hexBoxHEX";
+            this.hexBoxHEX.ReadOnly = true;
+            this.hexBoxHEX.ShadowSelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(60)))), ((int)(((byte)(188)))), ((int)(((byte)(255)))));
+            this.hexBoxHEX.Size = new System.Drawing.Size(417, 251);
+            this.hexBoxHEX.StringViewVisible = true;
+            this.hexBoxHEX.TabIndex = 0;
+            this.hexBoxHEX.UseFixedBytesPerLine = true;
+            this.hexBoxHEX.VScrollBarVisible = true;
+            // 
+            // toolStripButton_StartCapture
+            // 
+            this.toolStripButton_StartCapture.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton_StartCapture.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_StartCapture.Image")));
+            this.toolStripButton_StartCapture.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton_StartCapture.Name = "toolStripButton_StartCapture";
+            this.toolStripButton_StartCapture.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton_StartCapture.Text = "toolStripButton1";
+            this.toolStripButton_StartCapture.Click += new System.EventHandler(this.toolStripButton_StartCapture_Click);
+            // 
+            // toolStripButton_StopCapture
+            // 
+            this.toolStripButton_StopCapture.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton_StopCapture.Enabled = false;
+            this.toolStripButton_StopCapture.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_StopCapture.Image")));
+            this.toolStripButton_StopCapture.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton_StopCapture.Name = "toolStripButton_StopCapture";
+            this.toolStripButton_StopCapture.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton_StopCapture.Text = "toolStripButton1";
+            this.toolStripButton_StopCapture.Click += new System.EventHandler(this.toolStripButton_StopCapture_Click);
             // 
             // CaptureView
             // 
@@ -288,6 +313,8 @@
         private System.Windows.Forms.TextBox textBoxXML;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.TreeView treeViewXML;
+        private System.Windows.Forms.ToolStripButton toolStripButton_StartCapture;
+        private System.Windows.Forms.ToolStripButton toolStripButton_StopCapture;
 
     }
 }

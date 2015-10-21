@@ -58,6 +58,7 @@ namespace IEDExplorer.Views
             this.dataGridView_log.RowTemplate.Height = 17;
             this.dataGridView_log.Size = new System.Drawing.Size(284, 262);
             this.dataGridView_log.TabIndex = 0;
+            this.dataGridView_log.MouseUp += new System.Windows.Forms.MouseEventHandler(this.listViewLog_MouseUp);
             // 
             // column1
             // 

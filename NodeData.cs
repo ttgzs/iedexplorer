@@ -80,8 +80,6 @@ namespace IEDExplorer
                 lock (this)
                     if (_dataValue == null || !_dataValue.Equals(value))
                     {
-                        if (value is Single && DataType != scsm_MMS_TypeEnum.floating_point)
-                            _dataValue = value; ;
                         _dataValue = value;
                         fire = true;
                     }

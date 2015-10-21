@@ -10,7 +10,6 @@ namespace IEDExplorer
     class IsoCotp
     {
         private const int COTP_HDR_CR_SIZEOF = 6; //18;
-        //public const int COTP_HDR_DT_SIZEOF = 15 + 2 + 2 + 3;
         public const int COTP_HDR_DT_SIZEOF = 3;
 
         private const int COTP_HDR_IDX_HDRLEN = 0;
@@ -31,6 +30,8 @@ namespace IEDExplorer
         private short m_COTP_srcref;
         private short m_COTP_dstref;
         private byte m_COTP_option;
+
+        private byte[] dataReserveBuffer = new byte[TcpState.sendBufferSize];
 
         public struct TSelector
         {
@@ -143,15 +144,14 @@ namespace IEDExplorer
             // Make COTP data telegramm
             int offs = IsoTpkt.TPKT_SIZEOF;
             int maxLen = 1 << options.tpduSize; // max COTP len
-            const int sizeof_cotp_hdr = 0x03;
-            int maxDataLen = maxLen - sizeof_cotp_hdr; // max DATA len
+            int maxDataLen = maxLen - COTP_HDR_DT_SIZEOF; // max DATA len
 
             if (iecs.sendBytes <= maxDataLen)
             {
-                // Original handling, same as before
-                iecs.sendBuffer[offs++] = sizeof_cotp_hdr - 1; // cotp.hdrlen wihout this field
+                // Original handling, same as before / short datagram without fragmenting
+                iecs.sendBuffer[offs++] = COTP_HDR_DT_SIZEOF - 1; // cotp.hdrlen wihout this field
                 iecs.sendBuffer[offs++] = COTP_CODE_DT; // code
-                iecs.sendBuffer[offs++] = 0x80; // number "complete" (suppose sending "short" datagrams only atm.)
+                iecs.sendBuffer[offs++] = 0x80; // number "complete" for "short" datagrams
 
                 iecs.sendBytes += offs;
                 IsoTpkt.Send(iecs);
@@ -163,11 +163,13 @@ namespace IEDExplorer
                 // Copy original data "per partes" to the new buffer, adding TPKT and COTP headers
                 // and sending the fragments via TCP.
                 // Last COTP fragments must be marked 0x80, others 0x00
+                // Possible optimization: for the first fragment use the original buffer (spare 1 copy operation) NOT IMPLEMENTED
                 int dLen = iecs.sendBytes;  // Actual data length
                 int sLen = 0;               // Actual sent data length
                 byte[] originalData = iecs.sendBuffer;
-                iecs.sendBuffer = new byte[iecs.sendBuffer.Length];    // New buffer with same length
-                const int dOffs = IsoTpkt.TPKT_SIZEOF + sizeof_cotp_hdr;
+                iecs.sendBuffer = dataReserveBuffer;    // Use saved / recycled buffer
+                dataReserveBuffer = originalData;       // Save original buffer to reserve for future use / recycling saves allocation oper.
+                const int dOffs = IsoTpkt.TPKT_SIZEOF + COTP_HDR_DT_SIZEOF;
 
                 while (dLen > 0)
                 {
@@ -176,8 +178,8 @@ namespace IEDExplorer
                     dLen -= iecs.sendBytes;
                     sLen += iecs.sendBytes;
 
-                    offs = IsoTpkt.TPKT_SIZEOF;
-                    iecs.sendBuffer[offs++] = sizeof_cotp_hdr - 1; // cotp.hdrlen wihout this field
+                    offs = IsoTpkt.TPKT_SIZEOF; // reinit offset
+                    iecs.sendBuffer[offs++] = COTP_HDR_DT_SIZEOF - 1; // cotp.hdrlen wihout this field
                     iecs.sendBuffer[offs++] = COTP_CODE_DT; // code
                     iecs.sendBuffer[offs++] = (byte)((dLen > 0) ? 0x00 : 0x80); // number "fragment" or "complete"
 
@@ -232,10 +234,8 @@ namespace IEDExplorer
             int offs = IsoTpkt.TPKT_SIZEOF;
             int optof = COTP_HDR_IDX_OPTION;
 
-            //unchecked
-            //{
-                iecs.sendBuffer[offs + COTP_HDR_IDX_HDRLEN] = (byte)(COTP_HDR_CR_SIZEOF + options.getSize());
-            //}
+            iecs.sendBuffer[offs + COTP_HDR_IDX_HDRLEN] = (byte)(COTP_HDR_CR_SIZEOF + options.getSize());
+
             iecs.sendBuffer[offs + COTP_HDR_IDX_CODE] = COTP_CODE_CR;
             Array.Copy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(m_COTP_dstref)), 0, iecs.sendBuffer, offs + COTP_HDR_IDX_DSTREF, 2);
             Array.Copy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(m_COTP_srcref)), 0, iecs.sendBuffer, offs + COTP_HDR_IDX_SRCREF, 2);

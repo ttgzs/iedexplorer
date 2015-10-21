@@ -19,7 +19,6 @@ namespace IEDExplorer.Views
 
         WindowManager winMgr;
         public bool CaptureActive;
-        CheckBox cb = new CheckBox();
         public delegate void CaptureActiveChanged(bool captureActive);
         public event CaptureActiveChanged OnCaptureActiveChanged;
         public delegate void ClearCapture();
@@ -29,16 +28,6 @@ namespace IEDExplorer.Views
         {
             winMgr = wm;
             InitializeComponent();
-
-            cb.Text = "Start capture";
-            cb.CheckStateChanged += (s, ex) =>
-            {
-                this.CaptureActive = cb.CheckState == CheckState.Checked ? true : false;
-                this.toolStripButtonClear.Enabled = cb.CheckState == CheckState.Checked ? false : true;
-                if (OnCaptureActiveChanged != null) OnCaptureActiveChanged(this.CaptureActive);
-            };
-            ToolStripControlHost host = new ToolStripControlHost(cb);
-            toolStrip1.Items.Insert(0,host);        
         }
 
         public void AddPacket(MMSCapture cap)
@@ -154,6 +143,24 @@ namespace IEDExplorer.Views
                 string s = " (" + inXmlNode.Attributes["type"].Value + ")";
                 inTreeNode.Text += s;
             }
+        }
+
+        private void toolStripButton_StartCapture_Click(object sender, EventArgs e)
+        {
+            this.CaptureActive = true;
+            this.toolStripButtonClear.Enabled = false;
+            if (OnCaptureActiveChanged != null) OnCaptureActiveChanged(this.CaptureActive);
+            toolStripButton_StartCapture.Enabled = false;
+            toolStripButton_StopCapture.Enabled = true;
+        }
+
+        private void toolStripButton_StopCapture_Click(object sender, EventArgs e)
+        {
+            this.CaptureActive = false;
+            this.toolStripButtonClear.Enabled = true;
+            if (OnCaptureActiveChanged != null) OnCaptureActiveChanged(this.CaptureActive);
+            toolStripButton_StartCapture.Enabled = true;
+            toolStripButton_StopCapture.Enabled = false;
         }
     }
 }
