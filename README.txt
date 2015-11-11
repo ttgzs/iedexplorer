@@ -120,5 +120,7 @@ Rev 0.75 2015/10/21
 * Multithreading enabled for Write
 * LogView context menu re-enabled (victim of internal refactoring)
 
-
-
+Rev 0.76 2015/11/11
+* Autoupdate - removed bug when reading higher level nodes (IED, LD, LN)
+* Better readibility of octet_string values (converted to hex)
+* Save Data button for IED Data view - save data view incl. values to TXT file for reference

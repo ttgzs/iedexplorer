@@ -35,6 +35,8 @@
             this.toolStripButton_StopAu = new System.Windows.Forms.ToolStripButton();
             this.toolStripComboBox_autoUpdate = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripLabel_autoupdate = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripButtonSave = new System.Windows.Forms.ToolStripButton();
             this.listView_data = new IEDExplorer.MyListView();
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -50,7 +52,9 @@
             this.toolStripButton_RunAu,
             this.toolStripButton_StopAu,
             this.toolStripComboBox_autoUpdate,
-            this.toolStripLabel_autoupdate});
+            this.toolStripLabel_autoupdate,
+            this.toolStripSeparator1,
+            this.toolStripButtonSave});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(914, 25);
@@ -94,6 +98,22 @@
             this.toolStripLabel_autoupdate.Name = "toolStripLabel_autoupdate";
             this.toolStripLabel_autoupdate.Size = new System.Drawing.Size(98, 22);
             this.toolStripLabel_autoupdate.Text = "AutoUpdate [ms]";
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripButtonSave
+            // 
+            this.toolStripButtonSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonSave.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonSave.Image")));
+            this.toolStripButtonSave.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonSave.Name = "toolStripButtonSave";
+            this.toolStripButtonSave.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButtonSave.Text = "toolStripButton1";
+            this.toolStripButtonSave.ToolTipText = "Save Data List to TXT file";
+            this.toolStripButtonSave.Click += new System.EventHandler(this.toolStripButtonSave_Click);
             // 
             // listView_data
             // 
@@ -169,6 +189,8 @@
         private System.Windows.Forms.ToolStripLabel toolStripLabel_autoupdate;
         private System.Windows.Forms.Timer timer_Au;
         private System.Windows.Forms.ToolStripButton toolStripButton_StopAu;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripButton toolStripButtonSave;
 
     }
 }

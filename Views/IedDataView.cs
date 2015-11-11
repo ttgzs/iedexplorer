@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
+using System.IO;
 
 namespace IEDExplorer.Views
 {
@@ -187,17 +188,29 @@ namespace IEDExplorer.Views
             if (actualNode == null) return;
             Iec61850State iecs = actualNode.GetIecs();
             NodeBase[] ndarr = null;// = new NodeBase[1];
-            if (actualNode is NodeData || actualNode is NodeDO || actualNode is NodeFC || actualNode is NodeLN || actualNode is NodeVL)
+            if (actualNode is NodeData || actualNode is NodeDO || actualNode is NodeFC || actualNode is NodeVL)
             {
                 ndarr = new NodeBase[1];
                 ndarr[0] = actualNode;
             }
-            if (actualNode is NodeLD)
+            else if (actualNode is NodeLD || actualNode is NodeLN)
             {
                 List<NodeBase> nblist = new List<NodeBase>();
                 foreach (NodeBase nb in actualNode.GetChildNodes())
                 {
-                    nblist.Add(nb);
+                    if (actualNode is NodeLD)
+                    {
+                        // We are at LD level, we must go to FC level through LN level (grandchildren)
+                        foreach (NodeBase nb2 in nb.GetChildNodes())
+                        {
+                            nblist.Add(nb2);
+                        }
+                    }
+                    else
+                    {
+                        // We are at LN level, we go FC level / direct children
+                        nblist.Add(nb);
+                    }
                 }
                 ndarr = nblist.ToArray();
             }
@@ -208,6 +221,58 @@ namespace IEDExplorer.Views
         private void toolStripComboBox_autoUpdate_TextChanged(object sender, EventArgs e)
         {
             setInterval_Au();
+        }
+
+        private void toolStripButtonSave_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+            saveFileDialog1.Filter = "txt files (*.txt)|*.txt";
+            if (saveFileDialog1.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+            string filename = saveFileDialog1.FileName;
+
+            try
+            {
+                StreamWriter file = new StreamWriter(filename, false);
+                List<string> line = new List<string>();
+                foreach (ColumnHeader ch in listView_data.Columns)
+                {
+                    line.Add(ch.Text);
+                    
+                }
+                writeLine(line, file);
+                line.Clear();
+                foreach (ListViewItem lvi in listView_data.Items)
+                {
+                    line.Add(lvi.Text);
+                    foreach (ListViewItem.ListViewSubItem sublvi in lvi.SubItems)
+                    {
+                        line.Add(sublvi.Text);
+                    }
+                    writeLine(line, file);
+                    line.Clear();
+                }
+                file.Close();
+            }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show("Cannot open file " + filename + " for output! Detail: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+        }
+
+        void writeLine(List<string> line, StreamWriter file)
+        {
+            for (int i = 0; i < line.Count; i++)
+            {
+                file.Write(line[i]);
+                if (i != line.Count - 1) file.Write("\t");
+            }
+            file.WriteLine();
         }
 
     }

@@ -212,6 +212,13 @@ namespace IEDExplorer
                                 val = sbos.ToString();
                             }
                             break;
+                        case scsm_MMS_TypeEnum.octet_string:
+                            if (DataValue != null)
+                            {
+                                byte[] ba = System.Text.Encoding.ASCII.GetBytes(DataValue.ToString());
+                                val = BitConverter.ToString(ba);
+                            }
+                            break;
                         default:
                             val = DataValue.ToString();
                             break;
