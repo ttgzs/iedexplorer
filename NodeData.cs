@@ -66,6 +66,20 @@ namespace IEDExplorer
             set { _bType = value; }
         }
 
+        public string FC
+        {
+            get
+            {
+                NodeBase nb = Parent;
+                if (nb != null) do
+                {
+                    if (nb is NodeFC)
+                        return nb.Name;
+                } while (nb != null);
+                return "";
+            }
+        }
+
         public Object DataValue
         {
             get
@@ -269,7 +283,19 @@ namespace IEDExplorer
                 }
             }
         }
-    }
+
+        public override void Save(List<String> lines)
+        {
+            // DA(<data attribute name> <nb of array elements> <type> <FC> <trigger options> <sAddr>)[=value];
+            lines.Add("DA(" + Name + " 0) {");
+            foreach (NodeBase b in _childNodes)
+            {
+                b.Save(lines);
+            }
+            lines.Add("}");
+        }
+
+    }   // class NodeData
 
     [Flags]
     public enum DataQuality

@@ -27,6 +27,9 @@ namespace IEDExplorer
         private const byte COTP_PCODE_DSAP = 0xc2;
         private const byte COTP_PCODE_SSAP = 0xc1;
 
+        private const byte COTP_PACKET_FRAGMENT = 0x00;
+        private const byte COTP_PACKET_COMPLETE = 0x80;
+
         private short m_COTP_srcref;
         private short m_COTP_dstref;
         private byte m_COTP_option;
@@ -107,7 +110,7 @@ namespace IEDExplorer
             {
                 iecs.msMMS.Write(iecs.dataBuffer, 3, iecs.dataBufferIndex - 3);
 
-                if ((iecs.dataBuffer[2] & 0x80) == 0)
+                if ((iecs.dataBuffer[2] & COTP_PACKET_COMPLETE) == 0)
                 {
                     return CotpReceiveResult.WAIT;			// waiting for the rest of the datagram from other COTP frames
                 }
@@ -151,7 +154,7 @@ namespace IEDExplorer
                 // Original handling, same as before / short datagram without fragmenting
                 iecs.sendBuffer[offs++] = COTP_HDR_DT_SIZEOF - 1; // cotp.hdrlen wihout this field
                 iecs.sendBuffer[offs++] = COTP_CODE_DT; // code
-                iecs.sendBuffer[offs++] = 0x80; // number "complete" for "short" datagrams
+                iecs.sendBuffer[offs++] = COTP_PACKET_COMPLETE; // number "complete" for "short" datagrams
 
                 iecs.sendBytes += offs;
                 IsoTpkt.Send(iecs);
@@ -181,7 +184,7 @@ namespace IEDExplorer
                     offs = IsoTpkt.TPKT_SIZEOF; // reinit offset
                     iecs.sendBuffer[offs++] = COTP_HDR_DT_SIZEOF - 1; // cotp.hdrlen wihout this field
                     iecs.sendBuffer[offs++] = COTP_CODE_DT; // code
-                    iecs.sendBuffer[offs++] = (byte)((dLen > 0) ? 0x00 : 0x80); // number "fragment" or "complete"
+                    iecs.sendBuffer[offs++] = (byte)((dLen > 0) ? COTP_PACKET_FRAGMENT : COTP_PACKET_COMPLETE); // number "fragment" or "complete"
 
                     iecs.sendBytes += offs;
                     IsoTpkt.Send(iecs);

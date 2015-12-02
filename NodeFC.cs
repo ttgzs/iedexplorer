@@ -31,5 +31,14 @@ namespace IEDExplorer
         {
         }
 
+        public override void Save(List<String> lines)
+        {
+            // Pass saving to next level
+            foreach (NodeBase b in _childNodes)
+            {
+                b.Save(lines);
+            }
+        }
+
     }
 }

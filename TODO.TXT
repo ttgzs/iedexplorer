@@ -1,10 +1,16 @@
 IEDExplorer TODO
-rev 0. 6.2.2015
+rev 0. 06.02.2015
 rev 1. 21.10.2015
+rev 2. 02.12.2015
 1. [DONE] COTP - send long data (longer than 1 segment size)
-2. Watch window - select data (dropped from tree), possibility to start/stop pooling at selected interval
+2. Watch window - select data (dropped from tree), possibility to start/stop polling at selected interval
 3. [DONE] TreeView - refactor - extract data operations like report activation, commands etc. to the model
 4a Improve the report activation logic from named variable list
 4b [DONE] enable an activation from the report control blocks
 5. Finish the dynamic named variable list creation and activation logic
 6. Write Value dialog - generalize, finish
+7. Command dialog - include other data types - doubles, setpoints
+8. GOOSE investigation - SharpPCap
+9. Model file generator for libiec61850 from Online model
+10.Model file generator for libiec61850 from SCL file model
+11.Embedding libiec61850 server, ability to run it (more instances?) from a model file

@@ -33,5 +33,15 @@ namespace IEDExplorer
 
         public string Type { get; set; }
 
+        public override void Save(List<String> lines)
+        {
+            // Syntax: DO(<data object name> <nb of array elements>){…}
+            lines.Add("DO(" + Name + " 0) {");
+            foreach (NodeBase b in _childNodes)
+            {
+                b.Save(lines);
+            }
+            lines.Add("}");
+        }
     }
 }

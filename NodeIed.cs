@@ -83,5 +83,13 @@ namespace IEDExplorer
 
         public Iec61850State iecs { get; set; }
 
+        public override void Save(List<String> lines)
+        {
+            foreach (NodeBase b in _childNodes)
+            {
+                b.Save(lines);
+            }
+        }
+
     }
 }

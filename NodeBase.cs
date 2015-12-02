@@ -320,5 +320,10 @@ namespace IEDExplorer
         {
             return string.Compare(Name, other.Name, StringComparison.CurrentCultureIgnoreCase);
         }
+
+        public virtual void Save(List<String> lines)
+        {
+            return;
+        }
     }
 }

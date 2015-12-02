@@ -31,5 +31,15 @@ namespace IEDExplorer
         {
         }
 
+        public override void Save(List<String> lines)
+        {
+            // Syntax: LD(<logical device name>){…}
+            lines.Add("LD(" + Name + ") {");
+            foreach (NodeBase b in _childNodes)
+            {
+                b.Save(lines);
+            }
+            lines.Add("}");
+        }
     }
 }
