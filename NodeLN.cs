@@ -31,13 +31,13 @@ namespace IEDExplorer
         {
         }
 
-        public override void Save(List<String> lines)
+        public override void SaveModel(List<String> lines, bool fromSCL)
         {
             // Syntax: LN(<logical node name>){…}
             lines.Add("LN(" + Name + ") {");
             foreach (NodeBase b in _childNodes)
             {
-                b.Save(lines);
+                b.SaveModel(lines, fromSCL);
             }
             lines.Add("}");
         }

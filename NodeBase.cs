@@ -321,7 +321,7 @@ namespace IEDExplorer
             return string.Compare(Name, other.Name, StringComparison.CurrentCultureIgnoreCase);
         }
 
-        public virtual void Save(List<String> lines)
+        public virtual void SaveModel(List<String> lines, bool fromSCL)
         {
             return;
         }

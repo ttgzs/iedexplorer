@@ -31,12 +31,12 @@ namespace IEDExplorer
         {
         }
 
-        public override void Save(List<String> lines)
+        public override void SaveModel(List<String> lines, bool fromSCL)
         {
             // Pass saving to next level
             foreach (NodeBase b in _childNodes)
             {
-                b.Save(lines);
+                b.SaveModel(lines, fromSCL);
             }
         }
 

@@ -225,13 +225,13 @@ namespace IEDExplorer.Views
 
         private void toolStripButtonSave_Click(object sender, EventArgs e)
         {
-            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-            saveFileDialog1.Filter = "txt files (*.txt)|*.txt";
-            if (saveFileDialog1.ShowDialog() != DialogResult.OK)
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "txt files (*.txt)|*.txt";
+            if (saveFileDialog.ShowDialog() != DialogResult.OK)
             {
                 return;
             }
-            string filename = saveFileDialog1.FileName;
+            string filename = saveFileDialog.FileName;
 
             try
             {

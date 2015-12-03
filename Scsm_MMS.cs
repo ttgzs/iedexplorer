@@ -1259,30 +1259,36 @@ namespace IEDExplorer
             {
                 iecs.logger.LogDebug("t.Structure != null");
                 if (t.Structure.Components != null) foreach (TypeDescription.StructureSequenceType.ComponentsSequenceType s in t.Structure.Components)
+                {
+                    iecs.logger.LogDebug(s.ComponentName.Value);
+                    NodeBase newActualNode;
+                    // DO or DA?
+                    if (actualNode is NodeFC)   // Safe to say under FC must be DO
+                        newActualNode = new NodeDO(s.ComponentName.Value);
+                    else
+                        newActualNode = new NodeData(s.ComponentName.Value);
+                    newActualNode = actualNode.AddChildNode(newActualNode);
+                    RecursiveReadTypeDescription(iecs, newActualNode, s.ComponentType.TypeDescription);
+                    if (actualNode is NodeFC && (actualNode.Name == "RP" || actualNode.Name == "BR"))
                     {
-                        iecs.logger.LogDebug(s.ComponentName.Value);
-                        NodeBase newActualNode = new NodeData(s.ComponentName.Value);
-                        newActualNode = actualNode.AddChildNode(newActualNode);
-                        RecursiveReadTypeDescription(iecs, newActualNode, s.ComponentType.TypeDescription);
-                        if (actualNode is NodeFC && (actualNode.Name == "RP" || actualNode.Name == "BR"))
+                        // Having RCB
+                        NodeBase nrpied;
+                        if (actualNode.Name == "RP") nrpied = iecs.DataModel.urcbs.AddChildNode(new NodeLD(iecs.DataModel.ied.GetActualChildNode().Name));
+                        else nrpied = iecs.DataModel.brcbs.AddChildNode(new NodeLD(iecs.DataModel.ied.GetActualChildNode().Name));
+                        NodeBase nrp = new NodeRCB(newActualNode.CommAddress.Variable);
+                        nrpied.AddChildNode(nrp);
+                        foreach (NodeBase nb in newActualNode.GetChildNodes())
                         {
-                            // Having RCB
-                            NodeBase nrpied;
-                            if (actualNode.Name == "RP") nrpied = iecs.DataModel.urcbs.AddChildNode(new NodeLD(iecs.DataModel.ied.GetActualChildNode().Name));
-                            else nrpied = iecs.DataModel.brcbs.AddChildNode(new NodeLD(iecs.DataModel.ied.GetActualChildNode().Name));
-                            NodeBase nrp = new NodeRCB(newActualNode.CommAddress.Variable);
-                            nrpied.AddChildNode(nrp);
-                            foreach (NodeBase nb in newActualNode.GetChildNodes())
-                            {
-                                nrp.LinkChildNode(nb);
-                            }
+                            nrp.LinkChildNode(nb);
                         }
                     }
+                }
             }
             else if (t.Array != null)
             {
                 iecs.logger.LogDebug("t.Array != null");
-                (actualNode as NodeData).DataType = scsm_MMS_TypeEnum.array;
+                if (actualNode is NodeData)
+                    (actualNode as NodeData).DataType = scsm_MMS_TypeEnum.array;
                 for (int i = 0; i < t.Array.NumberOfElements.Value; i++)
                 {
                     NodeData newActualNode = new NodeData("[" + i.ToString() + "]");

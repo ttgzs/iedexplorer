@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using IEDExplorer.Resources;
 using System.Threading;
+using System.IO;
 
 namespace IEDExplorer.Views
 {
@@ -418,11 +419,49 @@ namespace IEDExplorer.Views
                         item.Tag = n;
                         item.Click += new EventHandler(OnConfigureRcb);
                     }
+                    if (n is NodeIed)
+                    {
+                        item = menu.Items.Add("Save model for libiec61850");
+                        item.Tag = n;
+                        item.Click += new EventHandler(OnSaveModel);
+                    }
                 }
 
                 if (menu.Items.Count > 0)
                     menu.Show((Control)sender, e.Location);
             }
+        }
+
+        void OnSaveModel(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "cfg files (*.cfg)|*.cfg";
+            if (saveFileDialog.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+            string filename = saveFileDialog.FileName;
+
+            try
+            {
+                StreamWriter file = new StreamWriter(filename, false);
+                List<string> lines = new List<string>();
+                NodeIed n = (NodeIed)(sender as ToolStripItem).Tag;
+                n.SaveModel(lines, false);
+                foreach (string line in lines)
+                {
+                    file.WriteLine(line);
+                }
+                file.Close();
+                MessageBox.Show("Model successfully exported! To " + filename, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show("Cannot open file " + filename + " for output! Detail: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
         }
 
         void OnFileListClick(object sender, EventArgs e)

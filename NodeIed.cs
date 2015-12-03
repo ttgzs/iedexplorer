@@ -83,11 +83,11 @@ namespace IEDExplorer
 
         public Iec61850State iecs { get; set; }
 
-        public override void Save(List<String> lines)
+        public override void SaveModel(List<String> lines, bool fromSCL)
         {
             foreach (NodeBase b in _childNodes)
             {
-                b.Save(lines);
+                b.SaveModel(lines, fromSCL);
             }
         }
 

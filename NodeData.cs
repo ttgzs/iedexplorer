@@ -284,15 +284,25 @@ namespace IEDExplorer
             }
         }
 
-        public override void Save(List<String> lines)
+        public override void SaveModel(List<String> lines, bool fromSCL)
         {
             // DA(<data attribute name> <nb of array elements> <type> <FC> <trigger options> <sAddr>)[=value];
-            lines.Add("DA(" + Name + " 0) {");
-            foreach (NodeBase b in _childNodes)
+            // Constructed>
+            // DA(<data attribute name> <nb of array elements> 27 <FC> <trigger options> <sAddr>){…}
+            if (_childNodes.Count > 0)
             {
-                b.Save(lines);
+                // Constructed
+                lines.Add("DA(" + Name + " 0) {");
+                foreach (NodeBase b in _childNodes)
+                {
+                    b.SaveModel(lines, fromSCL);
+                }
+                lines.Add("}");
             }
-            lines.Add("}");
+            else
+            {
+                lines.Add("DA(" + Name + " 0) value=" + StringValue);
+            }
         }
 
     }   // class NodeData
