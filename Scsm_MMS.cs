@@ -1263,7 +1263,19 @@ namespace IEDExplorer
                     iecs.logger.LogDebug(s.ComponentName.Value);
                     NodeBase newActualNode;
                     // DO or DA?
-                    if (actualNode is NodeFC)   // Safe to say under FC must be DO
+                    bool isDO = false;
+                    if (actualNode is NodeFC) isDO = true;  // Safe to say under FC must be a DO
+                    // If we are DO AND there is NO LEAF in children in node to be added, we say we are a DO
+                    if (actualNode is NodeDO)
+                    {
+                        isDO = true;
+                        foreach (TypeDescription.StructureSequenceType.ComponentsSequenceType s2 in t.Structure.Components)
+                        {
+                            if (!s2.ComponentType.TypeDescription.isStructureSelected())
+                                isDO = false;
+                        }
+                    }
+                    if (isDO)
                         newActualNode = new NodeDO(s.ComponentName.Value);
                     else
                         newActualNode = new NodeData(s.ComponentName.Value);
@@ -1601,7 +1613,7 @@ namespace IEDExplorer
             NodeBase n = iecs.DataModel.lists.GetActualChildNode();
             if (n == null)
             {
-                iecs.logger.LogError("mms.SendGetNamedVariableListAttributes: No lists defined!");
+                iecs.logger.LogDebug("mms.SendGetNamedVariableListAttributes: No lists defined!");
                 return -2;
             }
 
