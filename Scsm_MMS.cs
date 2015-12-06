@@ -95,7 +95,6 @@ namespace IEDExplorer
         IDecoder decoder = CoderFactory.getInstance().newDecoder("BER");
         IEncoder encoder = CoderFactory.getInstance().newEncoder("BER");
 
-        //Unsigned32 InvokeID = new Unsigned32();
         int InvokeID = 0;
         int MaxCalls = 10;
 
@@ -919,8 +918,6 @@ namespace IEDExplorer
             if (iecs.istate == Iec61850lStateEnum.IEC61850_READ_MODEL_DATA_WAIT)
             {
                 iecs.istate = Iec61850lStateEnum.IEC61850_READ_MODEL_DATA;
-                // if (iecs.dataModel.ied.GetActualChildNode().GetActualChildNode().GetActualChildNode().NextActualChildNode() == null)
-                // {
                 if (iecs.DataModel.ied.GetActualChildNode().GetActualChildNode().NextActualChildNode() == null)
                 {
                     if (iecs.DataModel.ied.GetActualChildNode().NextActualChildNode() == null)
@@ -934,7 +931,6 @@ namespace IEDExplorer
                         }
                     }
                 }
-                //}
             }
         }
 
@@ -950,7 +946,6 @@ namespace IEDExplorer
                 foreach (GetNamedVariableListAttributes_Response.ListOfVariableSequenceType v in GetNamedVariableListAttributes.ListOfVariable)
                 {
                     iecs.logger.LogDebug(String.Format("GetNameList.ListOfIdentifier: {0}/{1}", v.VariableSpecification.Name.Domain_specific.DomainID.Value, v.VariableSpecification.Name.Domain_specific.ItemID.Value));
-                    //iecs.dataModel.lists.GetActualChildNode().GetActualChildNode().AddChildNode(new NodeLD(v.VariableSpecification.Name.Domain_specific.ItemID.Value));
                     NodeBase b = (iecs.DataModel.ied as NodeIed).FindNodeByAddress(v.VariableSpecification.Name.Domain_specific.DomainID.Value, v.VariableSpecification.Name.Domain_specific.ItemID.Value);
                     if (b != null)
                     {
@@ -1017,7 +1012,6 @@ namespace IEDExplorer
                     }
                     iecs.logger.LogDebug("GetNameList.MoreFollows: " + GetNameList.MoreFollows.ToString());
                     if (GetNameList.MoreFollows)
-                        //if (GetNameList.ListOfIdentifier.Count > 0)
                         iecs.istate = Iec61850lStateEnum.IEC61850_READ_NAMELIST_VAR;
                     else
                     {
@@ -1265,7 +1259,7 @@ namespace IEDExplorer
                     // DO or DA?
                     bool isDO = false;
                     if (actualNode is NodeFC) isDO = true;  // Safe to say under FC must be a DO
-                    // If we are DO AND there is NO LEAF in children in node to be added, we say we are a DO
+                    // If we are DO AND there is NO LEAF in children in node to be added, we say it is a DO
                     if (actualNode is NodeDO)
                     {
                         isDO = true;
