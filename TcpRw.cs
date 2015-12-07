@@ -177,9 +177,16 @@ namespace IEDExplorer
 
         public static void Send(TcpState tcps) //Socket client, byte[] data)
         {
-            // Begin sending the data to the remote device.
-            tcps.workSocket.BeginSend(tcps.sendBuffer, 0, tcps.sendBytes, 0,
-                new AsyncCallback(SendCallback), tcps);
+            try
+            {
+                // Begin sending the data to the remote device.
+                if (tcps.workSocket != null) tcps.workSocket.BeginSend(tcps.sendBuffer, 0, tcps.sendBytes, 0,
+                    new AsyncCallback(SendCallback), tcps);
+            }
+            catch (Exception e)
+            {
+                tcps.logger.LogError(e.ToString());
+            }
         }
 
         private static void SendCallback(IAsyncResult ar)
