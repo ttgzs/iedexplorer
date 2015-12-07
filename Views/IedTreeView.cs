@@ -285,6 +285,14 @@ namespace IEDExplorer.Views
                     {
                         firsticon = 6;
                     }
+                    else if (b.GetType() == typeof(NodeDO))
+                    {
+                        firsticon = 7;
+                    }
+                    else if (b.GetType() == typeof(NodeData))
+                    {
+                        firsticon = 8;
+                    }
                     /*else if (b.GetType() == typeof(NodeData))
                     {
                         if (b.GetChildNodes().Length == 0)
@@ -296,6 +304,8 @@ namespace IEDExplorer.Views
                             firsticon = 7;
                         }
                     }*/
+                    /*
+                     * bylo aktivni toto
                     else if ((b.GetType() == typeof(NodeData)) || (b.GetType() == typeof(NodeDO)))
                     {
                         if (b.GetChildNodes().Length == 0)
@@ -307,7 +317,7 @@ namespace IEDExplorer.Views
                         {
                             firsticon = 7;
                         }
-                    }
+                    }*/
                     tn.ImageIndex = firsticon + ((int)b.NodeState) * 4;
                     tn.SelectedImageIndex = firsticon + ((int)b.NodeState) * 4;
                     treeViewIed.Invalidate(tn.Bounds);
@@ -427,8 +437,46 @@ namespace IEDExplorer.Views
                     }
                 }
 
+                item = menu.Items.Add("Expand Subtree");
+                item.Tag = e.Node;
+                item.Click += new EventHandler(OnExpandSubtree);
+
+                item = menu.Items.Add("Collapse Subtree");
+                item.Tag = e.Node;
+                item.Click += new EventHandler(OnCollapseSubtree);
+
                 if (menu.Items.Count > 0)
                     menu.Show((Control)sender, e.Location);
+            }
+        }
+
+        void OnExpandSubtree(object sender, EventArgs e)
+        {
+            ExpandNode(((sender as ToolStripItem).Tag as TreeNode));
+            ((sender as ToolStripItem).Tag as TreeNode).EnsureVisible();
+        }
+
+        void ExpandNode(TreeNode node)
+        {
+            node.Expand();
+            foreach (TreeNode tn in node.Nodes)
+            {
+                ExpandNode(tn);
+            }
+        }
+
+        void OnCollapseSubtree(object sender, EventArgs e)
+        {
+            CollapseNode(((sender as ToolStripItem).Tag as TreeNode));
+            ((sender as ToolStripItem).Tag as TreeNode).EnsureVisible();
+        }
+
+        void CollapseNode(TreeNode node)
+        {
+            node.Collapse();
+            foreach (TreeNode tn in node.Nodes)
+            {
+                CollapseNode(tn);
             }
         }
 

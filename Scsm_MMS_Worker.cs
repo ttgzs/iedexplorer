@@ -34,27 +34,18 @@ namespace IEDExplorer
     {
         private Thread _workerThread;
         private bool _run;
-        //private string _hostname;
-        //private int _port;
         private IsoConnectionParameters isoParameters;
         private Env _env;
         WaitHandle[] _waitHandles = new WaitHandle[5];
         public Iec61850State iecs;
         Logger logger = Logger.getLogger();
 
-        /*public Scsm_MMS_Worker(string hostname, int port, Env env)
-        {
-            _hostname = hostname;
-            _port = port;
-            _env = env;
-        }*/
-
         public Scsm_MMS_Worker(Env env)
         {
             _env = env;
         }
 
-        public int Start(IsoConnectionParameters par) //string hostname, int port)
+        public int Start(IsoConnectionParameters par)
         {
             isoParameters = par;
             return Start();
@@ -79,9 +70,7 @@ namespace IEDExplorer
         {
             if (_workerThread != null)
             {
-                //_run = false;
                 (_waitHandles[3] as ManualResetEvent).Set();
-                //_workerThread.Join();
                 _workerThread = null;
                 logger.LogInfo(String.Format("Communication to hostname = {0}, port = {1} stopped.", isoParameters.hostname, isoParameters.port));
             }
@@ -135,18 +124,15 @@ namespace IEDExplorer
                         {
                             case IsoProtocolState.OSI_CONNECT_COTP:
                                 iecs.logger.LogInfo("[OSI_CONNECT_COTP]");
-                                //iecs.osi.SendCOTPSessionInit(iecs);
                                 iecs.iso.SendCOTPSessionInit(iecs);
                                 iecs.ostate = IsoProtocolState.OSI_CONNECT_COTP_WAIT;
                                 break;
                             case IsoProtocolState.OSI_CONNECT_PRES:
                                 iecs.logger.LogInfo("[OSI_CONNECT_PRES]");
-                                //iecs.osi.SendPresentationInit(iecs);
                                 iecs.mms.SendInitiate(iecs);
                                 iecs.ostate = IsoProtocolState.OSI_CONNECT_PRES_WAIT;
                                 break;
                             case IsoProtocolState.OSI_CONNECTED:
-                                //iecs.logger.LogInfo("[OSI_CONNECTED]");
                                 switch (iecs.istate)
                                 {
                                     case Iec61850lStateEnum.IEC61850_STATE_START:
@@ -193,8 +179,8 @@ namespace IEDExplorer
                                         adr.Variable = null;
                                         adr.owner = null;
                                         NodeBase[] data = new NodeBase[1];
-                                        data[0] = iecs.DataModel.ied.GetActualChildNode().GetActualChildNode().GetActualChildNode(); //.GetActualChildNode();
-                                        //data[0] = iecs.DataModel.ied.GetActualChildNode().GetActualChildNode().GetActualChildNode().GetActualChildNode();
+                                        // Issue reads by FC level
+                                        data[0] = iecs.DataModel.ied.GetActualChildNode().GetActualChildNode().GetActualChildNode();
                                         WriteQueueElement wqel = new WriteQueueElement(data, adr, ActionRequested.Read);
                                         iecs.mms.SendRead(iecs, wqel);
                                         iecs.istate = Iec61850lStateEnum.IEC61850_READ_MODEL_DATA_WAIT;
@@ -206,19 +192,15 @@ namespace IEDExplorer
                                         break;
                                     case Iec61850lStateEnum.IEC61850_READ_ACCESSAT_NAMED_VARIABLE_LIST:
                                         iecs.logger.LogDebug("[IEC61850_READ_ACCESSAT_NAMED_VARIABLE_LIST]");
-                                        if (iecs.mms.SendGetNamedVariableListAttributes(iecs) != -0)
+                                        if (iecs.mms.SendGetNamedVariableListAttributes(iecs) != 0)
                                             iecs.istate = Iec61850lStateEnum.IEC61850_MAKEGUI;
                                         else
                                             iecs.istate = Iec61850lStateEnum.IEC61850_READ_ACCESSAT_NAMED_VARIABLE_LIST_WAIT;
                                         break;
                                     case Iec61850lStateEnum.IEC61850_MAKEGUI:
                                         iecs.logger.LogDebug("[IEC61850_MAKEGUI]");
-                                        //self._env.mainWindow.makeTree(iecs);
                                         self._env.winMgr.MakeIedTree(iecs);
                                         iecs.istate = Iec61850lStateEnum.IEC61850_FREILAUF;
-                                        //iecs.lastOperationData = new NodeBase[1];//() {  };
-                                        //iecs.lastOperationData[0] = iecs.files;
-                                        //iecs.Send(iecs.lastOperationData, ad, ActionRequested.GetDirectory);
                                         break;
                                     case Iec61850lStateEnum.IEC61850_FREILAUF:
                                         // File service handling
@@ -226,8 +208,6 @@ namespace IEDExplorer
                                         {
                                             case FileTransferState.FILE_DIRECTORY:
                                                 if (iecs.lastFileOperationData[0] is NodeIed)
-                                                    //self._env.mainWindow.makeTree(iecs);
-                                                    //self._env.winMgr.MakeIedTree(iecs);
                                                     self._env.winMgr.MakeFileTree(iecs);
                                                 iecs.fstate = FileTransferState.FILE_NO_ACTION;
                                                 break;
@@ -239,12 +219,8 @@ namespace IEDExplorer
                                                 break;
                                             case FileTransferState.FILE_COMPLETE:
                                                 // issue a close
+                                                // file can be saved from context menu
                                                 iecs.Send(iecs.lastFileOperationData, ad, ActionRequested.CloseFile);
-                                                /*if (iecs.lastOperationData[0] is NodeFile)
-                                                {
-                                                    (iecs.lastOperationData[0] as NodeFile).SaveFile((iecs.lastOperationData[0] as NodeFile).Name);
-                                                    iecs.logger.LogDebug("File Read completed, file saved to " + (iecs.lastOperationData[0] as NodeFile).Name);
-                                                }*/
                                                 iecs.fstate = FileTransferState.FILE_NO_ACTION;
                                                 break;
                                         }
