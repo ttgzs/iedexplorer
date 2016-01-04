@@ -1260,7 +1260,7 @@ namespace IEDExplorer
                     bool isDO = false;
                     if (actualNode is NodeFC) isDO = true;  // Safe to say under FC must be a DO
                     // If we are DO AND there is NO LEAF in children in node to be added, we say it is a DO
-                    if (actualNode is NodeDO)
+                    /*if (actualNode is NodeDO)
                     {
                         isDO = true;
                         foreach (TypeDescription.StructureSequenceType.ComponentsSequenceType s2 in t.Structure.Components)
@@ -1268,7 +1268,7 @@ namespace IEDExplorer
                             if (!s2.ComponentType.TypeDescription.isStructureSelected())
                                 isDO = false;
                         }
-                    }
+                    }*/
                     if (isDO)
                         newActualNode = new NodeDO(s.ComponentName.Value);
                     else
