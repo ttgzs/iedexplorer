@@ -161,6 +161,7 @@ namespace IEDExplorer.Views
             timer_Au.Enabled = true;
             toolStripButton_RunAu.Enabled = false;
             toolStripButton_StopAu.Enabled = true;
+            toolStripButtonRefresh.Enabled = false;
         }
 
         private void setInterval_Au()
@@ -180,6 +181,7 @@ namespace IEDExplorer.Views
             timer_Au.Enabled = false;
             toolStripButton_RunAu.Enabled = true;
             toolStripButton_StopAu.Enabled = false;
+            toolStripButtonRefresh.Enabled = true;
         }
 
         private void timer_Au_Tick(object sender, EventArgs e)
@@ -273,6 +275,11 @@ namespace IEDExplorer.Views
                 if (i != line.Count - 1) file.Write("\t");
             }
             file.WriteLine();
+        }
+
+        private void toolStripButtonRefresh_Click(object sender, EventArgs e)
+        {
+            timer_Au_Tick(null, null);
         }
 
     }

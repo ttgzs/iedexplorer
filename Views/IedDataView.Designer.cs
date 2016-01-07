@@ -43,12 +43,16 @@
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.timer_Au = new System.Windows.Forms.Timer(this.components);
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripButtonRefresh = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStrip1
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripButtonRefresh,
+            this.toolStripSeparator2,
             this.toolStripButton_RunAu,
             this.toolStripButton_StopAu,
             this.toolStripComboBox_autoUpdate,
@@ -69,6 +73,7 @@
             this.toolStripButton_RunAu.Name = "toolStripButton_RunAu";
             this.toolStripButton_RunAu.Size = new System.Drawing.Size(23, 22);
             this.toolStripButton_RunAu.Text = "toolStripButton1";
+            this.toolStripButton_RunAu.ToolTipText = "Auto Update - Run";
             this.toolStripButton_RunAu.Click += new System.EventHandler(this.toolStripButton_RunAu_Click);
             // 
             // toolStripButton_StopAu
@@ -80,6 +85,7 @@
             this.toolStripButton_StopAu.Name = "toolStripButton_StopAu";
             this.toolStripButton_StopAu.Size = new System.Drawing.Size(23, 22);
             this.toolStripButton_StopAu.Text = "toolStripButton2";
+            this.toolStripButton_StopAu.ToolTipText = "Auto Update - Stop";
             this.toolStripButton_StopAu.Click += new System.EventHandler(this.toolStripButton_StopAu_Click);
             // 
             // toolStripComboBox_autoUpdate
@@ -158,6 +164,22 @@
             this.timer_Au.Interval = 2000;
             this.timer_Au.Tick += new System.EventHandler(this.timer_Au_Tick);
             // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripButtonRefresh
+            // 
+            this.toolStripButtonRefresh.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonRefresh.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonRefresh.Image")));
+            this.toolStripButtonRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonRefresh.Name = "toolStripButtonRefresh";
+            this.toolStripButtonRefresh.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButtonRefresh.Text = "toolStripButton1";
+            this.toolStripButtonRefresh.ToolTipText = "Refresh data (single Read)";
+            this.toolStripButtonRefresh.Click += new System.EventHandler(this.toolStripButtonRefresh_Click);
+            // 
             // IedDataView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -191,6 +213,8 @@
         private System.Windows.Forms.ToolStripButton toolStripButton_StopAu;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton toolStripButtonSave;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripButton toolStripButtonRefresh;
 
     }
 }
