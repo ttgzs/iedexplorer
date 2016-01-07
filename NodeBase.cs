@@ -121,10 +121,19 @@ namespace IEDExplorer
             return Node;
         }
 
-        public NodeBase LinkChildNode(NodeBase Node)
+        public NodeBase LinkChildNodeByAddress(NodeBase Node)
         {
-            //foreach (var n in _childNodes.Where(n => Node.Name == n.Name))
             foreach (var n in _childNodes.Where(n => Node.CommAddress.Variable == n.CommAddress.Variable))
+            {
+                return n;
+            }
+            _childNodes.Add(Node);
+            return Node;
+        }
+
+        public NodeBase LinkChildNodeByName(NodeBase Node)
+        {
+            foreach (var n in _childNodes.Where(n => Node.Name == n.Name))
             {
                 return n;
             }
@@ -324,6 +333,17 @@ namespace IEDExplorer
         public virtual void SaveModel(List<String> lines, bool fromSCL)
         {
             return;
+        }
+
+        public void GetAllLeaves(List<NodeBase> leaves)
+        {
+            foreach (NodeBase b in _childNodes)
+            {
+                if (b._childNodes.Count == 0)
+                    leaves.Add(b);  // Leaf
+                else
+                    b.GetAllLeaves(leaves);
+            }
         }
     }
 }

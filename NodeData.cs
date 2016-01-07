@@ -305,6 +305,39 @@ namespace IEDExplorer
             }
         }
 
+        public string GetFC()
+        {
+            NodeBase b = Parent;
+            while (b != null)
+            {
+                if (b is NodeFC) return b.Name;
+                b = b.Parent;
+            }
+            return "??";
+        }
+
+        public string GetDOName()
+        {
+            List<String> dOName = new List<string>();
+            dOName.Add(Name);
+            NodeBase b = Parent;
+            while (b != null)
+            {
+                if (b is NodeFC)
+                {
+                    String ret = "";
+                    foreach (String s in dOName)
+                    {
+                        ret = "." + s + ret;
+                    }
+                    return ret;
+                }
+                dOName.Add(b.Name);
+                b = b.Parent;
+            }
+            return "";
+        }
+
     }   // class NodeData
 
     [Flags]

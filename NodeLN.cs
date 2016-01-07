@@ -35,9 +35,12 @@ namespace IEDExplorer
         {
             // Syntax: LN(<logical node name>){…}
             lines.Add("LN(" + Name + ") {");
-            foreach (NodeBase b in _childNodes)
+            //List<NodeBase> DAs = new List<NodeBase>();
+
+            foreach (NodeFC fc in _childNodes)
             {
-                b.SaveModel(lines, fromSCL);
+                // Now we are at FC level
+                //fc.GetAllLeaves(DAs);
             }
             lines.Add("}");
         }

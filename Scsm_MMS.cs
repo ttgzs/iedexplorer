@@ -949,7 +949,7 @@ namespace IEDExplorer
                     NodeBase b = (iecs.DataModel.ied as NodeIed).FindNodeByAddress(v.VariableSpecification.Name.Domain_specific.DomainID.Value, v.VariableSpecification.Name.Domain_specific.ItemID.Value);
                     if (b != null)
                     {
-                        iecs.DataModel.lists.GetActualChildNode().GetActualChildNode().LinkChildNode(b);
+                        iecs.DataModel.lists.GetActualChildNode().GetActualChildNode().LinkChildNodeByAddress(b);
                     }
                 }
                 iecs.istate = Iec61850lStateEnum.IEC61850_READ_ACCESSAT_NAMED_VARIABLE_LIST;
@@ -1259,8 +1259,8 @@ namespace IEDExplorer
                     // DO or DA?
                     bool isDO = false;
                     if (actualNode is NodeFC) isDO = true;  // Safe to say under FC must be a DO
-                    // If we are DO AND there is NO LEAF in children in node to be added, we say it is a DO
-                    if (actualNode is NodeDO)
+                    // If we are DO AND there is NO LEAF in children in node to be added, we say it is a DO ??
+                    /*if (actualNode is NodeDO)
                     {
                         isDO = true;
                         foreach (TypeDescription.StructureSequenceType.ComponentsSequenceType s2 in t.Structure.Components)
@@ -1268,7 +1268,7 @@ namespace IEDExplorer
                             if (!s2.ComponentType.TypeDescription.isStructureSelected())
                                 isDO = false;
                         }
-                    }
+                    }*/
                     if (isDO)
                         newActualNode = new NodeDO(s.ComponentName.Value);
                     else
@@ -1285,7 +1285,7 @@ namespace IEDExplorer
                         nrpied.AddChildNode(nrp);
                         foreach (NodeBase nb in newActualNode.GetChildNodes())
                         {
-                            nrp.LinkChildNode(nb);
+                            nrp.LinkChildNodeByAddress(nb);
                         }
                     }
                 }

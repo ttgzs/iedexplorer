@@ -70,7 +70,7 @@ namespace IEDExplorer
                 newlist.Deletable = true;
                 foreach (ListViewItem it in listView1.Items)
                 {
-                    newlist.LinkChildNode(it.Tag as NodeBase);
+                    newlist.LinkChildNodeByAddress(it.Tag as NodeBase);
                 }
                 list = newlist;
                 if (OnNVListChanged != null)
