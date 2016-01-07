@@ -1235,7 +1235,33 @@ namespace IEDExplorer
             else if (data.isBinary_timeSelected())
             {
                 iecs.logger.LogDebug("data.Binary_time != null");
-                (actualNode as NodeData).DataValue = data.Binary_time.Value;
+
+                ulong millis;
+                ulong days = 0;
+                DateTime origin;
+
+                millis = (ulong)(data.Binary_time.Value[0] << 24) +
+                         (ulong)(data.Binary_time.Value[1] << 16) +
+                         (ulong)(data.Binary_time.Value[2] << 8) +
+                         (ulong)(data.Binary_time.Value[3]);
+                if (data.Binary_time.Value.Length == 6)
+                {
+                    days = (ulong)(data.Binary_time.Value[4] << 8) +
+                           (ulong)(data.Binary_time.Value[5]);
+                    origin = new DateTime(1984, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+                    //millis *= 1000;
+                }
+                else
+                {
+                    origin = DateTime.UtcNow.Date;
+                }
+
+                double dMillis = (double)(millis + days * 24 * 3600 * 1000);
+                origin = origin.AddMilliseconds(dMillis);
+
+                (actualNode as NodeData).DataValue = origin.ToLocalTime();
+                (actualNode as NodeData).DataParam = data.Binary_time.Value;
+
             }
             else if (data.isBit_stringSelected())
             {

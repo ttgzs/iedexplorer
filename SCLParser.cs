@@ -54,42 +54,49 @@ namespace IEDExplorer
         /// <returns>IECS tree state to be displayed</returns>
         public static Iec61850Model CreateTree(String fileName) //, Env env)
         {
-            _dataModel = new Iec61850State().DataModel;
-            _nodeTypes = new List<NodeBase>();
-            _dataObjectTypes = new List<NodeBase>();
-            _dataAttributeTypes = new List<NodeBase>();
-
-            logger.LogInfo("Reading node (LN) and data object (DO) types.");
-            GetTypes(fileName);
-
-            using (var reader = XmlReader.Create(fileName))
+            try
             {
-                logger.LogInfo("Reading XML tree.");
-                reader.ReadToDescendant("IED");
-                _dataModel.ied = new NodeIed(reader.Name);
-                _iedName = reader.GetAttribute("name");
-                _dataModel.ied.VendorName = reader.GetAttribute("manufacturer");
-                _dataModel.ied.ModelName = reader.GetAttribute("type");
-                _dataModel.ied.Revision = reader.GetAttribute("revision");
+                _dataModel = new Iec61850State().DataModel;
+                _nodeTypes = new List<NodeBase>();
+                _dataObjectTypes = new List<NodeBase>();
+                _dataAttributeTypes = new List<NodeBase>();
 
-                while (reader.Read())
+                logger.LogInfo("Reading node (LN) and data object (DO) types.");
+                GetTypes(fileName);
+
+                using (var reader = XmlReader.Create(fileName))
                 {
-                    if (reader.IsStartElement())
+                    logger.LogInfo("Reading XML tree.");
+                    reader.ReadToDescendant("IED");
+                    _dataModel.ied = new NodeIed(reader.Name);
+                    _iedName = reader.GetAttribute("name");
+                    _dataModel.ied.VendorName = reader.GetAttribute("manufacturer");
+                    _dataModel.ied.ModelName = reader.GetAttribute("type");
+                    _dataModel.ied.Revision = reader.GetAttribute("revision");
+
+                    while (reader.Read())
                     {
-                        switch (reader.Name)
+                        if (reader.IsStartElement())
                         {
-                            case "LDevice":
-                                _dataModel.ied.AddChildNode(CreateLogicalDevice(reader.ReadSubtree()));
-                                break;
+                            switch (reader.Name)
+                            {
+                                case "LDevice":
+                                    _dataModel.ied.AddChildNode(CreateLogicalDevice(reader.ReadSubtree()));
+                                    break;
+                            }
                         }
                     }
+                    _dataModel.ied.SortImmediateChildren(); //alphabetical
+                    _dataModel.enums.SortImmediateChildren();
                 }
-                _dataModel.ied.SortImmediateChildren(); //alphabetical
-                _dataModel.enums.SortImmediateChildren();
-            }
 
-            logger.LogInfo("Reading data sets and reports.");
-            GetDataSetsAndReports(fileName);
+                logger.LogInfo("Reading data sets and reports.");
+                GetDataSetsAndReports(fileName);
+            }
+            catch (Exception e)
+            {
+                logger.LogError("Error reading file " + fileName + ": " + e.Message);
+            }
 
             return _dataModel;
         }
