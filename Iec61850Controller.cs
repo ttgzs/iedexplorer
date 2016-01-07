@@ -274,6 +274,9 @@ namespace IEDExplorer
 
         public void ActivateNVL(NodeVL vl)
         {
+            Logger.getLogger().LogError("Function not active, try to configure an RCB!");
+            return;
+
             NodeBase ur = null;
             Iec61850State iecs = vl.GetIecs();
             bool retry;
@@ -282,7 +285,7 @@ namespace IEDExplorer
                 do
                 {
                     ur = (NodeData)iecs.DataModel.ied.FindNodeByValue(scsm_MMS_TypeEnum.visible_string, vl.Address, ref ur);
-                    if (ur == null)
+                    if (ur == null || ur.Parent == null)
                     {
                         Logger.getLogger().LogError("Suitable URCB not found, list cannot be activated!");
                         return;

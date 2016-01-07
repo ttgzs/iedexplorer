@@ -165,13 +165,13 @@ namespace IEDExplorer
                     switch (DataType)
                     {
                         case scsm_MMS_TypeEnum.utc_time:
+                            if (DataValue != null) val = DataValue.ToString() + "." + ((DateTime)(DataValue)).Millisecond.ToString() + " [LOC]";
                             if (DataParam != null)
                             {
-                                val = DataValue.ToString() + "." + ((DateTime)(DataValue)).Millisecond.ToString();
                                 if (((byte)(DataParam) & 0x40) > 0)     // TimQualTimeBaseErr
                                     val += " TimQualTimeBaseErr";
                             }
-                                break;
+                            break;
                         case scsm_MMS_TypeEnum.bit_string:
                             if (DataParam != null)
                             {
@@ -216,15 +216,16 @@ namespace IEDExplorer
                             }
                             break;
                         case scsm_MMS_TypeEnum.binary_time:
-                            if (DataValue != null)
+                            /*if (DataValue != null)
                             {
                                 StringBuilder sbos = new StringBuilder(32);
                                 foreach (byte b in (byte[])DataValue)
                                 {
-                                    sbos.AppendFormat("X", b);
+                                    sbos.AppendFormat("X{0} ", b);
                                 }
                                 val = sbos.ToString();
-                            }
+                            }*/
+                            if (DataValue != null) val = DataValue.ToString() + "." + ((DateTime)(DataValue)).Millisecond.ToString() + " [LOC]";
                             break;
                         case scsm_MMS_TypeEnum.octet_string:
                             if (DataValue != null)

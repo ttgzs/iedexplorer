@@ -293,34 +293,13 @@ namespace IEDExplorer.Views
                     {
                         firsticon = 8;
                     }
-                    /*else if (b.GetType() == typeof(NodeData))
+                    int newIconIndex = firsticon + ((int)b.NodeState) * 4;
+                    if (tn.ImageIndex != newIconIndex)
                     {
-                        if (b.GetChildNodes().Length == 0)
-                        { // Leaf
-                            firsticon = 8;
-                        }
-                        else
-                        {
-                            firsticon = 7;
-                        }
-                    }*/
-                    /*
-                     * bylo aktivni toto
-                    else if ((b.GetType() == typeof(NodeData)) || (b.GetType() == typeof(NodeDO)))
-                    {
-                        if (b.GetChildNodes().Length == 0)
-                        {
-                            // Leaf
-                            firsticon = 8;
-                        }
-                        else
-                        {
-                            firsticon = 7;
-                        }
-                    }*/
-                    tn.ImageIndex = firsticon + ((int)b.NodeState) * 4;
-                    tn.SelectedImageIndex = firsticon + ((int)b.NodeState) * 4;
-                    treeViewIed.Invalidate(tn.Bounds);
+                        tn.ImageIndex = newIconIndex;
+                        tn.SelectedImageIndex = newIconIndex;
+                        treeViewIed.Invalidate(tn.Bounds);
+                    }
                 }
             }
         }
@@ -411,7 +390,7 @@ namespace IEDExplorer.Views
                         item.Tag = n;
                         item.Click += new EventHandler(OnSendCommandAsStructureClick);
                     }
-                    if (n is NodeData || n is NodeFC || n is NodeVL)
+                    if (n is NodeData || n is NodeDO || n is NodeFC || n is NodeVL)
                     {
                         item = menu.Items.Add("Read Data");
                         item.Tag = n;
@@ -437,6 +416,10 @@ namespace IEDExplorer.Views
                     }
                 }
 
+                if (menu.Items.Count > 0)
+                {
+                    menu.Items.Add(new ToolStripSeparator());
+                }
                 item = menu.Items.Add("Expand Subtree");
                 item.Tag = e.Node;
                 item.Click += new EventHandler(OnExpandSubtree);

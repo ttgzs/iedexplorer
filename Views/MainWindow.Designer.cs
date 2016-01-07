@@ -51,11 +51,11 @@
             this.toolStripButtonAbout = new System.Windows.Forms.ToolStripButton();
             this.toolStripComboBoxLoggingLevel = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripButtonConnParam = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
             this.toolStripButtonOpenSCL = new System.Windows.Forms.ToolStripSplitButton();
             this.dockPanel1 = new WeifenLuo.WinFormsUI.Docking.DockPanel();
-            this.toolStripButtonConnParam = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -115,6 +115,7 @@
             this.toolStripButtonAbout.Name = "toolStripButtonAbout";
             this.toolStripButtonAbout.Size = new System.Drawing.Size(23, 22);
             this.toolStripButtonAbout.Text = "toolStripButton1";
+            this.toolStripButtonAbout.ToolTipText = "Info";
             this.toolStripButtonAbout.Click += new System.EventHandler(this.toolStripButtonAbout_Click);
             // 
             // toolStripComboBoxLoggingLevel
@@ -131,6 +132,16 @@
             this.toolStripLabel1.Name = "toolStripLabel1";
             this.toolStripLabel1.Size = new System.Drawing.Size(84, 22);
             this.toolStripLabel1.Text = "Logging level: ";
+            // 
+            // toolStripButtonConnParam
+            // 
+            this.toolStripButtonConnParam.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonConnParam.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonConnParam.Image")));
+            this.toolStripButtonConnParam.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonConnParam.Name = "toolStripButtonConnParam";
+            this.toolStripButtonConnParam.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButtonConnParam.Text = "toolStripButton1";
+            this.toolStripButtonConnParam.Click += new System.EventHandler(this.toolStripButtonConnParam_Click);
             // 
             // toolStripSeparator1
             // 
@@ -208,16 +219,6 @@
             dockPanelSkin1.DockPaneStripSkin = dockPaneStripSkin1;
             this.dockPanel1.Skin = dockPanelSkin1;
             this.dockPanel1.TabIndex = 8;
-            // 
-            // toolStripButtonConnParam
-            // 
-            this.toolStripButtonConnParam.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButtonConnParam.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonConnParam.Image")));
-            this.toolStripButtonConnParam.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonConnParam.Name = "toolStripButtonConnParam";
-            this.toolStripButtonConnParam.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButtonConnParam.Text = "toolStripButton1";
-            this.toolStripButtonConnParam.Click += new System.EventHandler(this.toolStripButtonConnParam_Click);
             // 
             // MainWindow
             // 
