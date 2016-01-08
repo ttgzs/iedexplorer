@@ -90,6 +90,14 @@ namespace IEDExplorer.Views
             }
         }
 
+        internal void MakeIecTree(Iec61850State iecs)
+        {
+            if (iedWindow != null)
+            {
+                iedWindow.makeTreeIec(iecs);
+            }
+        }
+
         internal void MakeFileTree(Iec61850State iecs)
         {
             if (iedWindow != null)

@@ -134,7 +134,7 @@ namespace IEDExplorer.Views
                 tn2.Tag = b;
                 b.Tag = tn2;
 
-                if (b.FC.Count > 0)
+                /*if (b.FC.Count > 0)
                 {
                     tn2.ToolTipText = "FC=";
                     for (int i = 0; i < b.FC.Count; i++)
@@ -142,7 +142,7 @@ namespace IEDExplorer.Views
                         tn2.ToolTipText += b.FC[i];
                         if (i != b.FC.Count - 1) tn2.ToolTipText += ",";
                     }
-                }
+                }*/
                 makeTree_dataNode(b, tn2);
             }
         }

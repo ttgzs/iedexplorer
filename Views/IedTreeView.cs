@@ -31,6 +31,47 @@ namespace IEDExplorer.Views
             InitializeComponent();
         }
 
+        void makeImageList(TreeView treeView)
+        {
+            treeView.ImageList = new ImageList();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Resource1));
+            treeView.ImageList.Images.Add(((System.Drawing.Image)(resources.GetObject("computer"))));   // 0
+            treeView.ImageList.Images.Add(((System.Drawing.Image)(resources.GetObject("calculator"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Image)(resources.GetObject("database"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Image)(resources.GetObject("page_white_text"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Image)(resources.GetObject("page_white_text_width"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("LN1"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("FC1"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DO1"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DA1"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("LN2"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("FC2")))); // 10
+            treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DO2"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DA2"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("LN3"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("FC3"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DO3"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DA3"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("LN4"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("FC4"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DO4"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DA4")))); // 20
+            treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("LN5"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("FC5"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DO5"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DA5"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("LN6"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("FC6"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DO6"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DA6"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Image)(resources.GetObject("folder"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Image)(resources.GetObject("page_white_database"))));    // 30
+            treeView.ImageList.Images.Add(((System.Drawing.Image)(resources.GetObject("page_white_put"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("RP1"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("RP2"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DS1"))));
+        }
+
         internal void makeTree(Iec61850State iecs)
         {
             ctrl = iecs.Controller;
@@ -41,40 +82,7 @@ namespace IEDExplorer.Views
             }
             else
             {
-                treeViewIed.ImageList = new ImageList();
-                System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Resource1));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Image)(resources.GetObject("computer"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Image)(resources.GetObject("calculator"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Image)(resources.GetObject("database"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Image)(resources.GetObject("page_white_text"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Image)(resources.GetObject("page_white_text_width"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("LN1"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("FC1"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DO1"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DA1"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("LN2"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("FC2"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DO2"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DA2"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("LN3"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("FC3"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DO3"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DA3"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("LN4"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("FC4"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DO4"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DA4"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("LN5"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("FC5"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DO5"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DA5"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("LN6"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("FC6"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DO6"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DA6"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Image)(resources.GetObject("folder"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Image)(resources.GetObject("page_white_database"))));
-                treeViewIed.ImageList.Images.Add(((System.Drawing.Image)(resources.GetObject("page_white_put"))));
+                makeImageList(treeViewIed);
                 treeViewIed.Nodes.Clear();
                 TreeNode n = treeViewIed.Nodes.Add(iecs.DataModel.ied.Name + " = " + iecs.hostname +
                                                  ", Vendor = " + (iecs.DataModel.ied as NodeIed).VendorName +
@@ -134,6 +142,77 @@ namespace IEDExplorer.Views
             }
         }
 
+        internal void makeTreeIec(Iec61850State iecs)
+        {
+            ctrl = iecs.Controller;
+            if (treeViewIec.InvokeRequired)
+            {
+                OnNodeCallback d = new OnNodeCallback(makeTreeIec);
+                this.Invoke(d, new object[] { iecs });
+            }
+            else
+            {
+                makeImageList(treeViewIec);
+                treeViewIec.Nodes.Clear();
+                TreeNode n = treeViewIec.Nodes.Add(iecs.DataModel.iec.Name + " = " + iecs.hostname +
+                                                 ", Vendor = " + (iecs.DataModel.iec as NodeIed).VendorName +
+                                                 ", Model = " + (iecs.DataModel.iec as NodeIed).ModelName +
+                                                 ", Revision = " + (iecs.DataModel.iec as NodeIed).Revision +
+                                                 ", DefineNVL = " + (iecs.DataModel.iec as NodeIed).DefineNVL
+                                                 );
+                NodeBase nb = iecs.DataModel.iec;
+                n.Tag = nb;
+                n.ImageIndex = 0;
+                foreach (NodeBase b in nb.GetChildNodes())
+                {
+                    TreeNode tn3 = n.Nodes.Add(b.Name);
+                    tn3.Tag = b;
+                    tn3.ImageIndex = 1;
+                    tn3.SelectedImageIndex = 1;
+                    /*TreeNode tn3 = tn2.Nodes.Add("Data");
+                    tn3.Tag = b;
+                    tn3.ImageIndex = 2;
+                    tn3.SelectedImageIndex = 2;*/
+                    makeTreeIec_dataNode(b, tn3);
+
+                    /*NodeBase lb = iecs.DataModel.lists.FindChildNode(b.Name);
+                    if (lb != null)
+                    {
+                        tn3 = tn2.Nodes.Add("DataSets");
+                        tn3.Tag = lb;
+                        tn3.ImageIndex = 3;
+                        tn3.SelectedImageIndex = 3;
+                        makeTree_listNode(lb, tn3);
+                    }
+                    NodeBase ur = iecs.DataModel.urcbs.FindChildNode(b.Name);
+                    if (ur != null)
+                    {
+                        tn3 = tn2.Nodes.Add("Unbuffered Reports");
+                        tn3.Tag = ur;
+                        tn3.ImageIndex = 3;
+                        tn3.SelectedImageIndex = 3;
+                        makeTree_reportNode(ur, tn3);
+                    }
+                    NodeBase br = iecs.DataModel.brcbs.FindChildNode(b.Name);
+                    if (br != null)
+                    {
+                        tn3 = tn2.Nodes.Add("Buffered Reports");
+                        tn3.Tag = br;
+                        tn3.ImageIndex = 3;
+                        tn3.SelectedImageIndex = 3;
+                        makeTree_reportNode(br, tn3);
+                    }*/
+                }
+                nb = iecs.DataModel.files;
+                TreeNode tn4 = n.Nodes.Add("Files");
+                tn4.Tag = iecs.DataModel.files;
+                tn4.ImageIndex = 3;
+                tn4.SelectedImageIndex = 3;
+                nb.Tag = tn4;
+                makeTree_fileNode(nb, tn4);
+            }
+        }
+
         void makeTree_dataNode(NodeBase nb, TreeNode tn)
         {
             foreach (NodeBase b in nb.GetChildNodes())
@@ -144,16 +223,41 @@ namespace IEDExplorer.Views
                 Node_StateChanged(b, new EventArgs());
                 b.StateChanged += new EventHandler(Node_StateChanged);
 
-                if (b.FC.Count > 0)
+                makeTree_dataNode(b, tn2);
+            }
+        }
+
+        void makeTreeIec_dataNode(NodeBase nb, TreeNode tn)
+        {
+            foreach (NodeBase b in nb.GetChildNodes())
+            {
+                string name = b.Name;
+                if (b is NodeRCB || b is NodeVL)
+                    name = b.Name.Substring(b.Name.LastIndexOf("$") + 1);
+                if (b is NodeData && (b as NodeData).FCDesc != null && (b as NodeData).FCDesc != "") name += " [" + (b as NodeData).FCDesc + "]";
+                TreeNode tn2 = tn.Nodes.Add(name);
+                tn2.Tag = b;
+                b.TagR = tn2;
+                Node_StateChanged(b, new EventArgs());
+                if (b is NodeRCB)
                 {
-                    tn2.ToolTipText = "FC=";
-                    for (int i = 0; i < b.FC.Count; i++)
+                    if ((b as NodeRCB).isBuffered)
                     {
-                        tn2.ToolTipText += b.FC[i];
-                        if (i != b.FC.Count - 1) tn2.ToolTipText += ",";
+                        tn2.ImageIndex = 33;
+                        tn2.SelectedImageIndex = 33;
+                    }
+                    else
+                    {
+                        tn2.ImageIndex = 32;
+                        tn2.SelectedImageIndex = 32;
                     }
                 }
-                makeTree_dataNode(b, tn2);
+                if (b is NodeVL)
+                {
+                    tn2.ImageIndex = 34;
+                    tn2.SelectedImageIndex = 34;
+                }
+                makeTreeIec_dataNode(b, tn2);
             }
         }
 
@@ -164,8 +268,8 @@ namespace IEDExplorer.Views
                 TreeNode tn2 = tn.Nodes.Add(b.Name);
                 tn2.Tag = b;
                 b.Tag = tn2;
-                tn2.ImageIndex = 4;
-                tn2.SelectedImageIndex = 4;
+                tn2.ImageIndex = 34;
+                tn2.SelectedImageIndex = 34;
                 foreach (NodeBase b2 in b.GetChildNodes())
                 {
                     TreeNode tn3 = tn2.Nodes.Add(b2.CommAddress.Variable);
@@ -273,27 +377,48 @@ namespace IEDExplorer.Views
             else
             {
                 NodeBase b = (sender as NodeBase);
+                int firsticon = 0;
+                if (b is NodeLN)
+                {
+                    firsticon = 5;
+                }
+                else if (b is NodeFC)
+                {
+                    firsticon = 6;
+                }
+                else if (b is NodeDO)
+                {
+                    firsticon = 7;
+                }
+                else if (b is NodeData)
+                {
+                    firsticon = 8;
+                }
+                else if (b is NodeRCB)
+                {
+                    if ((b as NodeRCB).isBuffered)
+                        firsticon = 33;
+                    else
+                        firsticon = 32;
+                }
+                else if (b is NodeVL)
+                {
+                    firsticon = 34;
+                }
+                int newIconIndex = firsticon + ((int)b.NodeState) * 4;
                 if (b.Tag is TreeNode)
                 {
                     TreeNode tn = (b.Tag as TreeNode);
-                    int firsticon = 0;
-                    if (b.GetType() == typeof(NodeLN))
+                    if (tn.ImageIndex != newIconIndex)
                     {
-                        firsticon = 5;
+                        tn.ImageIndex = newIconIndex;
+                        tn.SelectedImageIndex = newIconIndex;
+                        treeViewIed.Invalidate(tn.Bounds);
                     }
-                    else if (b.GetType() == typeof(NodeFC))
-                    {
-                        firsticon = 6;
-                    }
-                    else if (b.GetType() == typeof(NodeDO))
-                    {
-                        firsticon = 7;
-                    }
-                    else if (b.GetType() == typeof(NodeData))
-                    {
-                        firsticon = 8;
-                    }
-                    int newIconIndex = firsticon + ((int)b.NodeState) * 4;
+                }
+                if (b.TagR is TreeNode)
+                {
+                    TreeNode tn = (b.TagR as TreeNode);
                     if (tn.ImageIndex != newIconIndex)
                     {
                         tn.ImageIndex = newIconIndex;

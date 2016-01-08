@@ -199,7 +199,9 @@ namespace IEDExplorer
                                         break;
                                     case Iec61850lStateEnum.IEC61850_MAKEGUI:
                                         iecs.logger.LogDebug("[IEC61850_MAKEGUI]");
+                                        iecs.DataModel.BuildIECModelFromMMSModel();
                                         self._env.winMgr.MakeIedTree(iecs);
+                                        self._env.winMgr.MakeIecTree(iecs);
                                         iecs.istate = Iec61850lStateEnum.IEC61850_FREILAUF;
                                         break;
                                     case Iec61850lStateEnum.IEC61850_FREILAUF:

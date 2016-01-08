@@ -80,16 +80,17 @@ namespace IEDExplorer
         public string TypeId { get; set; }
 
         public object Tag { get; set; }
+        public object TagR { get; set; }    // reserve for secondary Iec TreeView
 
         public NodeBase Parent { get; set; }
 
-        public List<String> FC
+        /*public List<String> FC
         {
             get
             {
                 return _fc;
             }
-        }
+        }*/
 
         public NodeBase[] GetChildNodes()
         {
