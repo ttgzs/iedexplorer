@@ -87,6 +87,7 @@ namespace IEDExplorer
         {
             foreach (NodeBase b in _childNodes)
             {
+                // Syntax: LD(<logical device name>){…}
                 b.SaveModel(lines, fromSCL);
             }
         }

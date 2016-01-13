@@ -588,6 +588,25 @@ namespace IEDExplorer.Views
             }
         }
 
+        string findShortestString(List<string> strings)
+        {
+            int count = 0;
+            string shortestString = strings.OrderByDescending(s => s.Length).Last();
+            strings.Remove(shortestString);
+            foreach (char c in shortestString)
+            {
+                foreach (string s in strings)
+                {
+                    if (s[count] != c)
+                    {
+                        return shortestString.Substring(0, count - 1); //need to check count is not 0 
+                    }
+                }
+                count += 1;
+            }
+            return shortestString;
+        }
+
         void OnSaveModel(object sender, EventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -603,6 +622,12 @@ namespace IEDExplorer.Views
                 StreamWriter file = new StreamWriter(filename, false);
                 List<string> lines = new List<string>();
                 NodeIed n = (NodeIed)(sender as ToolStripItem).Tag;
+                // Ensure we always save the IEC data structure, not the MMS one
+                n = n.GetIecs().DataModel.iec;
+                // Find model name = common LD names prefix
+                List<string> ldnames = n.GetChildNodeNames();
+                string prefix = findShortestString(ldnames);
+
                 n.SaveModel(lines, false);
                 foreach (string line in lines)
                 {

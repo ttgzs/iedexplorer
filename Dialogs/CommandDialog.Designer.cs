@@ -71,6 +71,7 @@ namespace IEDExplorer
             this.label7 = new System.Windows.Forms.Label();
             this.dateTimePickerT = new System.Windows.Forms.DateTimePicker();
             this.checkBoxTActive = new System.Windows.Forms.CheckBox();
+            this.textBoxValue = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBoxOrig.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -263,6 +264,7 @@ namespace IEDExplorer
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.textBoxValue);
             this.groupBox2.Controls.Add(this.comboBoxValue);
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.labelAddr);
@@ -319,6 +321,13 @@ namespace IEDExplorer
             this.checkBoxTActive.UseVisualStyleBackColor = true;
             this.checkBoxTActive.CheckedChanged += new System.EventHandler(this.checkBoxTActive_CheckedChanged);
             // 
+            // textBoxValue
+            // 
+            this.textBoxValue.Location = new System.Drawing.Point(70, 69);
+            this.textBoxValue.Name = "textBoxValue";
+            this.textBoxValue.Size = new System.Drawing.Size(310, 20);
+            this.textBoxValue.TabIndex = 11;
+            // 
             // CommandDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -372,5 +381,6 @@ namespace IEDExplorer
         private System.Windows.Forms.DateTimePicker dateTimePickerT;
         private System.Windows.Forms.CheckBox checkBoxTActive;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox textBoxValue;
     }
 }

@@ -97,6 +97,16 @@ namespace IEDExplorer
             return (NodeBase[])_childNodes.ToArray();
         }
 
+        public List<string> GetChildNodeNames()
+        {
+            List<string> names = new List<string>();
+            foreach (NodeBase nb in _childNodes)
+            {
+                names.Add(nb.Name);
+            }
+            return names;
+        }
+
         public int GetChildCount()
         {
             return _childNodes.Count;

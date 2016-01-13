@@ -51,9 +51,25 @@ namespace IEDExplorer
             switch (Cpar.DataType)
             {
                 case scsm_MMS_TypeEnum.boolean:
+                    textBoxValue.Hide();
+                    comboBoxValue.Show();
                     comboBoxValue.Items.Add("OFF / False");
                     comboBoxValue.Items.Add("ON  / True");
                     comboBoxValue.SelectedIndex = (bool)Cpar.ctlVal ? 0 : 1;
+                    break;
+                case scsm_MMS_TypeEnum.bit_string:
+                    textBoxValue.Hide();
+                    comboBoxValue.Show();
+                    comboBoxValue.Items.Add("00 / Stop");
+                    comboBoxValue.Items.Add("01 / Higher");
+                    comboBoxValue.Items.Add("10 / Lower");
+                    comboBoxValue.Items.Add("11 / Reserved");
+                    comboBoxValue.SelectedIndex = ((byte[])Cpar.ctlVal)[0];
+                    break;
+                case scsm_MMS_TypeEnum.integer:
+                    comboBoxValue.Hide();
+                    textBoxValue.Show();
+                    textBoxValue.Text = ((long)Cpar.ctlVal).ToString();
                     break;
                 default:
                     break;
@@ -71,6 +87,34 @@ namespace IEDExplorer
             {
                 case scsm_MMS_TypeEnum.boolean:
                     Cpar.ctlVal = comboBoxValue.SelectedIndex > 0 ? true : false;
+                    break;
+                case scsm_MMS_TypeEnum.bit_string:
+                    switch (comboBoxValue.SelectedIndex)
+                    {
+                        case 1:
+                            ((byte[])Cpar.ctlVal)[0] = 0x80;
+                            break;
+                        case 2:
+                            ((byte[])Cpar.ctlVal)[0] = 0x40;
+                            break;
+                        case 3:
+                            ((byte[])Cpar.ctlVal)[0] = 0xc0;
+                            break;
+                        default:
+                            ((byte[])Cpar.ctlVal)[0] = 0x00;
+                            break;
+                    }
+                    break;
+                case scsm_MMS_TypeEnum.integer:
+                    long res = 0;
+                    if (long.TryParse(textBoxValue.Text, out res))
+                    {
+                        Cpar.ctlVal = res;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Cannot parse Value to Integer: {0}", textBoxValue.Text);
+                    }
                     break;
                 default:
                     break;
