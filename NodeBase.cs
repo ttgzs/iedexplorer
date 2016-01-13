@@ -107,6 +107,32 @@ namespace IEDExplorer
             return names;
         }
 
+        public bool isArray()
+        {
+            foreach (NodeBase nb in _childNodes)
+            {
+                if (!nb.isArrayElement())
+                    return false;
+            }
+            return true;
+        }
+
+        public bool isArrayElement()
+        {
+            if (!Name.StartsWith("["))
+                return false;
+            if (!Name.EndsWith("]"))
+                return false;
+            return true;
+        }
+
+        public int getArraySize()
+        {
+            if (isArray()) return _childNodes.Count;
+            if (isArrayElement()) return Parent._childNodes.Count;
+            return -1;
+        }
+
         public int GetChildCount()
         {
             return _childNodes.Count;

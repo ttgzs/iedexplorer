@@ -92,5 +92,7 @@ namespace IEDExplorer
             }
         }
 
+        public string IedModelName { get; set; }
+
     }
 }

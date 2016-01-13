@@ -36,7 +36,10 @@ namespace IEDExplorer
         public override void SaveModel(List<String> lines, bool fromSCL)
         {
             // Syntax: DO(<data object name> <nb of array elements>){…}
-            lines.Add("DO(" + Name + " 0) {");
+            int nrElem = 0;
+            if (isArray()) nrElem = getArraySize();
+
+            lines.Add("DO(" + Name + " " + nrElem.ToString() + ") {");
             foreach (NodeBase b in _childNodes)
             {
                 b.SaveModel(lines, fromSCL);
