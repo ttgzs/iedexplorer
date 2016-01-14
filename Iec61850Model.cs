@@ -39,6 +39,7 @@ namespace IEDExplorer
         {
             (ied as NodeIed).iecs = iecs;
             (iec as NodeIed).iecs = iecs;
+            iec.IsIecModel = true;
             (lists as NodeIed).iecs = iecs;
             (files as NodeIed).iecs = iecs;
             (urcbs as NodeIed).iecs = iecs;
@@ -55,10 +56,12 @@ namespace IEDExplorer
             foreach (NodeLD ld in ied.GetChildNodes())      // LD level
             {
                 NodeLD ild = new NodeLD(ld.Name);
+                ild.IsIecModel = true;
                 ild = (NodeLD)iec.AddChildNode(ild);
                 foreach (NodeLN ln in ld.GetChildNodes())   // LN level
                 {
                     NodeLN iln = new NodeLN(ln.Name);
+                    iln.IsIecModel = true;
                     iln = (NodeLN)ild.AddChildNode(iln);
                     foreach (NodeFC fc in ln.GetChildNodes())   // FC level - skipping
                     {
@@ -68,6 +71,7 @@ namespace IEDExplorer
                         foreach (NodeDO dO in fc.GetChildNodes())   // DO level
                         {
                             NodeDO ido = new NodeDO(dO.Name);
+                            ido.IsIecModel = true;
                             // AddChildNode returns original object if the same name found (new object is forgotten)
                             ido = (NodeDO)iln.AddChildNode(ido);
                             // At this point, it can happen that we get DO more than once (same DO in several FC)
@@ -139,6 +143,7 @@ namespace IEDExplorer
                 // We have to create DO and add it to the iec model (target)
                 // and replace linkedDa with this object
                 NodeDO ido = new NodeDO(source.Name);
+                ido.IsIecModel = true;
                 target.RemoveChildNode(source);
                 linkedDa = target.AddChildNode(ido);
             }

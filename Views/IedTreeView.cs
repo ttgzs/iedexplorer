@@ -169,39 +169,7 @@ namespace IEDExplorer.Views
                     tn3.Tag = b;
                     tn3.ImageIndex = 1;
                     tn3.SelectedImageIndex = 1;
-                    /*TreeNode tn3 = tn2.Nodes.Add("Data");
-                    tn3.Tag = b;
-                    tn3.ImageIndex = 2;
-                    tn3.SelectedImageIndex = 2;*/
                     makeTreeIec_dataNode(b, tn3);
-
-                    /*NodeBase lb = iecs.DataModel.lists.FindChildNode(b.Name);
-                    if (lb != null)
-                    {
-                        tn3 = tn2.Nodes.Add("DataSets");
-                        tn3.Tag = lb;
-                        tn3.ImageIndex = 3;
-                        tn3.SelectedImageIndex = 3;
-                        makeTree_listNode(lb, tn3);
-                    }
-                    NodeBase ur = iecs.DataModel.urcbs.FindChildNode(b.Name);
-                    if (ur != null)
-                    {
-                        tn3 = tn2.Nodes.Add("Unbuffered Reports");
-                        tn3.Tag = ur;
-                        tn3.ImageIndex = 3;
-                        tn3.SelectedImageIndex = 3;
-                        makeTree_reportNode(ur, tn3);
-                    }
-                    NodeBase br = iecs.DataModel.brcbs.FindChildNode(b.Name);
-                    if (br != null)
-                    {
-                        tn3 = tn2.Nodes.Add("Buffered Reports");
-                        tn3.Tag = br;
-                        tn3.ImageIndex = 3;
-                        tn3.SelectedImageIndex = 3;
-                        makeTree_reportNode(br, tn3);
-                    }*/
                 }
                 nb = iecs.DataModel.files;
                 TreeNode tn4 = n.Nodes.Add("Files");
@@ -632,9 +600,19 @@ namespace IEDExplorer.Views
                 {
                     // User has to choose the name part, because it is unclear how to divide the MMS name(s) into MODEL and LD part
                     // Populate dialog
-                    prefix = ldnames[0];
-                    DialogResult res = ShowInputDialog(ref prefix, "Set Model Name / should be the first part of given LD name");
-                    if (res != DialogResult.OK) return;
+                    prefix = n.GetChildNodeNames()[0];
+                    if (prefix.Length == 2)
+                    {
+                        prefix = prefix.Substring(0, 1);
+                    }
+                    if (prefix.Length > 2)
+                    {
+                        Dialogs.SplitStringDialog ssd = new Dialogs.SplitStringDialog(prefix, "Make Model name from LD name / choose a substring", "Model Name:", "LD Name:");
+                        DialogResult res = ssd.ShowDialog();
+                        //DialogResult res = ShowInputDialog(ref prefix, "Set Model Name / should be the first part of given LD name");
+                        if (res != DialogResult.OK) return;
+                        prefix = ssd.Part1;
+                    }
                 }
                 n.IedModelName = prefix;
                 n.SaveModel(lines, false);
@@ -649,7 +627,7 @@ namespace IEDExplorer.Views
 
             catch (Exception ex)
             {
-                MessageBox.Show("Cannot open file " + filename + " for output! Detail: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Cannot export model to file " + filename + " ! Detail: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -837,44 +815,5 @@ namespace IEDExplorer.Views
             winMgr.SelectNode(e.Node);
         }
 
-        private static DialogResult ShowInputDialog(ref string input, string title)
-        {
-            System.Drawing.Size size = new System.Drawing.Size(200, 70);
-            Form inputBox = new Form();
-
-            inputBox.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            inputBox.ClientSize = size;
-            inputBox.Text = title;
-
-            System.Windows.Forms.TextBox textBox = new TextBox();
-            textBox.Size = new System.Drawing.Size(size.Width - 10, 23);
-            textBox.Location = new System.Drawing.Point(5, 5);
-            textBox.Text = input;
-            inputBox.Controls.Add(textBox);
-
-            Button okButton = new Button();
-            okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            okButton.Name = "okButton";
-            okButton.Size = new System.Drawing.Size(75, 23);
-            okButton.Text = "&OK";
-            okButton.Location = new System.Drawing.Point(size.Width - 80 - 80, 39);
-            inputBox.Controls.Add(okButton);
-
-            Button cancelButton = new Button();
-            cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            cancelButton.Name = "cancelButton";
-            cancelButton.Size = new System.Drawing.Size(75, 23);
-            cancelButton.Text = "&Cancel";
-            cancelButton.Location = new System.Drawing.Point(size.Width - 80, 39);
-            inputBox.Controls.Add(cancelButton);
-
-            inputBox.AcceptButton = okButton;
-            inputBox.CancelButton = cancelButton;
-
-            inputBox.StartPosition = FormStartPosition.CenterParent;
-            DialogResult result = inputBox.ShowDialog();
-            input = textBox.Text;
-            return result;
-        }
     }
 }

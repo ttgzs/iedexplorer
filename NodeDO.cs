@@ -37,10 +37,18 @@ namespace IEDExplorer
         {
             // Syntax: DO(<data object name> <nb of array elements>){…}
             int nrElem = 0;
-            if (isArray()) nrElem = getArraySize();
+            NodeBase nextnb = this;
+
+            if (isArray())
+            {
+                nrElem = getArraySize();
+                // Array has got an artificial level with array members, this is not part of model definition
+                if (_childNodes.Count > 0)
+                    nextnb = _childNodes[0];
+            }
 
             lines.Add("DO(" + Name + " " + nrElem.ToString() + ") {");
-            foreach (NodeBase b in _childNodes)
+            foreach (NodeBase b in nextnb.GetChildNodes())
             {
                 b.SaveModel(lines, fromSCL);
             }

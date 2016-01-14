@@ -124,13 +124,14 @@ namespace IEDExplorer
                         {
                             case IsoProtocolState.OSI_CONNECT_COTP:
                                 iecs.logger.LogInfo("[OSI_CONNECT_COTP]");
-                                iecs.iso.SendCOTPSessionInit(iecs);
                                 iecs.ostate = IsoProtocolState.OSI_CONNECT_COTP_WAIT;
+                                iecs.iso.SendCOTPSessionInit(iecs);
                                 break;
                             case IsoProtocolState.OSI_CONNECT_PRES:
                                 iecs.logger.LogInfo("[OSI_CONNECT_PRES]");
+                                // This cannot be before Send, but is issued inside Send chain before TCP send
+                                // iecs.ostate = IsoProtocolState.OSI_CONNECT_PRES_WAIT;
                                 iecs.mms.SendInitiate(iecs);
-                                iecs.ostate = IsoProtocolState.OSI_CONNECT_PRES_WAIT;
                                 break;
                             case IsoProtocolState.OSI_CONNECTED:
                                 switch (iecs.istate)
@@ -139,8 +140,8 @@ namespace IEDExplorer
                                         if (iecs.DataModel.ied.Identify)
                                         {
                                             iecs.logger.LogInfo("[IEC61850_STATE_START] (Send IdentifyRequest)");
-                                            iecs.mms.SendIdentify(iecs);
                                             iecs.istate = Iec61850lStateEnum.IEC61850_CONNECT_MMS_WAIT;
+                                            iecs.mms.SendIdentify(iecs);
                                             IdentifyTimeoutBase = DateTime.UtcNow;
                                         }
                                         else
@@ -159,18 +160,18 @@ namespace IEDExplorer
                                         break;
                                     case Iec61850lStateEnum.IEC61850_READ_NAMELIST_DOMAIN:
                                         iecs.logger.LogDebug("[IEC61850_READ_NAMELIST_DOMAIN]");
-                                        iecs.mms.SendGetNameListDomain(iecs);
                                         iecs.istate = Iec61850lStateEnum.IEC61850_READ_NAMELIST_DOMAIN_WAIT;
+                                        iecs.mms.SendGetNameListDomain(iecs);
                                         break;
                                     case Iec61850lStateEnum.IEC61850_READ_NAMELIST_VAR:
                                         iecs.logger.LogDebug("[IEC61850_READ_NAMELIST_VAR]");
-                                        iecs.mms.SendGetNameListVariables(iecs);
                                         iecs.istate = Iec61850lStateEnum.IEC61850_READ_NAMELIST_VAR_WAIT;
+                                        iecs.mms.SendGetNameListVariables(iecs);
                                         break;
                                     case Iec61850lStateEnum.IEC61850_READ_ACCESSAT_VAR:
                                         iecs.logger.LogDebug("[IEC61850_READ_ACCESSAT_VAR]");
-                                        iecs.mms.SendGetVariableAccessAttributes(iecs);
                                         iecs.istate = Iec61850lStateEnum.IEC61850_READ_ACCESSAT_VAR_WAIT;
+                                        iecs.mms.SendGetVariableAccessAttributes(iecs);
                                         break;
                                     case Iec61850lStateEnum.IEC61850_READ_MODEL_DATA:
                                         iecs.logger.LogDebug("[IEC61850_READ_MODEL_DATA]");
@@ -182,20 +183,19 @@ namespace IEDExplorer
                                         // Issue reads by FC level
                                         data[0] = iecs.DataModel.ied.GetActualChildNode().GetActualChildNode().GetActualChildNode();
                                         WriteQueueElement wqel = new WriteQueueElement(data, adr, ActionRequested.Read);
-                                        iecs.mms.SendRead(iecs, wqel);
                                         iecs.istate = Iec61850lStateEnum.IEC61850_READ_MODEL_DATA_WAIT;
+                                        iecs.mms.SendRead(iecs, wqel);
                                         break;
                                     case Iec61850lStateEnum.IEC61850_READ_NAMELIST_NAMED_VARIABLE_LIST:
                                         iecs.logger.LogDebug("[IEC61850_READ_NAMELIST_NAMED_VARIABLE_LIST]");
-                                        iecs.mms.SendGetNameListNamedVariableList(iecs);
                                         iecs.istate = Iec61850lStateEnum.IEC61850_READ_NAMELIST_NAMED_VARIABLE_LIST_WAIT;
+                                        iecs.mms.SendGetNameListNamedVariableList(iecs);
                                         break;
                                     case Iec61850lStateEnum.IEC61850_READ_ACCESSAT_NAMED_VARIABLE_LIST:
                                         iecs.logger.LogDebug("[IEC61850_READ_ACCESSAT_NAMED_VARIABLE_LIST]");
+                                        iecs.istate = Iec61850lStateEnum.IEC61850_READ_ACCESSAT_NAMED_VARIABLE_LIST_WAIT;
                                         if (iecs.mms.SendGetNamedVariableListAttributes(iecs) != 0)
                                             iecs.istate = Iec61850lStateEnum.IEC61850_MAKEGUI;
-                                        else
-                                            iecs.istate = Iec61850lStateEnum.IEC61850_READ_ACCESSAT_NAMED_VARIABLE_LIST_WAIT;
                                         break;
                                     case Iec61850lStateEnum.IEC61850_MAKEGUI:
                                         iecs.logger.LogDebug("[IEC61850_MAKEGUI]");

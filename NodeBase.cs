@@ -49,6 +49,7 @@ namespace IEDExplorer
             this.Name = Name;
             _childNodes = new List<NodeBase>();
             _nodeState = NodeState.Initial;
+            IsIecModel = false;
         }
 
         public NodeState NodeState
@@ -78,6 +79,8 @@ namespace IEDExplorer
         public string Name { get; private set; }
 
         public string TypeId { get; set; }
+
+        public bool IsIecModel { get; set; }
 
         public object Tag { get; set; }
         public object TagR { get; set; }    // reserve for secondary Iec TreeView
@@ -109,6 +112,7 @@ namespace IEDExplorer
 
         public bool isArray()
         {
+            if (isLeaf()) return false;
             foreach (NodeBase nb in _childNodes)
             {
                 if (!nb.isArrayElement())
@@ -126,11 +130,16 @@ namespace IEDExplorer
             return true;
         }
 
+        public bool isLeaf()
+        {
+            return _childNodes.Count == 0;
+        }
+
         public int getArraySize()
         {
             if (isArray()) return _childNodes.Count;
             if (isArrayElement()) return Parent._childNodes.Count;
-            return -1;
+            return 0;
         }
 
         public int GetChildCount()

@@ -285,24 +285,47 @@ namespace IEDExplorer
             }
         }
 
+        public int sAddr { get; set; }
+
         public override void SaveModel(List<String> lines, bool fromSCL)
         {
             // DA(<data attribute name> <nb of array elements> <type> <FC> <trigger options> <sAddr>)[=value];
             // Constructed>
             // DA(<data attribute name> <nb of array elements> 27 <FC> <trigger options> <sAddr>){…}
-            if (_childNodes.Count > 0)
+            if (isLeaf() || (isArray() && _childNodes[0].isLeaf()))
+            {
+                string line = "DA(" + Name;
+                int nrElem = getArraySize();
+                line += " " + nrElem + " " + MapLibiecType(DataType) + " " + MapLibiecFC(FCDesc) + " " + MapTrgOps() + " " + sAddr + ")";
+                bool writeVal = false;
+                // Some conditions for writing the value
+                if (Name == "ctlModel") writeVal = true;
+
+                // Finish the line
+                if (writeVal)
+                    line += " value=" + StringValue;
+                lines.Add(line);
+            }
+            else
             {
                 // Constructed
-                lines.Add("DA(" + Name + " 0) {");
-                foreach (NodeBase b in _childNodes)
+                int nrElem = 0;
+                NodeBase nextnb = this;
+
+                if (isArray())
+                {
+                    nrElem = getArraySize();
+                    // Array has got an artificial level with array members, this is not part of model definition
+                    if (_childNodes.Count > 0)
+                        nextnb = _childNodes[0];
+                }
+
+                lines.Add("DA(" + Name + " " + nrElem + " 27 " + MapLibiecFC(FCDesc) + " " + MapTrgOps() + " " + sAddr + ") {");
+                foreach (NodeBase b in nextnb.GetChildNodes())
                 {
                     b.SaveModel(lines, fromSCL);
                 }
                 lines.Add("}");
-            }
-            else
-            {
-                lines.Add("DA(" + Name + " 0) value=" + StringValue);
             }
         }
 
@@ -337,6 +360,30 @@ namespace IEDExplorer
                 b = b.Parent;
             }
             return "";
+        }
+
+        int MapLibiecFC(string FC)
+        {
+            int fco = 0;
+
+
+            return fco;
+        }
+
+        int MapLibiecType(scsm_MMS_TypeEnum DataType)
+        {
+            int type = 0;
+
+
+            return type;
+        }
+
+        int MapTrgOps()
+        {
+            int trgOps = 0;
+
+
+            return trgOps;
         }
 
     }   // class NodeData

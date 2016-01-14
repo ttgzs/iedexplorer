@@ -205,7 +205,10 @@ namespace IEDExplorer
         public int Send(Iec61850State iecs)
         {
             if (iecs.ostate == IsoProtocolState.OSI_CONNECT_PRES)
+            {
+                iecs.ostate = IsoProtocolState.OSI_CONNECT_PRES_WAIT;
                 SendPresentationInit(iecs);
+            }
             else
                 SendData(iecs);
             return 0;

@@ -85,11 +85,13 @@ namespace IEDExplorer
 
         public override void SaveModel(List<String> lines, bool fromSCL)
         {
+            // Syntax: MODEL(<model name>){…}
+            lines.Add("MODEL(" + IedModelName + ") {");
             foreach (NodeBase b in _childNodes)
             {
-                // Syntax: LD(<logical device name>){…}
                 b.SaveModel(lines, fromSCL);
             }
+            lines.Add("}");
         }
 
         public string IedModelName { get; set; }
