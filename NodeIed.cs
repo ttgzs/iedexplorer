@@ -86,7 +86,7 @@ namespace IEDExplorer
         public override void SaveModel(List<String> lines, bool fromSCL)
         {
             // Syntax: MODEL(<model name>){…}
-            lines.Add("MODEL(" + IedModelName + ") {");
+            lines.Add("MODEL(" + IedModelName + "){");
             foreach (NodeBase b in _childNodes)
             {
                 b.SaveModel(lines, fromSCL);

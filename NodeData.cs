@@ -320,7 +320,7 @@ namespace IEDExplorer
                         nextnb = _childNodes[0];
                 }
 
-                lines.Add("DA(" + Name + " " + nrElem + " 27 " + MapLibiecFC(FCDesc) + " " + MapTrgOps() + " " + sAddr + ") {");
+                lines.Add("DA(" + Name + " " + nrElem + " 27 " + MapLibiecFC(FCDesc) + " " + MapTrgOps() + " " + sAddr + "){");
                 foreach (NodeBase b in nextnb.GetChildNodes())
                 {
                     b.SaveModel(lines, fromSCL);
@@ -362,19 +362,125 @@ namespace IEDExplorer
             return "";
         }
 
-        int MapLibiecFC(string FC)
+         /** FCs (Functional constraints) according to IEC 61850-7-2 */
+        enum LibIecFunctionalConstraint
+        {
+            /** Status information */
+            IEC61850_FC_ST = 0,
+            /** Measurands - analog values */
+            IEC61850_FC_MX = 1,
+            /** Setpoint */
+            IEC61850_FC_SP = 2,
+            /** Substitution */
+            IEC61850_FC_SV = 3,
+            /** Configuration */
+            IEC61850_FC_CF = 4,
+            /** Description */
+            IEC61850_FC_DC = 5,
+            /** Setting group */
+            IEC61850_FC_SG = 6,
+            /** Setting group editable */
+            IEC61850_FC_SE = 7,
+            /** Service response / Service tracking */
+            IEC61850_FC_SR = 8,
+            /** Operate received */
+            IEC61850_FC_OR = 9,
+            /** Blocking */
+            IEC61850_FC_BL = 10,
+            /** Extended definition */
+            IEC61850_FC_EX = 11,
+            /** Control */
+            IEC61850_FC_CO = 12,
+            IEC61850_FC_ALL = 99,
+            IEC61850_FC_NONE = -1
+        }
+
+       int MapLibiecFC(string FC)
         {
             int fco = 0;
+            foreach (string s in Enum.GetNames(typeof(LibIecFunctionalConstraint)))
+            {
+                if (s.Substring(s.LastIndexOf("_") + 1) == FC)
+                {
+                    return (int)Enum.GetValues(typeof(LibIecFunctionalConstraint)).GetValue(fco);
+                }
+                fco++;
+            }
+            return -1;
+        }
 
-
-            return fco;
+        enum LibIecDataAttributeType
+        {
+	        BOOLEAN = 0,/* int */
+	        INT8 = 1,   /* int8_t */
+	        INT16 = 2,  /* int16_t */
+	        INT32 = 3,  /* int32_t */
+	        INT64 = 4,  /* int64_t */
+	        INT128 = 5, /* no native mapping! */
+	        INT8U = 6,  /* uint8_t */
+	        INT16U = 7, /* uint16_t */
+	        INT24U = 8, /* uint32_t */
+	        INT32U = 9, /* uint32_t */
+	        FLOAT32 = 10, /* float */
+	        FLOAT64 = 11, /* double */
+	        ENUMERATED = 12,
+	        OCTET_STRING_64 = 13,
+	        OCTET_STRING_6 = 14,
+	        OCTET_STRING_8 = 15,
+	        VISIBLE_STRING_32 = 16,
+	        VISIBLE_STRING_64 = 17,
+	        VISIBLE_STRING_65 = 18,
+	        VISIBLE_STRING_129 = 19,
+	        VISIBLE_STRING_255 = 20,
+	        UNICODE_STRING_255 = 21,
+	        TIMESTAMP = 22,
+	        QUALITY = 23,
+	        CHECK = 24,
+	        CODEDENUM = 25,
+	        GENERIC_BITSTRING = 26,
+	        CONSTRUCTED = 27,
+	        ENTRY_TIME = 28,
+	        PHYCOMADDR = 29
         }
 
         int MapLibiecType(scsm_MMS_TypeEnum DataType)
         {
             int type = 0;
-
-
+            switch (DataType)
+            {
+                case scsm_MMS_TypeEnum.boolean:
+                    type = (int)LibIecDataAttributeType.BOOLEAN;
+                    break;
+                case scsm_MMS_TypeEnum.floating_point:
+                    type = (int)LibIecDataAttributeType.FLOAT32;
+                    break;
+                case scsm_MMS_TypeEnum.utc_time:
+                    type = (int)LibIecDataAttributeType.TIMESTAMP;
+                    break;
+                case scsm_MMS_TypeEnum.bit_string:
+                    type = (int)LibIecDataAttributeType.CODEDENUM;
+                    if (Name == "q")
+                        type = (int)LibIecDataAttributeType.QUALITY;
+                    break;
+                case scsm_MMS_TypeEnum.integer:
+                    type = (int)LibIecDataAttributeType.INT32;
+                    break;
+                case scsm_MMS_TypeEnum.unsigned:
+                    type = (int)LibIecDataAttributeType.INT32U;
+                    break;
+                case scsm_MMS_TypeEnum.binary_time:
+                    type = (int)LibIecDataAttributeType.ENTRY_TIME;
+                    break;
+                case scsm_MMS_TypeEnum.mMSString:
+                    type = (int)LibIecDataAttributeType.UNICODE_STRING_255;
+                    break;
+                case scsm_MMS_TypeEnum.visible_string:
+                    type = (int)LibIecDataAttributeType.VISIBLE_STRING_255;
+                    break;
+                case scsm_MMS_TypeEnum.octet_string:
+                    type = (int)LibIecDataAttributeType.OCTET_STRING_64;
+                    break;
+            }
             return type;
         }
 

@@ -34,7 +34,7 @@ namespace IEDExplorer
         public override void SaveModel(List<String> lines, bool fromSCL)
         {
             // Syntax: LN(<logical node name>){…}
-            lines.Add("LN(" + Name + ") {");
+            lines.Add("LN(" + Name + "){");
 
             foreach (NodeBase b in _childNodes)
             {

@@ -47,7 +47,7 @@ namespace IEDExplorer
                     nextnb = _childNodes[0];
             }
 
-            lines.Add("DO(" + Name + " " + nrElem.ToString() + ") {");
+            lines.Add("DO(" + Name + " " + nrElem.ToString() + "){");
             foreach (NodeBase b in nextnb.GetChildNodes())
             {
                 b.SaveModel(lines, fromSCL);
