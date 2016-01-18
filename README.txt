@@ -124,3 +124,18 @@ Rev 0.76 2015/11/11
 * Autoupdate - removed bug when reading higher level nodes (IED, LD, LN)
 * Better readibility of octet_string values (converted to hex)
 * Save Data button for IED Data view - save data view incl. values to TXT file for reference
+
+Rev 0.77 2016/01/18
+* SCSM_MMS: InvokeId - autoPurge (internal functionality)
+  Stop Autorefresh (cyclic read) on unsuitable nodes (mostly in IEC View)
+* Saving CFG - split dialog, saveModel methods.
+  Bug correction - threading issue in Scsm_MMS_Worker.cs. Seen on the VMs.
+  Iec tree member nodes marked
+* Saving libiec61850 model file (CFG) - the feature is not yet fully finished
+* IEC structure view - tree.
+* reading binary_time + forgotten icon
+* Refresh data button in IED data view
+* Short fix DA/DO Type
+* small modification in TCP/RW
+* IEC data model - some first ideas
+* Collapse/Expand in tree. Some more DA/DO logic.
