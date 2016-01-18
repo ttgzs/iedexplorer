@@ -483,7 +483,7 @@ namespace IEDExplorer.Views
                         item.Tag = n;
                         item.Click += new EventHandler(OnSendCommandAsStructureClick);
                     }
-                    if (n is NodeData || n is NodeDO || n is NodeFC || n is NodeVL)
+                    if (n is NodeData || (n is NodeDO) && (!(n as NodeDO).IsIecModel) || n is NodeFC || n is NodeVL)
                     {
                         item = menu.Items.Add("Read Data");
                         item.Tag = n;

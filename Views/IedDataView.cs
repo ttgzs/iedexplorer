@@ -26,6 +26,26 @@ namespace IEDExplorer.Views
 
         internal void SelectNode(TreeNode tn)
         {
+            // Update logic
+            NodeBase nb = (NodeBase)tn.Tag;
+            if ((nb is NodeIed || nb.IsIecModel))
+            {
+                // Stop and disable AutoUpdate
+                timer_Au.Enabled = false;
+                toolStripButton_RunAu.Enabled = false;
+                toolStripButton_StopAu.Enabled = false;
+                toolStripButtonRefresh.Enabled = false;
+            }
+            else
+            {
+                if (timer_Au.Enabled == false)
+                {
+                    toolStripButton_RunAu.Enabled = true;
+                    toolStripButton_StopAu.Enabled = false;
+                    toolStripButtonRefresh.Enabled = true;
+                }
+            }
+
             foreach (ListViewItem l in this.listView_data.Items)
             {
                 if (l.Tag is TreeNode)

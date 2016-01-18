@@ -2309,7 +2309,15 @@ namespace IEDExplorer
             if (iecs.OutstandingCalls.Count >= MaxCalls)
             {
                 Logger.getLogger().LogWarning("Cannot send a request to client, " + MaxCalls + " calls pending for InvokeId " + (InvokeIdInc - 1).ToString());
-                return -1;
+                //return -1;
+                // Auto Purge
+                Logger.getLogger().LogWarning("Auto Purge Activated, deleting all previous operations. Too fast cycle of requests???");
+                NodeBase[] ret;
+                foreach (int id in iecs.OutstandingCalls.Keys)
+                {
+                    iecs.OutstandingCalls.TryRemove(id, out ret);
+                    Logger.getLogger().LogWarning("Auto Purging Id=" + id + ", Operation data: " + ((ret == null) ? "null" : (ret[0] == null) ? "null" : ret[0].Name));
+                }
             }
             if (!iecs.OutstandingCalls.TryAdd(InvokeIdInc - 1, OperationData)) return -2;
             return 0;
