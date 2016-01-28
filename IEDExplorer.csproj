@@ -66,6 +66,9 @@
     <RegisterForComInterop>False</RegisterForComInterop>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Iedexplorer.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -1155,6 +1158,7 @@
     <Content Include="Docking\Resources\InactiveTabHover_Close.bmp" />
     <Content Include="Docking\Resources\LostFocusTabHover_Close.bmp" />
     <Content Include="Docking\Resources\LostFocusTab_Close.bmp" />
+    <Content Include="Iedexplorer.ico" />
     <Content Include="README.txt" />
     <Content Include="Resources\calculator.png" />
     <Content Include="Resources\computer.png" />

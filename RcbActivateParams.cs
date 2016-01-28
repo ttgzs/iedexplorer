@@ -25,12 +25,14 @@ namespace IEDExplorer
         public NodeData[] getWriteArray()
         {
             List<NodeData> nlst = new List<NodeData>();
-            NodeBase fcn = self.FindChildNode("RptID");
-            if (sendRptID && fcn != null) nlst.Add((NodeData)fcn);
-            fcn = self.FindChildNode("RptEna");
-            if (sendRptEna && fcn != null) nlst.Add((NodeData)fcn);
-            fcn = self.FindChildNode("Resv");
+            // Reservation - Must go first!!!
+            NodeBase fcn = self.FindChildNode("Resv");
             if (sendResv && fcn != null) nlst.Add((NodeData)fcn);
+            fcn = self.FindChildNode("ResvTms");
+            if (sendResvTms && fcn != null) nlst.Add((NodeData)fcn);
+            // Normal members
+            fcn = self.FindChildNode("RptID");
+            if (sendRptID && fcn != null) nlst.Add((NodeData)fcn);
             fcn = self.FindChildNode("DatSet");
             if (sendDatSet && fcn != null) nlst.Add((NodeData)fcn);
             fcn = self.FindChildNode("OptFlds");
@@ -41,14 +43,16 @@ namespace IEDExplorer
             if (sendTrgOps && fcn != null) nlst.Add((NodeData)fcn);
             fcn = self.FindChildNode("IntgPd");
             if (sendIntgPd && fcn != null) nlst.Add((NodeData)fcn);
-            fcn = self.FindChildNode("GI");
-            if (sendGI && fcn != null) nlst.Add((NodeData)fcn);
             fcn = self.FindChildNode("PurgeBuf");
             if (sendPurgeBuf && fcn != null) nlst.Add((NodeData)fcn);
-            fcn = self.FindChildNode("ResvTms");
-            if (sendResvTms && fcn != null) nlst.Add((NodeData)fcn);
             fcn = self.FindChildNode("EntryID");
             if (sendEntryID && fcn != null) nlst.Add((NodeData)fcn);
+            // Activation - Must go last!!!
+            fcn = self.FindChildNode("RptEna");
+            if (sendRptEna && fcn != null) nlst.Add((NodeData)fcn);
+            // GI - Must go after activation!!!
+            fcn = self.FindChildNode("GI");
+            if (sendGI && fcn != null) nlst.Add((NodeData)fcn);
             return nlst.ToArray();
         }
     }
