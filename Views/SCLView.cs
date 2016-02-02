@@ -25,7 +25,8 @@ namespace IEDExplorer.Views
             InitializeComponent();
             try
             {
-                dataModels = new SCLParser().CreateTree(filename);
+                //dataModels = new SCLParser().CreateTree(filename);
+                dataModels = new SCLParserDOM().CreateTree(filename);
             }
             catch (Exception e)
             {
@@ -292,6 +293,7 @@ namespace IEDExplorer.Views
         {
             dataGridView_data.Rows.Clear();
             var n = (NodeBase)e.Node.Tag;
+            if (n == null) return;
 
             var row = dataGridView_data.Rows.Add(makeRow(n));
             dataGridView_data.Rows[row].Tag = e.Node;
