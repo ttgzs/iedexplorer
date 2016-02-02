@@ -35,16 +35,16 @@ using MMS_ASN1_Model;
 
 namespace IEDExplorer
 {
-    static class SCLParser
+    class SCLParser
     {
-        //private static Iec61850State _iecs;
-        private static Iec61850Model _dataModel;
-        private static List<NodeBase> _nodeTypes;
-        private static List<NodeBase> _dataObjectTypes;
-        private static List<NodeBase> _dataAttributeTypes;
+        //private Iec61850State _iecs;
+        private List<Iec61850Model> _dataModels = new List<Iec61850Model>();
+        private List<NodeBase> _nodeTypes;
+        private List<NodeBase> _dataObjectTypes;
+        private List<NodeBase> _dataAttributeTypes;
 
-        private static string _iedName = "";
-        private static Logger logger = Logger.getLogger();
+        //private string _iedName = "";
+        private Logger logger = Logger.getLogger();
 
         /// <summary>
         /// Reads through the specified SCL file and creates a logical tree
@@ -52,53 +52,61 @@ namespace IEDExplorer
         /// <param name="fileName"></param>
         /// <param name="env"></param>
         /// <returns>IECS tree state to be displayed</returns>
-        public static Iec61850Model CreateTree(String fileName) //, Env env)
+        public List<Iec61850Model> CreateTree(String fileName) //, Env env)
         {
             try
             {
-                _dataModel = new Iec61850State().DataModel;
+                _dataModels.Add(new Iec61850State().DataModel);
                 _nodeTypes = new List<NodeBase>();
                 _dataObjectTypes = new List<NodeBase>();
                 _dataAttributeTypes = new List<NodeBase>();
+                int i = 0;
 
                 logger.LogInfo("Reading node (LN) and data object (DO) types.");
+                // Model [0] is a master for types etc.
                 GetTypes(fileName);
 
                 using (var reader = XmlReader.Create(fileName))
                 {
                     logger.LogInfo("Reading XML tree.");
                     reader.ReadToDescendant("IED");
-                    _dataModel.ied = new NodeIed(reader.Name);
-                    _iedName = reader.GetAttribute("name");
-                    _dataModel.ied.VendorName = reader.GetAttribute("manufacturer");
-                    _dataModel.ied.ModelName = reader.GetAttribute("type");
-                    _dataModel.ied.Revision = reader.GetAttribute("revision");
-
-                    while (reader.Read())
+                    do
                     {
-                        if (reader.IsStartElement())
+                        // Create model. model 0 (master model) is already created above
+                        if (i > 0) _dataModels.Add(new Iec61850State().DataModel);
+                        _dataModels[i].ied = new NodeIed(reader.GetAttribute("name"));  //reader.Name);
+                        //_iedName = reader.GetAttribute("name");
+                        _dataModels[i].ied.VendorName = reader.GetAttribute("manufacturer");
+                        _dataModels[i].ied.ModelName = reader.GetAttribute("type");
+                        _dataModels[i].ied.Revision = reader.GetAttribute("revision");
+
+                        XmlReader sreader = reader.ReadSubtree();
+                        while (sreader.Read())
                         {
-                            switch (reader.Name)
+                            if (reader.IsStartElement())
                             {
-                                case "LDevice":
-                                    _dataModel.ied.AddChildNode(CreateLogicalDevice(reader.ReadSubtree()));
-                                    break;
+                                switch (reader.Name)
+                                {
+                                    case "LDevice":
+                                        _dataModels[i].ied.AddChildNode(CreateLogicalDevice(reader.ReadSubtree(), _dataModels[i].ied.Name));
+                                        break;
+                                }
                             }
                         }
-                    }
-                    _dataModel.ied.SortImmediateChildren(); //alphabetical
-                    _dataModel.enums.SortImmediateChildren();
+                        _dataModels[i].ied.SortImmediateChildren(); //alphabetical
+                        _dataModels[i].enums.SortImmediateChildren();
+                        logger.LogInfo("Reading data sets and reports.");
+                        GetDataSetsAndReports(fileName, _dataModels[i]);
+                        i++;
+                    } while (reader.ReadToNextSibling("IED"));
                 }
-
-                logger.LogInfo("Reading data sets and reports.");
-                GetDataSetsAndReports(fileName);
             }
             catch (Exception e)
             {
                 logger.LogError("Error reading file " + fileName + ": " + e.Message);
             }
 
-            return _dataModel;
+            return _dataModels;
         }
 
         /// <summary>
@@ -106,7 +114,7 @@ namespace IEDExplorer
         /// </summary>
         /// <param name="reader"></param>
         /// <returns> a LD node </returns>
-        private static NodeLD CreateLogicalDevice(XmlReader reader)
+        private NodeLD CreateLogicalDevice(XmlReader reader, string _iedName)
         {
             reader.Read();
             var logicalDevice = new NodeLD(String.Concat(_iedName, reader.GetAttribute("inst")));
@@ -128,7 +136,7 @@ namespace IEDExplorer
         /// </summary>
         /// <param name="reader"></param>
         /// <returns> a LN node </returns>
-        private static NodeLN CreateLogicalNode(XmlReader reader)
+        private NodeLN CreateLogicalNode(XmlReader reader)
         {
             reader.Read();
             
@@ -169,7 +177,7 @@ namespace IEDExplorer
         /// </summary>
         /// <param name="reader"></param>
         /// <returns> a LN node </returns>
-        private static NodeLN CreateLogicalNode2(XmlReader reader)
+        private NodeLN CreateLogicalNode2(XmlReader reader)
         {
             reader.Read();
             
@@ -296,7 +304,7 @@ namespace IEDExplorer
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>
-        private static NodeLN CreateLogicalNodeType(XmlReader reader)
+        private NodeLN CreateLogicalNodeType(XmlReader reader)
         {
             reader.Read();
             var logicalNode = new NodeLN(reader.GetAttribute("id"));
@@ -315,7 +323,7 @@ namespace IEDExplorer
         /// </summary>
         /// <param name="reader"></param>
         /// <returns> a DO Node representing a DO </returns>
-        private static NodeDO CreateDigitalObject(XmlReader reader)
+        private NodeDO CreateDigitalObject(XmlReader reader)
         {
             reader.Read();
             var digitalObject = new NodeDO(reader.GetAttribute("name"));
@@ -337,7 +345,7 @@ namespace IEDExplorer
         /// </summary>
         /// <param name="reader"></param>
         /// <returns> a DO node representing a DOType </returns>
-        private static NodeDO CreateDigitalObjectType(XmlReader reader)
+        private NodeDO CreateDigitalObjectType(XmlReader reader)
         {
             reader.Read();
             var digitalObjectType = new NodeDO(reader.GetAttribute("id"));
@@ -356,7 +364,7 @@ namespace IEDExplorer
         /// </summary>
         /// <param name="reader"></param>
         /// <returns> a node representing a DAType </returns>
-        private static NodeBase CreateDataAttributeType(XmlReader reader)
+        private NodeBase CreateDataAttributeType(XmlReader reader)
         {
             reader.Read();
             var dataAttributeType = new NodeBase(reader.GetAttribute("id"));
@@ -376,7 +384,7 @@ namespace IEDExplorer
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>
-        private static NodeData CreateDataAttribute(XmlReader reader)
+        private NodeData CreateDataAttribute(XmlReader reader)
         {
             reader.Read();
             var data = new NodeData(reader.GetAttribute("name"));
@@ -402,7 +410,7 @@ namespace IEDExplorer
         /// </summary>
         /// <param name="reader"></param>
         /// <returns> an Enum Type node </returns>
-        private static NodeBase CreateEnumType(XmlReader reader)
+        private NodeBase CreateEnumType(XmlReader reader)
         {
             reader.Read();
             var enumType = new NodeBase(reader.GetAttribute("id"));
@@ -412,7 +420,7 @@ namespace IEDExplorer
                 if (reader.IsStartElement() && reader.Name.Equals("EnumVal"))
                 {
                     var id = reader.GetAttribute("ord");
-                    var name = reader.ReadElementString();
+                    var name = reader.ReadString(); //ReadElementString();
                     var enumVal = enumType.AddChildNode(new NodeData(name));
                     (enumVal as NodeData).DataValue = id;
                 }
@@ -425,7 +433,7 @@ namespace IEDExplorer
         /// Parses the XML file for all LN, DO, DA, and Enum types
         /// </summary>
         /// <param name="filename"></param>
-        private static void GetTypes(String filename)
+        private void GetTypes(String filename)
         {
             var reader = new XmlTextReader(filename);
             while (reader.Read())
@@ -444,7 +452,7 @@ namespace IEDExplorer
                             _dataAttributeTypes.Add(CreateDataAttributeType(reader.ReadSubtree()));
                             break;
                         case "EnumType":
-                            _dataModel.enums.AddChildNode(CreateEnumType(reader.ReadSubtree()));
+                            _dataModels[0].enums.AddChildNode(CreateEnumType(reader.ReadSubtree()));
                             break;
                     }
                 }
@@ -455,7 +463,7 @@ namespace IEDExplorer
         /// Reads through the SCL file and looks for data sets and reports
         /// </summary>
         /// <param name="filename"></param>
-        private static void GetDataSetsAndReports(String filename)
+        private void GetDataSetsAndReports(String filename, Iec61850Model _dataModel)
         {
             var reader = new XmlTextReader(filename);
             var iedName = "";
@@ -486,7 +494,7 @@ namespace IEDExplorer
                             break;                        
                         case "DataSet":
                             parent = _dataModel.lists.AddChildNode(new NodeBase(String.Concat(iedName, deviceName))); // will return if already exists
-                            parent.AddChildNode(CreateDataSet(reader.ReadSubtree(), lnName, deviceName));
+                            parent.AddChildNode(CreateDataSet(reader.ReadSubtree(), lnName, deviceName, _dataModel));
                             break;
                         case "ReportControl":
                             parent = _dataModel.urcbs.AddChildNode(new NodeBase(String.Concat(iedName, deviceName))); // will return if already exists
@@ -504,7 +512,7 @@ namespace IEDExplorer
         /// <param name="nodeName"></param>
         /// <param name="deviceName"></param>
         /// <returns> a VL node </returns>
-        private static NodeVL CreateDataSet(XmlReader reader, string nodeName, string deviceName)
+        private NodeVL CreateDataSet(XmlReader reader, string nodeName, string deviceName, Iec61850Model _dataModel)
         {
             reader.Read();
 
@@ -522,7 +530,7 @@ namespace IEDExplorer
                     var doName = reader.GetAttribute("doName");
                     var fc = reader.GetAttribute("fc");
 
-                    var nodeData = _dataModel.ied.AddChildNode(new NodeLD(String.Concat(_iedName, ldInst)))
+                    var nodeData = _dataModel.ied.AddChildNode(new NodeLD(String.Concat(_dataModel.ied.Name, ldInst)))
                         .AddChildNode(new NodeLN(fullName))
                        .AddChildNode(new NodeFC(fc)).AddChildNode(new NodeData(doName));
 
@@ -539,7 +547,7 @@ namespace IEDExplorer
         /// <param name="nodeName"></param>
         /// <param name="deviceName"></param>
         /// <returns> a RP node </returns>
-        private static NodeRCB CreateReport(XmlReader reader, string nodeName, string deviceName)
+        private NodeRCB CreateReport(XmlReader reader, string nodeName, string deviceName)
         {
             reader.Read();
 
