@@ -54,6 +54,7 @@ namespace IEDExplorer
         {
             try
             {
+                // Model [0] is a master for types etc.
                 _dataModels.Add(new Iec61850State().DataModel);
                 _nodeTypes = new List<NodeBase>();
                 _dataObjectTypes = new List<NodeBase>();
@@ -61,42 +62,31 @@ namespace IEDExplorer
                 int i = 0;
 
                 logger.LogInfo("Reading node (LN) and data object (DO) types.");
-                // Model [0] is a master for types etc.
-                GetTypes(fileName);
-                //XDocument doc = XDocument.Load(fileName);
-                using (var reader = XmlReader.Create(fileName))
-                {
-                    logger.LogInfo("Reading XML tree.");
-                    reader.ReadToDescendant("IED");
-                    do
-                    {
-                        // Create model. model 0 (master model) is already created above
-                        if (i > 0) _dataModels.Add(new Iec61850State().DataModel);
-                        _dataModels[i].ied = new NodeIed(reader.GetAttribute("name"));  //reader.Name);
-                        //_iedName = reader.GetAttribute("name");
-                        _dataModels[i].ied.VendorName = reader.GetAttribute("manufacturer");
-                        _dataModels[i].ied.ModelName = reader.GetAttribute("type");
-                        _dataModels[i].ied.Revision = reader.GetAttribute("revision");
+                XDocument doc = XDocument.Load(fileName);
+                XNamespace ns = doc.Root.Name.Namespace;
+                GetTypes(doc, ns);
+                _dataModels[0].enums.SortImmediateChildren();
 
-                        XmlReader sreader = reader.ReadSubtree();
-                        while (sreader.Read())
-                        {
-                            if (reader.IsStartElement())
-                            {
-                                switch (reader.Name)
-                                {
-                                    case "LDevice":
-                                        _dataModels[i].ied.AddChildNode(CreateLogicalDevice(reader.ReadSubtree(), _dataModels[i].ied.Name));
-                                        break;
-                                }
-                            }
-                        }
-                        _dataModels[i].ied.SortImmediateChildren(); //alphabetical
-                        _dataModels[i].enums.SortImmediateChildren();
-                        logger.LogInfo("Reading data sets and reports.");
-                        GetDataSetsAndReports(fileName, _dataModels[i]);
-                        i++;
-                    } while (reader.ReadToNextSibling("IED"));
+                logger.LogInfo("Reading XML tree.");
+                foreach (XElement ied in doc.Root.Elements(ns + "IED"))
+                {
+                    // Create model. model 0 (master model) is already created above
+                    if (i > 0) _dataModels.Add(new Iec61850State().DataModel);
+                    XAttribute a = ied.Attribute("name");
+                    if (a != null) _dataModels[i].ied = new NodeIed(a.Value);
+                    a = ied.Attribute("manufacturer");
+                    if (a != null) _dataModels[i].ied.VendorName = a.Value;
+                    a = ied.Attribute("type");
+                    if (a != null) _dataModels[i].ied.ModelName = a.Value;
+                    a = ied.Attribute("revision");
+                    if (a != null) _dataModels[i].ied.Revision = a.Value;
+
+                    CreateLogicalDevices(_dataModels[i].ied, ied.Descendants(ns + "LDevice"), ns);
+                    _dataModels[i].ied.SortImmediateChildren(); //alphabetical
+                    logger.LogInfo("Reading data sets and reports.");
+                    
+                    GetDataSetsAndReports(fileName, _dataModels[i]);
+                    i++;
                 }
             }
             catch (Exception e)
@@ -112,21 +102,15 @@ namespace IEDExplorer
         /// </summary>
         /// <param name="reader"></param>
         /// <returns> a LD node </returns>
-        private NodeLD CreateLogicalDevice(XmlReader reader, string _iedName)
+        private void CreateLogicalDevices(NodeBase root, IEnumerable<XElement> elements, XNamespace ns)
         {
-            reader.Read();
-            var logicalDevice = new NodeLD(String.Concat(_iedName, reader.GetAttribute("inst")));
-            
-            while (reader.Read())
+            foreach (XElement ld in elements)
             {
-                // if a logical node element, create and add a LN child node
-                if (reader.IsStartElement() && reader.Name.StartsWith("LN"))
-                {
-                    logicalDevice.AddChildNode(CreateLogicalNode2(reader.ReadSubtree()));
-                }
+                NodeLD logicalDevice = new NodeLD(String.Concat(root.Name, ld.Attribute("inst").Value));
+                CreateLogicalNodes(logicalDevice, from el in ld.Elements() where el.Name.LocalName.StartsWith("LN") select el, ns);
+                logicalDevice.SortImmediateChildren(); // alphabetical sort
+                root.AddChildNode(logicalDevice);
             }
-            logicalDevice.SortImmediateChildren(); // alphabetical sort
-            return logicalDevice;
         }
 
         /// <summary>
@@ -135,152 +119,139 @@ namespace IEDExplorer
         /// </summary>
         /// <param name="reader"></param>
         /// <returns> a LN node </returns>
-        private NodeLN CreateLogicalNode2(XmlReader reader)
+        private void CreateLogicalNodes(NodeBase root, IEnumerable<XElement> elements, XNamespace ns)
         {
-            reader.Read();
-            
-            var prefix = reader.GetAttribute("prefix");
-            var lnClass = reader.GetAttribute("lnClass");
-            var inst = reader.GetAttribute("inst");
-            var type = reader.GetAttribute("lnType");
-
-            // LN name is a combination of prefix, lnCLass, and inst
-            var name = !String.IsNullOrWhiteSpace(prefix) ? String.Concat(prefix, lnClass, inst) : String.Concat(lnClass, inst);
-
-            NodeLN logicalNode = new NodeLN(name);
-            logicalNode.TypeId = type;
-
-            Hashtable functionalConstraints = new Hashtable();
-            NodeBase nodeType;
-            try
+            foreach (XElement ln in elements)
             {
-                nodeType = _nodeTypes.Single(nt => nt.Name.Equals(type));
-            }
-            catch (Exception e)
-            {
-                logger.LogError("SCL Parser: LN type template not found: " + type.ToString() + ", for Node: " + name.ToString() + ", Exception: " + e.Message);
-                return null;
-            }
+                XAttribute a = ln.Attribute("prefix");
+                string prefix = a != null ? a.Value : "";
+                a = ln.Attribute("lnClass");
+                string lnClass = a != null ? a.Value : "";
+                a = ln.Attribute("inst");
+                string inst = a != null ? a.Value : "";
+                a = ln.Attribute("lnType");
+                string type = a != null ? a.Value : "";
 
-            // for each DO in the LNodeType
-            foreach (var dataObject in nodeType.GetChildNodes())
-            {
-                NodeBase doType = null;
+                // LN name is a combination of prefix, lnCLass, and inst
+                var name = !String.IsNullOrWhiteSpace(prefix) ? String.Concat(prefix, lnClass, inst) : String.Concat(lnClass, inst);
+
+                NodeLN logicalNode = new NodeLN(name);
+                logicalNode.TypeId = type;
+
+                Hashtable functionalConstraints = new Hashtable();
+                NodeBase nodeType;
                 try
                 {
-                    doType = _dataObjectTypes.Single(dot => dot.Name.Equals((dataObject as NodeDO).Type));
+                    nodeType = _nodeTypes.Single(nt => nt.Name.Equals(type));
                 }
                 catch (Exception e)
                 {
-                    logger.LogError("SCL Parser: DO type template not found: " + (dataObject as NodeDO).Type + ", for LN type: " + nodeType.Name + ", in node: " + name.ToString() + ", Exception: " + e.Message);
+                    logger.LogError("SCL Parser: LN type template not found: " + type.ToString() + ", for Node: " + name.ToString() + ", Exception: " + e.Message);
                     continue;
                 }
 
-                // for each DA in the DOType
-                foreach (var dataAttribute in doType.GetChildNodes())
+                // for each DO in the LNodeType
+                foreach (var dataObject in nodeType.GetChildNodes())
                 {
-                    var fc = (dataAttribute as NodeData).FCDesc;
-                    (dataAttribute as NodeData).DOName = dataObject.Name;
-                    NodeData newNode = new NodeData(dataAttribute.Name);
-                    newNode.Type = (dataAttribute as NodeData).Type;
-                    newNode.BType = (dataAttribute as NodeData).BType;
-                    newNode.DOName = (dataAttribute as NodeData).DOName;
-                    newNode.FCDesc = (dataAttribute as NodeData).FCDesc;
-                    
-                    // when the type is specified (ie. when it's a struct), get the struct child nodes
-                    if (!String.IsNullOrWhiteSpace(newNode.Type))
+                    NodeBase doType = null;
+                    try
                     {
-                        var dataType =
-                            _dataAttributeTypes.Single(dat => dat.Name.Equals((newNode.Type)));
-                        foreach (NodeBase child in dataType.GetChildNodes())
+                        doType = _dataObjectTypes.Single(dot => dot.Name.Equals((dataObject as NodeDO).Type));
+                    }
+                    catch (Exception e)
+                    {
+                        logger.LogError("SCL Parser: DO type template not found: " + (dataObject as NodeDO).Type + ", for LN type: " + nodeType.Name + ", in node: " + name.ToString() + ", Exception: " + e.Message);
+                        continue;
+                    }
+
+                    // for each DA in the DOType
+                    foreach (var dataAttribute in doType.GetChildNodes())
+                    {
+                        var fc = (dataAttribute as NodeData).FCDesc;
+                        (dataAttribute as NodeData).DOName = dataObject.Name;
+                        NodeData newNode = new NodeData(dataAttribute.Name);
+                        newNode.Type = (dataAttribute as NodeData).Type;
+                        newNode.BType = (dataAttribute as NodeData).BType;
+                        newNode.DOName = (dataAttribute as NodeData).DOName;
+                        newNode.FCDesc = (dataAttribute as NodeData).FCDesc;
+
+                        // when the type is specified (ie. when it's a struct), get the struct child nodes
+                        if (!String.IsNullOrWhiteSpace(newNode.Type))
                         {
-                            var tempChild = new NodeData(child.Name);
-                            tempChild.BType = (child as NodeData).BType;
-                            if (!String.IsNullOrWhiteSpace((child as NodeData).Type))
+                            var dataType =
+                                _dataAttributeTypes.Single(dat => dat.Name.Equals((newNode.Type)));
+                            foreach (NodeBase child in dataType.GetChildNodes())
                             {
-                                var subDataType = _dataAttributeTypes.Single(dat => dat.Name.Equals((child as NodeData).Type));
-                                foreach (NodeBase subChild in subDataType.GetChildNodes())
+                                var tempChild = new NodeData(child.Name);
+                                tempChild.BType = (child as NodeData).BType;
+                                if (!String.IsNullOrWhiteSpace((child as NodeData).Type))
                                 {
-                                    var tempSubChild = new NodeData(subChild.Name);
-                                    tempSubChild.BType = (subChild as NodeData).BType;
-                                    tempChild.AddChildNode(subChild);
+                                    var subDataType = _dataAttributeTypes.Single(dat => dat.Name.Equals((child as NodeData).Type));
+                                    foreach (NodeBase subChild in subDataType.GetChildNodes())
+                                    {
+                                        var tempSubChild = new NodeData(subChild.Name);
+                                        tempSubChild.BType = (subChild as NodeData).BType;
+                                        tempChild.AddChildNode(subChild);
+                                    }
                                 }
+                                newNode.AddChildNode(tempChild);
                             }
-                            newNode.AddChildNode(tempChild);
+                        }
+                        if (!functionalConstraints.ContainsKey(fc))
+                        {
+                            NodeFC nodeFC = new NodeFC(fc);
+                            nodeFC.ForceAddChildNode(newNode);
+                            functionalConstraints.Add(fc, nodeFC);
+                        }
+                        else
+                        {
+                            (functionalConstraints[fc] as NodeBase).ForceAddChildNode(newNode);
                         }
                     }
-                    if (!functionalConstraints.ContainsKey(fc))
-                    {
-                        NodeFC nodeFC = new NodeFC(fc);
-                        nodeFC.ForceAddChildNode(newNode);
-                        functionalConstraints.Add(fc, nodeFC);
-                    }
-                    else
-                    {
-                        (functionalConstraints[fc] as NodeBase).ForceAddChildNode(newNode);
-                    }
                 }
-            }
-            
-            // for each hashtable element
-            foreach (var key in functionalConstraints.Keys)
-            {
-                var doList = new List<NodeDO>();
 
-                // for each data attribute of the functional constraint
-                foreach (var da in (functionalConstraints[key] as NodeBase).GetChildNodes())
+                // for each hashtable element
+                foreach (var key in functionalConstraints.Keys)
                 {
-                    var doName = (da as NodeData).DOName;
-                    if (doList.Exists(x => x.Name.Equals(doName)))
+                    var doList = new List<NodeDO>();
+
+                    // for each data attribute of the functional constraint
+                    foreach (var da in (functionalConstraints[key] as NodeBase).GetChildNodes())
                     {
-                        doList.Single(x => x.Name.Equals(doName)).AddChildNode(da);
+                        var doName = (da as NodeData).DOName;
+                        if (doList.Exists(x => x.Name.Equals(doName)))
+                        {
+                            doList.Single(x => x.Name.Equals(doName)).AddChildNode(da);
+                        }
+                        else
+                        {
+                            var temp = new NodeDO(doName);
+                            temp.AddChildNode(da);
+                            doList.Add(temp);
+                        }
                     }
-                    else
+
+                    var nodeFC = new NodeFC(key as string);
+                    foreach (NodeDO x in doList)
                     {
-                        var temp = new NodeDO(doName);
-                        temp.AddChildNode(da);
-                        doList.Add(temp);
+                        nodeFC.AddChildNode(x);
                     }
+                    nodeFC.SortImmediateChildren(); // alphabetical
+                    logicalNode.AddChildNode(nodeFC);
                 }
 
-                var nodeFC = new NodeFC(key as string);
-                foreach (NodeDO x in doList)
-                {
-                    nodeFC.AddChildNode(x);
-                }
-                nodeFC.SortImmediateChildren(); // alphabetical
-                logicalNode.AddChildNode(nodeFC);
+                logicalNode.SortImmediateChildren(); // alphabetical
+
+                root.AddChildNode(logicalNode);
             }
-
-            logicalNode.SortImmediateChildren(); // alphabetical
-
-            return logicalNode;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="reader"></param>
-        /// <returns></returns>
-        private NodeLN CreateLogicalNodeType(XmlReader reader)
-        {
-            reader.Read();
-            var logicalNode = new NodeLN(reader.GetAttribute("id"));
-            while (reader.Read())
-            {
-                if (reader.IsStartElement() && reader.Name.Equals("DO"))
-                {
-                    logicalNode.AddChildNode(CreateDigitalObject(reader.ReadSubtree()));
-                }
-            }
-            return logicalNode;
-        }
-        private void CreateLogicalNodeTypes(List<NodeBase> list, IEnumerable<XElement> elements)
+        private void CreateLogicalNodeTypes(List<NodeBase> list, IEnumerable<XElement> elements, XNamespace ns)
         {
             foreach (XElement el in elements)
             {
                 NodeLN logicalNode = new NodeLN(el.Attribute("id").Value);
-                CreateDataObjects(logicalNode, el.Elements("DO"));
+                CreateDataObjects(logicalNode, el.Elements(ns + "DO"), ns);
                 list.Add(logicalNode);
             }
         }
@@ -290,24 +261,7 @@ namespace IEDExplorer
         /// </summary>
         /// <param name="reader"></param>
         /// <returns> a DO Node representing a DO </returns>
-        private NodeDO CreateDigitalObject(XmlReader reader)
-        {
-            reader.Read();
-            var digitalObject = new NodeDO(reader.GetAttribute("name"));
-            if (reader.AttributeCount > 1)
-                digitalObject.Type = reader.GetAttribute("type");
-            while (reader.Read())
-            {
-                if (reader.IsStartElement() && reader.Name.Equals("DAI"))
-                {
-                    digitalObject.AddChildNode(CreateDataAttribute(reader.ReadSubtree()));
-                }
-            }
-            digitalObject.SortImmediateChildren();
-            return digitalObject;
-        }
-
-        private void CreateDataObjects(NodeBase root, IEnumerable<XElement> elements)
+        private void CreateDataObjects(NodeBase root, IEnumerable<XElement> elements, XNamespace ns)
         {
             foreach (XElement el in elements)
             {
@@ -315,7 +269,7 @@ namespace IEDExplorer
                 var type = el.Attribute("type");
                 if (type != null)
                     dataObject.Type = type.Value;
-                CreateDataAttributes(dataObject, el.Elements("DAI"));
+                CreateDataAttributes(dataObject, el.Elements(ns + "DAI"), ns);
                 dataObject.SortImmediateChildren();
                 root.AddChildNode(dataObject);
             }
@@ -325,26 +279,12 @@ namespace IEDExplorer
         /// </summary>
         /// <param name="reader"></param>
         /// <returns> a DO node representing a DOType </returns>
-        private NodeDO CreateDigitalObjectType(XmlReader reader)
-        {
-            reader.Read();
-            var digitalObjectType = new NodeDO(reader.GetAttribute("id"));
-            while (reader.Read())
-            {
-                if (reader.IsStartElement() && reader.Name.Equals("DA"))
-                {
-                    digitalObjectType.AddChildNode(CreateDataAttribute(reader.ReadSubtree()));
-                }
-            }
-            return digitalObjectType;
-        }
-
-        private void CreateDataObjectTypes(List<NodeBase> list, IEnumerable<XElement> elements)
+        private void CreateDataObjectTypes(List<NodeBase> list, IEnumerable<XElement> elements, XNamespace ns)
         {
             foreach (XElement el in elements)
             {
                 NodeDO dataObject = new NodeDO(el.Attribute("id").Value);
-                CreateDataAttributes(dataObject, el.Elements("DA"));
+                CreateDataAttributes(dataObject, el.Elements(ns + "DA"), ns);
                 list.Add(dataObject);
             }
         }
@@ -354,27 +294,12 @@ namespace IEDExplorer
         /// </summary>
         /// <param name="reader"></param>
         /// <returns> a node representing a DAType </returns>
-        private NodeBase CreateDataAttributeType(XmlReader reader)
-        {
-            reader.Read();
-            var dataAttributeType = new NodeBase(reader.GetAttribute("id"));
-            while (reader.Read())
-            {
-                if (reader.IsStartElement() && reader.Name.Equals("BDA"))
-                {
-                    dataAttributeType.AddChildNode(CreateDataAttribute(reader.ReadSubtree()));
-                }
-            }
-            return dataAttributeType;
-
-        }
-
-        private void CreateDataAttributeTypes(List<NodeBase> list, IEnumerable<XElement> elements)
+        private void CreateDataAttributeTypes(List<NodeBase> list, IEnumerable<XElement> elements, XNamespace ns)
         {
             foreach (XElement el in elements)
             {
                 NodeData data = new NodeData(el.Attribute("id").Value);
-                CreateDataAttributes(data, el.Elements("BDA"));
+                CreateDataAttributes(data, el.Elements(ns + "BDA"), ns);
                 list.Add(data);
             }
         }
@@ -384,48 +309,30 @@ namespace IEDExplorer
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>
-        private NodeData CreateDataAttribute(XmlReader reader)
-        {
-            reader.Read();
-            var data = new NodeData(reader.GetAttribute("name"));
-            data.FCDesc = reader.GetAttribute("fc");
-            if (null == reader.GetAttribute("bType"))
-            {
-                reader.ReadToDescendant("Val");
-                data.DataValue = reader.ReadElementString();
-            }
-            else
-            {
-                data.BType = reader.GetAttribute("bType");
-                if (data.BType.Equals("Struct") && null != reader.GetAttribute("type"))
-                    data.Type = reader.GetAttribute("type");
-                else if (data.BType.Equals("Enum"))
-                    data.BType = String.Concat(data.BType, " (Integer)");
-            }
-            return data;
-        }
-
-        private void CreateDataAttributes(NodeBase root, IEnumerable<XElement> elements)
+        private void CreateDataAttributes(NodeBase root, IEnumerable<XElement> elements, XNamespace ns)
         {
             foreach (XElement el in elements)
             {
-                NodeData data = new NodeData(el.Attribute("name").Value);
-                data.FCDesc = el.Attribute("fc").Value;
-                var bType = el.Attribute("bType");
-                if (bType == null)
+                if (el.Attribute("name") != null)
                 {
-                    List<XElement> en = el.Elements("Val").ToList();
-                    if (en.Count > 1) data.DataValue = en[0].Value;
+                    NodeData data = new NodeData(el.Attribute("name").Value);
+                    if (el.Attribute("fc") != null) data.FCDesc = el.Attribute("fc").Value;
+                    var bType = el.Attribute("bType");
+                    if (bType == null)
+                    {
+                        XElement en = el.Element(ns + "Val");
+                        if (en != null) data.DataValue = en.Value;
+                    }
+                    else
+                    {
+                        data.BType = bType.Value;
+                        if (data.BType.Equals("Struct") && null != el.Attribute("type"))
+                            data.Type = el.Attribute("type").Value;
+                        else if (data.BType.Equals("Enum"))
+                            data.BType = String.Concat(data.BType, " (Integer)");
+                    }
+                    root.AddChildNode(data);
                 }
-                else
-                {
-                    data.BType = bType.Value;
-                    if (data.BType.Equals("Struct") && null != el.Attribute("type"))
-                        data.Type = el.Attribute("type").Value;
-                    else if (data.BType.Equals("Enum"))
-                        data.BType = String.Concat(data.BType, " (Integer)");
-                }
-                root.AddChildNode(data);
             }
         }
 
@@ -434,38 +341,26 @@ namespace IEDExplorer
         /// </summary>
         /// <param name="reader"></param>
         /// <returns> an Enum Type node </returns>
-        private NodeBase CreateEnumType(XmlReader reader)
-        {
-            reader.Read();
-            var enumType = new NodeBase(reader.GetAttribute("id"));
-
-            while (reader.Read())
-            {
-                if (reader.IsStartElement() && reader.Name.Equals("EnumVal"))
-                {
-                    var id = reader.GetAttribute("ord");
-                    var name = reader.ReadString(); //ReadElementString();
-                    var enumVal = enumType.AddChildNode(new NodeData(name));
-                    (enumVal as NodeData).DataValue = id;
-                }
-            }
-
-            return enumType;
-        }
-        private void CreateEnumTypes(NodeBase root, IEnumerable<XElement> elements)
+        private void CreateEnumTypes(NodeBase root, IEnumerable<XElement> elements, XNamespace ns)
         {
             foreach (XElement el in elements)
             {
-                NodeBase enumType = new NodeBase(el.Attribute("id").Value);
-
-                foreach (XElement ev in el.Elements("EnumVal"))
+                if (el.Attribute("id") != null)
                 {
-                    var id = ev.Attribute("ord").Value;
-                    var name = ev.Value;
-                    var enumVal = enumType.AddChildNode(new NodeData(name));
-                    (enumVal as NodeData).DataValue = id;
-                }
+                    NodeBase enumType = new NodeBase(el.Attribute("id").Value);
 
+                    foreach (XElement ev in el.Elements(ns + "EnumVal"))
+                    {
+                        if (ev.Attribute("ord") != null)
+                        {
+                            var id = ev.Attribute("ord").Value;
+                            var name = ev.Value;
+                            var enumVal = enumType.AddChildNode(new NodeData(name));
+                            (enumVal as NodeData).DataValue = id;
+                        }
+                    }
+                    root.AddChildNode(enumType);
+                }
             }
         }
 
@@ -473,15 +368,16 @@ namespace IEDExplorer
         /// Parses the XML file for all LN, DO, DA, and Enum types
         /// </summary>
         /// <param name="filename"></param>
-        private void GetTypes(String filename)
+        private void GetTypes(XDocument doc, XNamespace ns)
         {
-            //var reader = new XmlTextReader(filename);
-            XDocument doc = XDocument.Load(filename);
+            ns = doc.Root.Name.Namespace;
 
-            CreateLogicalNodeTypes(_nodeTypes, doc.Root.Elements("LNodeType"));
-            CreateDataObjectTypes(_dataObjectTypes, doc.Root.Elements("DOType"));
-            CreateDataAttributeTypes(_dataAttributeTypes, doc.Root.Elements("DAType"));
-            CreateEnumTypes(_dataModels[0].enums, doc.Root.Elements("EnumType"));
+            XElement templates = doc.Root.Element(ns + "DataTypeTemplates");
+
+            CreateLogicalNodeTypes(_nodeTypes, templates.Elements(ns + "LNodeType"), ns);
+            CreateDataObjectTypes(_dataObjectTypes, templates.Elements(ns + "DOType"), ns);
+            CreateDataAttributeTypes(_dataAttributeTypes, templates.Elements(ns + "DAType"), ns);
+            CreateEnumTypes(_dataModels[0].enums, templates.Elements(ns + "EnumType"), ns);
 
         }
 
