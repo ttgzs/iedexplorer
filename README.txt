@@ -140,7 +140,7 @@ Rev 0.77 2016/01/18
 * IEC data model - some first ideas
 * Collapse/Expand in tree. Some more DA/DO logic.
 
-Rev 0.77b 2016/01/18
+Rev 0.77b 2016/02/04
 (Service release)
 * Writing of unsigned and integer values
 * Test XML DOM parser for SCL Parser and View
