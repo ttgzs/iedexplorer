@@ -1285,16 +1285,6 @@ namespace IEDExplorer
                     // DO or DA?
                     bool isDO = false;
                     if (actualNode is NodeFC) isDO = true;  // Safe to say under FC must be a DO
-                    // If we are DO AND there is NO LEAF in children in node to be added, we say it is a DO
-                    /*if (actualNode is NodeDO)
-                    {
-                        isDO = true;
-                        foreach (TypeDescription.StructureSequenceType.ComponentsSequenceType s2 in t.Structure.Components)
-                        {
-                            if (!s2.ComponentType.TypeDescription.isStructureSelected())
-                                isDO = false;
-                        }
-                    }*/
                     if (isDO)
                         newActualNode = new NodeDO(s.ComponentName.Value);
                     else
@@ -1820,6 +1810,36 @@ namespace IEDExplorer
                             break;
                         case scsm_MMS_TypeEnum.integer:
                             dat.selectInteger((long)d.DataValue);
+                            break;
+                        case scsm_MMS_TypeEnum.floating_point:
+                            byte[] byteval;
+                            byte[] tmp;
+                            if (d.DataValue is float)
+                            {
+                                byteval = new byte[5];
+                                tmp = BitConverter.GetBytes((float)d.DataValue);
+                                byteval[4] = tmp[0];
+                                byteval[3] = tmp[1];
+                                byteval[2] = tmp[2];
+                                byteval[1] = tmp[3];
+                                byteval[0] = 0x08;
+                            }
+                            else
+                            {
+                                byteval = new byte[9];
+                                tmp = BitConverter.GetBytes((float)d.DataValue);
+                                byteval[8] = tmp[0];
+                                byteval[7] = tmp[1];
+                                byteval[6] = tmp[2];
+                                byteval[5] = tmp[3];
+                                byteval[4] = tmp[4];
+                                byteval[3] = tmp[5];
+                                byteval[2] = tmp[6];
+                                byteval[1] = tmp[7];
+                                byteval[0] = 0x08;      // ???????????? TEST
+                            }
+                            FloatingPoint fpval = new FloatingPoint(byteval);
+                            dat.selectFloating_point(fpval);
                             break;
                         default:
                             iecs.logger.LogError("mms.SendWrite: Cannot send unknown datatype!");

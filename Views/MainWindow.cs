@@ -37,7 +37,7 @@ namespace IEDExplorer.Views
             worker = new Scsm_MMS_Worker(env);
 
             wm = new WindowManager(dockPanel1, env, this);
-            this.Text = "IED Explorer 0.77";
+            this.Text = "IED Explorer 0.77b";
 
             logger.LogInfo("Starting main program ...");
 

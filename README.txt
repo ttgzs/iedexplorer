@@ -139,3 +139,10 @@ Rev 0.77 2016/01/18
 * small modification in TCP/RW
 * IEC data model - some first ideas
 * Collapse/Expand in tree. Some more DA/DO logic.
+
+Rev 0.77b 2016/01/18
+(Service release)
+* Writing of unsigned and integer values
+* Test XML DOM parser for SCL Parser and View
+* SCL Parser and View - more IEDs from SCD can be read in. Some improvement in parser, parser made non-static
+* Small correction in variables precedence in RCB activation dialog. Icon for EXE made explicit.

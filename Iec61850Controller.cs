@@ -239,17 +239,22 @@ namespace IEDExplorer
 
         public void WriteData(NodeData data, bool reRead)
         {
-            NodeData[] ndarr = new NodeData[1];
-            ndarr[0] = data;
-            iecs.Send(ndarr, data.Parent.CommAddress, ActionRequested.Write);
-
-            if (reRead)
+            if (data != null && data.DataValue != null)
             {
-                delayTimer = new System.Threading.Timer(obj =>
+                NodeData[] ndarr = new NodeData[1];
+                ndarr[0] = data;
+                iecs.Send(ndarr, data.Parent.CommAddress, ActionRequested.Write);
+
+                if (reRead)
                 {
-                    ReadData(data);
-                }, null, 1000, System.Threading.Timeout.Infinite);
+                    delayTimer = new System.Threading.Timer(obj =>
+                    {
+                        ReadData(data);
+                    }, null, 1000, System.Threading.Timeout.Infinite);
+                }
             }
+            else
+                Logger.getLogger().LogError("Iec61850Controller.WriteData: null data (-Value), cannot send");
         }
 
         public void WriteRcb(RcbActivateParams rpar, bool reRead)

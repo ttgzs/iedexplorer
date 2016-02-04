@@ -245,41 +245,81 @@ namespace IEDExplorer
             {
                 if (value != null && value != "")
                 {
-                    switch (DataType)
+                    try
                     {
-                        case scsm_MMS_TypeEnum.utc_time:
+                        switch (DataType)
+                        {
+                            //case scsm_MMS_TypeEnum.utc_time:
                             // Not supported
-                            break;
-                        case scsm_MMS_TypeEnum.bit_string:
-                            byte[] bbval = (byte[])DataValue;
-                            int blen = bbval.Length;
-                            int trail = (int)DataParam;
+                            //    break;
+                            case scsm_MMS_TypeEnum.bit_string:
+                                byte[] bbval = (byte[])DataValue;
+                                int blen = bbval.Length;
+                                int trail = (int)DataParam;
 
-                            StringBuilder sb = new StringBuilder(32);
-                            for (int i = 0; i < blen * 8 - trail; i++)
-                            {
-                                if (((bbval[(i / 8)] << (i % 8)) & 0x80) > 0)
-                                    sb.Append(1);     //.Insert(0, 1);
+                                StringBuilder sb = new StringBuilder(32);
+                                for (int i = 0; i < blen * 8 - trail; i++)
+                                {
+                                    if (((bbval[(i / 8)] << (i % 8)) & 0x80) > 0)
+                                        sb.Append(1);     //.Insert(0, 1);
+                                    else
+                                        sb.Append(0);     //.Insert(0, 0);
+                                }
+                                //val = sb.ToString();
+                                break;
+                            case scsm_MMS_TypeEnum.boolean:
+                                if (value.StartsWith("0") || value.StartsWith("f", StringComparison.CurrentCultureIgnoreCase))
+                                    DataValue = false;
+                                if (value.StartsWith("1") || value.StartsWith("t", StringComparison.CurrentCultureIgnoreCase))
+                                    DataValue = true;
+                                break;
+                            case scsm_MMS_TypeEnum.visible_string:
+                                DataValue = value;
+                                break;
+                            case scsm_MMS_TypeEnum.octet_string:
+                                DataValue = Encoding.ASCII.GetBytes(value);
+                                break;
+                            case scsm_MMS_TypeEnum.unsigned:
+                                long uns;
+                                if (long.TryParse(value, out uns))
+                                {
+                                    DataValue = uns;
+                                }
                                 else
-                                    sb.Append(0);     //.Insert(0, 0);
-                            }
-                            //val = sb.ToString();
-                            break;
-                        case scsm_MMS_TypeEnum.boolean:
-                            if (value.StartsWith("0") || value.StartsWith("f", StringComparison.CurrentCultureIgnoreCase))
-                                DataValue = false;
-                            if (value.StartsWith("1") || value.StartsWith("t", StringComparison.CurrentCultureIgnoreCase))
-                                DataValue = true;
-                            break;
-                        case scsm_MMS_TypeEnum.visible_string:
-                            DataValue = value;
-                            break;
-                        case scsm_MMS_TypeEnum.octet_string:
-                            DataValue = Encoding.ASCII.GetBytes(value);
-                            break;
-                        default:
-                            //val = DataValue.ToString();
-                            break;
+                                {
+                                    Logger.getLogger().LogError("NodeData.StringValue - cannot parse '" + value + "' to unsigned (internally int64)");
+                                }
+                                break;
+                            case scsm_MMS_TypeEnum.integer:
+                                long sint;
+                                if (long.TryParse(value, out sint))
+                                {
+                                    DataValue = sint;
+                                }
+                                else
+                                {
+                                    Logger.getLogger().LogError("NodeData.StringValue - cannot parse '" + value + "' to integer (internally int64)");
+                                }
+                                break;
+                            case scsm_MMS_TypeEnum.floating_point:
+                                float fval;
+                                if (float.TryParse(value, out fval))
+                                {
+                                    DataValue = fval;
+                                }
+                                else
+                                {
+                                    Logger.getLogger().LogError("NodeData.StringValue - cannot parse '" + value + "' to float");
+                                }
+                                break;
+                            default:
+                                Logger.getLogger().LogError("NodeData.StringValue - type '" + DataType.ToString() + "' not implemented");
+                                break;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.getLogger().LogError("NodeData.StringValue - cannot parse '" + value + "' to type '" + DataType.ToString() + "', exception: " + e.Message);
                     }
                 }
             }
