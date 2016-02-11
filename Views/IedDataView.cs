@@ -210,7 +210,7 @@ namespace IEDExplorer.Views
             if (actualNode == null) return;
             Iec61850State iecs = actualNode.GetIecs();
             NodeBase[] ndarr = null;// = new NodeBase[1];
-            if (actualNode is NodeData || actualNode is NodeDO || actualNode is NodeFC || actualNode is NodeVL)
+            if (actualNode is NodeData || actualNode is NodeDO || actualNode is NodeFC || actualNode is NodeVL || actualNode is NodeRCB)
             {
                 ndarr = new NodeBase[1];
                 ndarr[0] = actualNode;

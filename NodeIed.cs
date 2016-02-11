@@ -26,10 +26,13 @@ namespace IEDExplorer
 {
     class NodeIed: NodeBase
     {
-        public NodeIed(string Name)
+        public NodeIed(string Name, Iec61850Model _model)
             : base(Name)
         {
+            model = _model;
         }
+        
+        Iec61850Model model;
 
         public string VendorName { get; set; }
 
@@ -95,6 +98,8 @@ namespace IEDExplorer
         }
 
         public string IedModelName { get; set; }
+
+        public Iec61850Model Model { get { return model; } }
 
     }
 }

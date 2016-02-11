@@ -74,7 +74,7 @@ namespace IEDExplorer
                     {
                         // Create model. model 0 (master model) is already created above
                         if (i > 0) _dataModels.Add(new Iec61850State().DataModel);
-                        _dataModels[i].ied = new NodeIed(reader.GetAttribute("name"));  //reader.Name);
+                        _dataModels[i].ied = new NodeIed(reader.GetAttribute("name"), _dataModels[i]);  //reader.Name);
                         //_iedName = reader.GetAttribute("name");
                         _dataModels[i].ied.VendorName = reader.GetAttribute("manufacturer");
                         _dataModels[i].ied.ModelName = reader.GetAttribute("type");
@@ -469,8 +469,8 @@ namespace IEDExplorer
             var iedName = "";
             var deviceName = "";
             var lnName = "";
-            _dataModel.lists = new NodeIed("lists");
-            _dataModel.urcbs = new NodeIed("reports");
+            _dataModel.lists = new NodeIed("lists", _dataModel);
+            _dataModel.urcbs = new NodeIed("reports", _dataModel);
             while (reader.Read())
             {
                 if (reader.IsStartElement())

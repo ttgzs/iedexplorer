@@ -100,6 +100,18 @@ namespace IEDExplorer
             return (NodeBase[])_childNodes.ToArray();
         }
 
+        public NodeBase GetChildNode(int idx)
+        {
+            try
+            {
+                return _childNodes[idx];
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public List<string> GetChildNodeNames()
         {
             List<string> names = new List<string>();
@@ -207,6 +219,7 @@ namespace IEDExplorer
         {
             _childNodes.Clear();
             if (Parent != null) Parent.RemoveChildNode(this);
+            //Tag = null;
         }
 
         public NodeBase GetActualChildNode()

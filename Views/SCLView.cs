@@ -31,6 +31,7 @@ namespace IEDExplorer.Views
             catch (Exception e)
             {
                 Logger.getLogger().LogError(" Reading SCL: " + e.Message);
+                return;
             }
             prepareTree();
             makeTreeScl(dataModels[0]);
@@ -226,6 +227,7 @@ namespace IEDExplorer.Views
 
         private void makeTree_enumNode(NodeBase nb, TreeNode tn)
         {
+            if (nb == null) return;
             foreach (NodeBase b in nb.GetChildNodes())
             {
                 TreeNode tn2 = tn.Nodes.Add(b.Name);

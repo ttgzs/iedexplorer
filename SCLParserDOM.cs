@@ -61,19 +61,20 @@ namespace IEDExplorer
                 _dataAttributeTypes = new List<NodeBase>();
                 int i = 0;
 
-                logger.LogInfo("Reading node (LN) and data object (DO) types.");
+                logger.LogInfo("Reading SCL file " + fileName);
                 XDocument doc = XDocument.Load(fileName);
                 XNamespace ns = doc.Root.Name.Namespace;
                 GetTypes(doc, ns);
                 _dataModels[0].enums.SortImmediateChildren();
 
-                logger.LogInfo("Reading XML tree.");
+                //logger.LogInfo("Reading XML tree.");
                 foreach (XElement ied in doc.Root.Elements(ns + "IED"))
                 {
                     // Create model. model 0 (master model) is already created above
                     if (i > 0) _dataModels.Add(new Iec61850State().DataModel);
                     XAttribute a = ied.Attribute("name");
-                    if (a != null) _dataModels[i].ied = new NodeIed(a.Value);
+                    if (a != null) _dataModels[i].ied = new NodeIed(a.Value, _dataModels[i]);
+                    else continue;  // cannot proceed
                     a = ied.Attribute("manufacturer");
                     if (a != null) _dataModels[i].ied.VendorName = a.Value;
                     a = ied.Attribute("type");
@@ -82,16 +83,37 @@ namespace IEDExplorer
                     if (a != null) _dataModels[i].ied.Revision = a.Value;
 
                     CreateLogicalDevices(_dataModels[i].ied, ied.Descendants(ns + "LDevice"), ns);
-                    _dataModels[i].ied.SortImmediateChildren(); //alphabetical
-                    logger.LogInfo("Reading data sets and reports.");
+                    //_dataModels[i].ied.SortImmediateChildren(); //alphabetical
+                    //logger.LogInfo("Reading data sets and reports.");
                     
-                    GetDataSetsAndReports(fileName, _dataModels[i]);
+                    //GetDataSetsAndReports(fileName, _dataModels[i]);
+                    // data sets and reports
+                    int ldidx = 0;
+                    foreach (XElement ld in ied.Descendants(ns + "LDevice"))
+                    {
+                        NodeBase ldroot = _dataModels[i].ied.GetChildNode(ldidx++);
+                        int lnidx = 0;
+                        IEnumerable<XElement> lns = (from el in ld.Elements() where el.Name.LocalName.StartsWith("LN") select el);
+                        int cnt = lns.Count();
+                        foreach (XElement ln in lns)
+                        {
+                            // Datasets
+                            NodeBase lnroot = ldroot.GetChildNode(lnidx++);
+                            if (lnroot == null || lnroot.Parent == null || lnroot.Parent.Parent == null)
+                                Logger.getLogger().LogError("Something is null 1" + cnt);
+                            CreateDataSets(lnroot, ln.Elements(ns + "DataSet"), ns);
+
+                            // Reports
+                            //CreateReports(logicalNode, ln.Elements(ns + "ReportControl"), ns);
+                        }
+                    }
                     i++;
                 }
             }
             catch (Exception e)
             {
                 logger.LogError("Error reading file " + fileName + ": " + e.Message);
+                throw e;
             }
 
             return _dataModels;
@@ -107,9 +129,9 @@ namespace IEDExplorer
             foreach (XElement ld in elements)
             {
                 NodeLD logicalDevice = new NodeLD(String.Concat(root.Name, ld.Attribute("inst").Value));
-                CreateLogicalNodes(logicalDevice, from el in ld.Elements() where el.Name.LocalName.StartsWith("LN") select el, ns);
-                logicalDevice.SortImmediateChildren(); // alphabetical sort
                 root.AddChildNode(logicalDevice);
+                CreateLogicalNodes(logicalDevice, from el in ld.Elements() where el.Name.LocalName.StartsWith("LN") select el, ns);
+                //logicalDevice.SortImmediateChildren(); // alphabetical sort
             }
         }
 
@@ -243,6 +265,7 @@ namespace IEDExplorer
                 logicalNode.SortImmediateChildren(); // alphabetical
 
                 root.AddChildNode(logicalNode);
+
             }
         }
 
@@ -345,21 +368,29 @@ namespace IEDExplorer
         {
             foreach (XElement el in elements)
             {
-                if (el.Attribute("id") != null)
+                try
                 {
-                    NodeBase enumType = new NodeBase(el.Attribute("id").Value);
-
-                    foreach (XElement ev in el.Elements(ns + "EnumVal"))
+                    if (el.Attribute("id") != null)
                     {
-                        if (ev.Attribute("ord") != null)
+                        NodeBase enumType = new NodeBase(el.Attribute("id").Value);
+
+                        foreach (XElement ev in el.Elements(ns + "EnumVal"))
                         {
-                            var id = ev.Attribute("ord").Value;
-                            var name = ev.Value;
-                            var enumVal = enumType.AddChildNode(new NodeData(name));
-                            (enumVal as NodeData).DataValue = id;
+                            if (ev.Attribute("ord") != null)
+                            {
+                                var id = ev.Attribute("ord").Value;
+                                var name = ev.Value;
+                                var enumVal = enumType.AddChildNode(new NodeData(name));
+                                (enumVal as NodeData).DataValue = id;
+                            }
                         }
+                        root.AddChildNode(enumType);
                     }
-                    root.AddChildNode(enumType);
+                }
+                catch (Exception e)
+                {
+                    Logger.getLogger().LogError("Creating Enum " + el.Name + ", Exception: " + e);
+                    throw e;
                 }
             }
         }
@@ -391,8 +422,8 @@ namespace IEDExplorer
             var iedName = "";
             var deviceName = "";
             var lnName = "";
-            _dataModel.lists = new NodeIed("lists");
-            _dataModel.urcbs = new NodeIed("reports");
+            _dataModel.lists = new NodeIed("lists", _dataModel);
+            _dataModel.urcbs = new NodeIed("reports", _dataModel);
             while (reader.Read())
             {
                 if (reader.IsStartElement())
@@ -460,6 +491,50 @@ namespace IEDExplorer
                 }
             }
             return nodeVL;
+        }
+
+        private void CreateDataSets(NodeBase lnode, IEnumerable<XElement> elements, XNamespace ns)
+        {
+            if (lnode == null || elements == null || lnode.Parent == null || lnode.Parent.Parent == null)
+                Logger.getLogger().LogError("Something is null");
+
+            // We are at the LN level, up 2 levels is an ied
+            Iec61850Model _dataModel = (lnode.Parent.Parent as NodeIed).Model;
+
+            foreach (XElement el in elements)
+            {
+                NodeVL nodeVL = new NodeVL(String.Concat(lnode.Address.Replace('.', '$'), "$", el.Attribute("name").Value));
+                _dataModel.lists.AddChildNode(new NodeLD(lnode.Parent.Name)).AddChildNode(nodeVL);
+                foreach (XElement dsMember in el.Elements(ns + "FCDA"))
+                {
+                    try
+                    {
+                        XAttribute a = dsMember.Attribute("prefix");
+                        string prefix = a != null ? a.Value : "";
+                        a = dsMember.Attribute("lnClass");
+                        string lnClass = a != null ? a.Value : "";
+                        a = dsMember.Attribute("lnInst");
+                        string lnInst = a != null ? a.Value : "";
+                        string fullName = String.Concat(prefix, lnClass, lnInst);
+                        a = dsMember.Attribute("ldInst");
+                        string ldInst = a != null ? a.Value : "";
+                        a = dsMember.Attribute("doName");
+                        string doName = a != null ? a.Value : "";
+                        a = dsMember.Attribute("fc");
+                        string fc = a != null ? a.Value : "";
+
+                        var nodeData = _dataModel.ied.AddChildNode(new NodeLD(String.Concat(_dataModel.ied.Name, ldInst)))
+                            .AddChildNode(new NodeLN(fullName))
+                            .AddChildNode(new NodeFC(fc)).AddChildNode(new NodeData(doName));
+
+                        nodeVL.ForceLinkChildNode(nodeData);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.getLogger().LogError("CreateDataSets: " + e.Message);
+                    }
+                }
+            }
         }
 
         /// <summary>

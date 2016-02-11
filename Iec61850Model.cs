@@ -10,40 +10,48 @@ namespace IEDExplorer
         /// <summary>
         /// Server data
         /// </summary>
-        public NodeIed ied = new NodeIed("ied");
+        public NodeIed ied;
         /// <summary>
         /// Server data ordered by IEC61850 data model
         /// </summary>
-        public NodeIed iec = new NodeIed("iec");
+        public NodeIed iec;
         /// <summary>
         /// Server named variable lists
         /// </summary>
-        public NodeIed lists = new NodeIed("lists");
+        public NodeIed lists;
         /// <summary>
         /// Server RP blocks (reports)
         /// </summary>
-        public NodeIed urcbs = new NodeIed("urcbs");
+        public NodeIed urcbs;
         /// <summary>
         /// Server BR blocks (reports)
         /// </summary>
-        public NodeIed brcbs = new NodeIed("brcbs");
+        public NodeIed brcbs;
         /// <summary>
         /// Server files
         /// </summary>
-        public NodeIed files = new NodeIed("files");
+        public NodeIed files;
         /// Enum types
         /// </summary>
-        public NodeIed enums = new NodeIed("enums");
+        public NodeIed enums;
 
         public Iec61850Model(Iec61850State iecs)
         {
-            (ied as NodeIed).iecs = iecs;
-            (iec as NodeIed).iecs = iecs;
+            ied = new NodeIed("ied", this);
+            iec = new NodeIed("iec", this);
+            lists = new NodeIed("lists", this);
+            urcbs = new NodeIed("urcbs", this);
+            brcbs = new NodeIed("brcbs", this);
+            files = new NodeIed("files", this);
+            enums = new NodeIed("enums", this);
+            ied.iecs = iecs;
+            iec.iecs = iecs;
             iec.IsIecModel = true;
-            (lists as NodeIed).iecs = iecs;
-            (files as NodeIed).iecs = iecs;
-            (urcbs as NodeIed).iecs = iecs;
-            (brcbs as NodeIed).iecs = iecs;
+            lists.iecs = iecs;
+            files.iecs = iecs;
+            urcbs.iecs = iecs;
+            brcbs.iecs = iecs;
+            enums.iecs = iecs;
         }
 
         public void BuildIECModelFromMMSModel()

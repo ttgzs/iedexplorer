@@ -40,6 +40,9 @@ namespace IEDExplorer
 
         public bool Defined { get; set; }
 
+        public EventHandler OnDefinedSuccess;
+        public EventHandler OnDeleteSuccess;
+
         public NodeData urcb { get; set; }
     }
 }

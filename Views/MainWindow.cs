@@ -37,7 +37,7 @@ namespace IEDExplorer.Views
             worker = new Scsm_MMS_Worker(env);
 
             wm = new WindowManager(dockPanel1, env, this);
-            this.Text = "IED Explorer 0.77b";
+            this.Text = "IED Explorer 0.77c";
 
             logger.LogInfo("Starting main program ...");
 
@@ -169,6 +169,7 @@ namespace IEDExplorer.Views
 
         private void toolStripButton_Stop_Click(object sender, EventArgs e)
         {
+            logger.LogInfo("Communication stopped by user");
             worker.Stop();
             toolStripButton_Stop.Enabled = false;
             toolStripButton_Run.Enabled = true;

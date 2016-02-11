@@ -103,11 +103,11 @@
     <Compile Include="Dialogs\AboutDialog.Designer.cs">
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\AddNVLDialog.cs">
+    <Compile Include="Views\AddNVLView.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Dialogs\AddNVLDialog.Designer.cs">
-      <DependentUpon>AddNVLDialog.cs</DependentUpon>
+    <Compile Include="Views\AddNVLView.Designer.cs">
+      <DependentUpon>AddNVLView.cs</DependentUpon>
     </Compile>
     <Compile Include="CommAddress.cs" />
     <Compile Include="Dialogs\CommandDialog.cs">
@@ -1014,8 +1014,8 @@
     <EmbeddedResource Include="Dialogs\AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\AddNVLDialog.resx">
-      <DependentUpon>AddNVLDialog.cs</DependentUpon>
+    <EmbeddedResource Include="Views\AddNVLView.resx">
+      <DependentUpon>AddNVLView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\CommandDialog.resx">
       <DependentUpon>CommandDialog.cs</DependentUpon>

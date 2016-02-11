@@ -288,8 +288,8 @@ namespace IEDExplorer.Views
                     }
                     else
                     {
-                            tn2.ImageIndex = 4;
-                            tn2.SelectedImageIndex = 4;
+                        tn2.ImageIndex = 4;
+                        tn2.SelectedImageIndex = 4;
                     }
                     (b as NodeFile).DirectoryUpdated += Node_DirectoryUpdated;
                     makeTree_fileNode(b, tn2);
@@ -431,6 +431,10 @@ namespace IEDExplorer.Views
                             item = menu.Items.Add("Send Define DataSet Request");
                             item.Tag = n;
                             item.Click += new EventHandler(OnDefineNVLClick);
+
+                            item = menu.Items.Add("Modify DataSet");
+                            item.Tag = n;
+                            item.Click += new EventHandler(OnModifyNVLClick);
                         }
                         if ((n as NodeVL).Deletable && !(n as NodeVL).Activated)
                         {
@@ -616,7 +620,7 @@ namespace IEDExplorer.Views
                 }
                 n.IedModelName = prefix;
                 n.SaveModel(lines, false);
-                
+
                 foreach (string line in lines)
                 {
                     file.WriteLine(line);
@@ -712,7 +716,7 @@ namespace IEDExplorer.Views
         void OnConfigureRcb(object sender, EventArgs e)
         {
             NodeRCB rcb = (NodeRCB)(sender as ToolStripItem).Tag;
-            RcbActivateParams par=new RcbActivateParams();
+            RcbActivateParams par = new RcbActivateParams();
             par.self = rcb;
 
             RcbActivateDialog rad = new RcbActivateDialog(par);
@@ -726,29 +730,68 @@ namespace IEDExplorer.Views
         void OnAddNVLClick(object sender, EventArgs e)
         {
             NodeBase lists = (NodeBase)(sender as ToolStripItem).Tag;
-            NodeVL newnode = new NodeVL("NewDataSet");
+            NodeVL newnode = new NodeVL("LLN0$NewDataSet");
             newnode.Parent = lists;
-            AddNVLDialog d = new AddNVLDialog(newnode, lists, listsNode, OnNVListChanged);
-            d.Show();
+            winMgr.AddAddNVLView(newnode, lists, listsNode, OnNVListChanged);
+        }
+
+        void OnModifyNVLClick(object sender, EventArgs e)
+        {
+            NodeVL newnode = (NodeVL)(sender as ToolStripItem).Tag;
+            NodeBase lists = newnode.Parent;
+            winMgr.AddAddNVLView(newnode, lists, listsNode, OnNVListChanged);
         }
 
         void OnNVListChanged(object sender, EventArgs e)
         {
-            TreeNode n = new TreeNode((sender as AddNVLDialog).List.Name);
-            n.Tag = (sender as AddNVLDialog).List;
-            (sender as AddNVLDialog).List.Tag = n;
-            ((sender as AddNVLDialog).ListsNode).Nodes.Add(n);
-            foreach (NodeBase nb in (sender as AddNVLDialog).List.GetChildNodes())
+            TreeNode n = null;
+            if ((sender as AddNVLView).List.Tag != null)
+            {
+                n = (TreeNode)(sender as AddNVLView).List.Tag;
+            }
+            else
+            {
+                n = new TreeNode((sender as AddNVLView).List.Name);
+                n.Tag = (sender as AddNVLView).List;
+                (sender as AddNVLView).List.Tag = n;
+                ((sender as AddNVLView).ListsNode).Nodes.Add(n);
+                // Remember model.lists node with this unusual construction
+                (sender as AddNVLView).List.Parent = (sender as AddNVLView).Lists;
+            }
+            n.Nodes.Clear();
+            foreach (NodeBase nb in (sender as AddNVLView).List.GetChildNodes())
             {
                 TreeNode tn = new TreeNode(nb.CommAddress.Variable);
                 tn.Tag = nb;
                 n.Nodes.Add(tn);
+                tn.ImageIndex = 7;
+                tn.SelectedImageIndex = 7;
             }
         }
 
         void OnDefineNVLClick(object sender, EventArgs e)
         {
+            ((NodeVL)(sender as ToolStripItem).Tag).OnDefinedSuccess += this.OnDefinedSuccess;
             ctrl.DefineNVL((NodeVL)(sender as ToolStripItem).Tag);
+        }
+
+        void OnDefinedSuccess(object sender, EventArgs e)
+        {
+            if (treeViewIed.InvokeRequired)
+            {
+                OnDirectoryCallback d = new OnDirectoryCallback(OnDefinedSuccess);
+                if (!this.Disposing)
+                    this.Invoke(d, new object[] { sender, e });
+
+            }
+            else
+            {
+                NodeVL nvl = (sender as NodeVL);
+                (nvl.Tag as TreeNode).ImageIndex = 34;
+                (nvl.Tag as TreeNode).SelectedImageIndex = 34;
+                nvl.Defined = true;
+                nvl.Parent.AddChildNode(nvl);
+            }
         }
 
         void OnDeleteNVLClick(object sender, EventArgs e)
@@ -756,12 +799,40 @@ namespace IEDExplorer.Views
             NodeVL nvl = (NodeVL)(sender as ToolStripItem).Tag;
             if (nvl.Defined)
             {
+                nvl.OnDeleteSuccess += OnDeletedSuccess;
                 ctrl.DeleteNVL(nvl);
             }
-            // TODO Propagate from SCSM after! delete acknowledged!
-            (nvl.Tag as TreeNode).Remove();
-            nvl.Remove();
+            else
+            {
+                (nvl.Tag as TreeNode).Tag = null;
+                (nvl.Tag as TreeNode).Remove();
+                nvl.Tag = null;
+                nvl.Remove();
+            }
+        }
 
+        void OnDeletedSuccess(object sender, EventArgs e)
+        {
+            if (treeViewIed.InvokeRequired)
+            {
+                OnDirectoryCallback d = new OnDirectoryCallback(OnDeletedSuccess);
+                if (!this.Disposing)
+                    this.Invoke(d, new object[] { sender, e });
+
+            }
+            else
+            {
+                // Propagated from SCSM after! delete acknowledged!
+                NodeVL nvl = (sender as NodeVL);
+                if (nvl.Tag != null)
+                {
+                    (nvl.Tag as TreeNode).Tag = null;
+                    (nvl.Tag as TreeNode).Remove();
+                }
+                nvl.Tag = null;
+                nvl.Defined = false;
+                nvl.Remove();
+            }
         }
 
         void OnActivateNVLClick(object sender, EventArgs e)
@@ -777,7 +848,7 @@ namespace IEDExplorer.Views
         private void treeViewIed_MouseDown(object sender, MouseEventArgs e)
         {
             nodeToDrag = ((TreeView)sender).GetNodeAt(e.Location);
-            if (e.Button == MouseButtons.Left && nodeToDrag != null && nodeToDrag.Tag is NodeData)
+            if (e.Button == MouseButtons.Left && nodeToDrag != null && (nodeToDrag.Tag is NodeData || nodeToDrag.Tag is NodeDO))
             {
                 // Remember the point where the mouse down occurred. The DragSize indicates
                 // the size that the mouse can move before a drag event should be started.                

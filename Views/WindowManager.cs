@@ -173,6 +173,20 @@ namespace IEDExplorer.Views
             documentViews.Remove(sender as SCLView);
         }
 
+        internal void AddAddNVLView(NodeVL list, NodeBase lists, TreeNode listsNode, EventHandler onNVListChanged)
+        {
+            DockContent nvlView = new AddNVLView(list, lists, listsNode, onNVListChanged);
+            nvlView.FormClosed += new FormClosedEventHandler(nvlView_FormClosed);
+            documentViews.Add(nvlView);
+            nvlView.Show(dockPanel);
+        }
+
+        void nvlView_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            (sender as AddNVLView).FormClosed -= new FormClosedEventHandler(nvlView_FormClosed);
+            documentViews.Remove(sender as AddNVLView);
+        }
+
         #region IDisposable Members
 
         public void Dispose()

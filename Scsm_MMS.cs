@@ -446,6 +446,10 @@ namespace IEDExplorer
                 {
                     ReceiveFileClose(iecs, mymmspdu.Confirmed_ResponsePDU.Service.FileClose);
                 }
+                else if (mymmspdu.Confirmed_ResponsePDU.Service.DeleteNamedVariableList != null)
+                {
+                    ReceiveDeleteNamedVariableList(iecs, mymmspdu.Confirmed_ResponsePDU.Service.DeleteNamedVariableList, operData);
+                }
             }
             else if (mymmspdu.Unconfirmed_PDU != null && mymmspdu.Unconfirmed_PDU.Service != null && mymmspdu.Unconfirmed_PDU.Service.InformationReport != null)
             {
@@ -599,7 +603,27 @@ namespace IEDExplorer
 
         private void ReceiveDefineNamedVariableList(Iec61850State iecs, DefineNamedVariableList_Response dnvl, NodeBase[] lastOperationData)
         {
-            (lastOperationData[0] as NodeVL).Defined = true;
+            NodeVL nvl = (lastOperationData[0] as NodeVL);
+            nvl.Defined = true;
+            if (nvl.OnDefinedSuccess != null)
+                nvl.OnDefinedSuccess(nvl, null);
+        }
+
+        private void ReceiveDeleteNamedVariableList(Iec61850State iecs, DeleteNamedVariableList_Response dnvl, NodeBase[] lastOperationData)
+        {
+            NodeVL nvl = (lastOperationData[0] as NodeVL);
+            if (dnvl.NumberMatched.Value == 0)
+            {
+                Logger.getLogger().LogWarning("NVL name did not match any list on server: " + nvl.Name);
+            }
+            if (dnvl.NumberDeleted.Value > 0)
+            {
+                nvl.Defined = false;
+                if (nvl.OnDeleteSuccess != null)
+                    nvl.OnDeleteSuccess(nvl, null);
+            }
+            else
+                Logger.getLogger().LogWarning("NVL Not deleted on server: " + nvl.Name);
         }
 
         private void ReceiveInformationReport(Iec61850State iecs, InformationReport Report)
