@@ -33,7 +33,7 @@ namespace IEDExplorer.Views
                 Logger.getLogger().LogError(" Reading SCL: " + e.Message);
                 return;
             }
-            prepareTree();
+            IedTreeView.makeImageList(treeViewSCL);
             makeTreeScl(dataModels[0]);
             foreach (Iec61850Model dataModel in dataModels)
             {
@@ -42,43 +42,6 @@ namespace IEDExplorer.Views
             string[] fparts = filename.Split(new char[] { '/', '\\' });
             filename_short  = fparts[fparts.Length - 1];
             this.Text = filename_short;
-        }
-
-        internal void prepareTree()
-        {
-            treeViewSCL.ImageList = new ImageList();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Resource1));
-            treeViewSCL.ImageList.Images.Add(((System.Drawing.Image)(resources.GetObject("computer"))));
-            treeViewSCL.ImageList.Images.Add(((System.Drawing.Image)(resources.GetObject("calculator"))));
-            treeViewSCL.ImageList.Images.Add(((System.Drawing.Image)(resources.GetObject("database"))));
-            treeViewSCL.ImageList.Images.Add(((System.Drawing.Image)(resources.GetObject("page_white_text"))));
-            treeViewSCL.ImageList.Images.Add(((System.Drawing.Image)(resources.GetObject("page_white_text_width"))));
-            treeViewSCL.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("LN1"))));
-            treeViewSCL.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("FC1"))));
-            treeViewSCL.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DO1"))));
-            treeViewSCL.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DA1"))));
-            treeViewSCL.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("LN2"))));
-            treeViewSCL.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("FC2"))));
-            treeViewSCL.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DO2"))));
-            treeViewSCL.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DA2"))));
-            treeViewSCL.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("LN3"))));
-            treeViewSCL.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("FC3"))));
-            treeViewSCL.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DO3"))));
-            treeViewSCL.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DA3"))));
-            treeViewSCL.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("LN4"))));
-            treeViewSCL.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("FC4"))));
-            treeViewSCL.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DO4"))));
-            treeViewSCL.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DA4"))));
-            treeViewSCL.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("LN5"))));
-            treeViewSCL.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("FC5"))));
-            treeViewSCL.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DO5"))));
-            treeViewSCL.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DA5"))));
-            treeViewSCL.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("LN6"))));
-            treeViewSCL.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("FC6"))));
-            treeViewSCL.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DO6"))));
-            treeViewSCL.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DA6"))));
-            treeViewSCL.ImageList.Images.Add(((System.Drawing.Image)(resources.GetObject("folder"))));
-            treeViewSCL.Nodes.Clear();
         }
 
         internal void makeTreeScl(Iec61850Model dataModel)
@@ -125,14 +88,23 @@ namespace IEDExplorer.Views
                         tn3.SelectedImageIndex = 3;
                         makeTree_listNode(lb, tn3);
                     }
-                    NodeBase rb = dataModel.urcbs.FindChildNode(b.Name);
-                    if (rb != null)
+                    NodeBase ur = dataModel.urcbs.FindChildNode(b.Name);
+                    if (ur != null)
                     {
-                        tn3 = tn2.Nodes.Add("Reports");
-                        tn3.Tag = rb;
+                        tn3 = tn2.Nodes.Add("Unbuffered Reports");
+                        tn3.Tag = ur;
                         tn3.ImageIndex = 3;
                         tn3.SelectedImageIndex = 3;
-                        makeTree_reportNode(rb, tn3);
+                        makeTree_reportNode(ur, tn3);
+                    }
+                    NodeBase br = dataModel.brcbs.FindChildNode(b.Name);
+                    if (br != null)
+                    {
+                        tn3 = tn2.Nodes.Add("Buffered Reports");
+                        tn3.Tag = br;
+                        tn3.ImageIndex = 3;
+                        tn3.SelectedImageIndex = 3;
+                        makeTree_reportNode(br, tn3);
                     }
                 }
                 /*nb = dataModel.files;
@@ -146,22 +118,34 @@ namespace IEDExplorer.Views
 
         void makeTree_dataNode(NodeBase nb, TreeNode tn)
         {
-            Node_SetIcon(nb);
             foreach (NodeBase b in nb.GetChildNodes())
             {
-                TreeNode tn2 = tn.Nodes.Add(b.Name);
+                string name = b.Name;
+                if (b is NodeRCB || b is NodeVL)
+                    name = b.Name.Substring(b.Name.LastIndexOf("$") + 1);
+                //if (b is NodeData && (b as NodeData).FCDesc != null && (b as NodeData).FCDesc != "") name += " [" + (b as NodeData).FCDesc + "]";
+                TreeNode tn2 = tn.Nodes.Add(name);
                 tn2.Tag = b;
                 b.Tag = tn2;
-
-                /*if (b.FC.Count > 0)
+                Node_SetIcon(b);
+                if (b is NodeRCB)
                 {
-                    tn2.ToolTipText = "FC=";
-                    for (int i = 0; i < b.FC.Count; i++)
+                    if ((b as NodeRCB).isBuffered)
                     {
-                        tn2.ToolTipText += b.FC[i];
-                        if (i != b.FC.Count - 1) tn2.ToolTipText += ",";
+                        tn2.ImageIndex = 33;
+                        tn2.SelectedImageIndex = 33;
                     }
-                }*/
+                    else
+                    {
+                        tn2.ImageIndex = 32;
+                        tn2.SelectedImageIndex = 32;
+                    }
+                }
+                if (b is NodeVL)
+                {
+                    tn2.ImageIndex = 34;
+                    tn2.SelectedImageIndex = 34;
+                }
                 makeTree_dataNode(b, tn2);
             }
         }
@@ -173,8 +157,8 @@ namespace IEDExplorer.Views
                 TreeNode tn2 = tn.Nodes.Add(b.Name);
                 tn2.Tag = b;
                 b.Tag = tn2;
-                tn2.ImageIndex = 4;
-                tn2.SelectedImageIndex = 4;
+                tn2.ImageIndex = 34;
+                tn2.SelectedImageIndex = 34;
                 foreach (NodeBase b2 in b.GetChildNodes())
                 {
                     TreeNode tn3 = tn2.Nodes.Add(b2.CommAddress.Variable);
@@ -192,8 +176,16 @@ namespace IEDExplorer.Views
                 TreeNode tn2 = tn.Nodes.Add(b.Name);
                 tn2.Tag = b;
                 b.Tag = tn2;
-                tn2.ImageIndex = 4;
-                tn2.SelectedImageIndex = 4;
+                tn2.ImageIndex = 32;
+                tn2.SelectedImageIndex = 32;
+                if (b is NodeRCB)
+                {
+                    if ((b as NodeRCB).isBuffered)
+                    {
+                        tn2.ImageIndex = 33;
+                        tn2.SelectedImageIndex = 33;
+                    }
+                }
                 foreach (NodeBase b2 in b.GetChildNodes())
                 {
                     TreeNode tn3 = tn2.Nodes.Add(b2.CommAddress.Variable);
@@ -203,27 +195,6 @@ namespace IEDExplorer.Views
                 }
             }
         }
-
-        /*void makeTree_fileNode(NodeBase nb, TreeNode tn)
-        {
-            foreach (NodeBase b in nb.GetChildNodes())
-            {
-                TreeNode tn2 = tn.Nodes.Add(b.Name);
-                tn2.Tag = b;
-                b.Tag = tn2;
-                if (b is NodeFile && (b as NodeFile).isDir)
-                {
-                    tn2.ImageIndex = 29;
-                    tn2.SelectedImageIndex = 29;
-                }
-                else
-                {
-                    tn2.ImageIndex = 4;
-                    tn2.SelectedImageIndex = 4;
-                }
-                makeTree_fileNode(b, tn2);
-            }
-        }*/
 
         private void makeTree_enumNode(NodeBase nb, TreeNode tn)
         {
@@ -251,28 +222,36 @@ namespace IEDExplorer.Views
                 {
                     TreeNode tn = (b.Tag as TreeNode);
                     int firsticon = 0;
-                    if (b.GetType() == typeof(NodeLN))
+                    if (b is NodeLN)
                     {
                         firsticon = 5;
                     }
-                    else if (b.GetType() == typeof(NodeFC))
+                    else if (b is NodeFC)
                     {
                         firsticon = 6;
                     }
-                    else if ((b.GetType() == typeof(NodeData)) || (b.GetType() == typeof(NodeDO)))
+                    else if (b is NodeDO)
                     {
-                        if (b.GetChildNodes().Length == 0)
-                        {
-                            // Leaf
-                            firsticon = 8;
-                        }
-                        else
-                        {
-                            firsticon = 7;
-                        }
+                        firsticon = 7;
                     }
-                    tn.ImageIndex = firsticon + ((int)b.NodeState) * 4;
-                    tn.SelectedImageIndex = firsticon + ((int)b.NodeState) * 4;
+                    else if (b is NodeData)
+                    {
+                        firsticon = 8;
+                    }
+                    else if (b is NodeRCB)
+                    {
+                        if ((b as NodeRCB).isBuffered)
+                            firsticon = 33;
+                        else
+                            firsticon = 32;
+                    }
+                    else if (b is NodeVL)
+                    {
+                        firsticon = 34;
+                    }
+                    int newIconIndex = firsticon + ((int)b.NodeState) * 4;
+                    tn.ImageIndex = newIconIndex;
+                    tn.SelectedImageIndex = newIconIndex;
                     treeViewSCL.Invalidate(tn.Bounds);
                 }
         }

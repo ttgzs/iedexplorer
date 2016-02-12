@@ -31,7 +31,7 @@ namespace IEDExplorer.Views
             InitializeComponent();
         }
 
-        void makeImageList(TreeView treeView)
+        internal static void makeImageList(TreeView treeView)
         {
             treeView.ImageList = new ImageList();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Resource1));
