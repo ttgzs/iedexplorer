@@ -29,7 +29,6 @@ using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Xml;
 using System.Xml.Linq;
 using MMS_ASN1_Model;
 
@@ -83,10 +82,6 @@ namespace IEDExplorer
                     if (a != null) _dataModels[i].ied.Revision = a.Value;
 
                     CreateLogicalDevices(_dataModels[i].ied, ied.Descendants(ns + "LDevice"), ns);
-                    //_dataModels[i].ied.SortImmediateChildren(); //alphabetical
-                    //logger.LogInfo("Reading data sets and reports.");
-                    
-                    //GetDataSetsAndReports(fileName, _dataModels[i]);
                     // data sets and reports
                     int ldidx = 0;
                     foreach (XElement ld in ied.Descendants(ns + "LDevice"))
@@ -99,13 +94,13 @@ namespace IEDExplorer
                         {
                             // Datasets
                             NodeBase lnroot = ldroot.GetChildNode(lnidx++);
-                            if (lnroot == null || lnroot.Parent == null || lnroot.Parent.Parent == null)
-                                Logger.getLogger().LogError("Something is null 1" + cnt);
+                            //if (lnroot == null || lnroot.Parent == null || lnroot.Parent.Parent == null)
+                            //    Logger.getLogger().LogError("Something is null 1" + cnt);
                             CreateDataSets(lnroot, ln.Elements(ns + "DataSet"), ns);
-
-                            // Reports
-                            //CreateReports(logicalNode, ln.Elements(ns + "ReportControl"), ns);
+                            CreateReports(lnroot, ln.Elements(ns + "ReportControl"), ns);
+                            lnroot.SortImmediateChildren();
                         }
+                        ldroot.SortImmediateChildren();
                     }
                     i++;
                 }
@@ -131,7 +126,6 @@ namespace IEDExplorer
                 NodeLD logicalDevice = new NodeLD(String.Concat(root.Name, ld.Attribute("inst").Value));
                 root.AddChildNode(logicalDevice);
                 CreateLogicalNodes(logicalDevice, from el in ld.Elements() where el.Name.LocalName.StartsWith("LN") select el, ns);
-                //logicalDevice.SortImmediateChildren(); // alphabetical sort
             }
         }
 
@@ -413,86 +407,12 @@ namespace IEDExplorer
         }
 
         /// <summary>
-        /// Reads through the SCL file and looks for data sets and reports
-        /// </summary>
-        /// <param name="filename"></param>
-        private void GetDataSetsAndReports(String filename, Iec61850Model _dataModel)
-        {
-            var reader = new XmlTextReader(filename);
-            var iedName = "";
-            var deviceName = "";
-            var lnName = "";
-            _dataModel.lists = new NodeIed("lists", _dataModel);
-            _dataModel.urcbs = new NodeIed("reports", _dataModel);
-            while (reader.Read())
-            {
-                if (reader.IsStartElement())
-                {
-                    NodeBase parent;
-                    switch (reader.Name)
-                    {
-                        case "IED":
-                            iedName = reader.GetAttribute("name");
-                            break;
-                        case "LDevice":
-                            deviceName = reader.GetAttribute("inst");
-                            break;
-                        case "LN0":
-                            lnName = String.Concat(reader.GetAttribute("prefix"), reader.GetAttribute("lnClass"),
-                                reader.GetAttribute("inst"));
-                            break;
-                        case "LN":
-                            lnName = String.Concat(reader.GetAttribute("prefix"), reader.GetAttribute("lnClass"),
-                                reader.GetAttribute("inst"));
-                            break;                        
-                        case "DataSet":
-                            parent = _dataModel.lists.AddChildNode(new NodeBase(String.Concat(iedName, deviceName))); // will return if already exists
-                            parent.AddChildNode(CreateDataSet(reader.ReadSubtree(), lnName, deviceName, _dataModel));
-                            break;
-                        case "ReportControl":
-                            parent = _dataModel.urcbs.AddChildNode(new NodeBase(String.Concat(iedName, deviceName))); // will return if already exists
-                            parent.AddChildNode(CreateReport(reader.ReadSubtree(), lnName, deviceName));
-                            break;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         /// Reads through a data set subtree and creates a data set node from it
         /// </summary>
         /// <param name="reader"></param>
         /// <param name="nodeName"></param>
         /// <param name="deviceName"></param>
         /// <returns> a VL node </returns>
-        private NodeVL CreateDataSet(XmlReader reader, string nodeName, string deviceName, Iec61850Model _dataModel)
-        {
-            reader.Read();
-
-            var nodeVL = new NodeVL(String.Concat(nodeName, "$", reader.GetAttribute("name")));
-            var test = reader.GetAttribute("name");
-            while (reader.Read())
-            {
-                if (reader.IsStartElement() && reader.Name.Equals("FCDA"))
-                {
-                    var prefix = reader.GetAttribute("prefix");
-                    var lnClass = reader.GetAttribute("lnClass");
-                    var lnInst = reader.GetAttribute("lnInst");
-                    var fullName = String.Concat(prefix, lnClass, lnInst);
-                    var ldInst = reader.GetAttribute("ldInst");
-                    var doName = reader.GetAttribute("doName");
-                    var fc = reader.GetAttribute("fc");
-
-                    var nodeData = _dataModel.ied.AddChildNode(new NodeLD(String.Concat(_dataModel.ied.Name, ldInst)))
-                        .AddChildNode(new NodeLN(fullName))
-                       .AddChildNode(new NodeFC(fc)).AddChildNode(new NodeData(doName));
-
-                    nodeVL.ForceLinkChildNode(nodeData);
-                }
-            }
-            return nodeVL;
-        }
-
         private void CreateDataSets(NodeBase lnode, IEnumerable<XElement> elements, XNamespace ns)
         {
             if (lnode == null || elements == null || lnode.Parent == null || lnode.Parent.Parent == null)
@@ -503,7 +423,7 @@ namespace IEDExplorer
 
             foreach (XElement el in elements)
             {
-                NodeVL nodeVL = new NodeVL(String.Concat(lnode.Address.Replace('.', '$'), "$", el.Attribute("name").Value));
+                NodeVL nodeVL = new NodeVL(String.Concat(lnode.Name, "$", el.Attribute("name").Value));
                 _dataModel.lists.AddChildNode(new NodeLD(lnode.Parent.Name)).AddChildNode(nodeVL);
                 foreach (XElement dsMember in el.Elements(ns + "FCDA"))
                 {
@@ -544,42 +464,71 @@ namespace IEDExplorer
         /// <param name="nodeName"></param>
         /// <param name="deviceName"></param>
         /// <returns> a RP node </returns>
-        private NodeRCB CreateReport(XmlReader reader, string nodeName, string deviceName)
+
+        private void CreateReports(NodeBase lnode, IEnumerable<XElement> elements, XNamespace ns)
         {
-            reader.Read();
+            if (lnode == null || elements == null || lnode.Parent == null || lnode.Parent.Parent == null)
+                Logger.getLogger().LogError("Something is null");
 
-            NodeRCB nodeRP = new NodeRCB(String.Concat(nodeName, "$RP$", reader.GetAttribute("name")));
+            // We are at the LN level, up 2 levels is an ied
+            Iec61850Model _dataModel = (lnode.Parent.Parent as NodeIed).Model;
 
-            // rptID
-            NodeData RptId = new NodeData("RptID");
-            RptId.DataType = scsm_MMS_TypeEnum.visible_string;
-            RptId.DataValue = reader.GetAttribute("rptID");
-            RptId.Address = String.Concat(deviceName, "/", nodeName, ".", nodeRP.Name, ".", RptId.Name);
+            foreach (XElement el in elements)
+            {
 
-            // datSet
-            NodeData DatSet = new NodeData("DatSet");
-            DatSet.DataType = scsm_MMS_TypeEnum.visible_string;
-            DatSet.DataValue = reader.GetAttribute("datSet");
-            DatSet.Address = String.Concat(deviceName, "/", nodeName, ".", nodeRP.Name, ".", DatSet.Name);
+                XAttribute a = el.Attribute("buffered");
+                NodeRCB nodeRCB;
+                bool buffered = a != null ? (a.Value.ToLower() == "true") : false;
+                string fc;
+                if (buffered)
+                {
+                    fc = "BR";
+                    nodeRCB = new NodeRCB(String.Concat(lnode.Name, "$", fc , "$", el.Attribute("name").Value));
+                    nodeRCB.isBuffered = true;
+                    _dataModel.brcbs.AddChildNode(new NodeLD(lnode.Parent.Name)).AddChildNode(nodeRCB);
+                }
+                else
+                {
+                    fc = "RP";
+                    nodeRCB = new NodeRCB(String.Concat(lnode.Name, "$", fc, "$", el.Attribute("name").Value));
+                    _dataModel.urcbs.AddChildNode(new NodeLD(lnode.Parent.Name)).AddChildNode(nodeRCB);
+                }
 
-            // confRev
-            NodeData ConfRev = new NodeData("ConfRev");
-            ConfRev.DataType = scsm_MMS_TypeEnum.unsigned;
-            ConfRev.DataValue = reader.GetAttribute("confRev");
-            ConfRev.Address = String.Concat(deviceName, "/", nodeName, ".", nodeRP.Name, ".", ConfRev.Name);
+                // rptID
+                NodeData RptId = new NodeData("RptID");
+                RptId.DataType = scsm_MMS_TypeEnum.visible_string;
+                a = el.Attribute("rptID");
+                RptId.DataValue = a != null ? a.Value : "";
 
-            // bufTime
-            NodeData BufTm = new NodeData("BufTm");
-            BufTm.DataType = scsm_MMS_TypeEnum.unsigned;
-            BufTm.DataValue = reader.GetAttribute("bufTime");
-            BufTm.Address = String.Concat(deviceName, "/", nodeName, ".", nodeRP.Name, ".", BufTm.Name);
+                // datSet
+                NodeData DatSet = new NodeData("DatSet");
+                DatSet.DataType = scsm_MMS_TypeEnum.visible_string;
+                a = el.Attribute("datSet");
+                DatSet.DataValue = a != null ? lnode.Name + "$" + a.Value : "";
 
-            nodeRP.AddChildNode(RptId);
-            nodeRP.AddChildNode(DatSet);
-            nodeRP.AddChildNode(ConfRev);
-            nodeRP.AddChildNode(BufTm);
+                // confRev
+                NodeData ConfRev = new NodeData("ConfRev");
+                ConfRev.DataType = scsm_MMS_TypeEnum.unsigned;
+                a = el.Attribute("confRev");
+                ConfRev.DataValue = a != null ? a.Value : "";
 
-            return nodeRP;
+                // bufTime
+                NodeData BufTm = new NodeData("BufTm");
+                BufTm.DataType = scsm_MMS_TypeEnum.unsigned;
+                a = el.Attribute("bufTime");
+                RptId.DataValue = a != null ? a.Value : "";
+
+                lnode.AddChildNode(new NodeFC(fc)).AddChildNode(new NodeDO(el.Attribute("name").Value)).AddChildNode(RptId);
+                nodeRCB.LinkChildNodeByAddress(RptId);
+                lnode.AddChildNode(new NodeFC(fc)).AddChildNode(new NodeDO(el.Attribute("name").Value)).AddChildNode(DatSet);
+                nodeRCB.LinkChildNodeByAddress(DatSet);
+                lnode.AddChildNode(new NodeFC(fc)).AddChildNode(new NodeDO(el.Attribute("name").Value)).AddChildNode(ConfRev);
+                nodeRCB.LinkChildNodeByAddress(ConfRev);
+                lnode.AddChildNode(new NodeFC(fc)).AddChildNode(new NodeDO(el.Attribute("name").Value)).AddChildNode(BufTm);
+                nodeRCB.LinkChildNodeByAddress(BufTm);
+
+                //lnode.AddChildNode(nodeRCB);
+            }
         }
     }
 }

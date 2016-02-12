@@ -24,7 +24,7 @@ using System.Text;
 
 namespace IEDExplorer
 {
-    class NodeRCB: NodeBase
+    class NodeRCB : NodeBase
     {
         //bool _defined = false;
 
@@ -38,8 +38,10 @@ namespace IEDExplorer
 
         public NodeVL dataset { get; set; }
 
-        public bool isBuffered { get { return ResvTms_present; } }
-        
+        public bool isBuffered { get { if (isBufLock) return isBufSet; else return PurgeBuf_present; } set { isBufLock = true; isBufSet = value; } }
+        bool isBufSet = false;
+        bool isBufLock = false;
+
         NodeData _RptID;
         public string RptID
         {
@@ -199,7 +201,7 @@ namespace IEDExplorer
                 if (_OptFlds == null) _OptFlds = (NodeData)FindChildNode("OptFlds");
                 if (_OptFlds != null)
                 {
-                    byte [] val = (byte[])_OptFlds.DataValue;
+                    byte[] val = (byte[])_OptFlds.DataValue;
                     ReportOptions ro = ReportOptions.NONE;
                     return ro.fromBytes(val);
                 }
