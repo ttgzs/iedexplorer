@@ -873,8 +873,6 @@ namespace IEDExplorer
                                     iecs.logger.LogDebug("Node address: " + b.Address);
                                     recursiveReadData(iecs, are.Current.Success, b, NodeState.Read);
                                 }
-                                //else
-                                //iecs.logger.LogError("Node address not found!");
                             }
                         }
                         else
@@ -912,16 +910,19 @@ namespace IEDExplorer
                 }
             }
             else    // When VariableAccessSpecification is missing, try to read to actual variable
+            {
                 if (Read.ListOfAccessResult != null)
                 {
                     int i = 0;
                     // libiec61850 correction
                     // one read of a node is equal to separate reads to node children
                     if (Read.ListOfAccessResult.Count > lastOperationData.Length)
+                    {
                         if (Read.ListOfAccessResult.Count == lastOperationData[0].GetChildNodes().Length)
                         {
                             lastOperationData = lastOperationData[0].GetChildNodes();
                         }
+                    }
                     // libiec61850 correction end
                     foreach (AccessResult ar in Read.ListOfAccessResult)
                     {
@@ -931,14 +932,15 @@ namespace IEDExplorer
                             {
                                 iecs.logger.LogDebug("Reading Actual variable value: " + lastOperationData[i].Address);
                                 recursiveReadData(iecs, ar.Success, lastOperationData[i], NodeState.Read);
-                                i++;
                             }
                         }
                         else
                             iecs.logger.LogError("Not matching read structure in ReceiveRead");
+                        i++;
                     }
                     lastOperationData = null;
                 }
+            }
             if (iecs.istate == Iec61850lStateEnum.IEC61850_READ_MODEL_DATA_WAIT)
             {
                 iecs.istate = Iec61850lStateEnum.IEC61850_READ_MODEL_DATA;
@@ -1118,7 +1120,7 @@ namespace IEDExplorer
                     if (i <= nb.GetUpperBound(0))
                         recursiveReadData(iecs, d, nb[i], s);
                     else
-                        iecs.logger.LogError("Not matching read structure: Node=" + actualNode.Name);
+                        iecs.logger.LogError("Not matching read structure: Node=" + actualNode.Address);
                     i++;
                 }
             }

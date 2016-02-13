@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using System.IO;
+using IEDExplorer.Dialogs;
 
 namespace IEDExplorer.Views
 {
@@ -16,12 +17,14 @@ namespace IEDExplorer.Views
         delegate void OnValueCallback(object sender, EventArgs e);
         public Env environment;
         NodeBase actualNode;
+        public bool DoNotShowAUStoppedDialog { get; set; }
 
         public IedDataView(Env env)
         {
             environment = env;
             InitializeComponent();
             toolStripComboBox_autoUpdate.SelectedIndex = 2;
+            DoNotShowAUStoppedDialog = false;
         }
 
         internal void SelectNode(TreeNode tn)
@@ -31,6 +34,10 @@ namespace IEDExplorer.Views
             if ((nb is NodeIed || nb.IsIecModel))
             {
                 // Stop and disable AutoUpdate
+                if (timer_Au.Enabled && !DoNotShowAUStoppedDialog)
+                {
+                    new AutoUpdateStoppedDialog(this).ShowDialog();
+                }
                 timer_Au.Enabled = false;
                 toolStripButton_RunAu.Enabled = false;
                 toolStripButton_StopAu.Enabled = false;

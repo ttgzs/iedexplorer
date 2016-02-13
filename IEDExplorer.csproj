@@ -89,6 +89,12 @@
   <ItemGroup>
     <Compile Include="ActionRequested.cs" />
     <Compile Include="BNExtension\XMLEncoder.cs" />
+    <Compile Include="Dialogs\AutoUpdateStoppedDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\AutoUpdateStoppedDialog.Designer.cs">
+      <DependentUpon>AutoUpdateStoppedDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="SCLParserDOM.cs" />
     <Compile Include="Dialogs\SplitStringDialog.cs">
       <SubType>Form</SubType>
@@ -1013,6 +1019,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Dialogs\AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\AutoUpdateStoppedDialog.resx">
+      <DependentUpon>AutoUpdateStoppedDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\AddNVLView.resx">
       <DependentUpon>AddNVLView.cs</DependentUpon>
