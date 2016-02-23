@@ -52,5 +52,32 @@ namespace IEDExplorer.Views
 
         }
 
+        private void treeViewAdv1_DragEnter(object sender, DragEventArgs e)
+        {
+            if ((e.Data.GetDataPresent(typeof(NodeData))) || (e.Data.GetDataPresent(typeof(NodeDO))))
+            {
+                e.Effect = DragDropEffects.Link;
+            }
+        }
+
+        private void treeViewAdv1_DragDrop(object sender, DragEventArgs e)
+        {
+            NodeBase d;
+            if ((d = (NodeBase)e.Data.GetData(typeof(NodeData))) != null || (d = (NodeBase)e.Data.GetData(typeof(NodeDO))) != null)
+            {
+                ListViewItem lvi = new ListViewItem(d.Address);
+                lvi.Tag = d;
+                int i = 0;
+                /*for (; i < treeViewAdv1.Items.Count; i++)
+                {
+                    if (lvi.Tag == treeViewAdv1.Items[i].Tag)
+                        break;
+                }
+                if (i == treeViewAdv1.Items.Count)
+                    treeViewAdv1.Items.Add(lvi);*/
+
+            }
+
+        }
     }
 }

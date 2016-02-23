@@ -13,7 +13,7 @@ namespace Aga.Controls.Tree.NodeControls
 	/// </summary>
 	public class ExpandingIcon: NodeControl
 	{
-		private static GifDecoder _gif = ResourceHelper.LoadingIcon;
+		private static GifDecoder _gif = null;//ResourceHelper.LoadingIcon;
 		private static int _index = 0;
 		private static volatile Thread _animatingThread;
         private static object _lock = new object();

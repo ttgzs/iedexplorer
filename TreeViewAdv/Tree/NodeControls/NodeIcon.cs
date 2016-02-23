@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
-using Aga.Controls.Properties;
+using IEDExplorer.TreeViewAdv.Properties;
 using System.ComponentModel;
 
 namespace Aga.Controls.Tree.NodeControls

@@ -16,6 +16,10 @@
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
+    <NoWin32Manifest>False</NoWin32Manifest>
+    <NoStdLib>False</NoStdLib>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -30,10 +34,6 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <NoWin32Manifest>False</NoWin32Manifest>
-    <NoStdLib>False</NoStdLib>
-    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
-    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -108,6 +108,11 @@
     </Compile>
     <Compile Include="Dialogs\AboutDialog.Designer.cs">
       <DependentUpon>AboutDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TreeViewAdv\Properties\Resources1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Views\AddNVLView.cs">
       <SubType>Form</SubType>
@@ -347,7 +352,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="TreeViewAdv\PerformanceAnalyzer.cs" />
-    <Compile Include="TreeViewAdv\Properties\Resources.Designer.cs" />
     <Compile Include="TreeViewAdv\ResourceHelper.cs" />
     <Compile Include="TreeViewAdv\StringCollectionEditor.cs" />
     <Compile Include="TreeViewAdv\TextHelper.cs" />
@@ -1074,7 +1078,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="TreeViewAdv\Properties\Resources.resx" />
+    <EmbeddedResource Include="TreeViewAdv\Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources1.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="TreeViewAdv\Tree\TreeViewAdv.resx">
       <DependentUpon>TreeViewAdv.cs</DependentUpon>
     </EmbeddedResource>

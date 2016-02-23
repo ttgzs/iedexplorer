@@ -10,13 +10,13 @@ namespace Aga.Controls
     public static class ResourceHelper
     {
         // VSpilt Cursor with Innerline (symbolisize hidden column)
-        private static Cursor _dVSplitCursor = GetCursor(Properties.Resources.DVSplit);
+        private static Cursor _dVSplitCursor = GetCursor(IEDExplorer.TreeViewAdv.Properties.Resources.DVSplit);
         public static Cursor DVSplitCursor
         {
             get { return _dVSplitCursor; }
         }
 
-		private static GifDecoder _loadingIcon = GetGifDecoder(Properties.Resources.loading_icon);
+		private static GifDecoder _loadingIcon = GetGifDecoder(IEDExplorer.TreeViewAdv.Properties.Resources.loading_icon);
 		public static GifDecoder LoadingIcon
 		{
 			get { return _loadingIcon; }

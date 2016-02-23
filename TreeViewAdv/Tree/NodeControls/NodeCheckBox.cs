@@ -1,6 +1,6 @@
 using System;
 using System.Drawing;
-using Aga.Controls.Properties;
+using IEDExplorer.TreeViewAdv.Properties;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using System.ComponentModel;

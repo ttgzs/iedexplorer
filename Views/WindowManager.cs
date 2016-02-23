@@ -20,6 +20,8 @@ namespace IEDExplorer.Views
         IedDataView dataWindow;
         CaptureView captureWindow;
 
+        WatchDataView watchWindow;
+
         public Env env;
 
         public WindowManager(DockPanel dockPanel, Env envir, MainWindow mWin)
@@ -45,6 +47,12 @@ namespace IEDExplorer.Views
             captureWindow.CloseButtonVisible = false;
             captureWindow.FormClosing += new FormClosingEventHandler(persistentWindows_FormClosing);
             captureWindow.Show(dockPanel);
+
+            watchWindow = new WatchDataView(env);
+            watchWindow.ShowHint = DockState.Document;
+            watchWindow.CloseButtonVisible = false;
+            watchWindow.FormClosing += new FormClosingEventHandler(persistentWindows_FormClosing);
+            watchWindow.Show(dockPanel);
 
             logWindow = new LogView(env);
             logWindow.ShowHint = DockState.DockBottom;
