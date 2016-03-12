@@ -30,8 +30,12 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SCLView));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolStripButtonCollapseAll = new System.Windows.Forms.ToolStripButton();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
             this.treeViewSCL = new System.Windows.Forms.TreeView();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.dataGridView_data = new IEDExplorer.Views.MyDataGridView();
             this.column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -39,12 +43,15 @@
             this.column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.toolStripButtonCollapseAll = new System.Windows.Forms.ToolStripButton();
+            this.treeViewSCL_IEC = new System.Windows.Forms.TreeView();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_data)).BeginInit();
             this.SuspendLayout();
             // 
@@ -58,6 +65,16 @@
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
             // 
+            // toolStripButtonCollapseAll
+            // 
+            this.toolStripButtonCollapseAll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButtonCollapseAll.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonCollapseAll.Image")));
+            this.toolStripButtonCollapseAll.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonCollapseAll.Name = "toolStripButtonCollapseAll";
+            this.toolStripButtonCollapseAll.Size = new System.Drawing.Size(73, 22);
+            this.toolStripButtonCollapseAll.Text = "Collapse All";
+            this.toolStripButtonCollapseAll.Click += new System.EventHandler(this.toolStripButtonCollapseAll_Click);
+            // 
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -66,7 +83,7 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.treeViewSCL);
+            this.splitContainer1.Panel1.Controls.Add(this.tabControl1);
             // 
             // splitContainer1.Panel2
             // 
@@ -75,14 +92,47 @@
             this.splitContainer1.SplitterDistance = 211;
             this.splitContainer1.TabIndex = 1;
             // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Location = new System.Drawing.Point(0, 0);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(211, 370);
+            this.tabControl1.TabIndex = 0;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.treeViewSCL);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(203, 344);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "IED View (MMS)";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
             // treeViewSCL
             // 
             this.treeViewSCL.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeViewSCL.Location = new System.Drawing.Point(0, 0);
+            this.treeViewSCL.Location = new System.Drawing.Point(3, 3);
             this.treeViewSCL.Name = "treeViewSCL";
-            this.treeViewSCL.Size = new System.Drawing.Size(211, 370);
+            this.treeViewSCL.Size = new System.Drawing.Size(197, 338);
             this.treeViewSCL.TabIndex = 0;
             this.treeViewSCL.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.treeViewSCL_IEC);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(203, 344);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "IEC View (61850)";
+            this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // dataGridView_data
             // 
@@ -143,15 +193,13 @@
             this.column7.Name = "column7";
             this.column7.Width = 69;
             // 
-            // toolStripButtonCollapseAll
+            // treeViewSCL_IEC
             // 
-            this.toolStripButtonCollapseAll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButtonCollapseAll.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonCollapseAll.Image")));
-            this.toolStripButtonCollapseAll.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonCollapseAll.Name = "toolStripButtonCollapseAll";
-            this.toolStripButtonCollapseAll.Size = new System.Drawing.Size(73, 22);
-            this.toolStripButtonCollapseAll.Text = "Collapse All";
-            this.toolStripButtonCollapseAll.Click += new System.EventHandler(this.toolStripButtonCollapseAll_Click);
+            this.treeViewSCL_IEC.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeViewSCL_IEC.Location = new System.Drawing.Point(3, 3);
+            this.treeViewSCL_IEC.Name = "treeViewSCL_IEC";
+            this.treeViewSCL_IEC.Size = new System.Drawing.Size(197, 338);
+            this.treeViewSCL_IEC.TabIndex = 0;
             // 
             // SCLView
             // 
@@ -169,6 +217,9 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_data)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -188,5 +239,9 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn column7;
         private MyDataGridView dataGridView_data;
         private System.Windows.Forms.ToolStripButton toolStripButtonCollapseAll;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TreeView treeViewSCL_IEC;
     }
 }

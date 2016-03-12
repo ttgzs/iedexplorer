@@ -74,13 +74,18 @@ namespace IEDExplorer
                     XAttribute a = ied.Attribute("name");
                     if (a != null) _dataModels[i].ied = new NodeIed(a.Value, _dataModels[i]);
                     else continue;  // cannot proceed
+                    if (a != null) _dataModels[i].iec = new NodeIed(a.Value, _dataModels[i]);
                     a = ied.Attribute("manufacturer");
                     if (a != null) _dataModels[i].ied.VendorName = a.Value;
+                    if (a != null) _dataModels[i].iec.VendorName = a.Value;
                     a = ied.Attribute("type");
                     if (a != null) _dataModels[i].ied.ModelName = a.Value;
+                    if (a != null) _dataModels[i].iec.ModelName = a.Value;
                     a = ied.Attribute("revision");
                     if (a != null) _dataModels[i].ied.Revision = a.Value;
+                    if (a != null) _dataModels[i].iec.Revision = a.Value;
 
+                    // IED MMS Tree
                     CreateLogicalDevices(_dataModels[i].ied, ied.Descendants(ns + "LDevice"), ns);
                     // data sets and reports
                     int ldidx = 0;
@@ -102,6 +107,29 @@ namespace IEDExplorer
                         }
                         ldroot.SortImmediateChildren();
                     }
+
+                    // IEC 61850 Tree
+                    CreateLogicalDevicesIEC(_dataModels[i].iec, ied.Descendants(ns + "LDevice"), ns);
+                    // data sets and reports
+                    /*ldidx = 0;
+                    foreach (XElement ld in ied.Descendants(ns + "LDevice"))
+                    {
+                        NodeBase ldroot = _dataModels[i].ied.GetChildNode(ldidx++);
+                        int lnidx = 0;
+                        IEnumerable<XElement> lns = (from el in ld.Elements() where el.Name.LocalName.StartsWith("LN") select el);
+                        int cnt = lns.Count();
+                        foreach (XElement ln in lns)
+                        {
+                            // Datasets
+                            NodeBase lnroot = ldroot.GetChildNode(lnidx++);
+                            //if (lnroot == null || lnroot.Parent == null || lnroot.Parent.Parent == null)
+                            //    Logger.getLogger().LogError("Something is null 1" + cnt);
+                            CreateDataSets(lnroot, ln.Elements(ns + "DataSet"), ns);
+                            CreateReports(lnroot, ln.Elements(ns + "ReportControl"), ns);
+                            lnroot.SortImmediateChildren();
+                        }
+                        ldroot.SortImmediateChildren();
+                    }*/
                     i++;
                 }
             }
@@ -126,6 +154,21 @@ namespace IEDExplorer
                 NodeLD logicalDevice = new NodeLD(String.Concat(root.Name, ld.Attribute("inst").Value));
                 root.AddChildNode(logicalDevice);
                 CreateLogicalNodes(logicalDevice, from el in ld.Elements() where el.Name.LocalName.StartsWith("LN") select el, ns);
+            }
+        }
+
+        /// <summary>
+        /// Creates a logical device (LD) node for IEC type tree and returns it
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns> a LD node </returns>
+        private void CreateLogicalDevicesIEC(NodeBase root, IEnumerable<XElement> elements, XNamespace ns)
+        {
+            foreach (XElement ld in elements)
+            {
+                NodeLD logicalDevice = new NodeLD(String.Concat(root.Name, ld.Attribute("inst").Value));
+                root.AddChildNode(logicalDevice);
+                CreateLogicalNodesIEC(logicalDevice, from el in ld.Elements() where el.Name.LocalName.StartsWith("LN") select el, ns);
             }
         }
 
@@ -255,6 +298,141 @@ namespace IEDExplorer
                     nodeFC.SortImmediateChildren(); // alphabetical
                     logicalNode.AddChildNode(nodeFC);
                 }
+
+                logicalNode.SortImmediateChildren(); // alphabetical
+
+                root.AddChildNode(logicalNode);
+
+            }
+        }
+
+        /// <summary>
+        /// Creates a logical node (LN) and all of its children, including
+        /// FCs, DO's, and DA's
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns> a LN node </returns>
+        private void CreateLogicalNodesIEC(NodeBase root, IEnumerable<XElement> elements, XNamespace ns)
+        {
+            foreach (XElement ln in elements)
+            {
+                XAttribute a = ln.Attribute("prefix");
+                string prefix = a != null ? a.Value : "";
+                a = ln.Attribute("lnClass");
+                string lnClass = a != null ? a.Value : "";
+                a = ln.Attribute("inst");
+                string inst = a != null ? a.Value : "";
+                a = ln.Attribute("lnType");
+                string type = a != null ? a.Value : "";
+
+                // LN name is a combination of prefix, lnCLass, and inst
+                var name = !String.IsNullOrWhiteSpace(prefix) ? String.Concat(prefix, lnClass, inst) : String.Concat(lnClass, inst);
+
+                NodeLN logicalNode = new NodeLN(name);
+                logicalNode.TypeId = type;
+
+                //Hashtable functionalConstraints = new Hashtable();
+                NodeBase nodeType;
+                try
+                {
+                    nodeType = _nodeTypes.Single(nt => nt.Name.Equals(type));
+                }
+                catch (Exception e)
+                {
+                    logger.LogError("SCL Parser: LN type template not found: " + type.ToString() + ", for Node: " + name.ToString() + ", Exception: " + e.Message);
+                    continue;
+                }
+
+                // for each DO in the LNodeType
+                foreach (var dataObject in nodeType.GetChildNodes())
+                {
+                    NodeBase doType = null;
+                    try
+                    {
+                        doType = _dataObjectTypes.Single(dot => dot.Name.Equals((dataObject as NodeDO).Type));
+                    }
+                    catch (Exception e)
+                    {
+                        logger.LogError("SCL Parser: DO type template not found: " + (dataObject as NodeDO).Type + ", for LN type: " + nodeType.Name + ", in node: " + name.ToString() + ", Exception: " + e.Message);
+                        continue;
+                    }
+
+                    // for each DA in the DOType
+                    foreach (var dataAttribute in doType.GetChildNodes())
+                    {
+                        //var fc = (dataAttribute as NodeData).FCDesc;
+                        (dataAttribute as NodeData).DOName = dataObject.Name;
+                        NodeData newNode = new NodeData(dataAttribute.Name);
+                        newNode.Type = (dataAttribute as NodeData).Type;
+                        newNode.BType = (dataAttribute as NodeData).BType;
+                        newNode.DOName = (dataAttribute as NodeData).DOName;
+                        newNode.FCDesc = (dataAttribute as NodeData).FCDesc;
+
+                        // when the type is specified (ie. when it's a struct), get the struct child nodes
+                        if (!String.IsNullOrWhiteSpace(newNode.Type))
+                        {
+                            var dataType =
+                                _dataAttributeTypes.Single(dat => dat.Name.Equals((newNode.Type)));
+                            foreach (NodeBase child in dataType.GetChildNodes())
+                            {
+                                var tempChild = new NodeData(child.Name);
+                                tempChild.BType = (child as NodeData).BType;
+                                if (!String.IsNullOrWhiteSpace((child as NodeData).Type))
+                                {
+                                    var subDataType = _dataAttributeTypes.Single(dat => dat.Name.Equals((child as NodeData).Type));
+                                    foreach (NodeBase subChild in subDataType.GetChildNodes())
+                                    {
+                                        var tempSubChild = new NodeData(subChild.Name);
+                                        tempSubChild.BType = (subChild as NodeData).BType;
+                                        tempChild.AddChildNode(subChild);
+                                    }
+                                }
+                                newNode.AddChildNode(tempChild);
+                            }
+                        }
+                        /*if (!functionalConstraints.ContainsKey(fc))
+                        {
+                            NodeFC nodeFC = new NodeFC(fc);
+                            nodeFC.ForceAddChildNode(newNode);
+                            functionalConstraints.Add(fc, nodeFC);
+                        }
+                        else
+                        {
+                            (functionalConstraints[fc] as NodeBase).ForceAddChildNode(newNode);
+                        }*/
+                        dataObject.AddChildNode(newNode);
+                    }
+                }
+
+                // for each hashtable element
+                /*foreach (var key in functionalConstraints.Keys)
+                {
+                    var doList = new List<NodeDO>();
+
+                    // for each data attribute of the functional constraint
+                    foreach (var da in (functionalConstraints[key] as NodeBase).GetChildNodes())
+                    {
+                        var doName = (da as NodeData).DOName;
+                        if (doList.Exists(x => x.Name.Equals(doName)))
+                        {
+                            doList.Single(x => x.Name.Equals(doName)).AddChildNode(da);
+                        }
+                        else
+                        {
+                            var temp = new NodeDO(doName);
+                            temp.AddChildNode(da);
+                            doList.Add(temp);
+                        }
+                    }
+
+                    var nodeFC = new NodeFC(key as string);
+                    foreach (NodeDO x in doList)
+                    {
+                        nodeFC.AddChildNode(x);
+                    }
+                    nodeFC.SortImmediateChildren(); // alphabetical
+                    logicalNode.AddChildNode(nodeFC);
+                }*/
 
                 logicalNode.SortImmediateChildren(); // alphabetical
 

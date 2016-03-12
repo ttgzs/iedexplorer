@@ -67,8 +67,8 @@ namespace IEDExplorer.Views
             {
                 ListViewItem lvi = new ListViewItem(d.Address);
                 lvi.Tag = d;
-                int i = 0;
-                /*for (; i < treeViewAdv1.Items.Count; i++)
+                /*int i = 0;
+                for (; i < treeViewAdv1.Items.Count; i++)
                 {
                     if (lvi.Tag == treeViewAdv1.Items[i].Tag)
                         break;

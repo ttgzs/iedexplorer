@@ -34,17 +34,20 @@ namespace IEDExplorer.Views
                 return;
             }
             IedTreeView.makeImageList(treeViewSCL);
-            makeTreeScl(dataModels[0]);
+            IedTreeView.makeImageList(treeViewSCL_IEC);
+            makeTreeScl(dataModels[0], treeViewSCL);
+            makeTreeScl(dataModels[0], treeViewSCL_IEC);
             foreach (Iec61850Model dataModel in dataModels)
             {
                 makeTreeIed(dataModel);
+                makeTreeIec(dataModel);
             }
             string[] fparts = filename.Split(new char[] { '/', '\\' });
             filename_short  = fparts[fparts.Length - 1];
             this.Text = filename_short;
         }
 
-        internal void makeTreeScl(Iec61850Model dataModel)
+        internal void makeTreeScl(Iec61850Model dataModel, TreeView treeViewSCL)
         {
             TreeNode n = treeViewSCL.Nodes.Add("SCL = " + filename);
             n.ImageIndex = 4;
@@ -59,61 +62,75 @@ namespace IEDExplorer.Views
 
         internal void makeTreeIed(Iec61850Model dataModel)
         {
-                TreeNode n = treeViewSCL.Nodes.Add(dataModel.ied.Name + // " = " + filename +
-                                                 " = Vendor = " + (dataModel.ied as NodeIed).VendorName +
-                                                 ", Model = " + (dataModel.ied as NodeIed).ModelName +
-                                                 ", Revision = " + (dataModel.ied as NodeIed).Revision +
-                                                 ", DefineNVL = " + (dataModel.ied as NodeIed).DefineNVL
-                                                 );
-                NodeBase nb = dataModel.ied;
-                n.Tag = nb;
-                n.ImageIndex = 0;
-                foreach (NodeBase b in nb.GetChildNodes())
+            TreeNode n = treeViewSCL.Nodes.Add(dataModel.ied.Name + // " = " + filename +
+                                             " = Vendor = " + (dataModel.ied as NodeIed).VendorName +
+                                             ", Model = " + (dataModel.ied as NodeIed).ModelName +
+                                             ", Revision = " + (dataModel.ied as NodeIed).Revision +
+                                             ", DefineNVL = " + (dataModel.ied as NodeIed).DefineNVL
+                                             );
+            NodeBase nb = dataModel.ied;
+            n.Tag = nb;
+            n.ImageIndex = 0;
+            foreach (NodeBase b in nb.GetChildNodes())
+            {
+                TreeNode tn2 = n.Nodes.Add(b.Name);
+                tn2.Tag = b;
+                tn2.ImageIndex = 1;
+                tn2.SelectedImageIndex = 1;
+                TreeNode tn3 = tn2.Nodes.Add("Data");
+                tn3.Tag = b;
+                tn3.ImageIndex = 2;
+                tn3.SelectedImageIndex = 2;
+                makeTree_dataNode(b, tn3);
+                NodeBase lb = dataModel.lists.FindChildNode(b.Name);
+                if (lb != null)
                 {
-                    TreeNode tn2 = n.Nodes.Add(b.Name);
-                    tn2.Tag = b;
-                    tn2.ImageIndex = 1;
-                    tn2.SelectedImageIndex = 1;
-                    TreeNode tn3 = tn2.Nodes.Add("Data");
-                    tn3.Tag = b;
-                    tn3.ImageIndex = 2;
-                    tn3.SelectedImageIndex = 2;
-                    makeTree_dataNode(b, tn3);
-                    NodeBase lb = dataModel.lists.FindChildNode(b.Name);
-                    if (lb != null)
-                    {
-                        tn3 = tn2.Nodes.Add("DataSets");
-                        tn3.Tag = lb;
-                        tn3.ImageIndex = 3;
-                        tn3.SelectedImageIndex = 3;
-                        makeTree_listNode(lb, tn3);
-                    }
-                    NodeBase ur = dataModel.urcbs.FindChildNode(b.Name);
-                    if (ur != null)
-                    {
-                        tn3 = tn2.Nodes.Add("Unbuffered Reports");
-                        tn3.Tag = ur;
-                        tn3.ImageIndex = 3;
-                        tn3.SelectedImageIndex = 3;
-                        makeTree_reportNode(ur, tn3);
-                    }
-                    NodeBase br = dataModel.brcbs.FindChildNode(b.Name);
-                    if (br != null)
-                    {
-                        tn3 = tn2.Nodes.Add("Buffered Reports");
-                        tn3.Tag = br;
-                        tn3.ImageIndex = 3;
-                        tn3.SelectedImageIndex = 3;
-                        makeTree_reportNode(br, tn3);
-                    }
+                    tn3 = tn2.Nodes.Add("DataSets");
+                    tn3.Tag = lb;
+                    tn3.ImageIndex = 3;
+                    tn3.SelectedImageIndex = 3;
+                    makeTree_listNode(lb, tn3);
                 }
-                /*nb = dataModel.files;
-                TreeNode tn4 = n.Nodes.Add("Files");
-                tn4.Tag = dataModel.files;
-                tn4.ImageIndex = 3;
-                tn4.SelectedImageIndex = 3;
-                makeTree_fileNode(nb, tn4);*/
-            
+                NodeBase ur = dataModel.urcbs.FindChildNode(b.Name);
+                if (ur != null)
+                {
+                    tn3 = tn2.Nodes.Add("Unbuffered Reports");
+                    tn3.Tag = ur;
+                    tn3.ImageIndex = 3;
+                    tn3.SelectedImageIndex = 3;
+                    makeTree_reportNode(ur, tn3);
+                }
+                NodeBase br = dataModel.brcbs.FindChildNode(b.Name);
+                if (br != null)
+                {
+                    tn3 = tn2.Nodes.Add("Buffered Reports");
+                    tn3.Tag = br;
+                    tn3.ImageIndex = 3;
+                    tn3.SelectedImageIndex = 3;
+                    makeTree_reportNode(br, tn3);
+                }
+            }
+        }
+
+        internal void makeTreeIec(Iec61850Model dataModel)
+        {
+            TreeNode n = treeViewSCL_IEC.Nodes.Add(dataModel.iec.Name + //" = " + iecs.hostname +
+                                             " = Vendor = " + (dataModel.iec as NodeIed).VendorName +
+                                             ", Model = " + (dataModel.iec as NodeIed).ModelName +
+                                             ", Revision = " + (dataModel.iec as NodeIed).Revision +
+                                             ", DefineNVL = " + (dataModel.iec as NodeIed).DefineNVL
+                                             );
+            NodeBase nb = dataModel.iec;
+            n.Tag = nb;
+            n.ImageIndex = 0;
+            foreach (NodeBase b in nb.GetChildNodes())
+            {
+                TreeNode tn3 = n.Nodes.Add(b.Name);
+                tn3.Tag = b;
+                tn3.ImageIndex = 1;
+                tn3.SelectedImageIndex = 1;
+                makeTreeIec_dataNode(b, tn3);
+            }
         }
 
         void makeTree_dataNode(NodeBase nb, TreeNode tn)
@@ -147,6 +164,40 @@ namespace IEDExplorer.Views
                     tn2.SelectedImageIndex = 34;
                 }
                 makeTree_dataNode(b, tn2);
+            }
+        }
+
+        void makeTreeIec_dataNode(NodeBase nb, TreeNode tn)
+        {
+            foreach (NodeBase b in nb.GetChildNodes())
+            {
+                string name = b.Name;
+                if (b is NodeRCB || b is NodeVL)
+                    name = b.Name.Substring(b.Name.LastIndexOf("$") + 1);
+                if (b is NodeData && (b as NodeData).FCDesc != null && (b as NodeData).FCDesc != "") name += " [" + (b as NodeData).FCDesc + "]";
+                TreeNode tn2 = tn.Nodes.Add(name);
+                tn2.Tag = b;
+                b.TagR = tn2;
+                //Node_StateChanged(b, new EventArgs());
+                if (b is NodeRCB)
+                {
+                    if ((b as NodeRCB).isBuffered)
+                    {
+                        tn2.ImageIndex = 33;
+                        tn2.SelectedImageIndex = 33;
+                    }
+                    else
+                    {
+                        tn2.ImageIndex = 32;
+                        tn2.SelectedImageIndex = 32;
+                    }
+                }
+                if (b is NodeVL)
+                {
+                    tn2.ImageIndex = 34;
+                    tn2.SelectedImageIndex = 34;
+                }
+                makeTreeIec_dataNode(b, tn2);
             }
         }
 
