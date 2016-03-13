@@ -144,7 +144,7 @@ namespace IEDExplorer.Views
                 TreeNode tn2 = tn.Nodes.Add(name);
                 tn2.Tag = b;
                 b.Tag = tn2;
-                Node_SetIcon(b);
+                Node_SetIcon(b, tn2);
                 if (b is NodeRCB)
                 {
                     if ((b as NodeRCB).isBuffered)
@@ -179,6 +179,7 @@ namespace IEDExplorer.Views
                 tn2.Tag = b;
                 b.TagR = tn2;
                 //Node_StateChanged(b, new EventArgs());
+                Node_SetIcon(b, tn2);
                 if (b is NodeRCB)
                 {
                     if ((b as NodeRCB).isBuffered)
@@ -267,11 +268,11 @@ namespace IEDExplorer.Views
             }
         }
 
-        void Node_SetIcon(NodeBase b)
+        void Node_SetIcon(NodeBase b, TreeNode tn)
         {
-                if (b.Tag is TreeNode)
-                {
-                    TreeNode tn = (b.Tag as TreeNode);
+                //if (b.Tag is TreeNode)
+                //{
+                //    TreeNode tn = (b.Tag as TreeNode);
                     int firsticon = 0;
                     if (b is NodeLN)
                     {
@@ -304,7 +305,7 @@ namespace IEDExplorer.Views
                     tn.ImageIndex = newIconIndex;
                     tn.SelectedImageIndex = newIconIndex;
                     treeViewSCL.Invalidate(tn.Bounds);
-                }
+                //}
         }
 
         private void dataGridView_data_SelectionChanged(object sender, EventArgs e)

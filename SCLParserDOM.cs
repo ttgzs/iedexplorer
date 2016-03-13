@@ -390,49 +390,10 @@ namespace IEDExplorer
                                 newNode.AddChildNode(tempChild);
                             }
                         }
-                        /*if (!functionalConstraints.ContainsKey(fc))
-                        {
-                            NodeFC nodeFC = new NodeFC(fc);
-                            nodeFC.ForceAddChildNode(newNode);
-                            functionalConstraints.Add(fc, nodeFC);
-                        }
-                        else
-                        {
-                            (functionalConstraints[fc] as NodeBase).ForceAddChildNode(newNode);
-                        }*/
                         dataObject.AddChildNode(newNode);
                     }
+                    logicalNode.AddChildNode(dataObject);
                 }
-
-                // for each hashtable element
-                /*foreach (var key in functionalConstraints.Keys)
-                {
-                    var doList = new List<NodeDO>();
-
-                    // for each data attribute of the functional constraint
-                    foreach (var da in (functionalConstraints[key] as NodeBase).GetChildNodes())
-                    {
-                        var doName = (da as NodeData).DOName;
-                        if (doList.Exists(x => x.Name.Equals(doName)))
-                        {
-                            doList.Single(x => x.Name.Equals(doName)).AddChildNode(da);
-                        }
-                        else
-                        {
-                            var temp = new NodeDO(doName);
-                            temp.AddChildNode(da);
-                            doList.Add(temp);
-                        }
-                    }
-
-                    var nodeFC = new NodeFC(key as string);
-                    foreach (NodeDO x in doList)
-                    {
-                        nodeFC.AddChildNode(x);
-                    }
-                    nodeFC.SortImmediateChildren(); // alphabetical
-                    logicalNode.AddChildNode(nodeFC);
-                }*/
 
                 logicalNode.SortImmediateChildren(); // alphabetical
 
