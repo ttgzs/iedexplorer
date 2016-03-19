@@ -19,6 +19,9 @@
 
 using System;
 using System.Windows.Forms;
+using System.Reflection;
+using System.IO;
+using System.Runtime.InteropServices;
 
 namespace IEDExplorer
 {
@@ -30,11 +33,54 @@ namespace IEDExplorer
         [STAThread]
         static void Main()
         {
+            string resPrefix = "IEDExplorer.Embed.";
+            string filename1 = "iec61850dotnet.dll";
+            string filename2 = "iec61850.dll";
+            EmbeddedAssembly.Load(resPrefix + filename1, filename1);
+            EmbeddedAssembly.Load(resPrefix + filename2, filename2);
+
+            AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new MainWindowOld());
+
             Env env = new Env();
             Application.Run(new Views.MainWindow(env));
+
+            string path2 = null;
+            try
+            {
+                path2 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, filename2);
+                if (File.Exists(path2))
+                    File.Delete(path2);
+            }
+            catch
+            {
+                try
+                {
+                    UnloadImportedDll(path2);
+                    File.Delete(path2);
+                }
+                catch { }
+            }
+        }
+
+        static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            return EmbeddedAssembly.Get(args.Name);
+        }
+
+        [DllImport("kernel32", SetLastError = true)]
+        private static extern bool FreeLibrary(IntPtr hModule);
+
+        public static void UnloadImportedDll(string DllPath)
+        {
+            foreach (System.Diagnostics.ProcessModule mod in System.Diagnostics.Process.GetCurrentProcess().Modules)
+            {
+                if (mod.FileName.ToUpper() == DllPath.ToUpper())
+                {
+                    FreeLibrary(mod.BaseAddress);
+                }
+            }
         }
     }
 }

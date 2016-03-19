@@ -70,6 +70,10 @@
     <ApplicationIcon>Iedexplorer.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="iec61850dotnet">
+      <HintPath>Embed\iec61850dotnet.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -95,6 +99,7 @@
     <Compile Include="Dialogs\AutoUpdateStoppedDialog.Designer.cs">
       <DependentUpon>AutoUpdateStoppedDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="EmbeddedAssembly.cs" />
     <Compile Include="SCLParserDOM.cs" />
     <Compile Include="Dialogs\SplitStringDialog.cs">
       <SubType>Form</SubType>
@@ -109,6 +114,7 @@
     <Compile Include="Dialogs\AboutDialog.Designer.cs">
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="SclServer.cs" />
     <Compile Include="TreeViewAdv\Properties\Resources1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1175,6 +1181,8 @@
     <Content Include="Docking\Resources\InactiveTabHover_Close.bmp" />
     <Content Include="Docking\Resources\LostFocusTabHover_Close.bmp" />
     <Content Include="Docking\Resources\LostFocusTab_Close.bmp" />
+    <EmbeddedResource Include="Embed\iec61850.dll" />
+    <EmbeddedResource Include="Embed\iec61850dotnet.dll" />
     <Content Include="Iedexplorer.ico" />
     <Content Include="README.txt" />
     <Content Include="Resources\calculator.png" />
