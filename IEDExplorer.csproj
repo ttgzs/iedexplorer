@@ -100,6 +100,18 @@
       <DependentUpon>AutoUpdateStoppedDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="EmbeddedAssembly.cs" />
+    <Compile Include="IEC61850.Server\DataAttribute.cs" />
+    <Compile Include="IEC61850.Server\DataObject.cs" />
+    <Compile Include="IEC61850.Server\DataSet.cs" />
+    <Compile Include="IEC61850.Server\DataSetEntry.cs" />
+    <Compile Include="IEC61850.Server\IedModel.cs" />
+    <Compile Include="IEC61850.Server\IedServer.cs" />
+    <Compile Include="IEC61850.Server\LogicalDevice.cs" />
+    <Compile Include="IEC61850.Server\LogicalNode.cs" />
+    <Compile Include="IEC61850.Server\ModelNode.cs" />
+    <Compile Include="IEC61850.Server\ReportControlBlock.cs" />
+    <Compile Include="IEC61850.Server\SettingGroupControlBlock.cs" />
+    <Compile Include="IEC61850.Server\Util.cs" />
     <Compile Include="SCLParserDOM.cs" />
     <Compile Include="Dialogs\SplitStringDialog.cs">
       <SubType>Form</SubType>
@@ -114,7 +126,7 @@
     <Compile Include="Dialogs\AboutDialog.Designer.cs">
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="SclServer.cs" />
+    <Compile Include="SCLServer.cs" />
     <Compile Include="TreeViewAdv\Properties\Resources1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

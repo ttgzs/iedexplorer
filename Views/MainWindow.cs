@@ -251,7 +251,7 @@ namespace IEDExplorer.Views
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            SclServer.TestClient();
+            SCLServer.TestClient();
         }
 
     }
