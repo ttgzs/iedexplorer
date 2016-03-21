@@ -1,4 +1,27 @@
-﻿using System;
+﻿/*
+ *  Copyright (C) 2016 Pavel Charvat
+ * 
+ *  This file is part of IEDExplorer.
+ *
+ *  IEDExplorer is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  IEDExplorer is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with IEDExplorer.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ *  SCLParser.cs was created by Joel Kaiser as an add-in to IEDExplorer.
+ *  This class parses a SCL-type XML file to create a logical tree similar
+ *  to that which Pavel creates from communication with an actual device.
+ */
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -18,10 +41,13 @@ namespace IEDExplorer.Views
         List<Iec61850Model> dataModels;
         public string Filename { get { return filename; } }
         private int _currentRow = -1;
+        public Env env;
+        Dictionary<NodeIed, SCLServer> runningServers = new Dictionary<NodeIed, SCLServer>();
 
-        public SCLView(string fname)
+        public SCLView(string fname, Env envir)
         {
             filename = fname;
+            env = envir;
             InitializeComponent();
             try
             {
@@ -432,6 +458,102 @@ namespace IEDExplorer.Views
             dataGridView_data.Rows.Clear();
             treeViewSCL.CollapseAll();
             dataGridView_data.Focus();
+        }
+
+        private void treeViewSCL_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right && e.Node != null)
+            {
+                NodeBase n = (NodeBase)e.Node.Tag;
+
+                ContextMenuStrip menu = new ContextMenuStrip();
+                ToolStripItem item;
+
+                if (n != null)
+                {
+                    if (n is NodeIed)
+                    {
+                        if (runningServers.ContainsKey((NodeIed)n))
+                        {
+                            item = menu.Items.Add("Stop SCLServer");
+                            item.Tag = n;
+                            item.Click += new EventHandler(OnStopServer);
+                        }
+                        else
+                        {
+                            item = menu.Items.Add("Run SCLServer");
+                            item.Tag = n;
+                            item.Click += new EventHandler(OnRunServer);
+                        }
+                    }
+                }
+                if (menu.Items.Count > 0)
+                    menu.Items.Add(new ToolStripSeparator());
+                item = menu.Items.Add("Expand Subtree");
+                item.Tag = e.Node;
+                item.Click += new EventHandler(OnExpandSubtree);
+
+                item = menu.Items.Add("Collapse Subtree");
+                item.Tag = e.Node;
+                item.Click += new EventHandler(OnCollapseSubtree);
+
+                if (menu.Items.Count > 0)
+                    menu.Show((Control)sender, e.Location);
+            }
+        }
+
+        void OnExpandSubtree(object sender, EventArgs e)
+        {
+            ExpandNode(((sender as ToolStripItem).Tag as TreeNode));
+            ((sender as ToolStripItem).Tag as TreeNode).EnsureVisible();
+        }
+
+        void ExpandNode(TreeNode node)
+        {
+            node.Expand();
+            foreach (TreeNode tn in node.Nodes)
+            {
+                ExpandNode(tn);
+            }
+        }
+
+        void OnCollapseSubtree(object sender, EventArgs e)
+        {
+            CollapseNode(((sender as ToolStripItem).Tag as TreeNode));
+            ((sender as ToolStripItem).Tag as TreeNode).EnsureVisible();
+        }
+
+        void CollapseNode(TreeNode node)
+        {
+            node.Collapse();
+            foreach (TreeNode tn in node.Nodes)
+            {
+                CollapseNode(tn);
+            }
+        }
+
+        void OnRunServer(object sender, EventArgs e)
+        {
+            NodeIed n = (NodeIed)(sender as ToolStripItem).Tag;
+            foreach (Iec61850Model m in dataModels)
+            {
+                if (m.ied.Name == n.Name)
+                {
+                    SCLServer s = new SCLServer(env);
+                    runningServers.Add(n, s);
+                    s.Start(m, 102);
+                }
+            }
+        }
+
+        void OnStopServer(object sender, EventArgs e)
+        {
+            NodeIed n = (NodeIed)(sender as ToolStripItem).Tag;
+            if (runningServers.ContainsKey(n))
+            {
+                runningServers[n].Stop();
+                runningServers.Remove(n);
+            }
         }
     }
 }

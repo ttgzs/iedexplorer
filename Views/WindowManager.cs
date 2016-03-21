@@ -169,7 +169,7 @@ namespace IEDExplorer.Views
                 }
             }
 
-            DockContent sclView = new SCLView(filename);
+            DockContent sclView = new SCLView(filename, env);
             sclView.FormClosed += new FormClosedEventHandler(sclView_FormClosed);
             documentViews.Add(sclView);
             sclView.Show(dockPanel);

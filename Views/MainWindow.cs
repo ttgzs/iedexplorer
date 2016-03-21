@@ -26,6 +26,8 @@ namespace IEDExplorer.Views
         const int maxHistory = 20;
         IsoConnectionParameters isoPar;
 
+        SCLServer sclServer = null;
+
         private WeifenLuo.WinFormsUI.Docking.VS2012LightTheme vS2012LightTheme1 = new VS2012LightTheme();
 
         public MainWindow(Env envir)
@@ -251,7 +253,21 @@ namespace IEDExplorer.Views
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            SCLServer.TestClient();
+            if (sclServer == null)
+            {
+                sclServer = new SCLServer(env);
+                sclServer.StartTestServer();
+                toolStripButton1.Enabled = false;
+                toolStripButton2.Enabled = true;
+            }
+        }
+
+        private void toolStripButton2_Click(object sender, EventArgs e)
+        {
+            sclServer.Stop();
+            sclServer = null;
+            toolStripButton2.Enabled = false;
+            toolStripButton1.Enabled = true;
         }
 
     }

@@ -43,6 +43,8 @@ namespace IEDExplorer
         private bool _addressLock = false;
         public event EventHandler StateChanged;
         private NodeState _nodeState;
+        // Persistence for SCL server library objects
+        public object SCLServerModelObject { get; set; }
 
         public NodeBase(string Name)
         {

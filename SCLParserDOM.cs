@@ -395,6 +395,44 @@ namespace IEDExplorer
                     logicalNode.AddChildNode(dataObject);
                 }
 
+                foreach (XElement el in ln.Elements(ns + "DataSet"))
+                {
+                    NodeVL nodeVL = new NodeVL(el.Attribute("name").Value);
+                    logicalNode.AddChildNode(nodeVL);
+                    foreach (XElement dsMember in el.Elements(ns + "FCDA"))
+                    {
+                        try
+                        {
+                            a = dsMember.Attribute("prefix");
+                            string prefix2 = a != null ? a.Value : "";
+                            a = dsMember.Attribute("lnClass");
+                            string lnClass2 = a != null ? a.Value : "";
+                            a = dsMember.Attribute("lnInst");
+                            string lnInst = a != null ? a.Value : "";
+                            string fullName = String.Concat(prefix2, lnClass2, lnInst);
+                            a = dsMember.Attribute("ldInst");
+                            string ldInst = a != null ? a.Value : "";
+                            a = dsMember.Attribute("doName");
+                            string doName = a != null ? a.Value : "";
+                            a = dsMember.Attribute("fc");
+                            string fc = a != null ? a.Value : "";
+
+                            // We are at the LN level, up 2 levels is an ied
+                            NodeIed iec = root.Parent as NodeIed;
+
+                            var nodeData = iec.AddChildNode(new NodeLD(String.Concat(iec.Name, ldInst)))
+                                .AddChildNode(new NodeLN(fullName))
+                                .AddChildNode(new NodeData(doName));
+
+                            nodeVL.ForceLinkChildNode(nodeData);
+                        }
+                        catch (Exception e)
+                        {
+                            Logger.getLogger().LogError("CreateDataSets IEC: " + e.Message);
+                        }
+                    }
+                }
+
                 logicalNode.SortImmediateChildren(); // alphabetical
 
                 root.AddChildNode(logicalNode);
