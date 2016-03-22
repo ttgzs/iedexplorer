@@ -166,7 +166,8 @@ namespace IEDExplorer
         {
             foreach (XElement ld in elements)
             {
-                NodeLD logicalDevice = new NodeLD(String.Concat(root.Name, ld.Attribute("inst").Value));
+                //NodeLD logicalDevice = new NodeLD(String.Concat(root.Name, ld.Attribute("inst").Value));
+                NodeLD logicalDevice = new NodeLD(ld.Attribute("inst").Value);
                 root.AddChildNode(logicalDevice);
                 CreateLogicalNodesIEC(logicalDevice, from el in ld.Elements() where el.Name.LocalName.StartsWith("LN") select el, ns);
             }
@@ -312,7 +313,7 @@ namespace IEDExplorer
         /// </summary>
         /// <param name="reader"></param>
         /// <returns> a LN node </returns>
-        private void CreateLogicalNodesIEC(NodeBase root, IEnumerable<XElement> elements, XNamespace ns)
+        private void CreateLogicalNodesIEC(NodeBase ld, IEnumerable<XElement> elements, XNamespace ns)
         {
             foreach (XElement ln in elements)
             {
@@ -394,6 +395,7 @@ namespace IEDExplorer
                     }
                     logicalNode.AddChildNode(dataObject);
                 }
+                ld.AddChildNode(logicalNode);
 
                 foreach (XElement el in ln.Elements(ns + "DataSet"))
                 {
@@ -418,13 +420,21 @@ namespace IEDExplorer
                             string fc = a != null ? a.Value : "";
 
                             // We are at the LN level, up 2 levels is an ied
-                            NodeIed iec = root.Parent as NodeIed;
+                            NodeIed iec = ld.Parent as NodeIed;
 
-                            var nodeData = iec.AddChildNode(new NodeLD(String.Concat(iec.Name, ldInst)))
-                                .AddChildNode(new NodeLN(fullName))
-                                .AddChildNode(new NodeData(doName));
+                            //string memberName = ld.Name + "/" + fullName + "." + doName;
+                            string memberName = ld.Name + "/" + fullName + "." + fc + "." + doName;
+                            memberName = memberName.Replace('.', '$');
 
-                            nodeVL.ForceLinkChildNode(nodeData);
+                            // Cannot be done, the data are not yet present (instantiated)
+                            //var nodeData = iec.FindSubNode(memberName);
+                            //if (nodeData != null)
+                            //    nodeVL.ForceLinkChildNode(nodeData);
+                            //else
+                            //    logger.LogWarning("SCL Iec model: DataSet member not found: " + memberName);
+
+                            // instead, add a temporary object
+                            nodeVL.AddChildNode(new NodeVLM(memberName));
                         }
                         catch (Exception e)
                         {
@@ -433,9 +443,9 @@ namespace IEDExplorer
                     }
                 }
 
-                logicalNode.SortImmediateChildren(); // alphabetical
+                CreateReports(logicalNode, ln.Elements(ns + "ReportControl"), ns, true);
 
-                root.AddChildNode(logicalNode);
+                logicalNode.SortImmediateChildren(); // alphabetical
 
             }
         }
@@ -593,7 +603,7 @@ namespace IEDExplorer
         private void CreateDataSets(NodeBase lnode, IEnumerable<XElement> elements, XNamespace ns)
         {
             if (lnode == null || elements == null || lnode.Parent == null || lnode.Parent.Parent == null)
-                Logger.getLogger().LogError("Something is null");
+                Logger.getLogger().LogError("CreateDataSets: Something is null");
 
             // We are at the LN level, up 2 levels is an ied
             Iec61850Model _dataModel = (lnode.Parent.Parent as NodeIed).Model;
@@ -642,10 +652,10 @@ namespace IEDExplorer
         /// <param name="deviceName"></param>
         /// <returns> a RP node </returns>
 
-        private void CreateReports(NodeBase lnode, IEnumerable<XElement> elements, XNamespace ns)
+        private void CreateReports(NodeBase lnode, IEnumerable<XElement> elements, XNamespace ns, bool isIecTree = false)
         {
             if (lnode == null || elements == null || lnode.Parent == null || lnode.Parent.Parent == null)
-                Logger.getLogger().LogError("Something is null");
+                Logger.getLogger().LogError("CreateReports: Something is null");
 
             // We are at the LN level, up 2 levels is an ied
             Iec61850Model _dataModel = (lnode.Parent.Parent as NodeIed).Model;
@@ -656,19 +666,25 @@ namespace IEDExplorer
                 XAttribute a = el.Attribute("buffered");
                 NodeRCB nodeRCB;
                 bool buffered = a != null ? (a.Value.ToLower() == "true") : false;
-                string fc;
-                if (buffered)
+                string fc = buffered ? "BR" : "RP";
+                if (isIecTree)
                 {
-                    fc = "BR";
-                    nodeRCB = new NodeRCB(String.Concat(lnode.Name, "$", fc , "$", el.Attribute("name").Value));
-                    nodeRCB.isBuffered = true;
-                    _dataModel.brcbs.AddChildNode(new NodeLD(lnode.Parent.Name)).AddChildNode(nodeRCB);
+                    nodeRCB = new NodeRCB(el.Attribute("name").Value);
+                    nodeRCB.isBuffered = buffered;
                 }
                 else
                 {
-                    fc = "RP";
-                    nodeRCB = new NodeRCB(String.Concat(lnode.Name, "$", fc, "$", el.Attribute("name").Value));
-                    _dataModel.urcbs.AddChildNode(new NodeLD(lnode.Parent.Name)).AddChildNode(nodeRCB);
+                    if (buffered)
+                    {
+                        nodeRCB = new NodeRCB(String.Concat(lnode.Name, "$", fc, "$", el.Attribute("name").Value));
+                        nodeRCB.isBuffered = true;
+                        _dataModel.brcbs.AddChildNode(new NodeLD(lnode.Parent.Name)).AddChildNode(nodeRCB);
+                    }
+                    else
+                    {
+                        nodeRCB = new NodeRCB(String.Concat(lnode.Name, "$", fc, "$", el.Attribute("name").Value));
+                        _dataModel.urcbs.AddChildNode(new NodeLD(lnode.Parent.Name)).AddChildNode(nodeRCB);
+                    }
                 }
 
                 // rptID
@@ -681,29 +697,127 @@ namespace IEDExplorer
                 NodeData DatSet = new NodeData("DatSet");
                 DatSet.DataType = scsm_MMS_TypeEnum.visible_string;
                 a = el.Attribute("datSet");
-                DatSet.DataValue = a != null ? lnode.Name + "$" + a.Value : "";
+                if (isIecTree)
+                    DatSet.DataValue = a != null ? lnode.Parent.Name + "/" + lnode.Name + "$" + a.Value : "";
+                else
+                    DatSet.DataValue = a != null ? lnode.Name + "$" + a.Value : "";
 
                 // confRev
                 NodeData ConfRev = new NodeData("ConfRev");
                 ConfRev.DataType = scsm_MMS_TypeEnum.unsigned;
                 a = el.Attribute("confRev");
-                ConfRev.DataValue = a != null ? a.Value : "";
+                try
+                {
+                    ConfRev.DataValue = uint.Parse(a.Value);
+                }
+                catch
+                {
+                    ConfRev.DataValue = 1;
+                }
 
                 // bufTime
                 NodeData BufTm = new NodeData("BufTm");
                 BufTm.DataType = scsm_MMS_TypeEnum.unsigned;
                 a = el.Attribute("bufTime");
-                RptId.DataValue = a != null ? a.Value : "";
+                try
+                {
+                    BufTm.DataValue = uint.Parse(a.Value);
+                }
+                catch
+                {
+                    BufTm.DataValue = 1;
+                }
 
-                lnode.AddChildNode(new NodeFC(fc)).AddChildNode(new NodeDO(el.Attribute("name").Value)).AddChildNode(RptId);
-                nodeRCB.LinkChildNodeByAddress(RptId);
-                lnode.AddChildNode(new NodeFC(fc)).AddChildNode(new NodeDO(el.Attribute("name").Value)).AddChildNode(DatSet);
-                nodeRCB.LinkChildNodeByAddress(DatSet);
-                lnode.AddChildNode(new NodeFC(fc)).AddChildNode(new NodeDO(el.Attribute("name").Value)).AddChildNode(ConfRev);
-                nodeRCB.LinkChildNodeByAddress(ConfRev);
-                lnode.AddChildNode(new NodeFC(fc)).AddChildNode(new NodeDO(el.Attribute("name").Value)).AddChildNode(BufTm);
-                nodeRCB.LinkChildNodeByAddress(BufTm);
+                // intgPd
+                NodeData IntgPd = new NodeData("IntgPd");
+                IntgPd.DataType = scsm_MMS_TypeEnum.unsigned;
+                a = el.Attribute("intgPd");
+                try
+                {
+                    IntgPd.DataValue = uint.Parse(a.Value);
+                }
+                catch
+                {
+                    IntgPd.DataValue = 0;
+                }
 
+                // <TrgOps dchg="true" qchg="false" dupd="false" period="true" />
+                NodeData TrgOps = new NodeData("TrgOps");
+                TrgOps.DataType = scsm_MMS_TypeEnum.integer;
+                IEC61850.Common.TriggerOptions trgOptions = IEC61850.Common.TriggerOptions.NONE;
+                XElement xeTrgOps = el.Element(ns + "TrgOps");
+                if (xeTrgOps != null)
+                {
+                    a = xeTrgOps.Attribute("dchg");
+                    if ((a != null ? a.Value : "false").ToLower() == "true")
+                        trgOptions |= IEC61850.Common.TriggerOptions.DATA_CHANGED;
+                    a = xeTrgOps.Attribute("qchg");
+                    if ((a != null ? a.Value : "false").ToLower() == "true")
+                        trgOptions |= IEC61850.Common.TriggerOptions.QUALITY_CHANGED;
+                    a = xeTrgOps.Attribute("dupd");
+                    if ((a != null ? a.Value : "false").ToLower() == "true")
+                        trgOptions |= IEC61850.Common.TriggerOptions.DATA_UPDATE;
+                    a = xeTrgOps.Attribute("period");
+                    if ((a != null ? a.Value : "false").ToLower() == "true")
+                        trgOptions |= IEC61850.Common.TriggerOptions.INTEGRITY;
+                    a = xeTrgOps.Attribute("gi");
+                    if ((a != null ? a.Value : "false").ToLower() == "true")
+                        trgOptions |= IEC61850.Common.TriggerOptions.GI;
+                }
+                TrgOps.DataValue = trgOptions;
+
+                // <OptFields seqNum="true" timeStamp="true" dataSet="true" reasonCode="true" dataRef="false" entryID="true" configRef="true" bufOvfl="true" />
+                NodeData OptFields = new NodeData("OptFields");
+                OptFields.DataType = scsm_MMS_TypeEnum.integer;
+                IEC61850.Common.ReportOptions rptOptions = IEC61850.Common.ReportOptions.NONE;
+                XElement xeOptFields = el.Element(ns + "OptFields");
+                if (xeOptFields != null)
+                {
+                    a = xeOptFields.Attribute("seqNum");
+                    if ((a != null ? a.Value : "false").ToLower() == "true")
+                        rptOptions |= IEC61850.Common.ReportOptions.SEQ_NUM;
+                    a = xeOptFields.Attribute("timeStamp");
+                    if ((a != null ? a.Value : "false").ToLower() == "true")
+                        rptOptions |= IEC61850.Common.ReportOptions.TIME_STAMP;
+                    a = xeOptFields.Attribute("dataSet");
+                    if ((a != null ? a.Value : "false").ToLower() == "true")
+                        rptOptions |= IEC61850.Common.ReportOptions.DATA_SET;
+                    a = xeOptFields.Attribute("reasonCode");
+                    if ((a != null ? a.Value : "false").ToLower() == "true")
+                        rptOptions |= IEC61850.Common.ReportOptions.REASON_FOR_INCLUSION;
+                    a = xeOptFields.Attribute("dataRef");
+                    if ((a != null ? a.Value : "false").ToLower() == "true")
+                        rptOptions |= IEC61850.Common.ReportOptions.DATA_REFERENCE;
+                    a = xeOptFields.Attribute("entryID");
+                    if ((a != null ? a.Value : "false").ToLower() == "true")
+                        rptOptions |= IEC61850.Common.ReportOptions.ENTRY_ID;
+                    a = xeOptFields.Attribute("configRef");
+                    if ((a != null ? a.Value : "false").ToLower() == "true")
+                        rptOptions |= IEC61850.Common.ReportOptions.CONF_REV;
+                    a = xeOptFields.Attribute("bufOvfl");
+                    if ((a != null ? a.Value : "false").ToLower() == "true")
+                        rptOptions |= IEC61850.Common.ReportOptions.BUFFER_OVERFLOW;
+                }
+                OptFields.DataValue = rptOptions;
+
+                if (isIecTree)
+                {
+                    nodeRCB.AddChildNode(RptId);
+                    nodeRCB.AddChildNode(DatSet);
+                    nodeRCB.AddChildNode(ConfRev);
+                    nodeRCB.AddChildNode(BufTm);
+                }
+                else
+                {
+                    lnode.AddChildNode(new NodeFC(fc)).AddChildNode(new NodeDO(el.Attribute("name").Value)).AddChildNode(RptId);
+                    nodeRCB.LinkChildNodeByAddress(RptId);
+                    lnode.AddChildNode(new NodeFC(fc)).AddChildNode(new NodeDO(el.Attribute("name").Value)).AddChildNode(DatSet);
+                    nodeRCB.LinkChildNodeByAddress(DatSet);
+                    lnode.AddChildNode(new NodeFC(fc)).AddChildNode(new NodeDO(el.Attribute("name").Value)).AddChildNode(ConfRev);
+                    nodeRCB.LinkChildNodeByAddress(ConfRev);
+                    lnode.AddChildNode(new NodeFC(fc)).AddChildNode(new NodeDO(el.Attribute("name").Value)).AddChildNode(BufTm);
+                    nodeRCB.LinkChildNodeByAddress(BufTm);
+                }
                 //lnode.AddChildNode(nodeRCB);
             }
         }

@@ -37,7 +37,7 @@ namespace IEC61850
     /// </summary>
     namespace Server
     {
-        public class IedModel
+        public class IedModel : IDisposable
         {
             [DllImport("iec61850", CallingConvention = CallingConvention.Cdecl)]
             private static extern IntPtr IedModel_create(string name);
@@ -45,7 +45,7 @@ namespace IEC61850
             [DllImport("iec61850", CallingConvention = CallingConvention.Cdecl)]
             private static extern void IedModel_destroy(IntPtr self);
 
-            IntPtr self;
+            IntPtr self = IntPtr.Zero;
 
             /// <summary>
             /// brief create a new IedModel instance
@@ -59,13 +59,19 @@ namespace IEC61850
 
             ~IedModel()
             {
-                if (self != IntPtr.Zero)
-                    IedModel_destroy(self);
+                Dispose();
             }
 
             public IntPtr GetPtr()
             {
                 return self;
+            }
+
+            public void Dispose()
+            {
+                if (self != IntPtr.Zero)
+                    IedModel_destroy(self);
+                self = IntPtr.Zero;
             }
         }
     }

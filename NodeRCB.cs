@@ -42,6 +42,10 @@ namespace IEDExplorer
         bool isBufSet = false;
         bool isBufLock = false;
 
+        public bool isIndexed { get; set; }
+
+        public uint maxRptEnabled { get; set; }
+
         NodeData _RptID;
         public string RptID
         {

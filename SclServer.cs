@@ -91,12 +91,18 @@ namespace IEDExplorer
         {
             SCLServer self = (SCLServer)obj;
 
+            logger.LogInfo(String.Format("SCL Server " + sclModel.iec.Name + " - Creating model. It takes a while..."));
             IedModel model = makeIecModel();
 
             IedServer server = new IedServer(model);
             server.Start(tcpPort);
-
-            logger.LogInfo(String.Format("SCL Server " + sclModel.iec.Name + " Started at port " + tcpPort.ToString() + "!!!"));
+            if (!server.isRunning())
+            {
+                logger.LogError(String.Format("SCL Server " + sclModel.iec.Name + " Failed at port " + tcpPort.ToString() + "!!!"));
+                self._run = false;
+            }
+            else
+                logger.LogInfo(String.Format("SCL Server " + sclModel.iec.Name + " Started at port " + tcpPort.ToString() + "!!!"));
 
             while (self._run)
             {
@@ -105,14 +111,21 @@ namespace IEDExplorer
                 {
                     case 0:     // endthread
                         self._run = false;
-                        server.Stop();
-                        resetModelObjects(sclModel.iec);
-                        sclModel = null;
                         break;
                     case WaitHandle.WaitTimeout:
+                        if (!server.isRunning())
+                            self._run = false;
                         break;
                 }
             }
+            server.Stop();
+            resetModelObjects(sclModel.iec);
+            server.Dispose();
+            server = null;
+            model.Dispose();
+            model = null;
+            sclModel = null;
+            logger.LogInfo(String.Format("SCL Server Stopped"));
         }
 
         IedModel makeIecModel()
@@ -120,10 +133,27 @@ namespace IEDExplorer
             IedModel model = new IedModel(sclModel.iec.Name);
             sclModel.iec.SCLServerModelObject = model;
 
+            // Data
             foreach (NodeLD ld in sclModel.iec.GetChildNodes())
             {
                 createModelDevices(ld, model);
             }
+
+            // VLs
+            foreach (NodeLD ld in sclModel.iec.GetChildNodes())
+            {
+                foreach (NodeLN ln in ld.GetChildNodes())
+                {
+                    foreach (NodeBase vl in ln.GetChildNodes())
+                    {
+                        if (vl is NodeVL)
+                        {
+                            createVL((NodeVL)vl, (LogicalNode)ln.SCLServerModelObject);
+                        }
+                    }
+                }
+            }
+
             return model;
         }
 
@@ -151,10 +181,28 @@ namespace IEDExplorer
                 }
                 else if (nb is NodeRCB)
                 {
+                    IEC61850.Common.ReportOptions rptOptions = (IEC61850.Common.ReportOptions)(nb.FindChildNode("OptFields") as NodeData).DataValue;
+                    IEC61850.Common.TriggerOptions trgOptions = (IEC61850.Common.TriggerOptions)(nb.FindChildNode("TrgOps") as NodeData).DataValue;
+                    string rptId = (string)(nb.FindChildNode("RptID") as NodeData).DataValue;
+                    string datSet = (string)(nb.FindChildNode("DatSet") as NodeData).DataValue;
+                    uint confRev = (uint)(nb.FindChildNode("ConfRev") as NodeData).DataValue;
+                    uint bufTm = (uint)(nb.FindChildNode("BufTm") as NodeData).DataValue;
+                    uint intgPd = (uint)(nb.FindChildNode("IntgPd") as NodeData).DataValue;
+
+                    IEC61850.Server.ReportControlBlock rcb1 =
+                        new IEC61850.Server.ReportControlBlock(nb.Name, lnode, rptId, (nb as NodeRCB).isBuffered, datSet, confRev, trgOptions, rptOptions, bufTm, intgPd);
                 }
-                else if (nb is NodeVL)
-                {
-                }
+            }
+        }
+
+        void createVL(NodeVL vl, LogicalNode ln)
+        {
+            IEC61850.Server.DataSet dataSet = new IEC61850.Server.DataSet(vl.Name, ln);
+            vl.SCLServerModelObject = dataSet;
+            foreach (NodeVLM vlm in vl.GetChildNodes())
+            {
+                DataSetEntry dse = new DataSetEntry(dataSet, vlm.Name, -1, null);
+                vlm.SCLServerModelObject = dse;
             }
         }
 

@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SCLView));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButtonCollapseAll = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -44,7 +45,6 @@
             this.column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -76,6 +76,11 @@
             this.toolStripButtonCollapseAll.Size = new System.Drawing.Size(73, 22);
             this.toolStripButtonCollapseAll.Text = "Collapse All";
             this.toolStripButtonCollapseAll.Click += new System.EventHandler(this.toolStripButtonCollapseAll_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
             // splitContainer1
             // 
@@ -144,6 +149,8 @@
             this.treeViewSCL_IEC.Name = "treeViewSCL_IEC";
             this.treeViewSCL_IEC.Size = new System.Drawing.Size(197, 338);
             this.treeViewSCL_IEC.TabIndex = 0;
+            this.treeViewSCL_IEC.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
+            this.treeViewSCL_IEC.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeViewSCL_NodeMouseClick);
             // 
             // dataGridView_data
             // 
@@ -203,11 +210,6 @@
             this.column7.HeaderText = "Var Path";
             this.column7.Name = "column7";
             this.column7.Width = 69;
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
             // SCLView
             // 

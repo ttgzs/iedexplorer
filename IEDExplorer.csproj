@@ -93,6 +93,7 @@
   <ItemGroup>
     <Compile Include="ActionRequested.cs" />
     <Compile Include="BNExtension\XMLEncoder.cs" />
+    <Compile Include="NodeVLM.cs" />
     <Compile Include="Dialogs\AutoUpdateStoppedDialog.cs">
       <SubType>Form</SubType>
     </Compile>

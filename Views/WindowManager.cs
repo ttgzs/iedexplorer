@@ -52,7 +52,7 @@ namespace IEDExplorer.Views
             watchWindow.ShowHint = DockState.Document;
             watchWindow.CloseButtonVisible = false;
             watchWindow.FormClosing += new FormClosingEventHandler(persistentWindows_FormClosing);
-            watchWindow.Show(dockPanel);
+            //watchWindow.Show(dockPanel);
 
             logWindow = new LogView(env);
             logWindow.ShowHint = DockState.DockBottom;
@@ -177,8 +177,10 @@ namespace IEDExplorer.Views
 
         void sclView_FormClosed(object sender, FormClosedEventArgs e)
         {
-            (sender as SCLView).FormClosed -= new FormClosedEventHandler(sclView_FormClosed);
-            documentViews.Remove(sender as SCLView);
+            SCLView sclView = (sender as SCLView);
+            sclView.FormClosed -= new FormClosedEventHandler(sclView_FormClosed);
+            sclView.StopServers();
+            documentViews.Remove(sclView);
         }
 
         internal void AddAddNVLView(NodeVL list, NodeBase lists, TreeNode listsNode, EventHandler onNVListChanged)

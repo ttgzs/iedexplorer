@@ -555,5 +555,14 @@ namespace IEDExplorer.Views
                 runningServers.Remove(n);
             }
         }
+
+        public void StopServers()
+        {
+            foreach (NodeIed n in runningServers.Keys)
+            {
+                runningServers[n].Stop();
+            }
+            runningServers.Clear();
+        }
     }
 }

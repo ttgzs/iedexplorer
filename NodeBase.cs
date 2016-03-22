@@ -246,6 +246,20 @@ namespace IEDExplorer
             return _childNodes.FirstOrDefault(n => n.Name == Name);
         }
 
+        public NodeBase FindSubNode(string subName)
+        {
+            string[] parts = subName.Split(new char[] { '/', '.', '$' });
+            NodeBase n = this;
+            int i = 0;
+            do
+            {
+                n = n.FindChildNode(parts[i]);
+                i++;
+                if (i == parts.Length) return n;
+            } while (i < parts.Length && n != null);
+            return null;
+        }
+
         public void ResetActualChildNode()
         {
             _actualChildNode = 0;

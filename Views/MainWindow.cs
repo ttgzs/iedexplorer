@@ -251,24 +251,5 @@ namespace IEDExplorer.Views
             }
         }
 
-        private void toolStripButton1_Click(object sender, EventArgs e)
-        {
-            if (sclServer == null)
-            {
-                sclServer = new SCLServer(env);
-                sclServer.StartTestServer();
-                toolStripButton1.Enabled = false;
-                toolStripButton2.Enabled = true;
-            }
-        }
-
-        private void toolStripButton2_Click(object sender, EventArgs e)
-        {
-            sclServer.Stop();
-            sclServer = null;
-            toolStripButton2.Enabled = false;
-            toolStripButton1.Enabled = true;
-        }
-
     }
 }

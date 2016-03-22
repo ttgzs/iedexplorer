@@ -37,7 +37,7 @@ namespace IEC61850
     /// </summary>
     namespace Server
     {
-        class IedServer
+        class IedServer : IDisposable
         {
             [DllImport("iec61850", CallingConvention = CallingConvention.Cdecl)]
             private static extern IntPtr IedServer_create(IntPtr model);
@@ -57,7 +57,10 @@ namespace IEC61850
             [DllImport("iec61850", CallingConvention = CallingConvention.Cdecl)]
             private static extern void IedServer_unlockDataModel(IntPtr self);
 
-            private IntPtr self;
+            [DllImport("iec61850", CallingConvention = CallingConvention.Cdecl)]
+            private static extern bool IedServer_isRunning(IntPtr self);
+
+            private IntPtr self = IntPtr.Zero;
 
             public IedServer(IedModel model)
             {
@@ -66,8 +69,7 @@ namespace IEC61850
 
             ~IedServer()
             {
-                if (self != IntPtr.Zero)
-                    IedServer_destroy(self);
+                Dispose();
             }
 
             public IntPtr GetPtr()
@@ -85,6 +87,13 @@ namespace IEC61850
                 IedServer_stop(self);
             }
 
+            public bool isRunning()
+            {
+                if (self == IntPtr.Zero)
+                    return IedServer_isRunning(self);
+                return false;
+            }
+
             public void LockDataModel()
             {
                 IedServer_lockDataModel(self);
@@ -93,6 +102,13 @@ namespace IEC61850
             public void UnlockDataModel()
             {
                 IedServer_unlockDataModel(self);
+            }
+
+            public void Dispose()
+            {
+                if (self != IntPtr.Zero)
+                    IedServer_destroy(self);
+                self = IntPtr.Zero;
             }
         }
     }

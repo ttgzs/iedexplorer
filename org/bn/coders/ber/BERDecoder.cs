@@ -509,7 +509,9 @@ namespace org.bn.coders.ber
             byte[] byteBuf = new byte[len.Value];
             stream.Read(byteBuf, 0, byteBuf.Length);
             string dottedDecimal = BERObjectIdentifier.Decode(byteBuf);
-            return new DecodedObject<object>(new ObjectIdentifier(dottedDecimal));
+            //return new DecodedObject<object>(new ObjectIdentifier(dottedDecimal));
+            // Vadim Evseev 22.3.2016
+            return new DecodedObject<object>(new ObjectIdentifier(dottedDecimal), len.Value + len.Size);
         }
 	}
 }
