@@ -122,11 +122,16 @@ namespace IEC61850
             {
                 try
                 {
-                    return (DataAttributeType)Enum.Parse(typeof(DataAttributeType), type);
+                    string validType = type.ToUpper();
+                    if (validType.Contains("ENUM")) validType = "ENUMERATED";
+                    if (validType.Contains("VISSTRING")) validType = validType.Replace("VISSTRING", "VISIBLE_STRING_");
+                    if (validType.Contains("OCTET")) validType = validType.Replace("OCTET", "OCTET_STRING_");
+                    if (validType.Contains("STRUCT")) validType = "CONSTRUCTED";
+                    return (DataAttributeType)Enum.Parse(typeof(DataAttributeType), validType);
                 }
                 catch (ArgumentException)
                 {
-                    return DataAttributeType.CHECK;
+                    return DataAttributeType.BOOLEAN;
                 }
             }
 
@@ -134,7 +139,7 @@ namespace IEC61850
             {
                 try
                 {
-                    return (FunctionalConstraint)Enum.Parse(typeof(FunctionalConstraint), FC);
+                    return (FunctionalConstraint)Enum.Parse(typeof(FunctionalConstraint), FC.ToUpper());
                 }
                 catch (ArgumentException)
                 {

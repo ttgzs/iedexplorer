@@ -69,6 +69,7 @@ namespace IEDExplorer
             {
                 _run = true;
                 _workerThread = new Thread(ts);
+                _workerThread.Name = "SCL_Server_thread";
                 logger.LogInfo(String.Format("Starting SCL Server"));
                 _workerThread.Start(this);
             }
@@ -96,6 +97,7 @@ namespace IEDExplorer
 
             IedServer server = new IedServer(model);
             server.Start(tcpPort);
+            //Thread.Sleep(100);
             if (!server.isRunning())
             {
                 logger.LogError(String.Format("SCL Server " + sclModel.iec.Name + " Failed at port " + tcpPort.ToString() + "!!!"));
@@ -103,7 +105,7 @@ namespace IEDExplorer
             }
             else
                 logger.LogInfo(String.Format("SCL Server " + sclModel.iec.Name + " Started at port " + tcpPort.ToString() + "!!!"));
-
+            
             while (self._run)
             {
                 int waitres = WaitHandle.WaitAny(_waitHandles, 500);
@@ -113,7 +115,7 @@ namespace IEDExplorer
                         self._run = false;
                         break;
                     case WaitHandle.WaitTimeout:
-                        if (!server.isRunning())
+                        if (!server.isRunning()) //logger.LogInfo("Server not running???");
                             self._run = false;
                         break;
                 }
@@ -181,7 +183,7 @@ namespace IEDExplorer
                 }
                 else if (nb is NodeRCB)
                 {
-                    IEC61850.Common.ReportOptions rptOptions = (IEC61850.Common.ReportOptions)(nb.FindChildNode("OptFields") as NodeData).DataValue;
+                    IEC61850.Common.ReportOptions rptOptions = (IEC61850.Common.ReportOptions)(nb.FindChildNode("OptFlds") as NodeData).DataValue;
                     IEC61850.Common.TriggerOptions trgOptions = (IEC61850.Common.TriggerOptions)(nb.FindChildNode("TrgOps") as NodeData).DataValue;
                     string rptId = (string)(nb.FindChildNode("RptID") as NodeData).DataValue;
                     string datSet = (string)(nb.FindChildNode("DatSet") as NodeData).DataValue;
@@ -189,8 +191,11 @@ namespace IEDExplorer
                     uint bufTm = (uint)(nb.FindChildNode("BufTm") as NodeData).DataValue;
                     uint intgPd = (uint)(nb.FindChildNode("IntgPd") as NodeData).DataValue;
 
-                    IEC61850.Server.ReportControlBlock rcb1 =
+                    datSet = datSet == "" ? null : datSet;
+
+                    IEC61850.Server.ReportControlBlock rcb =
                         new IEC61850.Server.ReportControlBlock(nb.Name, lnode, rptId, (nb as NodeRCB).isBuffered, datSet, confRev, trgOptions, rptOptions, bufTm, intgPd);
+                    nb.SCLServerModelObject = rcb;
                 }
             }
         }
@@ -210,13 +215,13 @@ namespace IEDExplorer
         {
             ModelNode newmn = null;
             if (dt is NodeDO)
-                newmn = new DataObject(dt.Name, mn, 0);
+                newmn = new DataObject(dt.Name, mn, (dt as NodeDO).SCL_ArraySize);
             else if (dt is NodeData)
             {   // dt id NodeDA
                 NodeData da = (NodeData)dt;
-                FunctionalConstraint fc = DataAttribute.fcFromString(da.FCDesc);
-                IEC61850.Server.DataAttributeType t = DataAttribute.typeFromString(da.BType);
-                newmn = new DataAttribute(dt.Name, mn, t, fc, 0, 0, 0);
+                FunctionalConstraint fc = DataAttribute.fcFromString(da.SCL_FCDesc);
+                IEC61850.Server.DataAttributeType t = DataAttribute.typeFromString(da.SCL_BType);
+                newmn = new DataAttribute(dt.Name, mn, t, fc, da.SCL_TrgOps, da.SCL_ArraySize, 0);
             }
             dt.SCLServerModelObject = newmn;
             foreach (NodeBase nb in dt.GetChildNodes())

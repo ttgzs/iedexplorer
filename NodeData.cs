@@ -51,16 +51,18 @@ namespace IEDExplorer
             }
         }
 
-        public string Type
+        public string SCL_Type
         {
             get { return _type; }
             set { _type = value; }
         }
 
-        public string FCDesc { get; set; }
-        public string DOName { get; set; }
+        public string SCL_FCDesc { get; set; }
+        public string SCL_DOName { get; set; }
+        public byte SCL_TrgOps { get; set; }
+        public int SCL_ArraySize { get; set; }
 
-        public string BType
+        public string SCL_BType
         {
             get { return _bType; }
             set { _bType = value; }
@@ -336,7 +338,7 @@ namespace IEDExplorer
             {
                 string line = "DA(" + Name;
                 int nrElem = getArraySize();
-                line += " " + nrElem + " " + MapLibiecType(DataType) + " " + MapLibiecFC(FCDesc) + " " + MapTrgOps() + " " + sAddr + ")";
+                line += " " + nrElem + " " + MapLibiecType(DataType) + " " + MapLibiecFC(SCL_FCDesc) + " " + MapTrgOps() + " " + sAddr + ")";
                 bool writeVal = false;
                 // Some conditions for writing the value
                 if (Name == "ctlModel") writeVal = true;
@@ -360,7 +362,7 @@ namespace IEDExplorer
                         nextnb = _childNodes[0];
                 }
 
-                lines.Add("DA(" + Name + " " + nrElem + " 27 " + MapLibiecFC(FCDesc) + " " + MapTrgOps() + " " + sAddr + "){");
+                lines.Add("DA(" + Name + " " + nrElem + " 27 " + MapLibiecFC(SCL_FCDesc) + " " + MapTrgOps() + " " + sAddr + "){");
                 foreach (NodeBase b in nextnb.GetChildNodes())
                 {
                     b.SaveModel(lines, fromSCL);

@@ -142,7 +142,7 @@ namespace IEDExplorer
             NodeBase linkedDa = target.LinkChildNodeByName(source);
             // Set FC
             if (linkedDa is NodeData)
-                (linkedDa as NodeData).FCDesc = fc.Name;
+                (linkedDa as NodeData).SCL_FCDesc = fc.Name;
             // Check DO / DA types
             if (linkedDa != source)
             {

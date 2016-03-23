@@ -200,7 +200,7 @@ namespace IEDExplorer.Views
                 string name = b.Name;
                 if (b is NodeRCB || b is NodeVL)
                     name = b.Name.Substring(b.Name.LastIndexOf("$") + 1);
-                if (b is NodeData && (b as NodeData).FCDesc != null && (b as NodeData).FCDesc != "") name += " [" + (b as NodeData).FCDesc + "]";
+                if (b is NodeData && (b as NodeData).SCL_FCDesc != null && (b as NodeData).SCL_FCDesc != "") name += " [" + (b as NodeData).SCL_FCDesc + "]";
                 TreeNode tn2 = tn.Nodes.Add(name);
                 tn2.Tag = b;
                 b.TagR = tn2;
@@ -416,9 +416,9 @@ namespace IEDExplorer.Views
             if (n is NodeData)
             {
                 string val = (n as NodeData).StringValue;
-                string type = String.IsNullOrWhiteSpace((n as NodeData).BType)
+                string type = String.IsNullOrWhiteSpace((n as NodeData).SCL_BType)
                     ? (n as NodeData).DataType.ToString()
-                    : (n as NodeData).BType;
+                    : (n as NodeData).SCL_BType;
                 var dgvr =
                     new string[]
                     {

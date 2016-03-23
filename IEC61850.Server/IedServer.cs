@@ -89,7 +89,7 @@ namespace IEC61850
 
             public bool isRunning()
             {
-                if (self == IntPtr.Zero)
+                if (self != IntPtr.Zero)
                     return IedServer_isRunning(self);
                 return false;
             }

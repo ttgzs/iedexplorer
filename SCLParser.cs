@@ -221,30 +221,30 @@ namespace IEDExplorer
                 // for each DA in the DOType
                 foreach (var dataAttribute in doType.GetChildNodes())
                 {
-                    var fc = (dataAttribute as NodeData).FCDesc;
-                    (dataAttribute as NodeData).DOName = dataObject.Name;
+                    var fc = (dataAttribute as NodeData).SCL_FCDesc;
+                    (dataAttribute as NodeData).SCL_DOName = dataObject.Name;
                     NodeData newNode = new NodeData(dataAttribute.Name);
-                    newNode.Type = (dataAttribute as NodeData).Type;
-                    newNode.BType = (dataAttribute as NodeData).BType;
-                    newNode.DOName = (dataAttribute as NodeData).DOName;
-                    newNode.FCDesc = (dataAttribute as NodeData).FCDesc;
+                    newNode.SCL_Type = (dataAttribute as NodeData).SCL_Type;
+                    newNode.SCL_BType = (dataAttribute as NodeData).SCL_BType;
+                    newNode.SCL_DOName = (dataAttribute as NodeData).SCL_DOName;
+                    newNode.SCL_FCDesc = (dataAttribute as NodeData).SCL_FCDesc;
                     
                     // when the type is specified (ie. when it's a struct), get the struct child nodes
-                    if (!String.IsNullOrWhiteSpace(newNode.Type))
+                    if (!String.IsNullOrWhiteSpace(newNode.SCL_Type))
                     {
                         var dataType =
-                            _dataAttributeTypes.Single(dat => dat.Name.Equals((newNode.Type)));
+                            _dataAttributeTypes.Single(dat => dat.Name.Equals((newNode.SCL_Type)));
                         foreach (NodeBase child in dataType.GetChildNodes())
                         {
                             var tempChild = new NodeData(child.Name);
-                            tempChild.BType = (child as NodeData).BType;
-                            if (!String.IsNullOrWhiteSpace((child as NodeData).Type))
+                            tempChild.SCL_BType = (child as NodeData).SCL_BType;
+                            if (!String.IsNullOrWhiteSpace((child as NodeData).SCL_Type))
                             {
-                                var subDataType = _dataAttributeTypes.Single(dat => dat.Name.Equals((child as NodeData).Type));
+                                var subDataType = _dataAttributeTypes.Single(dat => dat.Name.Equals((child as NodeData).SCL_Type));
                                 foreach (NodeBase subChild in subDataType.GetChildNodes())
                                 {
                                     var tempSubChild = new NodeData(subChild.Name);
-                                    tempSubChild.BType = (subChild as NodeData).BType;
+                                    tempSubChild.SCL_BType = (subChild as NodeData).SCL_BType;
                                     tempChild.AddChildNode(subChild);
                                 }
                             }
@@ -272,7 +272,7 @@ namespace IEDExplorer
                 // for each data attribute of the functional constraint
                 foreach (var da in (functionalConstraints[key] as NodeBase).GetChildNodes())
                 {
-                    var doName = (da as NodeData).DOName;
+                    var doName = (da as NodeData).SCL_DOName;
                     if (doList.Exists(x => x.Name.Equals(doName)))
                     {
                         doList.Single(x => x.Name.Equals(doName)).AddChildNode(da);
@@ -388,7 +388,7 @@ namespace IEDExplorer
         {
             reader.Read();
             var data = new NodeData(reader.GetAttribute("name"));
-            data.FCDesc = reader.GetAttribute("fc");
+            data.SCL_FCDesc = reader.GetAttribute("fc");
             if (null == reader.GetAttribute("bType"))
             {
                 reader.ReadToDescendant("Val");
@@ -396,11 +396,11 @@ namespace IEDExplorer
             }
             else
             {
-                data.BType = reader.GetAttribute("bType");
-                if (data.BType.Equals("Struct") && null != reader.GetAttribute("type"))
-                    data.Type = reader.GetAttribute("type");
-                else if (data.BType.Equals("Enum"))
-                    data.BType = String.Concat(data.BType, " (Integer)");
+                data.SCL_BType = reader.GetAttribute("bType");
+                if (data.SCL_BType.Equals("Struct") && null != reader.GetAttribute("type"))
+                    data.SCL_Type = reader.GetAttribute("type");
+                else if (data.SCL_BType.Equals("Enum"))
+                    data.SCL_BType = String.Concat(data.SCL_BType, " (Integer)");
             }
             return data;
         }

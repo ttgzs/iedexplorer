@@ -26,6 +26,16 @@ namespace IEDExplorer
 {
     class NodeDO : NodeBase
     {
+        private string _type = "";
+
+        public int SCL_ArraySize { get; set; }
+
+        public string SCL_Type
+        {
+            get { return _type; }
+            set { _type = value; }
+        }
+
         public NodeDO(string Name)
             : base(Name)
         {
