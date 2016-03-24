@@ -118,7 +118,7 @@ namespace IEC61850
             {
             }
 
-            public static DataAttributeType typeFromString(string type)
+            public static DataAttributeType typeFromSCLString(string type)
             {
                 try
                 {
@@ -126,7 +126,10 @@ namespace IEC61850
                     if (validType.Contains("ENUM")) validType = "ENUMERATED";
                     if (validType.Contains("VISSTRING")) validType = validType.Replace("VISSTRING", "VISIBLE_STRING_");
                     if (validType.Contains("OCTET")) validType = validType.Replace("OCTET", "OCTET_STRING_");
+                    if (validType.Contains("UNICODE")) validType = validType.Replace("UNICODE", "UNICODE_STRING_");
                     if (validType.Contains("STRUCT")) validType = "CONSTRUCTED";
+                    if (validType == "DBPOS" || validType == "TCMD") validType = "CODEDENUM";
+                    if (validType == "ENTRYTIME") validType = "ENTRY_TIME";
                     return (DataAttributeType)Enum.Parse(typeof(DataAttributeType), validType);
                 }
                 catch (ArgumentException)

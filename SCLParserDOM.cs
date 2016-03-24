@@ -110,26 +110,7 @@ namespace IEDExplorer
 
                     // IEC 61850 Tree
                     CreateLogicalDevicesIEC(_dataModels[i].iec, ied.Descendants(ns + "LDevice"), ns);
-                    // data sets and reports
-                    /*ldidx = 0;
-                    foreach (XElement ld in ied.Descendants(ns + "LDevice"))
-                    {
-                        NodeBase ldroot = _dataModels[i].ied.GetChildNode(ldidx++);
-                        int lnidx = 0;
-                        IEnumerable<XElement> lns = (from el in ld.Elements() where el.Name.LocalName.StartsWith("LN") select el);
-                        int cnt = lns.Count();
-                        foreach (XElement ln in lns)
-                        {
-                            // Datasets
-                            NodeBase lnroot = ldroot.GetChildNode(lnidx++);
-                            //if (lnroot == null || lnroot.Parent == null || lnroot.Parent.Parent == null)
-                            //    Logger.getLogger().LogError("Something is null 1" + cnt);
-                            CreateDataSets(lnroot, ln.Elements(ns + "DataSet"), ns);
-                            CreateReports(lnroot, ln.Elements(ns + "ReportControl"), ns);
-                            lnroot.SortImmediateChildren();
-                        }
-                        ldroot.SortImmediateChildren();
-                    }*/
+
                     i++;
                 }
             }
@@ -571,15 +552,13 @@ namespace IEDExplorer
                     a = el.Attribute("dupd");
                     if ((a != null ? a.Value : "false").ToLower() == "true")
                         trgOptions |= IEC61850.Common.TriggerOptions.DATA_UPDATE;
-                    a = el.Attribute("period");
-                    if ((a != null ? a.Value : "false").ToLower() == "true")
-                        trgOptions |= IEC61850.Common.TriggerOptions.INTEGRITY;
-                    a = el.Attribute("gi");
-                    if ((a != null ? a.Value : "false").ToLower() == "true")
-                        trgOptions |= IEC61850.Common.TriggerOptions.GI;
                     data.SCL_TrgOps = (byte)trgOptions;
                     // Inheritance
                     if ((root is NodeData) && trgOptions == IEC61850.Common.TriggerOptions.NONE) data.SCL_TrgOps = (root as NodeData).SCL_TrgOps;
+                    int cnt = 0;
+                    if (el.Attribute("count") != null)
+                        int.TryParse(el.Attribute("count").Value, out cnt);
+                    data.SCL_ArraySize = cnt;
 
                     root.AddChildNode(data);
                 }
@@ -715,7 +694,7 @@ namespace IEDExplorer
                 string fc = buffered ? "BR" : "RP";
                 
                 a = el.Attribute("indexed");
-                bool indexed = a != null ? (a.Value.ToLower() == "true") : false;
+                bool indexed = a != null ? (a.Value.ToLower() == "true") : true;    // default true???
                 uint maxRptEnabled = 1;
                 XElement xeRptEnabled = el.Element(ns + "RptEnabled");
                 if (xeRptEnabled != null)
@@ -758,7 +737,7 @@ namespace IEDExplorer
                 DatSet.DataType = scsm_MMS_TypeEnum.visible_string;
                 a = el.Attribute("datSet");
                 if (isIecTree)
-                    DatSet.DataValue = a.Value;
+                    DatSet.DataValue = a.Value; // null accepted
                 else
                     DatSet.DataValue = a != null ? lnode.Name + "$" + a.Value : "";
 
@@ -821,7 +800,7 @@ namespace IEDExplorer
                     if ((a != null ? a.Value : "false").ToLower() == "true")
                         trgOptions |= IEC61850.Common.TriggerOptions.INTEGRITY;
                     a = xeTrgOps.Attribute("gi");
-                    if ((a != null ? a.Value : "false").ToLower() == "true")
+                    if ((a != null ? a.Value : "true").ToLower() == "true") // default true
                         trgOptions |= IEC61850.Common.TriggerOptions.GI;
                 }
                 TrgOps.DataValue = trgOptions;

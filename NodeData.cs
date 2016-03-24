@@ -61,6 +61,7 @@ namespace IEDExplorer
         public string SCL_DOName { get; set; }
         public byte SCL_TrgOps { get; set; }
         public int SCL_ArraySize { get; set; }
+        public string SCL_sAddr { get; set; }
 
         public string SCL_BType
         {

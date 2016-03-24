@@ -220,7 +220,7 @@ namespace IEDExplorer
             {   // dt id NodeDA
                 NodeData da = (NodeData)dt;
                 FunctionalConstraint fc = DataAttribute.fcFromString(da.SCL_FCDesc);
-                IEC61850.Server.DataAttributeType t = DataAttribute.typeFromString(da.SCL_BType);
+                IEC61850.Server.DataAttributeType t = DataAttribute.typeFromSCLString(da.SCL_BType);
                 newmn = new DataAttribute(dt.Name, mn, t, fc, da.SCL_TrgOps, da.SCL_ArraySize, 0);
             }
             dt.SCLServerModelObject = newmn;
