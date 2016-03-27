@@ -51,7 +51,7 @@ namespace IEDExplorer
         /// <returns>IECS tree state to be displayed</returns>
         public List<Iec61850Model> CreateTree(String fileName) //, Env env)
         {
-            try
+            //try
             {
                 // Model [0] is a master for types etc.
                 _dataModels.Add(new Iec61850State().DataModel);
@@ -114,11 +114,11 @@ namespace IEDExplorer
                     i++;
                 }
             }
-            catch (Exception e)
-            {
-                logger.LogError("Error reading file " + fileName + ": " + e.Message);
-                throw e;
-            }
+            //catch (Exception e)
+            //{
+            //    logger.LogError("Error reading file " + fileName + ": " + e.Message);
+            //    throw e;
+            //}
 
             return _dataModels;
         }
@@ -197,56 +197,40 @@ namespace IEDExplorer
                     NodeBase doType = null;
                     try
                     {
-                        doType = _dataObjectTypes.Single(dot => dot.Name.Equals((dataObject as NodeDO).Type));
+                        doType = _dataObjectTypes.Single(dot => dot.Name.Equals((dataObject as NodeDO).SCL_Type));
                     }
                     catch (Exception e)
                     {
-                        logger.LogError("SCL Parser: DO type template not found: " + (dataObject as NodeDO).Type + ", for LN type: " + nodeType.Name + ", in node: " + name.ToString() + ", Exception: " + e.Message);
+                        logger.LogError("SCL Parser: DO type template not found: " + (dataObject as NodeDO).SCL_Type + ", for LN type: " + nodeType.Name + ", in node: " + name.ToString() + ", Exception: " + e.Message);
                         continue;
                     }
 
                     // for each DA in the DOType
                     foreach (var dataAttribute in doType.GetChildNodes())
                     {
-                        var fc = (dataAttribute as NodeData).SCL_FCDesc;
-                        (dataAttribute as NodeData).SCL_DOName = dataObject.Name;
-                        NodeData newNode = new NodeData(dataAttribute.Name);
-                        newNode.SCL_Type = (dataAttribute as NodeData).SCL_Type;
-                        newNode.SCL_BType = (dataAttribute as NodeData).SCL_BType;
-                        newNode.SCL_DOName = (dataAttribute as NodeData).SCL_DOName;
-                        newNode.SCL_FCDesc = (dataAttribute as NodeData).SCL_FCDesc;
-
-                        // when the type is specified (ie. when it's a struct), get the struct child nodes
-                        if (!String.IsNullOrWhiteSpace(newNode.SCL_Type))
+                        if (dataAttribute is NodeDO)
                         {
-                            var dataType =
-                                _dataAttributeTypes.Single(dat => dat.Name.Equals((newNode.SCL_Type)));
-                            foreach (NodeBase child in dataType.GetChildNodes())
+                            // SDO (sub Data Object)
+                            NodeBase subDoType = null;
+                            try
                             {
-                                var tempChild = new NodeData(child.Name);
-                                tempChild.SCL_BType = (child as NodeData).SCL_BType;
-                                if (!String.IsNullOrWhiteSpace((child as NodeData).SCL_Type))
-                                {
-                                    var subDataType = _dataAttributeTypes.Single(dat => dat.Name.Equals((child as NodeData).SCL_Type));
-                                    foreach (NodeBase subChild in subDataType.GetChildNodes())
-                                    {
-                                        var tempSubChild = new NodeData(subChild.Name);
-                                        tempSubChild.SCL_BType = (subChild as NodeData).SCL_BType;
-                                        tempChild.AddChildNode(tempSubChild);
-                                    }
-                                }
-                                newNode.AddChildNode(tempChild);
+                                subDoType = _dataObjectTypes.Single(dot => dot.Name.Equals((dataAttribute as NodeDO).SCL_Type));
                             }
+                            catch (Exception e)
+                            {
+                                logger.LogError("SCL Parser: SDO type template not found: " + (dataAttribute as NodeDO).SCL_Type + ", for DO type: " + doType.Name + ", for LN type: " + nodeType.Name + ", in node: " + name.ToString() + ", Exception: " + e.Message);
+                                continue;
+                            }
+                            NodeDO subDataObject = new NodeDO(dataAttribute.Name);
+                            foreach (var dataAttribute2 in subDoType.GetChildNodes())
+                            {
+                                CreateDataAttributes(functionalConstraints, dataObject, dataAttribute2, subDataObject);
+                            }
+
                         }
-                        if (!functionalConstraints.ContainsKey(fc))
+                        if (dataAttribute is NodeData)
                         {
-                            NodeFC nodeFC = new NodeFC(fc);
-                            nodeFC.ForceAddChildNode(newNode);
-                            functionalConstraints.Add(fc, nodeFC);
-                        }
-                        else
-                        {
-                            (functionalConstraints[fc] as NodeBase).ForceAddChildNode(newNode);
+                            CreateDataAttributes(functionalConstraints, dataObject, dataAttribute, null);
                         }
                     }
                 }
@@ -259,7 +243,11 @@ namespace IEDExplorer
                     // for each data attribute of the functional constraint
                     foreach (var da in (functionalConstraints[key] as NodeBase).GetChildNodes())
                     {
-                        var doName = (da as NodeData).SCL_DOName;
+                        string doName;
+                        if (da is NodeData)
+                            doName = (da as NodeData).SCL_DOName;
+                        else
+                            doName = (da as NodeDO).SCL_UpperDOName;
                         if (doList.Exists(x => x.Name.Equals(doName)))
                         {
                             doList.Single(x => x.Name.Equals(doName)).AddChildNode(da);
@@ -285,6 +273,64 @@ namespace IEDExplorer
 
                 root.AddChildNode(logicalNode);
 
+            }
+        }
+
+        private void CreateDataAttributes(Hashtable functionalConstraints, NodeBase dataObject, NodeBase dataAttribute, NodeDO subNode)
+        {
+            var fc = (dataAttribute as NodeData).SCL_FCDesc;
+            (dataAttribute as NodeData).SCL_DOName = dataObject.Name;
+            NodeData newNode = new NodeData(dataAttribute.Name);
+            newNode.SCL_Type = (dataAttribute as NodeData).SCL_Type;
+            newNode.SCL_BType = (dataAttribute as NodeData).SCL_BType;
+            newNode.SCL_DOName = (dataAttribute as NodeData).SCL_DOName;
+            newNode.SCL_FCDesc = (dataAttribute as NodeData).SCL_FCDesc;
+
+            // when the type is specified (ie. when it's a struct), get the struct child nodes
+            if (!String.IsNullOrWhiteSpace(newNode.SCL_Type))
+            {
+                var dataType =
+                    _dataAttributeTypes.Single(dat => dat.Name.Equals((newNode.SCL_Type)));
+                foreach (NodeBase child in dataType.GetChildNodes())
+                {
+                    var tempChild = new NodeData(child.Name);
+                    tempChild.SCL_BType = (child as NodeData).SCL_BType;
+                    if (!String.IsNullOrWhiteSpace((child as NodeData).SCL_Type))
+                    {
+                        var subDataType = _dataAttributeTypes.Single(dat => dat.Name.Equals((child as NodeData).SCL_Type));
+                        foreach (NodeBase subChild in subDataType.GetChildNodes())
+                        {
+                            var tempSubChild = new NodeData(subChild.Name);
+                            tempSubChild.SCL_BType = (subChild as NodeData).SCL_BType;
+                            tempChild.AddChildNode(tempSubChild);
+                        }
+                    }
+                    newNode.AddChildNode(tempChild);
+                }
+            }
+            if (!functionalConstraints.ContainsKey(fc))
+            {
+                NodeFC nodeFC = new NodeFC(fc);
+                if (subNode != null)
+                {
+                    subNode.AddChildNode(newNode);
+                    subNode.SCL_UpperDOName = dataObject.Name;
+                    nodeFC.ForceAddChildNode(subNode);
+                }
+                else
+                    nodeFC.ForceAddChildNode(newNode);
+                functionalConstraints.Add(fc, nodeFC);
+            }
+            else
+            {
+                if (subNode != null)
+                {
+                    subNode.AddChildNode(newNode);
+                    subNode.SCL_UpperDOName = dataObject.Name;
+                    (functionalConstraints[fc] as NodeBase).ForceAddChildNode(subNode);
+                }
+                else
+                    (functionalConstraints[fc] as NodeBase).ForceAddChildNode(newNode);
             }
         }
 
@@ -331,57 +377,41 @@ namespace IEDExplorer
                     NodeBase doType = null;
                     try
                     {
-                        doType = _dataObjectTypes.Single(dot => dot.Name.Equals((dataObject as NodeDO).Type));
+                        doType = _dataObjectTypes.Single(dot => dot.Name.Equals((dataObject as NodeDO).SCL_Type));
                     }
                     catch (Exception e)
                     {
-                        logger.LogError("SCL Parser: DO type template not found: " + (dataObject as NodeDO).Type + ", for LN type: " + nodeType.Name + ", in node: " + name.ToString() + ", Exception: " + e.Message);
+                        logger.LogError("SCL Parser: DO type template not found: " + (dataObject as NodeDO).SCL_Type + ", for LN type: " + nodeType.Name + ", in node: " + name.ToString() + ", Exception: " + e.Message);
                         continue;
                     }
 
                     // for each DA in the DOType
                     foreach (var dataAttribute in doType.GetChildNodes())
                     {
-                        //var fc = (dataAttribute as NodeData).FCDesc;
-                        (dataAttribute as NodeData).SCL_DOName = dataObject.Name;
-                        NodeData newNode = new NodeData(dataAttribute.Name);
-                        newNode.SCL_Type = (dataAttribute as NodeData).SCL_Type;
-                        newNode.SCL_BType = (dataAttribute as NodeData).SCL_BType;
-                        newNode.SCL_DOName = (dataAttribute as NodeData).SCL_DOName;
-                        newNode.SCL_FCDesc = (dataAttribute as NodeData).SCL_FCDesc;
-                        newNode.SCL_TrgOps = (dataAttribute as NodeData).SCL_TrgOps;
-
-                        // when the type is specified (ie. when it's a struct), get the struct child nodes
-                        if (!String.IsNullOrWhiteSpace(newNode.SCL_Type))
+                        if (dataAttribute is NodeDO)
                         {
-                            var dataType =
-                                _dataAttributeTypes.Single(dat => dat.Name.Equals((newNode.SCL_Type)));
-                            foreach (NodeBase child in dataType.GetChildNodes())
+                            // SDO (sub Data Object)
+                            NodeBase subDoType = null;
+                            try
                             {
-                                var tempChild = new NodeData(child.Name);
-                                tempChild.SCL_BType = (child as NodeData).SCL_BType;
-                                tempChild.SCL_FCDesc = (child as NodeData).SCL_FCDesc;
-                                if (tempChild.SCL_FCDesc == null) tempChild.SCL_FCDesc = newNode.SCL_FCDesc;
-                                tempChild.SCL_TrgOps = (child as NodeData).SCL_TrgOps;
-                                if (tempChild.SCL_TrgOps == 0) tempChild.SCL_TrgOps = newNode.SCL_TrgOps;
-                                if (!String.IsNullOrWhiteSpace((child as NodeData).SCL_Type))
-                                {
-                                    var subDataType = _dataAttributeTypes.Single(dat => dat.Name.Equals((child as NodeData).SCL_Type));
-                                    foreach (NodeBase subChild in subDataType.GetChildNodes())
-                                    {
-                                        var tempSubChild = new NodeData(subChild.Name);
-                                        tempSubChild.SCL_BType = (subChild as NodeData).SCL_BType;
-                                        tempSubChild.SCL_FCDesc = (subChild as NodeData).SCL_FCDesc;
-                                        if (tempSubChild.SCL_FCDesc == null) tempSubChild.SCL_FCDesc = tempChild.SCL_FCDesc;
-                                        tempSubChild.SCL_TrgOps = (subChild as NodeData).SCL_TrgOps;
-                                        if (tempSubChild.SCL_TrgOps == 0) tempSubChild.SCL_TrgOps = tempChild.SCL_TrgOps;
-                                        tempChild.AddChildNode(tempSubChild);
-                                    }
-                                }
-                                newNode.AddChildNode(tempChild);
+                                subDoType = _dataObjectTypes.Single(dot => dot.Name.Equals((dataAttribute as NodeDO).SCL_Type));
+                            }
+                            catch (Exception e)
+                            {
+                                logger.LogError("SCL Parser: SDO type template not found: " + (dataAttribute as NodeDO).SCL_Type + ", for DO type: " + doType.Name + ", for LN type: " + nodeType.Name + ", in node: " + name.ToString() + ", Exception: " + e.Message);
+                                continue;
+                            }
+                            NodeDO subDataObject = new NodeDO(dataAttribute.Name);
+                            dataObject.AddChildNode(subDataObject);
+                            foreach (var dataAttribute2 in subDoType.GetChildNodes())
+                            {
+                                CreateDataAttributesIEC(subDataObject, dataAttribute2);
                             }
                         }
-                        dataObject.AddChildNode(newNode);
+                        if (dataAttribute is NodeData)
+                        {
+                            CreateDataAttributesIEC(dataObject, dataAttribute);
+                        }
                     }
                     logicalNode.AddChildNode(dataObject);
                 }
@@ -440,6 +470,50 @@ namespace IEDExplorer
             }
         }
 
+        private void CreateDataAttributesIEC(NodeBase dataObject, NodeBase dataAttribute)
+        {
+            //var fc = (dataAttribute as NodeData).FCDesc;
+            (dataAttribute as NodeData).SCL_DOName = dataObject.Name;
+            NodeData newNode = new NodeData(dataAttribute.Name);
+            newNode.SCL_Type = (dataAttribute as NodeData).SCL_Type;
+            newNode.SCL_BType = (dataAttribute as NodeData).SCL_BType;
+            newNode.SCL_DOName = (dataAttribute as NodeData).SCL_DOName;
+            newNode.SCL_FCDesc = (dataAttribute as NodeData).SCL_FCDesc;
+            newNode.SCL_TrgOps = (dataAttribute as NodeData).SCL_TrgOps;
+
+            // when the type is specified (ie. when it's a struct), get the struct child nodes
+            if (!String.IsNullOrWhiteSpace(newNode.SCL_Type))
+            {
+                var dataType =
+                    _dataAttributeTypes.Single(dat => dat.Name.Equals((newNode.SCL_Type)));
+                foreach (NodeBase child in dataType.GetChildNodes())
+                {
+                    var tempChild = new NodeData(child.Name);
+                    tempChild.SCL_BType = (child as NodeData).SCL_BType;
+                    tempChild.SCL_FCDesc = (child as NodeData).SCL_FCDesc;
+                    if (tempChild.SCL_FCDesc == null) tempChild.SCL_FCDesc = newNode.SCL_FCDesc;
+                    tempChild.SCL_TrgOps = (child as NodeData).SCL_TrgOps;
+                    if (tempChild.SCL_TrgOps == 0) tempChild.SCL_TrgOps = newNode.SCL_TrgOps;
+                    if (!String.IsNullOrWhiteSpace((child as NodeData).SCL_Type))
+                    {
+                        var subDataType = _dataAttributeTypes.Single(dat => dat.Name.Equals((child as NodeData).SCL_Type));
+                        foreach (NodeBase subChild in subDataType.GetChildNodes())
+                        {
+                            var tempSubChild = new NodeData(subChild.Name);
+                            tempSubChild.SCL_BType = (subChild as NodeData).SCL_BType;
+                            tempSubChild.SCL_FCDesc = (subChild as NodeData).SCL_FCDesc;
+                            if (tempSubChild.SCL_FCDesc == null) tempSubChild.SCL_FCDesc = tempChild.SCL_FCDesc;
+                            tempSubChild.SCL_TrgOps = (subChild as NodeData).SCL_TrgOps;
+                            if (tempSubChild.SCL_TrgOps == 0) tempSubChild.SCL_TrgOps = tempChild.SCL_TrgOps;
+                            tempChild.AddChildNode(tempSubChild);
+                        }
+                    }
+                    newNode.AddChildNode(tempChild);
+                }
+            }
+            dataObject.AddChildNode(newNode);
+        }
+
         private void CreateLogicalNodeTypes(List<NodeBase> list, IEnumerable<XElement> elements, XNamespace ns)
         {
             foreach (XElement el in elements)
@@ -462,7 +536,7 @@ namespace IEDExplorer
                 NodeDO dataObject = new NodeDO(el.Attribute("name").Value);
                 var type = el.Attribute("type");
                 if (type != null)
-                    dataObject.Type = type.Value;
+                    dataObject.SCL_Type = type.Value;
                 CreateDataAttributes(dataObject, el.Elements(ns + "DAI"), ns);
                 dataObject.SortImmediateChildren();
                 root.AddChildNode(dataObject);

@@ -195,7 +195,11 @@ namespace IEDExplorer
                                         iecs.logger.LogDebug("[IEC61850_READ_ACCESSAT_NAMED_VARIABLE_LIST]");
                                         iecs.istate = Iec61850lStateEnum.IEC61850_READ_ACCESSAT_NAMED_VARIABLE_LIST_WAIT;
                                         if (iecs.mms.SendGetNamedVariableListAttributes(iecs) != 0)
+                                        {
+                                            // No VarLists
+                                            iecs.logger.LogInfo("Init end: [IEC61850_FREILAUF]");
                                             iecs.istate = Iec61850lStateEnum.IEC61850_MAKEGUI;
+                                        }
                                         break;
                                     case Iec61850lStateEnum.IEC61850_MAKEGUI:
                                         iecs.logger.LogDebug("[IEC61850_MAKEGUI]");

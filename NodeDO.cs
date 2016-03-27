@@ -36,12 +36,12 @@ namespace IEDExplorer
             set { _type = value; }
         }
 
+        public string SCL_UpperDOName { get; set; }
+
         public NodeDO(string Name)
             : base(Name)
         {
         }
-
-        public string Type { get; set; }
 
         public override void SaveModel(List<String> lines, bool fromSCL)
         {

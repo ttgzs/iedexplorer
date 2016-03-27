@@ -210,11 +210,11 @@ namespace IEDExplorer
                 NodeBase doType = null;
                 try
                 {
-                    doType = _dataObjectTypes.Single(dot => dot.Name.Equals((dataObject as NodeDO).Type));
+                    doType = _dataObjectTypes.Single(dot => dot.Name.Equals((dataObject as NodeDO).SCL_Type));
                 }
                 catch (Exception e)
                 {
-                    logger.LogError("SCL Parser: DO type template not found: " + (dataObject as NodeDO).Type + ", for LN type: " + nodeType.Name + ", in node: " + name.ToString() + ", Exception: " + e.Message);
+                    logger.LogError("SCL Parser: DO type template not found: " + (dataObject as NodeDO).SCL_Type + ", for LN type: " + nodeType.Name + ", in node: " + name.ToString() + ", Exception: " + e.Message);
                     continue;
                 }
 
@@ -328,7 +328,7 @@ namespace IEDExplorer
             reader.Read();
             var digitalObject = new NodeDO(reader.GetAttribute("name"));
             if (reader.AttributeCount > 1)
-                digitalObject.Type = reader.GetAttribute("type");
+                digitalObject.SCL_Type = reader.GetAttribute("type");
             while (reader.Read())
             {
                 if (reader.IsStartElement() && reader.Name.Equals("DAI"))

@@ -49,16 +49,16 @@ namespace IEDExplorer.Views
             filename = fname;
             env = envir;
             InitializeComponent();
-            try
+            //try
             {
                 //dataModels = new SCLParser().CreateTree(filename);
                 dataModels = new SCLParserDOM().CreateTree(filename);
             }
-            catch (Exception e)
+            /*catch (Exception e)
             {
                 Logger.getLogger().LogError(" Reading SCL: " + e.Message);
                 return;
-            }
+            }*/
             IedTreeView.makeImageList(treeViewSCL);
             IedTreeView.makeImageList(treeViewSCL_IEC);
             makeTreeScl(dataModels[0], treeViewSCL);
