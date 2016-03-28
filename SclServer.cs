@@ -214,17 +214,28 @@ namespace IEDExplorer
         void createData(NodeBase dt, ModelNode mn)
         {
             ModelNode newmn = null;
+            NodeBase iter = null;
+            bool isArr = false;
             if (dt is NodeDO)
-                newmn = new DataObject(dt.Name, mn, (dt as NodeDO).SCL_ArraySize);
+            {
+                NodeDO dO = (dt as NodeDO);
+                isArr = dO.SCL_ArraySize > 0;
+                newmn  = new DataObject(dt.Name, mn, dO.SCL_ArraySize);
+            }
             else if (dt is NodeData)
             {   // dt id NodeDA
-                NodeData da = (NodeData)dt;
-                FunctionalConstraint fc = DataAttribute.fcFromString(da.SCL_FCDesc);
-                IEC61850.Server.DataAttributeType t = DataAttribute.typeFromSCLString(da.SCL_BType);
-                newmn = new DataAttribute(dt.Name, mn, t, fc, da.SCL_TrgOps, da.SCL_ArraySize, 0);
+                NodeData dA = (NodeData)dt;
+                isArr = dA.SCL_ArraySize > 0;
+                FunctionalConstraint fc = DataAttribute.fcFromString(dA.SCL_FCDesc);
+                IEC61850.Server.DataAttributeType t = DataAttribute.typeFromSCLString(dA.SCL_BType);
+                newmn = new DataAttribute(dt.Name, mn, t, fc, dA.SCL_TrgOps, dA.SCL_ArraySize, 0);
             }
             dt.SCLServerModelObject = newmn;
-            foreach (NodeBase nb in dt.GetChildNodes())
+            if (isArr)
+                iter = dt.GetChildNode(0);
+            else
+                iter = dt;
+            foreach (NodeBase nb in iter.GetChildNodes())
             {
                 // Recursion
                 createData(nb, newmn);

@@ -222,9 +222,27 @@ namespace IEDExplorer
                                 continue;
                             }
                             NodeDO subDataObject = new NodeDO(dataAttribute.Name);
-                            foreach (var dataAttribute2 in subDoType.GetChildNodes())
+                            subDataObject.SCL_ArraySize = (dataAttribute as NodeDO).SCL_ArraySize;
+                            subDataObject.SCL_UpperDOName = dataObject.Name;
+                            if (subDataObject.SCL_ArraySize > 0)
                             {
-                                CreateDataAttributes(functionalConstraints, dataObject, dataAttribute2, subDataObject);
+                                for (int i = 0; i < subDataObject.SCL_ArraySize; i++)
+                                {
+                                    NodeDO arrDataObject = new NodeDO("[" + i.ToString() + "]");
+                                    subDataObject.AddChildNode(arrDataObject);
+                                    arrDataObject.SCL_UpperDOName = dataObject.Name;
+                                    foreach (var dataAttribute2 in subDoType.GetChildNodes())
+                                    {
+                                        CreateDataAttributes(functionalConstraints, dataObject, dataAttribute2, arrDataObject);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                foreach (var dataAttribute2 in subDoType.GetChildNodes())
+                                {
+                                    CreateDataAttributes(functionalConstraints, dataObject, dataAttribute2, subDataObject);
+                                }
                             }
 
                         }
@@ -285,6 +303,7 @@ namespace IEDExplorer
             newNode.SCL_BType = (dataAttribute as NodeData).SCL_BType;
             newNode.SCL_DOName = (dataAttribute as NodeData).SCL_DOName;
             newNode.SCL_FCDesc = (dataAttribute as NodeData).SCL_FCDesc;
+            newNode.SCL_ArraySize = (dataAttribute as NodeData).SCL_ArraySize;
 
             // when the type is specified (ie. when it's a struct), get the struct child nodes
             if (!String.IsNullOrWhiteSpace(newNode.SCL_Type))
@@ -314,7 +333,6 @@ namespace IEDExplorer
                 if (subNode != null)
                 {
                     subNode.AddChildNode(newNode);
-                    subNode.SCL_UpperDOName = dataObject.Name;
                     nodeFC.ForceAddChildNode(subNode);
                 }
                 else
@@ -326,7 +344,6 @@ namespace IEDExplorer
                 if (subNode != null)
                 {
                     subNode.AddChildNode(newNode);
-                    subNode.SCL_UpperDOName = dataObject.Name;
                     (functionalConstraints[fc] as NodeBase).ForceAddChildNode(subNode);
                 }
                 else
@@ -402,10 +419,29 @@ namespace IEDExplorer
                                 continue;
                             }
                             NodeDO subDataObject = new NodeDO(dataAttribute.Name);
+                            subDataObject.SCL_ArraySize = (dataAttribute as NodeDO).SCL_ArraySize;
+
                             dataObject.AddChildNode(subDataObject);
-                            foreach (var dataAttribute2 in subDoType.GetChildNodes())
+                            if (subDataObject.SCL_ArraySize > 0)
                             {
-                                CreateDataAttributesIEC(subDataObject, dataAttribute2);
+                                for (int i = 0; i < subDataObject.SCL_ArraySize; i++)
+                                {
+                                    NodeDO arrDataObject = new NodeDO("[" + i.ToString() + "]");
+                                    subDataObject.AddChildNode(arrDataObject);
+                                    arrDataObject.SCL_UpperDOName = dataObject.Name;
+
+                                    foreach (var dataAttribute2 in subDoType.GetChildNodes())
+                                    {
+                                        CreateDataAttributesIEC(arrDataObject, dataAttribute2);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                foreach (var dataAttribute2 in subDoType.GetChildNodes())
+                                {
+                                    CreateDataAttributesIEC(subDataObject, dataAttribute2);
+                                }
                             }
                         }
                         if (dataAttribute is NodeData)
@@ -472,46 +508,88 @@ namespace IEDExplorer
 
         private void CreateDataAttributesIEC(NodeBase dataObject, NodeBase dataAttribute)
         {
-            //var fc = (dataAttribute as NodeData).FCDesc;
             (dataAttribute as NodeData).SCL_DOName = dataObject.Name;
-            NodeData newNode = new NodeData(dataAttribute.Name);
-            newNode.SCL_Type = (dataAttribute as NodeData).SCL_Type;
-            newNode.SCL_BType = (dataAttribute as NodeData).SCL_BType;
-            newNode.SCL_DOName = (dataAttribute as NodeData).SCL_DOName;
-            newNode.SCL_FCDesc = (dataAttribute as NodeData).SCL_FCDesc;
-            newNode.SCL_TrgOps = (dataAttribute as NodeData).SCL_TrgOps;
+            NodeData dataAttributeInst = new NodeData(dataAttribute.Name);
+            dataAttributeInst.SCL_Type = (dataAttribute as NodeData).SCL_Type;
+            dataAttributeInst.SCL_BType = (dataAttribute as NodeData).SCL_BType;
+            dataAttributeInst.SCL_DOName = (dataAttribute as NodeData).SCL_DOName;
+            dataAttributeInst.SCL_FCDesc = (dataAttribute as NodeData).SCL_FCDesc;
+            dataAttributeInst.SCL_TrgOps = (dataAttribute as NodeData).SCL_TrgOps;
+            dataAttributeInst.SCL_ArraySize = (dataAttribute as NodeData).SCL_ArraySize;
 
             // when the type is specified (ie. when it's a struct), get the struct child nodes
-            if (!String.IsNullOrWhiteSpace(newNode.SCL_Type))
+            if (dataAttributeInst.SCL_ArraySize > 0)
             {
-                var dataType =
-                    _dataAttributeTypes.Single(dat => dat.Name.Equals((newNode.SCL_Type)));
-                foreach (NodeBase child in dataType.GetChildNodes())
+                for (int i = 0; i < dataAttributeInst.SCL_ArraySize; i++)
                 {
-                    var tempChild = new NodeData(child.Name);
-                    tempChild.SCL_BType = (child as NodeData).SCL_BType;
-                    tempChild.SCL_FCDesc = (child as NodeData).SCL_FCDesc;
-                    if (tempChild.SCL_FCDesc == null) tempChild.SCL_FCDesc = newNode.SCL_FCDesc;
-                    tempChild.SCL_TrgOps = (child as NodeData).SCL_TrgOps;
-                    if (tempChild.SCL_TrgOps == 0) tempChild.SCL_TrgOps = newNode.SCL_TrgOps;
-                    if (!String.IsNullOrWhiteSpace((child as NodeData).SCL_Type))
-                    {
-                        var subDataType = _dataAttributeTypes.Single(dat => dat.Name.Equals((child as NodeData).SCL_Type));
-                        foreach (NodeBase subChild in subDataType.GetChildNodes())
-                        {
-                            var tempSubChild = new NodeData(subChild.Name);
-                            tempSubChild.SCL_BType = (subChild as NodeData).SCL_BType;
-                            tempSubChild.SCL_FCDesc = (subChild as NodeData).SCL_FCDesc;
-                            if (tempSubChild.SCL_FCDesc == null) tempSubChild.SCL_FCDesc = tempChild.SCL_FCDesc;
-                            tempSubChild.SCL_TrgOps = (subChild as NodeData).SCL_TrgOps;
-                            if (tempSubChild.SCL_TrgOps == 0) tempSubChild.SCL_TrgOps = tempChild.SCL_TrgOps;
-                            tempChild.AddChildNode(tempSubChild);
-                        }
-                    }
-                    newNode.AddChildNode(tempChild);
+                    NodeData arrNode = new NodeData("[" + i.ToString() + "]");
+                    dataAttributeInst.AddChildNode(arrNode);
+                    CreateDataAttributesChildIEC(arrNode);
                 }
             }
-            dataObject.AddChildNode(newNode);
+            else
+                CreateDataAttributesChildIEC(dataAttributeInst);
+            dataObject.AddChildNode(dataAttributeInst);
+        }
+
+        private void CreateDataAttributesChildIEC(NodeData dataAttributeInst)
+        {
+            if (!String.IsNullOrWhiteSpace(dataAttributeInst.SCL_Type))
+            {
+                var dataType =
+                    _dataAttributeTypes.Single(dat => dat.Name.Equals((dataAttributeInst.SCL_Type)));
+                foreach (NodeBase child in dataType.GetChildNodes())
+                {
+                    var dataAttributeInstChild = new NodeData(child.Name);
+                    dataAttributeInstChild.SCL_BType = (child as NodeData).SCL_BType;
+                    dataAttributeInstChild.SCL_FCDesc = (child as NodeData).SCL_FCDesc;
+                    if (dataAttributeInstChild.SCL_FCDesc == null) dataAttributeInstChild.SCL_FCDesc = dataAttributeInst.SCL_FCDesc;
+                    dataAttributeInstChild.SCL_TrgOps = (child as NodeData).SCL_TrgOps;
+                    if (dataAttributeInstChild.SCL_TrgOps == 0) dataAttributeInstChild.SCL_TrgOps = dataAttributeInst.SCL_TrgOps;
+
+                    if (dataAttributeInstChild.SCL_ArraySize > 0)
+                    {
+                        for (int i = 0; i < dataAttributeInstChild.SCL_ArraySize; i++)
+                        {
+                            NodeData arrNode = new NodeData("[" + i.ToString() + "]");
+                            dataAttributeInstChild.AddChildNode(arrNode);
+                            CreateDataAttributesSubChildIEC(child, arrNode);
+                        }
+                    }
+                    else
+                        CreateDataAttributesSubChildIEC(child, dataAttributeInstChild);
+
+                    dataAttributeInst.AddChildNode(dataAttributeInstChild);
+                }
+            }
+        }
+
+        private void CreateDataAttributesSubChildIEC(NodeBase child, NodeData dataAttributeInstChild)
+        {
+            if (!String.IsNullOrWhiteSpace((child as NodeData).SCL_Type))
+            {
+                var subDataType = _dataAttributeTypes.Single(dat => dat.Name.Equals((child as NodeData).SCL_Type));
+                foreach (NodeBase subChild in subDataType.GetChildNodes())
+                {
+                    var dataAttributeInstSubChild = new NodeData(subChild.Name);
+                    dataAttributeInstSubChild.SCL_BType = (subChild as NodeData).SCL_BType;
+                    dataAttributeInstSubChild.SCL_FCDesc = (subChild as NodeData).SCL_FCDesc;
+                    if (dataAttributeInstSubChild.SCL_FCDesc == null) dataAttributeInstSubChild.SCL_FCDesc = dataAttributeInstChild.SCL_FCDesc;
+                    dataAttributeInstSubChild.SCL_TrgOps = (subChild as NodeData).SCL_TrgOps;
+                    if (dataAttributeInstSubChild.SCL_TrgOps == 0) dataAttributeInstSubChild.SCL_TrgOps = dataAttributeInstChild.SCL_TrgOps;
+
+                    if (dataAttributeInstSubChild.SCL_ArraySize > 0)
+                    {
+                        for (int i = 0; i < dataAttributeInstSubChild.SCL_ArraySize; i++)
+                        {
+                            NodeData arrNode = new NodeData("[" + i.ToString() + "]");
+                            dataAttributeInstSubChild.AddChildNode(arrNode);
+                        }
+                    }
+                    else
+                        dataAttributeInstChild.AddChildNode(dataAttributeInstSubChild);
+                }
+            }
         }
 
         private void CreateLogicalNodeTypes(List<NodeBase> list, IEnumerable<XElement> elements, XNamespace ns)
@@ -811,7 +889,7 @@ namespace IEDExplorer
                 DatSet.DataType = scsm_MMS_TypeEnum.visible_string;
                 a = el.Attribute("datSet");
                 if (isIecTree)
-                    DatSet.DataValue = a.Value; // null accepted
+                    DatSet.DataValue = a != null ? a.Value : null; // null accepted
                 else
                     DatSet.DataValue = a != null ? lnode.Name + "$" + a.Value : "";
 
