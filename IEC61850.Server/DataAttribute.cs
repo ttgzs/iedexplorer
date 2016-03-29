@@ -74,6 +74,12 @@ namespace IEC61850
             [DllImport("iec61850", CallingConvention = CallingConvention.Cdecl)]
             private static extern IntPtr DataAttribute_create(string name, IntPtr parent, int type, int fc, byte triggerOptions, int arrayElements, uint sAddr);
 
+            [DllImport("iec61850", CallingConvention = CallingConvention.Cdecl)]
+            static extern void MmsValue_update(IntPtr self, IntPtr source);
+
+            [DllImport("iec61850", CallingConvention = CallingConvention.Cdecl)]
+            static extern int MmsValue_getType(IntPtr self);
+
             private MmsValue mmsValue;
 
             public MmsValue MmsValue
@@ -88,6 +94,17 @@ namespace IEC61850
                     return mmsValue;
                 }
             }
+
+            public MmsType GetMmsValueType()
+            {
+                sDataAttribute sda = (sDataAttribute)Marshal.PtrToStructure(self, typeof(sDataAttribute));
+                return (MmsType)MmsValue_getType(sda.mmsValue);
+            }
+
+            /*public UpdateValue(MmsValue val)
+            {
+                MmsValue_update(IntPtr self, IntPtr source)
+            }*/
 
             /**
              * \brief create a new data attribute and add it to a parent model node

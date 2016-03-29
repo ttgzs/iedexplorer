@@ -219,15 +219,6 @@ namespace IEDExplorer
                             }
                             break;
                         case scsm_MMS_TypeEnum.binary_time:
-                            /*if (DataValue != null)
-                            {
-                                StringBuilder sbos = new StringBuilder(32);
-                                foreach (byte b in (byte[])DataValue)
-                                {
-                                    sbos.AppendFormat("X{0} ", b);
-                                }
-                                val = sbos.ToString();
-                            }*/
                             if (DataValue != null) val = DataValue.ToString() + "." + ((DateTime)(DataValue)).Millisecond.ToString() + " [LOC]";
                             break;
                         case scsm_MMS_TypeEnum.octet_string:

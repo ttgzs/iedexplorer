@@ -110,7 +110,20 @@ namespace IEDExplorer
 
                     // IEC 61850 Tree
                     CreateLogicalDevicesIEC(_dataModels[i].iec, ied.Descendants(ns + "LDevice"), ns);
-
+                    
+                    ldidx = 0;
+                    foreach (XElement ld in ied.Descendants(ns + "LDevice"))
+                    {
+                        NodeBase ldroot = _dataModels[i].iec.GetChildNode(ldidx++);
+                        int lnidx = 0;
+                        IEnumerable<XElement> lns = (from el in ld.Elements() where el.Name.LocalName.StartsWith("LN") select el);
+                        int cnt = lns.Count();
+                        foreach (XElement ln in lns)
+                        {
+                            NodeBase lnroot = ldroot.GetChildNode(lnidx++);
+                            ReadDataInstanceValues(lnroot, ln.Elements(ns + "DOI"), ns);
+                        }
+                    }
                     i++;
                 }
             }
@@ -121,6 +134,59 @@ namespace IEDExplorer
             //}
 
             return _dataModels;
+        }
+
+        private void ReadDataInstanceValues(NodeBase lnroot, IEnumerable<XElement> elements, XNamespace ns)
+        {
+            foreach (XElement inst in elements)
+            {
+                XAttribute a = inst.Attribute("name");
+                if (a == null)
+                {
+                    logger.LogDebug("SCL DAI/DOI attribute 'name' not found for " + inst.ToString() + ", node " + lnroot.Address);
+                    return;
+                }
+                NodeBase child = lnroot.FindChildNode(a.Value);
+                if (child == null)
+                {
+                    logger.LogDebug("SCL DAI/DOI child " + a.Value + " not found for " + inst.ToString() + ", node " + lnroot.Address);
+                    return;
+                }
+                XElement val = inst.Element(ns + "Val");
+                if (val != null && child is NodeData)
+                {
+                    // Read value in
+                    NodeData data = child as NodeData;
+                    logger.LogDebug("SCL Value found for " + child.Address + ": val = " + val.Value);
+                    if (data.SCL_BType.StartsWith("Enum"))
+                    {
+                        NodeBase myEnum = _dataModels[0].enums.FindChildNode(data.SCL_Type);
+                        if (myEnum != null)
+                        {
+                            NodeData myVal = (NodeData)myEnum.FindChildNode(val.Value);
+                            if (myVal != null)
+                            {
+                                try
+                                {
+                                    data.DataValue = int.Parse(myVal.DataValue.ToString());
+                                }
+                                catch { }
+                            }
+                        }
+                    }
+                    else if (data.SCL_BType.Contains("String"))
+                    {
+                        data.DataValue = val.Value;
+                    }
+                }
+                else
+                {
+                    // Try children DOI
+                    ReadDataInstanceValues(child, inst.Elements(ns + "DOI"), ns);
+                    // Try children DAI
+                    ReadDataInstanceValues(child, inst.Elements(ns + "DAI"), ns);
+                }
+            }
         }
 
         /// <summary>
@@ -306,7 +372,7 @@ namespace IEDExplorer
             newNode.SCL_ArraySize = (dataAttribute as NodeData).SCL_ArraySize;
 
             // when the type is specified (ie. when it's a struct), get the struct child nodes
-            if (!String.IsNullOrWhiteSpace(newNode.SCL_Type))
+            if (!String.IsNullOrWhiteSpace(newNode.SCL_Type) && !newNode.SCL_BType.StartsWith("Enum"))
             {
                 var dataType =
                     _dataAttributeTypes.Single(dat => dat.Name.Equals((newNode.SCL_Type)));
@@ -314,7 +380,7 @@ namespace IEDExplorer
                 {
                     var tempChild = new NodeData(child.Name);
                     tempChild.SCL_BType = (child as NodeData).SCL_BType;
-                    if (!String.IsNullOrWhiteSpace((child as NodeData).SCL_Type))
+                    if (!String.IsNullOrWhiteSpace((child as NodeData).SCL_Type) && !(child as NodeData).SCL_BType.StartsWith("Enum"))
                     {
                         var subDataType = _dataAttributeTypes.Single(dat => dat.Name.Equals((child as NodeData).SCL_Type));
                         foreach (NodeBase subChild in subDataType.GetChildNodes())
@@ -534,7 +600,7 @@ namespace IEDExplorer
 
         private void CreateDataAttributesChildIEC(NodeData dataAttributeInst)
         {
-            if (!String.IsNullOrWhiteSpace(dataAttributeInst.SCL_Type))
+            if (!String.IsNullOrWhiteSpace(dataAttributeInst.SCL_Type)  && !dataAttributeInst.SCL_BType.StartsWith("Enum"))
             {
                 var dataType =
                     _dataAttributeTypes.Single(dat => dat.Name.Equals((dataAttributeInst.SCL_Type)));
@@ -566,7 +632,7 @@ namespace IEDExplorer
 
         private void CreateDataAttributesSubChildIEC(NodeBase child, NodeData dataAttributeInstChild)
         {
-            if (!String.IsNullOrWhiteSpace((child as NodeData).SCL_Type))
+            if (!String.IsNullOrWhiteSpace((child as NodeData).SCL_Type) && !(child as NodeData).SCL_BType.StartsWith("Enum"))
             {
                 var subDataType = _dataAttributeTypes.Single(dat => dat.Name.Equals((child as NodeData).SCL_Type));
                 foreach (NodeBase subChild in subDataType.GetChildNodes())
@@ -615,7 +681,7 @@ namespace IEDExplorer
                 var type = el.Attribute("type");
                 if (type != null)
                     dataObject.SCL_Type = type.Value;
-                CreateDataAttributes(dataObject, el.Elements(ns + "DAI"), ns);
+                //CreateDataAttributes(dataObject, el.Elements(ns + "DAI"), ns);
                 dataObject.SortImmediateChildren();
                 root.AddChildNode(dataObject);
             }
@@ -692,7 +758,10 @@ namespace IEDExplorer
                         if (data.SCL_BType.Equals("Struct") && null != el.Attribute("type"))
                             data.SCL_Type = el.Attribute("type").Value;
                         else if (data.SCL_BType.Equals("Enum"))
+                        {
                             data.SCL_BType = String.Concat(data.SCL_BType, " (Integer)");
+                            if (null != el.Attribute("type")) data.SCL_Type = el.Attribute("type").Value;
+                        }
                     }
                     IEC61850.Common.TriggerOptions trgOptions = IEC61850.Common.TriggerOptions.NONE;
                     XAttribute a = el.Attribute("dchg");
@@ -903,7 +972,7 @@ namespace IEDExplorer
                 }
                 catch
                 {
-                    ConfRev.DataValue = 1;
+                    ConfRev.DataValue = (uint)1;
                 }
 
                 // bufTime
@@ -916,7 +985,7 @@ namespace IEDExplorer
                 }
                 catch
                 {
-                    BufTm.DataValue = 0;
+                    BufTm.DataValue = (uint)0;
                 }
 
                 // intgPd
@@ -929,7 +998,7 @@ namespace IEDExplorer
                 }
                 catch
                 {
-                    IntgPd.DataValue = 0;
+                    IntgPd.DataValue = (uint)0;
                 }
 
                 // <TrgOps dchg="true" qchg="false" dupd="false" period="true" />

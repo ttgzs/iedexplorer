@@ -229,6 +229,15 @@ namespace IEDExplorer
                 FunctionalConstraint fc = DataAttribute.fcFromString(dA.SCL_FCDesc);
                 IEC61850.Server.DataAttributeType t = DataAttribute.typeFromSCLString(dA.SCL_BType);
                 newmn = new DataAttribute(dt.Name, mn, t, fc, dA.SCL_TrgOps, dA.SCL_ArraySize, 0);
+                if (dA.DataValue != null)
+                {
+                    // Initial values from SCL file
+                    if (dA.DataValue is string)
+                    {
+                        //MmsValue val = new MmsValue((string)dA.DataValue);
+                        //(newmn as DataAttribute).MmsValue = val;
+                    }
+                }
             }
             dt.SCLServerModelObject = newmn;
             if (isArr)
