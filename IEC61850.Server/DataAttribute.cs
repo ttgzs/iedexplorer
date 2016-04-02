@@ -74,37 +74,10 @@ namespace IEC61850
             [DllImport("iec61850", CallingConvention = CallingConvention.Cdecl)]
             private static extern IntPtr DataAttribute_create(string name, IntPtr parent, int type, int fc, byte triggerOptions, int arrayElements, uint sAddr);
 
-            [DllImport("iec61850", CallingConvention = CallingConvention.Cdecl)]
-            static extern void MmsValue_update(IntPtr self, IntPtr source);
-
-            [DllImport("iec61850", CallingConvention = CallingConvention.Cdecl)]
-            static extern int MmsValue_getType(IntPtr self);
-
-            private MmsValue mmsValue;
-
-            public MmsValue MmsValue
-            {
-                get
-                {
-                    if (mmsValue == null)
-                    {
-                        sDataAttribute sda = (sDataAttribute)Marshal.PtrToStructure(self, typeof(sDataAttribute));
-                        mmsValue = new MmsValue(sda.mmsValue);
-                    }
-                    return mmsValue;
-                }
-            }
-
-            public MmsType GetMmsValueType()
-            {
-                sDataAttribute sda = (sDataAttribute)Marshal.PtrToStructure(self, typeof(sDataAttribute));
-                return (MmsType)MmsValue_getType(sda.mmsValue);
-            }
-
-            /*public UpdateValue(MmsValue val)
-            {
-                MmsValue_update(IntPtr self, IntPtr source)
-            }*/
+            private MmsValue mmsValue = null;
+            private MmsType mmsType = MmsType.MMS_DATA_ACCESS_ERROR;
+            private DataAttributeType daType;
+            private FunctionalConstraint daFc;
 
             /**
              * \brief create a new data attribute and add it to a parent model node
@@ -124,6 +97,8 @@ namespace IEC61850
             public DataAttribute(string name, ModelNode parentNode, DataAttributeType type, FunctionalConstraint fc, byte triggerOptions, int arrayElements, uint sAddr)
             {
                 self = DataAttribute_create(name, parentNode.GetPtr(), (int)type, (int)fc, triggerOptions, arrayElements, sAddr);
+                daType = type;
+                daFc = fc;
             }
 
             internal DataAttribute(IntPtr newDA)
@@ -133,6 +108,144 @@ namespace IEC61850
 
             ~DataAttribute()
             {
+            }
+
+            public MmsValue MmsValue
+            {
+                get
+                {
+                    if (mmsValue == null)
+                        mmsValueInit();
+                    return mmsValue;
+                }
+            }
+
+            void mmsValueInit()
+            {
+                sDataAttribute sda = (sDataAttribute)Marshal.PtrToStructure(self, typeof(sDataAttribute));
+                if (sda.mmsValue != IntPtr.Zero)
+                {
+                    mmsValue = new MmsValue(sda.mmsValue);
+                    mmsType = mmsValue.GetType();
+                }
+            }
+
+            public MmsType GetMmsValueType()
+            {
+                if (mmsValue == null)
+                    mmsValueInit();
+                return mmsType;
+            }
+
+            public void UpdateValue(object DataValue)
+            {
+                if (DataValue == null)
+                    return;
+                if (mmsValue == null)
+                    mmsValueInit();
+                switch (mmsType)
+                {
+                    /** array type (multiple elements of the same type) */
+                    case MmsType.MMS_ARRAY:
+                        // not supported
+                        break;
+                    /** structure type (multiple elements of different types) */
+                    case MmsType.MMS_STRUCTURE:
+                        // not supported
+                        break;
+                    /** boolean */
+                    case MmsType.MMS_BOOLEAN:
+                        mmsValue.SetBoolean((bool)DataValue);
+                        break;
+                    /** bit string */
+                    case MmsType.MMS_BIT_STRING:
+                        if (DataValue is uint)
+                            mmsValue.BitStringFromUInt32((uint)DataValue);
+                        break;
+                    case MmsType.MMS_INTEGER:
+                        if (daType == DataAttributeType.INT8)
+                        {
+                            mmsValue.SetInt8((int)DataValue);
+                        }
+                        else if (daType == DataAttributeType.INT16)
+                        {
+                            mmsValue.SetInt16((int)DataValue);
+                        }
+                        else if (daType == DataAttributeType.INT32)
+                        {
+                            mmsValue.SetInt32((int)DataValue);
+                        }
+                        else if (daType == DataAttributeType.INT64)
+                        {
+                            mmsValue.SetInt64((long)DataValue);
+                        }
+                        else if (daType == DataAttributeType.ENUMERATED)
+                        {
+                            mmsValue.SetInt32((int)DataValue);
+                        }
+                        break;
+                    /** unsigned integer */
+                    case MmsType.MMS_UNSIGNED:
+                        if (daType == DataAttributeType.INT8U)
+                        {
+                            mmsValue.SetUInt8((uint)DataValue);
+                        }
+                        else if (daType == DataAttributeType.INT16U)
+                        {
+                            mmsValue.SetUInt16((uint)DataValue);
+                        }
+                        else if (daType == DataAttributeType.INT32U)
+                        {
+                            mmsValue.SetUInt32((uint)DataValue);
+                        }
+                        break;
+                    /** floating point value (32 or 64 bit) */
+                    case MmsType.MMS_FLOAT:
+                        if (daType == DataAttributeType.FLOAT32)
+                        {
+                            mmsValue.SetFloat((float)DataValue);
+                        }
+                        else if (daType == DataAttributeType.FLOAT64)
+                        {
+                            mmsValue.SetDouble((double)DataValue);
+                        }
+                        break;
+                    /** octet string */
+                    case MmsType.MMS_OCTET_STRING:
+                        mmsValue.setOctetString((byte[])DataValue);
+                        break;
+                    /** visible string - ANSI string */
+                    case MmsType.MMS_VISIBLE_STRING:
+                        mmsValue.SetVisibleString((string)DataValue);
+                        break;
+                    /** Generalized time */
+                    case MmsType.MMS_GENERALIZED_TIME:
+                        // not supported
+                        break;
+                    case MmsType.MMS_BINARY_TIME:
+                        mmsValue.SetBinaryTime((ulong)DataValue);
+                        break;
+                    /** Binary coded decimal (BCD) - not used */
+                    case MmsType.MMS_BCD:
+                        // Not supported
+                        break;
+                    /** object ID - not used */
+                    case MmsType.MMS_OBJ_ID:
+                        // Not supported
+                        break;
+                    /** Unicode string */
+                    case MmsType.MMS_STRING:
+                        mmsValue.SetMmsString((string)DataValue);
+                        break;
+                    /** UTC time */
+                    case MmsType.MMS_UTC_TIME:
+                        mmsValue.SetUtcTimeMs((ulong)DataValue);
+                        break;
+                    /** will be returned in case of an error (contains error code) */
+                    case MmsType.MMS_DATA_ACCESS_ERROR:
+                        // Not supported
+                        break;
+                }
             }
 
             public static DataAttributeType typeFromSCLString(string type)

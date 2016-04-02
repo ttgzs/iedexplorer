@@ -516,13 +516,13 @@ namespace IEDExplorer.Views
                         item.Tag = n;
                         item.Click += new EventHandler(OnReadDataClick);
                     }
-                    if (n is NodeData && n.GetChildNodes().Length == 0)
+                    if (n is NodeData && n.isLeaf())
                     {
                         item = menu.Items.Add("Write Data");
                         item.Tag = n;
                         item.Click += new EventHandler(OnWriteDataClick);
                     }
-                    if (n is NodeRCB && n.GetChildNodes().Length > 0)
+                    if (n is NodeRCB && !n.isLeaf())
                     {
                         item = menu.Items.Add("Configure RCB");
                         item.Tag = n;
@@ -536,18 +536,19 @@ namespace IEDExplorer.Views
                     }
                 }
 
-                if (menu.Items.Count > 0)
+                if (!n.isLeaf())
                 {
-                    menu.Items.Add(new ToolStripSeparator());
+                    if (menu.Items.Count > 0 && !n.isLeaf())
+                        menu.Items.Add(new ToolStripSeparator());
+
+                    item = menu.Items.Add("Expand Subtree");
+                    item.Tag = e.Node;
+                    item.Click += new EventHandler(OnExpandSubtree);
+
+                    item = menu.Items.Add("Collapse Subtree");
+                    item.Tag = e.Node;
+                    item.Click += new EventHandler(OnCollapseSubtree);
                 }
-                item = menu.Items.Add("Expand Subtree");
-                item.Tag = e.Node;
-                item.Click += new EventHandler(OnExpandSubtree);
-
-                item = menu.Items.Add("Collapse Subtree");
-                item.Tag = e.Node;
-                item.Click += new EventHandler(OnCollapseSubtree);
-
                 if (menu.Items.Count > 0)
                     menu.Show((Control)sender, e.Location);
             }
@@ -725,7 +726,7 @@ namespace IEDExplorer.Views
         void OnWriteDataClick(object sender, EventArgs e)
         {
             NodeData data = (NodeData)(sender as ToolStripItem).Tag;
-            NodeData newdata = ctrl.PrepareWriteData(data);
+            NodeData newdata = Iec61850Controller.PrepareWriteData(data);
 
             EditValue ev = new EditValue(newdata);
             DialogResult r = ev.ShowDialog();

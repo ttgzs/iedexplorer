@@ -110,7 +110,7 @@ namespace IEDExplorer
 
                     // IEC 61850 Tree
                     CreateLogicalDevicesIEC(_dataModels[i].iec, ied.Descendants(ns + "LDevice"), ns);
-                    
+
                     ldidx = 0;
                     foreach (XElement ld in ied.Descendants(ns + "LDevice"))
                     {
@@ -157,32 +157,83 @@ namespace IEDExplorer
                 {
                     // Read value in
                     NodeData data = child as NodeData;
-                    logger.LogDebug("SCL Value found for " + child.Address + ": val = " + val.Value);
-                    if (data.SCL_BType.StartsWith("Enum"))
+                    logger.LogDebug("SCL Value found for " + child.Address + ": val = " + val.Value + ", BType=" + data.SCL_BType);
+                    IEC61850.Server.DataAttributeType at = IEC61850.Server.DataAttribute.typeFromSCLString(data.SCL_BType);
+
+                    try
                     {
-                        NodeBase myEnum = _dataModels[0].enums.FindChildNode(data.SCL_Type);
-                        if (myEnum != null)
+                        if (at == IEC61850.Server.DataAttributeType.ENUMERATED)
                         {
-                            NodeData myVal = (NodeData)myEnum.FindChildNode(val.Value);
-                            if (myVal != null)
+                            NodeBase myEnum = _dataModels[0].enums.FindChildNode(data.SCL_Type);
+                            if (myEnum != null)
                             {
-                                try
+                                NodeData myVal = (NodeData)myEnum.FindChildNode(val.Value);
+                                if (myVal != null)
                                 {
-                                    data.DataValue = int.Parse(myVal.DataValue.ToString());
+                                    data.DataValue = int.Parse((string)myVal.DataValue);
+                                    data.DataType = scsm_MMS_TypeEnum.integer;
                                 }
-                                catch { }
                             }
                         }
+                        else if (at == IEC61850.Server.DataAttributeType.VISIBLE_STRING_32 ||
+                                 at == IEC61850.Server.DataAttributeType.VISIBLE_STRING_64 ||
+                                 at == IEC61850.Server.DataAttributeType.VISIBLE_STRING_65 ||
+                                 at == IEC61850.Server.DataAttributeType.VISIBLE_STRING_129 ||
+                                 at == IEC61850.Server.DataAttributeType.VISIBLE_STRING_255 ||
+                                 at == IEC61850.Server.DataAttributeType.UNICODE_STRING_255)
+                        {
+                            data.DataValue = val.Value;
+                            data.DataType = scsm_MMS_TypeEnum.visible_string;
+                        }
+                        else if (at == IEC61850.Server.DataAttributeType.UNICODE_STRING_255)
+                        {
+                            data.DataValue = val.Value;
+                            data.DataType = scsm_MMS_TypeEnum.mMSString;
+                        }
+                        else if (at == IEC61850.Server.DataAttributeType.INT8 ||
+                                 at == IEC61850.Server.DataAttributeType.INT16 ||
+                                 at == IEC61850.Server.DataAttributeType.INT32)
+                        {
+                            data.DataValue = int.Parse(val.Value);
+                            data.DataType = scsm_MMS_TypeEnum.integer;
+                        }
+                        else if (at == IEC61850.Server.DataAttributeType.INT64)
+                        {
+                            data.DataValue = long.Parse(val.Value);
+                            data.DataType = scsm_MMS_TypeEnum.integer;
+                        }
+                        else if (at == IEC61850.Server.DataAttributeType.INT8U ||
+                                 at == IEC61850.Server.DataAttributeType.INT16U ||
+                                 at == IEC61850.Server.DataAttributeType.INT32U)
+                        {
+                            data.DataValue = uint.Parse(val.Value);
+                            data.DataType = scsm_MMS_TypeEnum.unsigned;
+                        }
+                        else if (at == IEC61850.Server.DataAttributeType.BOOLEAN)
+                        {
+                            data.DataValue = val.Value.ToUpper() == "TRUE";
+                            data.DataType = scsm_MMS_TypeEnum.boolean;
+                        }
+                        else if (at == IEC61850.Server.DataAttributeType.FLOAT32)
+                        {
+                            data.DataValue = float.Parse(val.Value);
+                            data.DataType = scsm_MMS_TypeEnum.floating_point;
+                        }
+                        else if (at == IEC61850.Server.DataAttributeType.FLOAT64)
+                        {
+                            data.DataValue = double.Parse(val.Value);
+                            data.DataType = scsm_MMS_TypeEnum.floating_point;
+                        }
                     }
-                    else if (data.SCL_BType.Contains("String"))
+                    catch
                     {
-                        data.DataValue = val.Value;
+                        logger.LogDebug("Error parsing SCL Value (above) for type " + at.ToString());
                     }
                 }
                 else
                 {
-                    // Try children DOI
-                    ReadDataInstanceValues(child, inst.Elements(ns + "DOI"), ns);
+                    // Try children SDI
+                    ReadDataInstanceValues(child, inst.Elements(ns + "SDI"), ns);
                     // Try children DAI
                     ReadDataInstanceValues(child, inst.Elements(ns + "DAI"), ns);
                 }
@@ -600,7 +651,7 @@ namespace IEDExplorer
 
         private void CreateDataAttributesChildIEC(NodeData dataAttributeInst)
         {
-            if (!String.IsNullOrWhiteSpace(dataAttributeInst.SCL_Type)  && !dataAttributeInst.SCL_BType.StartsWith("Enum"))
+            if (!String.IsNullOrWhiteSpace(dataAttributeInst.SCL_Type) && !dataAttributeInst.SCL_BType.StartsWith("Enum"))
             {
                 var dataType =
                     _dataAttributeTypes.Single(dat => dat.Name.Equals((dataAttributeInst.SCL_Type)));
@@ -913,7 +964,7 @@ namespace IEDExplorer
                 XAttribute a = el.Attribute("buffered");
                 bool buffered = a != null ? (a.Value.ToLower() == "true") : false;
                 string fc = buffered ? "BR" : "RP";
-                
+
                 a = el.Attribute("indexed");
                 bool indexed = a != null ? (a.Value.ToLower() == "true") : true;    // default true???
                 uint maxRptEnabled = 1;
@@ -933,12 +984,12 @@ namespace IEDExplorer
                 {
                     if (isIecTree)
                     {
-                        nodeRCBs.Add(new NodeRCB(el.Attribute("name").Value + (indexed ? (i+1).ToString("D2") : "")));
+                        nodeRCBs.Add(new NodeRCB(el.Attribute("name").Value + (indexed ? (i + 1).ToString("D2") : "")));
                         lnode.AddChildNode(nodeRCBs[i]);
                     }
                     else
                     {
-                        nodeRCBs.Add(new NodeRCB(String.Concat(lnode.Name, "$", fc, "$", el.Attribute("name").Value) + (indexed ? (i+1).ToString("D2") : "")));
+                        nodeRCBs.Add(new NodeRCB(String.Concat(lnode.Name, "$", fc, "$", el.Attribute("name").Value) + (indexed ? (i + 1).ToString("D2") : "")));
                         if (buffered)
                             _dataModel.brcbs.AddChildNode(new NodeLD(lnode.Parent.Name)).AddChildNode(nodeRCBs[i]);
                         else

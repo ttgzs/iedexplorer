@@ -31,6 +31,7 @@ using System.Text;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using IEDExplorer.Resources;
+using IEC61850.Server;
 
 namespace IEDExplorer.Views
 {
@@ -486,17 +487,27 @@ namespace IEDExplorer.Views
                             item.Click += new EventHandler(OnRunServer);
                         }
                     }
+                    if (n is NodeData && n.isLeaf() && n.SCLServerModelObject != null)
+                    {
+                        //if (
+                        item = menu.Items.Add("Write Data");
+                        item.Tag = n;
+                        item.Click += new EventHandler(OnWriteDataClick);
+                    }
                 }
-                if (menu.Items.Count > 0)
-                    menu.Items.Add(new ToolStripSeparator());
-                item = menu.Items.Add("Expand Subtree");
-                item.Tag = e.Node;
-                item.Click += new EventHandler(OnExpandSubtree);
+                if (!n.isLeaf())
+                {
+                    if (menu.Items.Count > 0 && !n.isLeaf())
+                        menu.Items.Add(new ToolStripSeparator());
 
-                item = menu.Items.Add("Collapse Subtree");
-                item.Tag = e.Node;
-                item.Click += new EventHandler(OnCollapseSubtree);
+                    item = menu.Items.Add("Expand Subtree");
+                    item.Tag = e.Node;
+                    item.Click += new EventHandler(OnExpandSubtree);
 
+                    item = menu.Items.Add("Collapse Subtree");
+                    item.Tag = e.Node;
+                    item.Click += new EventHandler(OnCollapseSubtree);
+                }
                 if (menu.Items.Count > 0)
                     menu.Show((Control)sender, e.Location);
             }
@@ -564,5 +575,22 @@ namespace IEDExplorer.Views
             }
             runningServers.Clear();
         }
+
+        void OnWriteDataClick(object sender, EventArgs e)
+        {
+            NodeData data = (NodeData)(sender as ToolStripItem).Tag;
+
+            EditValue ev = new EditValue(data);
+            DialogResult r = ev.ShowDialog();
+            if (r == DialogResult.OK)
+            {
+                DataAttribute da = (DataAttribute)data.SCLServerModelObject;
+                if (da != null)
+                {
+                    da.UpdateValue(data.DataValue);
+                }
+            }
+        }
+
     }
 }

@@ -26,37 +26,41 @@ namespace IEDExplorer
 {
     public enum scsm_MMS_TypeEnum
     {
-        structure,
-
         array,
-
+        structure,
         boolean,
-
         bit_string,
-
         integer,
-
         unsigned,
-
         floating_point,
-
         octet_string,
-
         visible_string,
-
         generalized_time,
-
         binary_time,
-
         bcd,
-
         objId,
-
         mMSString,
-
         utc_time,
+        data_access_error
     }
-
+    /*
+        MMS_ARRAY = 0,
+        MMS_STRUCTURE = 1,
+        MMS_BOOLEAN = 2,
+        MMS_BIT_STRING = 3,
+        MMS_INTEGER = 4,
+        MMS_UNSIGNED = 5,
+        MMS_FLOAT = 6,
+        MMS_OCTET_STRING = 7,
+        MMS_VISIBLE_STRING = 8,
+        MMS_GENERALIZED_TIME = 9,
+        MMS_BINARY_TIME = 10,
+        MMS_BCD = 11,
+        MMS_OBJ_ID = 12,
+        MMS_STRING = 13,
+        MMS_UTC_TIME = 14,
+        MMS_DATA_ACCESS_ERROR = 15,
+    */
     public enum DataAttributeType
     {
         BOOLEAN = 0,/* int */

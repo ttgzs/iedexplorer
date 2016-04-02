@@ -227,7 +227,7 @@ namespace IEDExplorer
             }
         }
 
-        public NodeData PrepareWriteData(NodeData data)
+        public static NodeData PrepareWriteData(NodeData data)
         {
             NodeData nd = new NodeData(data.Name);
             nd.DataType = data.DataType;

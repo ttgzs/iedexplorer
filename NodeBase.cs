@@ -368,11 +368,19 @@ namespace IEDExplorer
 
         internal Iec61850State GetIecs()
         {
+            NodeBase b = GetIedNode();
+            if(b != null)
+                return (b as NodeIed).iecs;
+            return null;
+        }
+
+        internal NodeIed GetIedNode()
+        {
             NodeBase b = this;
             do
             {
                 if (b is NodeIed)
-                    return (b as NodeIed).iecs;
+                    return (b as NodeIed);
                 b = b.Parent;
             } while (b != null);
             return null;

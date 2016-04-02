@@ -133,6 +133,7 @@ namespace IEDExplorer
             try
             {
                 // Begin receiving the data from the remote device.
+                //
                 tcps.workSocket.BeginReceive(tcps.recvBuffer, 0, Iec61850State.recvBufferSize, 0,
                     new AsyncCallback(ReceiveCallback), tcps);
             }
@@ -152,20 +153,31 @@ namespace IEDExplorer
                 // Complete the connection.
                 if (tcps.workSocket != null)
                 {
-                    try
+                    if (tcps.workSocket.Poll(5000, SelectMode.SelectRead) && tcps.workSocket.Available == 0)
                     {
-                        tcps.recvBytes = tcps.workSocket.EndReceive(ar);
-                        //Console.WriteLine("ReceiveCallback: Data received {0}",
-                        //    tcps.recvBytes.ToString());
+                        //socket not connected, close it if it's still running
+                        tcps.workSocket.Close();
+                        tcps.workSocket = null;
+                        tcps.logger.LogError("Socket disconnected (detected in ReceiveCallback)");
+                        tcps.tstate = TcpProtocolState.TCP_STATE_SHUTDOWN;
+                    }
+                    else
+                    {
+                        try
+                        {
+                            tcps.recvBytes = tcps.workSocket.EndReceive(ar);
+                            //Console.WriteLine("ReceiveCallback: Data received {0}",
+                            //    tcps.recvBytes.ToString());
 
-                        IsoTpkt.Parse(tcps);
+                            IsoTpkt.Parse(tcps);
+                        }
+                        catch (Exception e)
+                        {
+                            tcps.logger.LogError(e.Message);
+                        }
+                        // Signal that the data has been received.
+                        tcps.receiveDone.Set();
                     }
-                    catch (Exception e)
-                    {
-                        tcps.logger.LogError(e.Message);
-                    }
-                    // Signal that the data has been received.
-                    tcps.receiveDone.Set();
                 }
             }
             //catch (Exception e)

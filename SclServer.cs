@@ -96,6 +96,8 @@ namespace IEDExplorer
             IedModel model = makeIecModel();
 
             IedServer server = new IedServer(model);
+            InitializeValues(sclModel.iec);
+
             server.Start(tcpPort);
             //Thread.Sleep(100);
             if (!server.isRunning())
@@ -128,6 +130,30 @@ namespace IEDExplorer
             model = null;
             sclModel = null;
             logger.LogInfo(String.Format("SCL Server Stopped"));
+        }
+
+        void InitializeValues(NodeBase nb)
+        {
+            if (nb.isLeaf() && (nb is NodeData))
+            {
+                NodeData nd = nb as NodeData;
+                if (nd.SCLServerModelObject != null)
+                {
+                    // Initial value exist (from SCL file)
+                    DataAttribute da = (DataAttribute)nd.SCLServerModelObject;
+                    if (nd.DataValue != null)
+                        da.UpdateValue(nd.DataValue);
+                    nd.DataType = (scsm_MMS_TypeEnum)da.GetMmsValueType();
+                }
+            }
+            else
+            {
+                foreach (NodeBase child in nb.GetChildNodes())
+                {
+                    // Recursion
+                    InitializeValues(child);
+                }
+            }
         }
 
         IedModel makeIecModel()
@@ -223,21 +249,12 @@ namespace IEDExplorer
                 newmn  = new DataObject(dt.Name, mn, dO.SCL_ArraySize);
             }
             else if (dt is NodeData)
-            {   // dt id NodeDA
+            {   // dt is NodeDA
                 NodeData dA = (NodeData)dt;
                 isArr = dA.SCL_ArraySize > 0;
                 FunctionalConstraint fc = DataAttribute.fcFromString(dA.SCL_FCDesc);
                 IEC61850.Server.DataAttributeType t = DataAttribute.typeFromSCLString(dA.SCL_BType);
                 newmn = new DataAttribute(dt.Name, mn, t, fc, dA.SCL_TrgOps, dA.SCL_ArraySize, 0);
-                if (dA.DataValue != null)
-                {
-                    // Initial values from SCL file
-                    if (dA.DataValue is string)
-                    {
-                        //MmsValue val = new MmsValue((string)dA.DataValue);
-                        //(newmn as DataAttribute).MmsValue = val;
-                    }
-                }
             }
             dt.SCLServerModelObject = newmn;
             if (isArr)
