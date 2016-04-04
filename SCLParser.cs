@@ -557,25 +557,25 @@ namespace IEDExplorer
             NodeData RptId = new NodeData("RptID");
             RptId.DataType = scsm_MMS_TypeEnum.visible_string;
             RptId.DataValue = reader.GetAttribute("rptID");
-            RptId.Address = String.Concat(deviceName, "/", nodeName, ".", nodeRP.Name, ".", RptId.Name);
+            RptId.IecAddress = String.Concat(deviceName, "/", nodeName, ".", nodeRP.Name, ".", RptId.Name);
 
             // datSet
             NodeData DatSet = new NodeData("DatSet");
             DatSet.DataType = scsm_MMS_TypeEnum.visible_string;
             DatSet.DataValue = reader.GetAttribute("datSet");
-            DatSet.Address = String.Concat(deviceName, "/", nodeName, ".", nodeRP.Name, ".", DatSet.Name);
+            DatSet.IecAddress = String.Concat(deviceName, "/", nodeName, ".", nodeRP.Name, ".", DatSet.Name);
 
             // confRev
             NodeData ConfRev = new NodeData("ConfRev");
             ConfRev.DataType = scsm_MMS_TypeEnum.unsigned;
             ConfRev.DataValue = reader.GetAttribute("confRev");
-            ConfRev.Address = String.Concat(deviceName, "/", nodeName, ".", nodeRP.Name, ".", ConfRev.Name);
+            ConfRev.IecAddress = String.Concat(deviceName, "/", nodeName, ".", nodeRP.Name, ".", ConfRev.Name);
 
             // bufTime
             NodeData BufTm = new NodeData("BufTm");
             BufTm.DataType = scsm_MMS_TypeEnum.unsigned;
             BufTm.DataValue = reader.GetAttribute("bufTime");
-            BufTm.Address = String.Concat(deviceName, "/", nodeName, ".", nodeRP.Name, ".", BufTm.Name);
+            BufTm.IecAddress = String.Concat(deviceName, "/", nodeName, ".", nodeRP.Name, ".", BufTm.Name);
 
             nodeRP.AddChildNode(RptId);
             nodeRP.AddChildNode(DatSet);

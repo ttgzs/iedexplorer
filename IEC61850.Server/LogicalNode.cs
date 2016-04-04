@@ -46,7 +46,7 @@ namespace IEC61850
 
             public LogicalNode(string name, LogicalDevice ldevice)
             {
-                self = LogicalNode_create(name, ldevice.GetPtr());
+                self = LogicalNode_create(name, ldevice.GetLibraryObject());
             }
 
             ~LogicalNode()

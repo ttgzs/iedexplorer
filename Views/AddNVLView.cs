@@ -54,7 +54,7 @@ namespace IEDExplorer
             this.textBox1.Text = list.Name;
             foreach (NodeBase b in list.GetChildNodes())
             {
-                ListViewItem it = this.listView1.Items.Add(new ListViewItem(b.Address));
+                ListViewItem it = this.listView1.Items.Add(new ListViewItem(b.IecAddress));
                 it.Tag = b;
             }
         }
@@ -72,7 +72,7 @@ namespace IEDExplorer
             NodeBase d;
             if ((d = (NodeBase)e.Data.GetData(typeof(NodeData))) != null || (d = (NodeBase)e.Data.GetData(typeof(NodeDO))) != null)
             {
-                ListViewItem lvi = new ListViewItem(d.Address);
+                ListViewItem lvi = new ListViewItem(d.IecAddress);
                 lvi.Tag = d;
                 int i = 0;
                 for (; i < listView1.Items.Count; i++)

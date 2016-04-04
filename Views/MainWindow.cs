@@ -39,7 +39,7 @@ namespace IEDExplorer.Views
             worker = new Scsm_MMS_Worker(env);
 
             wm = new WindowManager(dockPanel1, env, this);
-            this.Text = "IED Explorer 0.77c";
+            this.Text = "IED Explorer 0.78 experimental-SCL server";
 
             logger.LogInfo("Starting main program ...");
 

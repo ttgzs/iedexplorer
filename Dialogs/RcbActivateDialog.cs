@@ -37,7 +37,7 @@ namespace IEDExplorer
             RCBpar = rcbpar;
             InitializeComponent();
 
-            labelReportName.Text = RCBpar.self.Address;
+            labelReportName.Text = RCBpar.self.IecAddress;
             labelReportType.Text = RCBpar.self.isBuffered ? "Buffered" : "Unbuffered";
 
             if (RCBpar.self.RptID_present)
@@ -60,7 +60,7 @@ namespace IEDExplorer
                     NodeBase[] nba = RCBpar.self.GetIecs().DataModel.lists.FindChildNode(myld).GetChildNodes();
                     foreach (NodeBase nb in nba)
                     {
-                        comboBoxDatSet.Items.Add(nb.Address);
+                        comboBoxDatSet.Items.Add(nb.IecAddress);
                     }
                     comboBoxDatSet.SelectedItem = RCBpar.self.DatSet;
                 }

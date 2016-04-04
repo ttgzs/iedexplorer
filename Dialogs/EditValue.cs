@@ -30,6 +30,7 @@ namespace IEDExplorer
 {
     public partial class EditValue : Form
     {
+        NodeBase tNode = null;
         NodeData data;
 
         EditValue()
@@ -42,11 +43,41 @@ namespace IEDExplorer
             InitializeComponent();
             data = n;
             this.textBox1.Text = n.StringValue;
+            NodeBase nb = data;
+            bool tFound = false;
+            if (data.Name == "t")
+            {
+                checkBoxTimestamp.Checked = false;
+                checkBoxTimestamp.Enabled = false;
+            }
+            else
+            {
+                while (nb.Parent != null && (nb.Parent is NodeData || nb.Parent is NodeDO))
+                {
+                    nb = nb.Parent;
+                    tNode = nb.FindChildNode("t");
+                    if (tNode != null && tNode is NodeData)
+                    {
+                        tFound = true;
+                        break;
+                    }
+                }
+                if (!tFound)
+                {
+                    checkBoxTimestamp.Checked = false;
+                    checkBoxTimestamp.Enabled = false;
+                }
+
+            }
         }
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
             data.StringValue = this.textBox1.Text;
         }
+
+        public bool UpdateTimestamp { get { return checkBoxTimestamp.Checked; } }
+
+        public NodeData timeNode { get { if (tNode is NodeData) return (NodeData)tNode; return null; } }
     }
 }

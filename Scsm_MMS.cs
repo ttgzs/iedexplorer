@@ -870,7 +870,7 @@ namespace IEDExplorer
                                 NodeBase b = (iecs.DataModel.ied as NodeIed).FindNodeByAddress(vase.Current.VariableSpecification.Name.Domain_specific.DomainID.Value, vase.Current.VariableSpecification.Name.Domain_specific.ItemID.Value);
                                 if (b != null)
                                 {
-                                    iecs.logger.LogDebug("Node address: " + b.Address);
+                                    iecs.logger.LogDebug("Node address: " + b.IecAddress);
                                     recursiveReadData(iecs, are.Current.Success, b, NodeState.Read);
                                 }
                             }
@@ -901,7 +901,7 @@ namespace IEDExplorer
 
                                 for (int i = 0; i < data.Length; i++)
                                 {
-                                    iecs.logger.LogDebug("Reading variable: " + data[i].Address);
+                                    iecs.logger.LogDebug("Reading variable: " + data[i].IecAddress);
                                     recursiveReadData(iecs, (Read.ListOfAccessResult as List<AccessResult>)[i].Success, data[i], NodeState.Read);
                                 }
                             }
@@ -930,7 +930,7 @@ namespace IEDExplorer
                         {
                             if (ar.Success != null)
                             {
-                                iecs.logger.LogDebug("Reading Actual variable value: " + lastOperationData[i].Address);
+                                iecs.logger.LogDebug("Reading Actual variable value: " + lastOperationData[i].IecAddress);
                                 recursiveReadData(iecs, ar.Success, lastOperationData[i], NodeState.Read);
                             }
                         }
@@ -1108,7 +1108,7 @@ namespace IEDExplorer
                 iecs.logger.LogDebug("actualNode = null, returning from recursiveReadData");
                 return;
             }
-            iecs.logger.LogDebug("recursiveReadData: nodeAddress=" + actualNode.Address + ", state=" + s.ToString());
+            iecs.logger.LogDebug("recursiveReadData: nodeAddress=" + actualNode.IecAddress + ", state=" + s.ToString());
             actualNode.NodeState = s;
             if (data.Structure != null)
             {
@@ -1120,7 +1120,7 @@ namespace IEDExplorer
                     if (i <= nb.GetUpperBound(0))
                         recursiveReadData(iecs, d, nb[i], s);
                     else
-                        iecs.logger.LogError("Not matching read structure: Node=" + actualNode.Address);
+                        iecs.logger.LogError("Not matching read structure: Node=" + actualNode.IecAddress);
                     i++;
                 }
             }

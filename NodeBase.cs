@@ -274,7 +274,7 @@ namespace IEDExplorer
             }
         }
 
-        public string Address
+        public string IecAddress
         {
             get
             {
@@ -284,27 +284,44 @@ namespace IEDExplorer
                 string address = "";
                 NodeBase tmpn = this;
                 List<string> parts = new List<string>();
+                bool iecModel = false;
 
                 do
                 {
-                    parts.Add(tmpn.Name);
+                    if (!(tmpn is NodeFC))
+                        parts.Add(tmpn.Name);
                     tmpn = tmpn.Parent;
-                } while (tmpn != null);
+                    if (tmpn != null) iecModel = tmpn.IsIecModel;
+                } while (tmpn != null && (!(tmpn is NodeIed) || iecModel));
 
-                for (int i = parts.Count - 2; i >= 0; i--)
+                for (int i = parts.Count - 1; i >= 0; i--)
                 {
-                    if (i == parts.Count - 4)
-                    {
-                        continue;
-                    }
+                    //if (i == parts.Count - 4)
+                    //    continue;
                     address += parts[i];
-                    if (i == parts.Count - 2)
+                    if (iecModel)
                     {
-                        if (i != 0)
-                            address += "/";
+                        if (i == parts.Count - 2)
+                        {
+                            if (i != 0)
+                                address += "/";
+                        }
+                        else if (i != 0 && i != parts.Count - 1)
+                            if (parts[i - 1].Contains('/'))
+                                address += "->";
+                            else
+                                address += ".";
                     }
-                    else if (i != 0)
-                        address += ".";
+                    else
+                    {
+                        if (i == parts.Count - 1)
+                        {
+                            if (i != 0)
+                                address += "/";
+                        }
+                        else if (i != 0)
+                            address += ".";
+                    }
                 }
                 return address;
             }

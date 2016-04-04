@@ -44,7 +44,7 @@ namespace IEC61850
 
             public DataObject(string name, ModelNode parentNode, int arrayElements)
             {
-                self = DataObject_create(name, parentNode.GetPtr(), arrayElements);
+                self = DataObject_create(name, parentNode.GetLibraryObject(), arrayElements);
             }
 
             internal DataObject(IntPtr newDO)
@@ -67,12 +67,12 @@ namespace IEC61850
 
             public static DataObject CDC_ENG(string dataObjectName, ModelNode parent, CDCOptions options)
             {
-                return new DataObject(CDC_ENG_create(dataObjectName, parent.GetPtr(), (uint)options));
+                return new DataObject(CDC_ENG_create(dataObjectName, parent.GetLibraryObject(), (uint)options));
             }
 
             public static DataObject CDC_SAV(string dataObjectName, ModelNode parent, CDCOptions options, bool isIntegerNotFloat)
             {
-                return new DataObject(CDC_SAV_create(dataObjectName, parent.GetPtr(), (uint)options, isIntegerNotFloat));
+                return new DataObject(CDC_SAV_create(dataObjectName, parent.GetLibraryObject(), (uint)options, isIntegerNotFloat));
             }
         }
 

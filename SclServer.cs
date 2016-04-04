@@ -43,6 +43,8 @@ namespace IEDExplorer
         Logger logger = Logger.getLogger();
         public Iec61850Model sclModel;
         int tcpPort = 102;
+        public int TcpPort { get { return tcpPort; } set { tcpPort = value; } }
+        IedServer server;
 
         public SCLServer(Env env)
         {
@@ -95,7 +97,7 @@ namespace IEDExplorer
             logger.LogInfo(String.Format("SCL Server " + sclModel.iec.Name + " - Creating model. It takes a while..."));
             IedModel model = makeIecModel();
 
-            IedServer server = new IedServer(model);
+            server = new IedServer(model);
             InitializeValues(sclModel.iec);
 
             server.Start(tcpPort);
@@ -132,6 +134,8 @@ namespace IEDExplorer
             logger.LogInfo(String.Format("SCL Server Stopped"));
         }
 
+        public IedServer GetIedServer() { return server; }
+
         void InitializeValues(NodeBase nb)
         {
             if (nb.isLeaf() && (nb is NodeData))
@@ -142,7 +146,7 @@ namespace IEDExplorer
                     // Initial value exist (from SCL file)
                     DataAttribute da = (DataAttribute)nd.SCLServerModelObject;
                     if (nd.DataValue != null)
-                        da.UpdateValue(nd.DataValue);
+                        da.UpdateValue(server, nd.DataValue);
                     nd.DataType = (scsm_MMS_TypeEnum)da.GetMmsValueType();
                 }
             }
@@ -255,6 +259,7 @@ namespace IEDExplorer
                 FunctionalConstraint fc = DataAttribute.fcFromString(dA.SCL_FCDesc);
                 IEC61850.Server.DataAttributeType t = DataAttribute.typeFromSCLString(dA.SCL_BType);
                 newmn = new DataAttribute(dt.Name, mn, t, fc, dA.SCL_TrgOps, dA.SCL_ArraySize, 0);
+                logger.LogDebug("DataAttribute " + dt.IecAddress + " TrgOps:" + dA.SCL_TrgOps.ToString());
             }
             dt.SCLServerModelObject = newmn;
             if (isArr)

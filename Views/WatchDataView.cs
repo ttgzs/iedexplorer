@@ -65,7 +65,7 @@ namespace IEDExplorer.Views
             NodeBase d;
             if ((d = (NodeBase)e.Data.GetData(typeof(NodeData))) != null || (d = (NodeBase)e.Data.GetData(typeof(NodeDO))) != null)
             {
-                ListViewItem lvi = new ListViewItem(d.Address);
+                ListViewItem lvi = new ListViewItem(d.IecAddress);
                 lvi.Tag = d;
                 /*int i = 0;
                 for (; i < treeViewAdv1.Items.Count; i++)

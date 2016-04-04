@@ -51,87 +51,80 @@ namespace IEDExplorer
         /// <returns>IECS tree state to be displayed</returns>
         public List<Iec61850Model> CreateTree(String fileName) //, Env env)
         {
-            //try
+            // Model [0] is a master for types etc.
+            _dataModels.Add(new Iec61850State().DataModel);
+            _nodeTypes = new List<NodeBase>();
+            _dataObjectTypes = new List<NodeBase>();
+            _dataAttributeTypes = new List<NodeBase>();
+            int i = 0;
+
+            logger.LogInfo("Reading SCL file " + fileName);
+            XDocument doc = XDocument.Load(fileName);
+            XNamespace ns = doc.Root.Name.Namespace;
+            GetTypes(doc, ns);
+            _dataModels[0].enums.SortImmediateChildren();
+
+            //logger.LogInfo("Reading XML tree.");
+            foreach (XElement ied in doc.Root.Elements(ns + "IED"))
             {
-                // Model [0] is a master for types etc.
-                _dataModels.Add(new Iec61850State().DataModel);
-                _nodeTypes = new List<NodeBase>();
-                _dataObjectTypes = new List<NodeBase>();
-                _dataAttributeTypes = new List<NodeBase>();
-                int i = 0;
+                // Create model. Model 0 (master model) is already created above
+                if (i > 0) _dataModels.Add(new Iec61850State().DataModel);
+                XAttribute a = ied.Attribute("name");
+                if (a != null) _dataModels[i].ied = new NodeIed(a.Value, _dataModels[i]);
+                else continue;  // cannot proceed
+                if (a != null) _dataModels[i].iec = new NodeIed(a.Value, _dataModels[i]);
+                _dataModels[i].iec.IsIecModel = true;
+                a = ied.Attribute("manufacturer");
+                if (a != null) _dataModels[i].ied.VendorName = a.Value;
+                if (a != null) _dataModels[i].iec.VendorName = a.Value;
+                a = ied.Attribute("type");
+                if (a != null) _dataModels[i].ied.ModelName = a.Value;
+                if (a != null) _dataModels[i].iec.ModelName = a.Value;
+                a = ied.Attribute("revision");
+                if (a != null) _dataModels[i].ied.Revision = a.Value;
+                if (a != null) _dataModels[i].iec.Revision = a.Value;
 
-                logger.LogInfo("Reading SCL file " + fileName);
-                XDocument doc = XDocument.Load(fileName);
-                XNamespace ns = doc.Root.Name.Namespace;
-                GetTypes(doc, ns);
-                _dataModels[0].enums.SortImmediateChildren();
-
-                //logger.LogInfo("Reading XML tree.");
-                foreach (XElement ied in doc.Root.Elements(ns + "IED"))
+                // IED MMS Tree
+                CreateLogicalDevices(_dataModels[i].ied, ied.Descendants(ns + "LDevice"), ns);
+                // data sets and reports
+                int ldidx = 0;
+                foreach (XElement ld in ied.Descendants(ns + "LDevice"))
                 {
-                    // Create model. model 0 (master model) is already created above
-                    if (i > 0) _dataModels.Add(new Iec61850State().DataModel);
-                    XAttribute a = ied.Attribute("name");
-                    if (a != null) _dataModels[i].ied = new NodeIed(a.Value, _dataModels[i]);
-                    else continue;  // cannot proceed
-                    if (a != null) _dataModels[i].iec = new NodeIed(a.Value, _dataModels[i]);
-                    a = ied.Attribute("manufacturer");
-                    if (a != null) _dataModels[i].ied.VendorName = a.Value;
-                    if (a != null) _dataModels[i].iec.VendorName = a.Value;
-                    a = ied.Attribute("type");
-                    if (a != null) _dataModels[i].ied.ModelName = a.Value;
-                    if (a != null) _dataModels[i].iec.ModelName = a.Value;
-                    a = ied.Attribute("revision");
-                    if (a != null) _dataModels[i].ied.Revision = a.Value;
-                    if (a != null) _dataModels[i].iec.Revision = a.Value;
-
-                    // IED MMS Tree
-                    CreateLogicalDevices(_dataModels[i].ied, ied.Descendants(ns + "LDevice"), ns);
-                    // data sets and reports
-                    int ldidx = 0;
-                    foreach (XElement ld in ied.Descendants(ns + "LDevice"))
+                    NodeBase ldroot = _dataModels[i].ied.GetChildNode(ldidx++);
+                    int lnidx = 0;
+                    IEnumerable<XElement> lns = (from el in ld.Elements() where el.Name.LocalName.StartsWith("LN") select el);
+                    int cnt = lns.Count();
+                    foreach (XElement ln in lns)
                     {
-                        NodeBase ldroot = _dataModels[i].ied.GetChildNode(ldidx++);
-                        int lnidx = 0;
-                        IEnumerable<XElement> lns = (from el in ld.Elements() where el.Name.LocalName.StartsWith("LN") select el);
-                        int cnt = lns.Count();
-                        foreach (XElement ln in lns)
-                        {
-                            // Datasets
-                            NodeBase lnroot = ldroot.GetChildNode(lnidx++);
-                            //if (lnroot == null || lnroot.Parent == null || lnroot.Parent.Parent == null)
-                            //    Logger.getLogger().LogError("Something is null 1" + cnt);
-                            CreateDataSets(lnroot, ln.Elements(ns + "DataSet"), ns);
-                            CreateReports(lnroot, ln.Elements(ns + "ReportControl"), ns);
-                            lnroot.SortImmediateChildren();
-                        }
-                        ldroot.SortImmediateChildren();
+                        // Datasets
+                        NodeBase lnroot = ldroot.GetChildNode(lnidx++);
+                        //if (lnroot == null || lnroot.Parent == null || lnroot.Parent.Parent == null)
+                        //    Logger.getLogger().LogError("Something is null 1" + cnt);
+                        CreateDataSets(lnroot, ln.Elements(ns + "DataSet"), ns);
+                        CreateReports(lnroot, ln.Elements(ns + "ReportControl"), ns);
+                        lnroot.SortImmediateChildren();
                     }
-
-                    // IEC 61850 Tree
-                    CreateLogicalDevicesIEC(_dataModels[i].iec, ied.Descendants(ns + "LDevice"), ns);
-
-                    ldidx = 0;
-                    foreach (XElement ld in ied.Descendants(ns + "LDevice"))
-                    {
-                        NodeBase ldroot = _dataModels[i].iec.GetChildNode(ldidx++);
-                        int lnidx = 0;
-                        IEnumerable<XElement> lns = (from el in ld.Elements() where el.Name.LocalName.StartsWith("LN") select el);
-                        int cnt = lns.Count();
-                        foreach (XElement ln in lns)
-                        {
-                            NodeBase lnroot = ldroot.GetChildNode(lnidx++);
-                            ReadDataInstanceValues(lnroot, ln.Elements(ns + "DOI"), ns);
-                        }
-                    }
-                    i++;
+                    ldroot.SortImmediateChildren();
                 }
+
+                // IEC 61850 Tree
+                CreateLogicalDevicesIEC(_dataModels[i].iec, ied.Descendants(ns + "LDevice"), ns);
+
+                ldidx = 0;
+                foreach (XElement ld in ied.Descendants(ns + "LDevice"))
+                {
+                    NodeBase ldroot = _dataModels[i].iec.GetChildNode(ldidx++);
+                    int lnidx = 0;
+                    IEnumerable<XElement> lns = (from el in ld.Elements() where el.Name.LocalName.StartsWith("LN") select el);
+                    int cnt = lns.Count();
+                    foreach (XElement ln in lns)
+                    {
+                        NodeBase lnroot = ldroot.GetChildNode(lnidx++);
+                        ReadDataInstanceValues(lnroot, ln.Elements(ns + "DOI"), ns);
+                    }
+                }
+                i++;
             }
-            //catch (Exception e)
-            //{
-            //    logger.LogError("Error reading file " + fileName + ": " + e.Message);
-            //    throw e;
-            //}
 
             return _dataModels;
         }
@@ -143,13 +136,13 @@ namespace IEDExplorer
                 XAttribute a = inst.Attribute("name");
                 if (a == null)
                 {
-                    logger.LogDebug("SCL DAI/DOI attribute 'name' not found for " + inst.ToString() + ", node " + lnroot.Address);
+                    logger.LogDebug("SCL DAI/DOI attribute 'name' not found for " + inst.ToString() + ", node " + lnroot.IecAddress);
                     return;
                 }
                 NodeBase child = lnroot.FindChildNode(a.Value);
                 if (child == null)
                 {
-                    logger.LogDebug("SCL DAI/DOI child " + a.Value + " not found for " + inst.ToString() + ", node " + lnroot.Address);
+                    logger.LogDebug("SCL DAI/DOI child " + a.Value + " not found for " + inst.ToString() + ", node " + lnroot.IecAddress);
                     return;
                 }
                 XElement val = inst.Element(ns + "Val");
@@ -157,7 +150,7 @@ namespace IEDExplorer
                 {
                     // Read value in
                     NodeData data = child as NodeData;
-                    logger.LogDebug("SCL Value found for " + child.Address + ": val = " + val.Value + ", BType=" + data.SCL_BType);
+                    logger.LogDebug("SCL Value found for " + child.IecAddress + ": val = " + val.Value + ", BType=" + data.SCL_BType);
                     IEC61850.Server.DataAttributeType at = IEC61850.Server.DataAttribute.typeFromSCLString(data.SCL_BType);
 
                     try

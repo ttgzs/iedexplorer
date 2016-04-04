@@ -78,7 +78,7 @@ namespace IEDExplorer
                     if ((b = d.FindChildNode("ctlVal")) != null)
                     {
                         cPar.DataType = ((NodeData)b).DataType;
-                        cPar.Address = b.Address;
+                        cPar.Address = b.IecAddress;
                         cPar.ctlVal = ((NodeData)b).DataValue;
                     }
                     cPar.T = DateTime.MinValue;
@@ -108,7 +108,7 @@ namespace IEDExplorer
                     return cPar;
                 }
                 else
-                    Logger.getLogger().LogError("Basic structure for a command not found at " + data.Address + "!");
+                    Logger.getLogger().LogError("Basic structure for a command not found at " + data.IecAddress + "!");
             }
             return null;
         }
@@ -223,7 +223,7 @@ namespace IEDExplorer
                     iecs.Send(ndar.ToArray(), d.CommAddress, how);
                 }
                 else
-                    Logger.getLogger().LogError("Basic structure for a command not found at " + data.Address + "!");
+                    Logger.getLogger().LogError("Basic structure for a command not found at " + data.IecAddress + "!");
             }
         }
 
@@ -289,7 +289,7 @@ namespace IEDExplorer
             {
                 do
                 {
-                    ur = (NodeData)iecs.DataModel.ied.FindNodeByValue(scsm_MMS_TypeEnum.visible_string, vl.Address, ref ur);
+                    ur = (NodeData)iecs.DataModel.ied.FindNodeByValue(scsm_MMS_TypeEnum.visible_string, vl.IecAddress, ref ur);
                     if (ur == null || ur.Parent == null)
                     {
                         Logger.getLogger().LogError("Suitable URCB not found, list cannot be activated!");

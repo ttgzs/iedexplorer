@@ -96,7 +96,7 @@ namespace IEC61850
              */
             public DataAttribute(string name, ModelNode parentNode, DataAttributeType type, FunctionalConstraint fc, byte triggerOptions, int arrayElements, uint sAddr)
             {
-                self = DataAttribute_create(name, parentNode.GetPtr(), (int)type, (int)fc, triggerOptions, arrayElements, sAddr);
+                self = DataAttribute_create(name, parentNode.GetLibraryObject(), (int)type, (int)fc, triggerOptions, arrayElements, sAddr);
                 daType = type;
                 daFc = fc;
             }
@@ -137,9 +137,11 @@ namespace IEC61850
                 return mmsType;
             }
 
-            public void UpdateValue(object DataValue)
+            public void UpdateValue(IedServer server, object DataValue)
             {
                 if (DataValue == null)
+                    return;
+                if (server == null)
                     return;
                 if (mmsValue == null)
                     mmsValueInit();
@@ -155,74 +157,65 @@ namespace IEC61850
                         break;
                     /** boolean */
                     case MmsType.MMS_BOOLEAN:
-                        mmsValue.SetBoolean((bool)DataValue);
+                        server.UpdateBooleanAttributeValue(this, (bool)DataValue);
                         break;
                     /** bit string */
                     case MmsType.MMS_BIT_STRING:
                         if (DataValue is uint)
-                            mmsValue.BitStringFromUInt32((uint)DataValue);
+                            server.UpdateBitStringAttributeValue(this, (uint)DataValue);
                         break;
                     case MmsType.MMS_INTEGER:
-                        if (daType == DataAttributeType.INT8)
+                        if (daType == DataAttributeType.INT8 ||
+                            daType == DataAttributeType.INT16 ||
+                            daType == DataAttributeType.INT32)
                         {
-                            mmsValue.SetInt8((int)DataValue);
-                        }
-                        else if (daType == DataAttributeType.INT16)
-                        {
-                            mmsValue.SetInt16((int)DataValue);
-                        }
-                        else if (daType == DataAttributeType.INT32)
-                        {
-                            mmsValue.SetInt32((int)DataValue);
+                            server.UpdateInt32AttributeValue(this, (int)DataValue);
                         }
                         else if (daType == DataAttributeType.INT64)
                         {
-                            mmsValue.SetInt64((long)DataValue);
+                            server.UpdateInt64AttributeValue(this, (long)DataValue);
                         }
                         else if (daType == DataAttributeType.ENUMERATED)
                         {
-                            mmsValue.SetInt32((int)DataValue);
+                            server.UpdateInt32AttributeValue(this, (int)DataValue);
                         }
                         break;
                     /** unsigned integer */
                     case MmsType.MMS_UNSIGNED:
-                        if (daType == DataAttributeType.INT8U)
+                        if (daType == DataAttributeType.INT8U ||
+                            daType == DataAttributeType.INT16U ||
+                            daType == DataAttributeType.INT32U)
                         {
-                            mmsValue.SetUInt8((uint)DataValue);
-                        }
-                        else if (daType == DataAttributeType.INT16U)
-                        {
-                            mmsValue.SetUInt16((uint)DataValue);
-                        }
-                        else if (daType == DataAttributeType.INT32U)
-                        {
-                            mmsValue.SetUInt32((uint)DataValue);
+                            server.UpdateUnsignedAttributeValue(this, (uint)DataValue);
                         }
                         break;
                     /** floating point value (32 or 64 bit) */
                     case MmsType.MMS_FLOAT:
                         if (daType == DataAttributeType.FLOAT32)
                         {
-                            mmsValue.SetFloat((float)DataValue);
+                            server.UpdateFloatAttributeValue(this, (float)DataValue);
                         }
                         else if (daType == DataAttributeType.FLOAT64)
                         {
+                            // !!! Attention does not generate reports !!!
                             mmsValue.SetDouble((double)DataValue);
                         }
                         break;
                     /** octet string */
                     case MmsType.MMS_OCTET_STRING:
+                        // !!! Attention does not generate reports !!!
                         mmsValue.setOctetString((byte[])DataValue);
                         break;
                     /** visible string - ANSI string */
                     case MmsType.MMS_VISIBLE_STRING:
-                        mmsValue.SetVisibleString((string)DataValue);
+                        server.UpdateVisibleStringAttributeValue(this, (string)DataValue);
                         break;
                     /** Generalized time */
                     case MmsType.MMS_GENERALIZED_TIME:
                         // not supported
                         break;
                     case MmsType.MMS_BINARY_TIME:
+                        // !!! Attention does not generate reports !!!
                         mmsValue.SetBinaryTime((ulong)DataValue);
                         break;
                     /** Binary coded decimal (BCD) - not used */
@@ -235,11 +228,13 @@ namespace IEC61850
                         break;
                     /** Unicode string */
                     case MmsType.MMS_STRING:
-                        mmsValue.SetMmsString((string)DataValue);
+                        // Not supported
+                        //mmsValue.SetMmsString((string)DataValue);
                         break;
                     /** UTC time */
                     case MmsType.MMS_UTC_TIME:
-                        mmsValue.SetUtcTimeMs((ulong)DataValue);
+                        server.UpdateUTCTimeAttributeValue(this, (ulong)DataValue);
+                        //mmsValue.SetUtcTimeMs((ulong)DataValue);
                         break;
                     /** will be returned in case of an error (contains error code) */
                     case MmsType.MMS_DATA_ACCESS_ERROR:

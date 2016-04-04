@@ -44,7 +44,7 @@ namespace IEC61850
 
             public DataSet(string name, LogicalNode parentNode)
             {
-                self = DataSet_create(name, parentNode.GetPtr());
+                self = DataSet_create(name, parentNode.GetLibraryObject());
             }
 
             internal DataSet(IntPtr newDS)

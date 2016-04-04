@@ -19,7 +19,7 @@ namespace IEDExplorer.Views
         IedTreeView iedWindow;
         IedDataView dataWindow;
         CaptureView captureWindow;
-
+        public List<int> SCLServers_usedPorts = new List<int>();
         WatchDataView watchWindow;
 
         public Env env;

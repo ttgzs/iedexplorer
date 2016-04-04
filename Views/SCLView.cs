@@ -32,6 +32,7 @@ using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using IEDExplorer.Resources;
 using IEC61850.Server;
+using System.Threading;
 
 namespace IEDExplorer.Views
 {
@@ -50,16 +51,16 @@ namespace IEDExplorer.Views
             filename = fname;
             env = envir;
             InitializeComponent();
-            //try
+            this.toolStrip1.Renderer = new MyRenderer();
+            try
             {
                 //dataModels = new SCLParser().CreateTree(filename);
                 dataModels = new SCLParserDOM().CreateTree(filename);
             }
-            /*catch (Exception e)
+            catch (Exception e)
             {
-                Logger.getLogger().LogError(" Reading SCL: " + e.Message);
-                return;
-            }*/
+                Logger.getLogger().LogError(" Reading SCL file: " + filename + ": " + e.Message);
+            }
             IedTreeView.makeImageList(treeViewSCL);
             IedTreeView.makeImageList(treeViewSCL_IEC);
             makeTreeScl(dataModels[0], treeViewSCL);
@@ -423,7 +424,7 @@ namespace IEDExplorer.Views
                 var dgvr =
                     new string[]
                     {
-                        n.Address, type, val,
+                        n.IecAddress, type, val,
                         n.CommAddress.Domain, n.CommAddress.LogicalNode, n.CommAddress.VariablePath
                     };
                 (n as NodeData).ValueTag = dgvr;
@@ -434,7 +435,7 @@ namespace IEDExplorer.Views
                 return
                     new string[]
                     {
-                        n.Address, n.ToString(), "",
+                        n.IecAddress, n.ToString(), "",
                         "Deletable = " + (n as NodeVL).Deletable.ToString() + ", " + "Defined = " +
                         (n as NodeVL).Defined.ToString()
                     };
@@ -450,7 +451,7 @@ namespace IEDExplorer.Views
             }
             else if (n != null)
                 return
-                    new string[] { n.Address, n.ToString(), "", n.CommAddress.Domain, n.CommAddress.LogicalNode, n.CommAddress.VariablePath };
+                    new string[] { n.IecAddress, n.ToString(), "", n.CommAddress.Domain, n.CommAddress.LogicalNode, n.CommAddress.VariablePath };
             return null;
         }
 
@@ -552,7 +553,10 @@ namespace IEDExplorer.Views
                 {
                     SCLServer s = new SCLServer(env);
                     runningServers.Add(n, s);
-                    s.Start(m, 102);
+                    int port = getFreePort();
+                    s.Start(m, port);
+                    m.iec.SCLServerRunning = s;
+                    addStartedServer(port);
                 }
             }
         }
@@ -562,8 +566,11 @@ namespace IEDExplorer.Views
             NodeIed n = (NodeIed)(sender as ToolStripItem).Tag;
             if (runningServers.ContainsKey(n))
             {
+                int port = runningServers[n].TcpPort;
                 runningServers[n].Stop();
+                n.SCLServerRunning = null;
                 runningServers.Remove(n);
+                removeStartedServer(port);
             }
         }
 
@@ -571,9 +578,13 @@ namespace IEDExplorer.Views
         {
             foreach (NodeIed n in runningServers.Keys)
             {
+                int port = runningServers[n].TcpPort;
                 runningServers[n].Stop();
+                n.SCLServerRunning = null;
             }
             runningServers.Clear();
+            toolStripLabelServers.BackColor = Color.Yellow;
+            toolStripLabelServers.Text = "SCL Servers not running";
         }
 
         void OnWriteDataClick(object sender, EventArgs e)
@@ -585,12 +596,69 @@ namespace IEDExplorer.Views
             if (r == DialogResult.OK)
             {
                 DataAttribute da = (DataAttribute)data.SCLServerModelObject;
-                if (da != null)
+                IedServer iedSvr = data.GetIedNode().SCLServerRunning.GetIedServer();
+                if (da != null && iedSvr != null)
                 {
-                    da.UpdateValue(data.DataValue);
+                    iedSvr.LockDataModel();
+                    da.UpdateValue(iedSvr, data.DataValue);
+                    if (ev.timeNode != null && ev.UpdateTimestamp)
+                    {
+                        DataAttribute dat = (DataAttribute)data.SCLServerModelObject;
+                        if (dat != null)
+                        {
+                            ulong time = 0; // DateTime.UtcNow.
+                            dat.UpdateValue(iedSvr, time);
+                        }
+                    }
+                    iedSvr.UnlockDataModel();
                 }
             }
         }
 
+        int getFreePort()
+        {
+            int i = 102;
+            while (env.winMgr.SCLServers_usedPorts.Contains(i)) i++;
+            return i;
+        }
+
+        void addStartedServer(int port)
+        {
+            env.winMgr.SCLServers_usedPorts.Add(port);
+            toolStripLabelServers.Text = "SCL Servers running, ports: ";
+            foreach (int p in env.winMgr.SCLServers_usedPorts)
+            {
+                toolStripLabelServers.Text += p.ToString() + " ";
+            }
+            toolStripLabelServers.BackColor = Color.LightGreen;
+        }
+
+        void removeStartedServer(int port)
+        {
+            env.winMgr.SCLServers_usedPorts.Remove(port);
+            toolStripLabelServers.Text = "SCL Servers running, ports: ";
+            foreach (int p in env.winMgr.SCLServers_usedPorts)
+            {
+                toolStripLabelServers.Text += p.ToString() + " ";
+            }
+            if (env.winMgr.SCLServers_usedPorts.Count == 0)
+            {
+                toolStripLabelServers.BackColor = Color.Yellow;
+                toolStripLabelServers.Text = "SCL Servers not running";
+            }
+        }
+
+        // For ToolStripLabel background color
+        private class MyRenderer : ToolStripProfessionalRenderer
+        {
+            protected override void OnRenderLabelBackground(ToolStripItemRenderEventArgs e)
+            {
+                using (var brush = new SolidBrush(e.Item.BackColor))
+                {
+                    e.Graphics.FillRectangle(brush, new Rectangle(Point.Empty, e.Item.Size));
+                }
+            }
+        }
     }
+
 }

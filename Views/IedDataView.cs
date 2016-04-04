@@ -123,7 +123,7 @@ namespace IEDExplorer.Views
             if (n is NodeData)
             {
                 string val = (n as NodeData).StringValue;
-                ListViewItem lvi = new ListViewItem(new string[] { n.Address, (n as NodeData).DataType.ToString(), val, "Dom = " + n.CommAddress.Domain + " Var = " + n.CommAddress.Variable });
+                ListViewItem lvi = new ListViewItem(new string[] { n.IecAddress, (n as NodeData).DataType.ToString(), val, "Dom = " + n.CommAddress.Domain + " Var = " + n.CommAddress.Variable });
                 (n as NodeData).ValueChanged += new EventHandler(Node_ValueChanged);
                 (n as NodeData).ValueTag = lvi;
                 //lvi.SubItems[2].Text;
@@ -131,7 +131,7 @@ namespace IEDExplorer.Views
             }
             else if (n is NodeVL)
             {
-                return new ListViewItem(new string[] { n.Address, n.ToString(), "", "Deletable = " + (n as NodeVL).Deletable.ToString() + ", " + "Defined = " + (n as NodeVL).Defined.ToString() });
+                return new ListViewItem(new string[] { n.IecAddress, n.ToString(), "", "Deletable = " + (n as NodeVL).Deletable.ToString() + ", " + "Defined = " + (n as NodeVL).Defined.ToString() });
             }
             else if (n is NodeFile)
             {
@@ -143,7 +143,7 @@ namespace IEDExplorer.Views
                 return new ListViewItem(new string[] { n.Name, n.ToString(), val, (n as NodeFile).FullName });
             }
             else if (n != null)
-                return new ListViewItem(new string[] { n.Address, n.ToString(), "", "Dom = " + n.CommAddress.Domain + " Var = " + n.CommAddress.Variable });
+                return new ListViewItem(new string[] { n.IecAddress, n.ToString(), "", "Dom = " + n.CommAddress.Domain + " Var = " + n.CommAddress.Variable });
             return null;
         }
 

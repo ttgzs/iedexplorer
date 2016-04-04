@@ -73,6 +73,11 @@ namespace IEC61850
                     IedModel_destroy(self);
                 self = IntPtr.Zero;
             }
+
+            public IntPtr GetLibraryObject()
+            {
+                return self;
+            }
         }
     }
 }

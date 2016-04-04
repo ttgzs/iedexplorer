@@ -61,7 +61,7 @@ namespace IEC61850
              */
             public DataSetEntry(DataSet dataSet, string variable, int index, string component)
             {
-                self = DataSetEntry_create(dataSet.GetPtr(), variable, index, component);
+                self = DataSetEntry_create(dataSet.GetLibraryObject(), variable, index, component);
             }
 
             internal DataSetEntry(IntPtr newDSE)

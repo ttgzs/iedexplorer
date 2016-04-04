@@ -45,7 +45,7 @@ namespace IEC61850
 
             protected IntPtr self;
 
-            internal IntPtr GetPtr()
+            internal IntPtr GetLibraryObject()
             {
                 return self;
             }

@@ -64,7 +64,7 @@ namespace IEC61850
              */
             public ReportControlBlock(string name, LogicalNode parent, string rptId, bool isBuffered, string dataSetName, uint confRef, TriggerOptions trgOps, ReportOptions options, uint bufTm, uint intgPd)
             {
-                self = ReportControlBlock_create(name, parent.GetPtr(), rptId, isBuffered, dataSetName, confRef, (byte)trgOps, (byte)options, bufTm, intgPd);
+                self = ReportControlBlock_create(name, parent.GetLibraryObject(), rptId, isBuffered, dataSetName, confRef, (byte)trgOps, (byte)options, bufTm, intgPd);
             }
 
             internal ReportControlBlock(IntPtr newDO)

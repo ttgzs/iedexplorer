@@ -46,7 +46,7 @@ namespace IEC61850
 
             public SettingGroupControlBlock(ModelNode parentNode, byte actSG, byte numOfSGs)
             {
-                self = SettingGroupControlBlock_create(parentNode.GetPtr(), actSG, numOfSGs);
+                self = SettingGroupControlBlock_create(parentNode.GetLibraryObject(), actSG, numOfSGs);
             }
 
             internal SettingGroupControlBlock(IntPtr newDO)

@@ -44,6 +44,8 @@ namespace IEDExplorer
 
         public bool Identify { get; set; }
 
+        public SCLServer SCLServerRunning { get; set; }
+
         public NodeBase FindNodeByAddress(string Domain, string IecAddress, bool FindList = false)
         {
             if (Domain == null || IecAddress == null)
@@ -100,6 +102,8 @@ namespace IEDExplorer
         public string IedModelName { get; set; }
 
         public Iec61850Model Model { get { return model; } }
+
+        public bool isIecTree() { return model.iec == this; }
 
     }
 }

@@ -52,6 +52,7 @@ namespace IEDExplorer
             this.buttonCancel = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.checkBoxTimestamp = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // buttonOK
@@ -91,11 +92,24 @@ namespace IEDExplorer
             this.label1.TabIndex = 7;
             this.label1.Text = "New Value:";
             // 
+            // checkBoxTimestamp
+            // 
+            this.checkBoxTimestamp.AutoSize = true;
+            this.checkBoxTimestamp.Checked = true;
+            this.checkBoxTimestamp.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxTimestamp.Location = new System.Drawing.Point(54, 75);
+            this.checkBoxTimestamp.Name = "checkBoxTimestamp";
+            this.checkBoxTimestamp.Size = new System.Drawing.Size(200, 17);
+            this.checkBoxTimestamp.TabIndex = 8;
+            this.checkBoxTimestamp.Text = "Update Timestamp (.t) to current time";
+            this.checkBoxTimestamp.UseVisualStyleBackColor = true;
+            // 
             // EditValue
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(395, 158);
+            this.Controls.Add(this.checkBoxTimestamp);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.buttonOK);
@@ -114,5 +128,6 @@ namespace IEDExplorer
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.CheckBox checkBoxTimestamp;
     }
 }
