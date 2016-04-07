@@ -47,6 +47,13 @@ namespace IEC61850
             {
                 return Hal_getTimeInMs();
             }
+
+            public static ulong ConvertDateTime(DateTime inp)
+            {
+                ulong res = 0;
+
+                return res;
+            }
         }
     }
 }

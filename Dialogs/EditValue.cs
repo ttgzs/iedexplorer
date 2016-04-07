@@ -76,8 +76,13 @@ namespace IEDExplorer
             data.StringValue = this.textBox1.Text;
         }
 
-        public bool UpdateTimestamp { get { return checkBoxTimestamp.Checked; } }
+        internal bool UpdateTimestamp { get { return checkBoxTimestamp.Checked; } }
 
-        public NodeData timeNode { get { if (tNode is NodeData) return (NodeData)tNode; return null; } }
+        internal NodeData timeNode { get { if (tNode is NodeData) return (NodeData)tNode; return null; } }
+
+        internal void HideUpdateTimestamp()
+        {
+            checkBoxTimestamp.Hide();
+        }
     }
 }

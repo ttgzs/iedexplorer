@@ -729,6 +729,7 @@ namespace IEDExplorer.Views
             NodeData newdata = Iec61850Controller.PrepareWriteData(data);
 
             EditValue ev = new EditValue(newdata);
+            ev.HideUpdateTimestamp();
             DialogResult r = ev.ShowDialog();
             if (r == DialogResult.OK)
             {

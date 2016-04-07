@@ -157,27 +157,27 @@ namespace IEC61850
                         break;
                     /** boolean */
                     case MmsType.MMS_BOOLEAN:
-                        server.UpdateBooleanAttributeValue(this, (bool)DataValue);
+                        server.UpdateBooleanAttributeValue(this, Convert.ToBoolean(DataValue));
                         break;
                     /** bit string */
                     case MmsType.MMS_BIT_STRING:
                         if (DataValue is uint)
-                            server.UpdateBitStringAttributeValue(this, (uint)DataValue);
+                            server.UpdateBitStringAttributeValue(this, Convert.ToUInt32(DataValue));
                         break;
                     case MmsType.MMS_INTEGER:
                         if (daType == DataAttributeType.INT8 ||
                             daType == DataAttributeType.INT16 ||
                             daType == DataAttributeType.INT32)
                         {
-                            server.UpdateInt32AttributeValue(this, (int)DataValue);
+                            server.UpdateInt32AttributeValue(this, Convert.ToInt32(DataValue));
                         }
                         else if (daType == DataAttributeType.INT64)
                         {
-                            server.UpdateInt64AttributeValue(this, (long)DataValue);
+                            server.UpdateInt64AttributeValue(this, Convert.ToInt64(DataValue));
                         }
                         else if (daType == DataAttributeType.ENUMERATED)
                         {
-                            server.UpdateInt32AttributeValue(this, (int)DataValue);
+                            server.UpdateInt32AttributeValue(this, Convert.ToInt32(DataValue));
                         }
                         break;
                     /** unsigned integer */
@@ -186,7 +186,7 @@ namespace IEC61850
                             daType == DataAttributeType.INT16U ||
                             daType == DataAttributeType.INT32U)
                         {
-                            server.UpdateUnsignedAttributeValue(this, (uint)DataValue);
+                            server.UpdateUnsignedAttributeValue(this, Convert.ToUInt32(DataValue));
                         }
                         break;
                     /** floating point value (32 or 64 bit) */
@@ -233,7 +233,12 @@ namespace IEC61850
                         break;
                     /** UTC time */
                     case MmsType.MMS_UTC_TIME:
-                        server.UpdateUTCTimeAttributeValue(this, (ulong)DataValue);
+                        if (DataValue is ulong)
+                            server.UpdateUTCTimeAttributeValue(this, Convert.ToUInt64(DataValue));
+                        else if (DataValue is DateTime)
+                        {
+                            server.UpdateUTCTimeAttributeValue(this, Util.ConvertDateTime((DateTime)DataValue));
+                        }
                         //mmsValue.SetUtcTimeMs((ulong)DataValue);
                         break;
                     /** will be returned in case of an error (contains error code) */

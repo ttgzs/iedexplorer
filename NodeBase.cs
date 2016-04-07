@@ -144,6 +144,20 @@ namespace IEDExplorer
             return true;
         }
 
+        public NodeBase findArray()
+        {
+            NodeBase arr = this;
+            while (arr != null)
+            {
+                if (arr.isArray())
+                {
+                    return arr;
+                }
+                arr = arr.Parent;
+            }
+            return null;
+        }
+
         public bool isLeaf()
         {
             return _childNodes.Count == 0;
@@ -164,6 +178,7 @@ namespace IEDExplorer
         public NodeBase AddChildNode(NodeBase Node)
         {
             if (Node == null) return null;       // defensive
+            if (Node == this) return null;
             foreach (NodeBase n in _childNodes)
             {
                 if (Node.Name == n.Name)
@@ -215,6 +230,16 @@ namespace IEDExplorer
         public void RemoveChildNode(NodeBase Node)
         {
             _childNodes.Remove(Node);
+        }
+
+        public void ReplaceChildNode(NodeBase Node, NodeBase newNode)
+        {
+            int i = _childNodes.IndexOf(Node);
+            if (i >= 0)
+            {
+                _childNodes.RemoveAt(i);
+                _childNodes.Insert(i, newNode);
+            }
         }
 
         public void Remove()

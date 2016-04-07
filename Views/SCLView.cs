@@ -52,14 +52,14 @@ namespace IEDExplorer.Views
             env = envir;
             InitializeComponent();
             this.toolStrip1.Renderer = new MyRenderer();
-            try
+            //try
             {
                 //dataModels = new SCLParser().CreateTree(filename);
                 dataModels = new SCLParserDOM().CreateTree(filename);
             }
-            catch (Exception e)
+            //catch (Exception e)
             {
-                Logger.getLogger().LogError(" Reading SCL file: " + filename + ": " + e.Message);
+            //    Logger.getLogger().LogError(" Reading SCL file: " + filename + ": " + e.Message);
             }
             IedTreeView.makeImageList(treeViewSCL);
             IedTreeView.makeImageList(treeViewSCL_IEC);
@@ -595,25 +595,30 @@ namespace IEDExplorer.Views
             DialogResult r = ev.ShowDialog();
             if (r == DialogResult.OK)
             {
-                DataAttribute da = (DataAttribute)data.SCLServerModelObject;
-                IedServer iedSvr = data.GetIedNode().SCLServerRunning.GetIedServer();
-                if (da != null && iedSvr != null)
-                {
-                    iedSvr.LockDataModel();
-                    da.UpdateValue(iedSvr, data.DataValue);
-                    if (ev.timeNode != null && ev.UpdateTimestamp)
-                    {
-                        DataAttribute dat = (DataAttribute)data.SCLServerModelObject;
-                        if (dat != null)
-                        {
-                            ulong time = 0; // DateTime.UtcNow.
-                            dat.UpdateValue(iedSvr, time);
-                        }
-                    }
-                    iedSvr.UnlockDataModel();
-                }
+                if (data != null && data.GetIedNode() != null && data.GetIedNode().SCLServerRunning != null)
+                    data.GetIedNode().SCLServerRunning.UpdateServerData(data, null, false, ev.timeNode, ev.UpdateTimestamp);
             }
         }
+
+    /*private static void UpdateServerData(NodeData data, NodeData time, bool updateTimestamp)
+        {
+            DataAttribute da = (DataAttribute)data.SCLServerModelObject;
+            IedServer iedSvr = data.GetIedNode().SCLServerRunning.GetIedServer();
+            if (da != null && iedSvr != null)
+            {
+                iedSvr.LockDataModel();
+                da.UpdateValue(iedSvr, data.DataValue);
+                if (time != null && updateTimestamp)
+                {
+                    DataAttribute dat = (DataAttribute)time.SCLServerModelObject;
+                    if (dat != null)
+                    {
+                        dat.UpdateValue(iedSvr, Util.GetTimeInMs());
+                    }
+                }
+                iedSvr.UnlockDataModel();
+            }
+        }*/
 
         int getFreePort()
         {

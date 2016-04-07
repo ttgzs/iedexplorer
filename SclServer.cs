@@ -148,7 +148,24 @@ namespace IEDExplorer
                     if (nd.DataValue != null)
                         da.UpdateValue(server, nd.DataValue);
                     nd.DataType = (scsm_MMS_TypeEnum)da.GetMmsValueType();
+                    logger.LogDebug("InitializeValues: " + nd.IecAddress + ", Type: " + nd.DataType.ToString());
                 }
+                /*else
+                {
+                    NodeBase arr = nd.findArray();
+                    if (arr != null)
+                    {
+                        if (arr is NodeData)
+                        {
+                            // Array in Attribute
+                            DataAttribute da = (DataAttribute)arr.SCLServerModelObject;
+                        }
+                        else
+                        {
+                            // Array in DataObject
+                        }
+                    }
+                }*/
             }
             else
             {
@@ -280,6 +297,35 @@ namespace IEDExplorer
             {
                 // Recursion
                 resetModelObjects(n);
+            }
+        }
+
+        public void UpdateServerData(NodeData data, NodeData quality, bool updateQuality, NodeData time, bool updateTimestamp)
+        {
+            DataAttribute da = (DataAttribute)data.SCLServerModelObject;
+            IedServer iedSvr = GetIedServer();
+            if (da != null && iedSvr != null)
+            {
+                iedSvr.LockDataModel();
+                if (quality != null && updateQuality)
+                {
+                    DataAttribute daq = (DataAttribute)quality.SCLServerModelObject;
+                    if (daq != null)
+                    {
+                        daq.UpdateValue(iedSvr, quality.DataValue);
+                    }
+                }
+                if (time != null && updateTimestamp)
+                {
+                    DataAttribute dat = (DataAttribute)time.SCLServerModelObject;
+                    time.DataValue = DateTime.Now;
+                    if (dat != null)
+                    {
+                        dat.UpdateValue(iedSvr, Util.GetTimeInMs());
+                    }
+                }
+                da.UpdateValue(iedSvr, data.DataValue);
+                iedSvr.UnlockDataModel();
             }
         }
 

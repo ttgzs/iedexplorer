@@ -306,6 +306,20 @@ namespace IEDExplorer
                                     Logger.getLogger().LogError("NodeData.StringValue - cannot parse '" + value + "' to float");
                                 }
                                 break;
+                            case scsm_MMS_TypeEnum.utc_time:
+                                DateTime tval;
+                                string tms = value;
+                                if (tms.Contains('['))
+                                    tms = tms.Substring(0, tms.IndexOf('['));
+                                if (DateTime.TryParse(tms, out tval))
+                                {
+                                    DataValue = tval;
+                                }
+                                else
+                                {
+                                    Logger.getLogger().LogError("NodeData.StringValue - cannot parse '" + tms + "' to DateTime");
+                                }
+                                break;
                             default:
                                 Logger.getLogger().LogError("NodeData.StringValue - type '" + DataType.ToString() + "' not implemented");
                                 break;

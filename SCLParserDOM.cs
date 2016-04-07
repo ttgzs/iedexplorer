@@ -123,10 +123,49 @@ namespace IEDExplorer
                         ReadDataInstanceValues(lnroot, ln.Elements(ns + "DOI"), ns);
                     }
                 }
+                unifyAttributes(_dataModels[i].ied, _dataModels[i].iec);
                 i++;
             }
 
             return _dataModels;
+        }
+
+        void unifyAttributes(NodeIed ied, NodeBase iec)
+        {
+            foreach (NodeBase child in iec.GetChildNodes())
+            {
+                if (child is NodeData)
+                {
+                    string addr = child.IecAddress;
+                    string fc = (child as NodeData).SCL_FCDesc;
+                    if (fc == "RP" || fc == "BR")
+                        continue;
+                    string[] parts = addr.Split(new char[] { '/', '.', '$' });
+                    string newAddr = "";
+                    for (int i = 0; i < parts.Length; i++)
+                    {
+                        if (i == 2)
+                            newAddr += "." + fc;
+                        if (i > 1)
+                            newAddr += ".";
+                        if(i == 1)
+                            newAddr += "/";
+                        newAddr += parts[i];
+                    }
+                    NodeBase foundDA = ied.FindSubNode(newAddr);
+                    if (foundDA != null)
+                    {
+                        foundDA.Parent.ReplaceChildNode(foundDA, child);
+                    }
+                    else
+                        logger.LogError("unifyAttributes: address " + newAddr + " not found for " + addr);
+                }
+                else
+                {
+                    // Recursive call
+                    unifyAttributes(ied, child);
+                }
+            }
         }
 
         private void ReadDataInstanceValues(NodeBase lnroot, IEnumerable<XElement> elements, XNamespace ns)
@@ -343,7 +382,9 @@ namespace IEDExplorer
                                     arrDataObject.SCL_UpperDOName = dataObject.Name;
                                     foreach (var dataAttribute2 in subDoType.GetChildNodes())
                                     {
+                                        logger.LogDebug("0.CreateDataAttributes: " + dataObject.IecAddress + ", atr: " + dataAttribute2.IecAddress + ", arr: " + arrDataObject.IecAddress);
                                         CreateDataAttributes(functionalConstraints, dataObject, dataAttribute2, arrDataObject);
+                                        logger.LogDebug("1.CreateDataAttributes: " + dataObject.IecAddress + ", atr: " + dataAttribute2.IecAddress + ", arr: " + arrDataObject.IecAddress);
                                     }
                                 }
                             }
@@ -352,6 +393,7 @@ namespace IEDExplorer
                                 foreach (var dataAttribute2 in subDoType.GetChildNodes())
                                 {
                                     CreateDataAttributes(functionalConstraints, dataObject, dataAttribute2, subDataObject);
+                                    logger.LogDebug("2.CreateDataAttributes: " + dataObject.IecAddress + ", atr: " + dataAttribute2.IecAddress + ", arr: " + subDataObject.IecAddress);
                                 }
                             }
 
@@ -359,6 +401,7 @@ namespace IEDExplorer
                         if (dataAttribute is NodeData)
                         {
                             CreateDataAttributes(functionalConstraints, dataObject, dataAttribute, null);
+                            logger.LogDebug("3.CreateDataAttributes: " + dataObject.IecAddress + ", atr: " + dataAttribute.IecAddress + ", arr: null");
                         }
                     }
                 }
@@ -373,18 +416,35 @@ namespace IEDExplorer
                     {
                         string doName;
                         if (da is NodeData)
-                            doName = (da as NodeData).SCL_DOName;
-                        else
-                            doName = (da as NodeDO).SCL_UpperDOName;
-                        if (doList.Exists(x => x.Name.Equals(doName)))
                         {
-                            doList.Single(x => x.Name.Equals(doName)).AddChildNode(da);
+                            doName = (da as NodeData).SCL_DOName;
+                            if (doList.Exists(x => x.Name.Equals(doName)))
+                            {
+                                doList.Single(x => x.Name.Equals(doName)).AddChildNode(da);
+                            }
+                            else
+                            {
+                                var temp = new NodeDO(doName);
+                                temp.AddChildNode(da);
+                                doList.Add(temp);
+                            }
                         }
                         else
                         {
-                            var temp = new NodeDO(doName);
-                            temp.AddChildNode(da);
-                            doList.Add(temp);
+                            doName = (da as NodeDO).SCL_UpperDOName;
+                            if (doList.Exists(x => x.Name.Equals(doName)))
+                            {
+                                if (doList.Single(x => x.Name.Equals(doName)).AddChildNode(da.Parent == null ? da : da.Parent) == null)
+                                    if (da.Parent != null)
+                                        logger.LogDebug("1 Trying insert itself: Parent=" + da.Parent.Name + ", da= " + da.IecAddress + ", doName=" + doName);
+                            }
+                            else
+                            {
+                                var temp = new NodeDO(doName);
+                                if (temp.AddChildNode(da.Parent == null ? da : da.Parent) == null)
+                                    logger.LogDebug("2 Trying insert itself");
+                                doList.Add(temp);
+                            }
                         }
                     }
 
@@ -406,6 +466,7 @@ namespace IEDExplorer
 
         private void CreateDataAttributes(Hashtable functionalConstraints, NodeBase dataObject, NodeBase dataAttribute, NodeDO subNode)
         {
+            // Create only the first level, will be replaced by attributes from IEC tree anyway
             var fc = (dataAttribute as NodeData).SCL_FCDesc;
             (dataAttribute as NodeData).SCL_DOName = dataObject.Name;
             NodeData newNode = new NodeData(dataAttribute.Name);
@@ -415,35 +476,13 @@ namespace IEDExplorer
             newNode.SCL_FCDesc = (dataAttribute as NodeData).SCL_FCDesc;
             newNode.SCL_ArraySize = (dataAttribute as NodeData).SCL_ArraySize;
 
-            // when the type is specified (ie. when it's a struct), get the struct child nodes
-            if (!String.IsNullOrWhiteSpace(newNode.SCL_Type) && !newNode.SCL_BType.StartsWith("Enum"))
-            {
-                var dataType =
-                    _dataAttributeTypes.Single(dat => dat.Name.Equals((newNode.SCL_Type)));
-                foreach (NodeBase child in dataType.GetChildNodes())
-                {
-                    var tempChild = new NodeData(child.Name);
-                    tempChild.SCL_BType = (child as NodeData).SCL_BType;
-                    if (!String.IsNullOrWhiteSpace((child as NodeData).SCL_Type) && !(child as NodeData).SCL_BType.StartsWith("Enum"))
-                    {
-                        var subDataType = _dataAttributeTypes.Single(dat => dat.Name.Equals((child as NodeData).SCL_Type));
-                        foreach (NodeBase subChild in subDataType.GetChildNodes())
-                        {
-                            var tempSubChild = new NodeData(subChild.Name);
-                            tempSubChild.SCL_BType = (subChild as NodeData).SCL_BType;
-                            tempChild.AddChildNode(tempSubChild);
-                        }
-                    }
-                    newNode.AddChildNode(tempChild);
-                }
-            }
             if (!functionalConstraints.ContainsKey(fc))
             {
                 NodeFC nodeFC = new NodeFC(fc);
                 if (subNode != null)
                 {
                     subNode.AddChildNode(newNode);
-                    nodeFC.ForceAddChildNode(subNode);
+                    nodeFC.ForceLinkChildNode(subNode);
                 }
                 else
                     nodeFC.ForceAddChildNode(newNode);
@@ -454,7 +493,7 @@ namespace IEDExplorer
                 if (subNode != null)
                 {
                     subNode.AddChildNode(newNode);
-                    (functionalConstraints[fc] as NodeBase).ForceAddChildNode(subNode);
+                    (functionalConstraints[fc] as NodeBase).ForceLinkChildNode(subNode);
                 }
                 else
                     (functionalConstraints[fc] as NodeBase).ForceAddChildNode(newNode);
@@ -993,12 +1032,14 @@ namespace IEDExplorer
 
                 // rptID
                 NodeData RptId = new NodeData("RptID");
+                RptId.SCL_FCDesc = fc;
                 RptId.DataType = scsm_MMS_TypeEnum.visible_string;
                 a = el.Attribute("rptID");
                 RptId.DataValue = a != null ? a.Value : "";
 
                 // datSet
                 NodeData DatSet = new NodeData("DatSet");
+                DatSet.SCL_FCDesc = fc;
                 DatSet.DataType = scsm_MMS_TypeEnum.visible_string;
                 a = el.Attribute("datSet");
                 if (isIecTree)
@@ -1008,6 +1049,7 @@ namespace IEDExplorer
 
                 // confRev
                 NodeData ConfRev = new NodeData("ConfRev");
+                ConfRev.SCL_FCDesc = fc;
                 ConfRev.DataType = scsm_MMS_TypeEnum.unsigned;
                 a = el.Attribute("confRev");
                 try
@@ -1021,6 +1063,7 @@ namespace IEDExplorer
 
                 // bufTime
                 NodeData BufTm = new NodeData("BufTm");
+                BufTm.SCL_FCDesc = fc;
                 BufTm.DataType = scsm_MMS_TypeEnum.unsigned;
                 a = el.Attribute("bufTime");
                 try
@@ -1034,6 +1077,7 @@ namespace IEDExplorer
 
                 // intgPd
                 NodeData IntgPd = new NodeData("IntgPd");
+                IntgPd.SCL_FCDesc = fc;
                 IntgPd.DataType = scsm_MMS_TypeEnum.unsigned;
                 a = el.Attribute("intgPd");
                 try
@@ -1047,6 +1091,7 @@ namespace IEDExplorer
 
                 // <TrgOps dchg="true" qchg="false" dupd="false" period="true" />
                 NodeData TrgOps = new NodeData("TrgOps");
+                TrgOps.SCL_FCDesc = fc;
                 TrgOps.DataType = scsm_MMS_TypeEnum.integer;
                 IEC61850.Common.TriggerOptions trgOptions = IEC61850.Common.TriggerOptions.NONE;
                 XElement xeTrgOps = el.Element(ns + "TrgOps");
@@ -1072,6 +1117,7 @@ namespace IEDExplorer
 
                 // <OptFields seqNum="true" timeStamp="true" dataSet="true" reasonCode="true" dataRef="false" entryID="true" configRef="true" bufOvfl="true" />
                 NodeData OptFlds = new NodeData("OptFlds");
+                OptFlds.SCL_FCDesc = fc;
                 OptFlds.DataType = scsm_MMS_TypeEnum.integer;
                 IEC61850.Common.ReportOptions rptOptions = IEC61850.Common.ReportOptions.NONE;
                 XElement xeOptFields = el.Element(ns + "OptFields");
