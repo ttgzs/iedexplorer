@@ -253,7 +253,7 @@ namespace IEDExplorer
             vl.SCLServerModelObject = dataSet;
             foreach (NodeVLM vlm in vl.GetChildNodes())
             {
-                DataSetEntry dse = new DataSetEntry(dataSet, vlm.Name, -1, null);
+                DataSetEntry dse = new DataSetEntry(dataSet, vlm.SCL_ServerLink, -1, null);
                 vlm.SCLServerModelObject = dse;
             }
         }

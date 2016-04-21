@@ -31,5 +31,8 @@ namespace IEDExplorer
         {
         }
 
+        public NodeBase LinkedNode { get; set; }
+        public string SCL_FCDesc { get; set; }
+        public string SCL_ServerLink { get; set; }
     }
 }

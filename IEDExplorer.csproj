@@ -93,6 +93,7 @@
   <ItemGroup>
     <Compile Include="ActionRequested.cs" />
     <Compile Include="BNExtension\XMLEncoder.cs" />
+    <Compile Include="SCLParserDOM2.cs" />
     <Compile Include="NodeVLM.cs" />
     <Compile Include="Dialogs\AutoUpdateStoppedDialog.cs">
       <SubType>Form</SubType>
@@ -1205,6 +1206,7 @@
     <None Include="Resources\RP1.ico" />
     <None Include="Resources\RP2.ico" />
     <None Include="Resources\DS1.ico" />
+    <None Include="Resources\VLM.ico" />
     <Content Include="TreeViewAdv\Resources\check.bmp" />
     <Content Include="TreeViewAdv\Resources\DVSplit.cur" />
     <Content Include="TreeViewAdv\Resources\Folder.bmp" />

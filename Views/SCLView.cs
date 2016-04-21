@@ -55,7 +55,7 @@ namespace IEDExplorer.Views
             //try
             {
                 //dataModels = new SCLParser().CreateTree(filename);
-                dataModels = new SCLParserDOM().CreateTree(filename);
+                dataModels = new SCLParserDOM2().CreateTree(filename);
             }
             //catch (Exception e)
             {
@@ -241,10 +241,11 @@ namespace IEDExplorer.Views
                 tn2.SelectedImageIndex = 34;
                 foreach (NodeBase b2 in b.GetChildNodes())
                 {
-                    TreeNode tn3 = tn2.Nodes.Add(b2.CommAddress.Variable);
+                    TreeNode tn3 = tn2.Nodes.Add(b2.Name);
+                    //TreeNode tn3 = tn2.Nodes.Add(b2.CommAddress.Variable);
                     tn3.Tag = b2;
-                    tn3.ImageIndex = 7;
-                    tn3.SelectedImageIndex = 7;
+                    tn3.ImageIndex = 35;
+                    tn3.SelectedImageIndex = 35;
                 }
             }
         }
@@ -329,6 +330,10 @@ namespace IEDExplorer.Views
                     {
                         firsticon = 34;
                     }
+                    else if (b is NodeVLM)
+                    {
+                        firsticon = 35;
+                    }
                     int newIconIndex = firsticon + ((int)b.NodeState) * 4;
                     tn.ImageIndex = newIconIndex;
                     tn.SelectedImageIndex = newIconIndex;
@@ -355,7 +360,8 @@ namespace IEDExplorer.Views
             dataGridView_data.Rows.Clear();
             var n = (NodeBase)e.Node.Tag;
             if (n == null) return;
-
+            if (n is NodeVLM && (n as NodeVLM).LinkedNode != null)
+                n = (n as NodeVLM).LinkedNode;
             var row = dataGridView_data.Rows.Add(makeRow(n));
             dataGridView_data.Rows[row].Tag = e.Node;
             if (n.GetChildNodes().Length > 0)
@@ -375,7 +381,10 @@ namespace IEDExplorer.Views
                 {
                     foreach (NodeBase nb in n.GetChildNodes())
                     {
-                        var li = dataGridView_data.Rows.Add(makeRow(nb));
+                        NodeBase nbl = nb;
+                        if (nb is NodeVLM && (nb as NodeVLM).LinkedNode != null)
+                            nbl = (nb as NodeVLM).LinkedNode;
+                        var li = dataGridView_data.Rows.Add(makeRow(nbl));
                         dataGridView_data.Rows[li].Tag = n.Tag;
                     }
                 }

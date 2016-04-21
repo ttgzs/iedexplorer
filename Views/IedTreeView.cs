@@ -93,6 +93,7 @@ namespace IEDExplorer.Views
             treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("RP1"))));
             treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("RP2"))));
             treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("DS1"))));
+            treeView.ImageList.Images.Add(((System.Drawing.Icon)(resources.GetObject("VLM"))));
         }
 
         internal void makeTree(Iec61850State iecs)
@@ -265,8 +266,8 @@ namespace IEDExplorer.Views
                 {
                     TreeNode tn3 = tn2.Nodes.Add(b2.CommAddress.Variable);
                     tn3.Tag = b2;
-                    tn3.ImageIndex = 7;
-                    tn3.SelectedImageIndex = 7;
+                    tn3.ImageIndex = 35;
+                    tn3.SelectedImageIndex = 35;
                     /*Node_StateChanged(b2, new EventArgs());
                     b2.StateChanged += new EventHandler(Node_StateChanged);*/
                 }
@@ -395,6 +396,10 @@ namespace IEDExplorer.Views
                 else if (b is NodeVL)
                 {
                     firsticon = 34;
+                }
+                else if (b is NodeVLM)
+                {
+                    firsticon = 35;
                 }
                 int newIconIndex = firsticon + ((int)b.NodeState) * 4;
                 if (b.Tag is TreeNode)
