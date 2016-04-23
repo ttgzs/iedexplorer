@@ -50,7 +50,8 @@ namespace IEC61850
 
             public static ulong ConvertDateTime(DateTime inp)
             {
-                ulong res = 0;
+        
+                ulong res = (ulong)(inp.Ticks - new DateTime(1971,1,1).Ticks)/10000ul;
 
                 return res;
             }

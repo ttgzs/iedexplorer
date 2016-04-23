@@ -590,10 +590,11 @@ namespace IEDExplorer.Views
                 int port = runningServers[n].TcpPort;
                 runningServers[n].Stop();
                 n.SCLServerRunning = null;
+                removeStartedServer(port);
             }
             runningServers.Clear();
-            toolStripLabelServers.BackColor = Color.Yellow;
-            toolStripLabelServers.Text = "SCL Servers not running";
+            //toolStripLabelServers.BackColor = Color.Yellow;
+            //toolStripLabelServers.Text = "SCL Servers not running";
         }
 
         void OnWriteDataClick(object sender, EventArgs e)

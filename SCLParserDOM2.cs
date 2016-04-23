@@ -15,10 +15,6 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with IEDExplorer.  If not, see <http://www.gnu.org/licenses/>.
- * 
- *  SCLParser.cs was created by Joel Kaiser as an add-in to IEDExplorer.
- *  This class parses a SCL-type XML file to create a logical tree similar
- *  to that which Pavel creates from communication with an actual device.
  */
 
 using System;
@@ -347,115 +343,134 @@ namespace IEDExplorer
                 // for each DO in the LNodeType
                 foreach (var dataObject in nodeType.GetChildNodes())
                 {
-                    NodeBase doType = null;
                     try
                     {
-                        doType = _dataObjectTypes.Single(dot => dot.Name.Equals((dataObject as NodeDO).SCL_Type));
+                        NodeBase doType = _dataObjectTypes.Single(dot => dot.Name.Equals((dataObject as NodeDO).SCL_Type));
+                        NodeBase ndataObject = logicalNode.AddChildNode(new NodeDO(dataObject.Name));
+                        CreateSDO_DA(ndataObject, doType);
                     }
                     catch (Exception e)
                     {
                         logger.LogError("SCL Parser: DO type template not found: " + (dataObject as NodeDO).SCL_Type + ", for LN type: " + nodeType.Name + ", in node: " + name.ToString() + ", Exception: " + e.Message);
                         continue;
                     }
-
-                    // for each DA in the DOType
-                    foreach (var dataAttribute in doType.GetChildNodes())
-                    {
-                        if (dataAttribute is NodeDO)
-                        {
-                            // SDO (sub Data Object)
-                            NodeBase subDoType = null;
-                            try
-                            {
-                                subDoType = _dataObjectTypes.Single(dot => dot.Name.Equals((dataAttribute as NodeDO).SCL_Type));
-                            }
-                            catch (Exception e)
-                            {
-                                logger.LogError("SCL Parser: SDO type template not found: " + (dataAttribute as NodeDO).SCL_Type + ", for DO type: " + doType.Name + ", for LN type: " + nodeType.Name + ", in node: " + name.ToString() + ", Exception: " + e.Message);
-                                continue;
-                            }
-                            NodeDO subDataObject = new NodeDO(dataAttribute.Name);
-                            subDataObject.SCL_ArraySize = (dataAttribute as NodeDO).SCL_ArraySize;
-
-                            dataObject.AddChildNode(subDataObject);
-                            if (subDataObject.SCL_ArraySize > 0)
-                            {
-                                for (int i = 0; i < subDataObject.SCL_ArraySize; i++)
-                                {
-                                    NodeDO arrDataObject = new NodeDO("[" + i.ToString() + "]");
-                                    subDataObject.AddChildNode(arrDataObject);
-                                    arrDataObject.SCL_UpperDOName = dataObject.Name;
-
-                                    foreach (var dataAttribute2 in subDoType.GetChildNodes())
-                                    {
-                                        CreateDataAttributesIEC(arrDataObject, dataAttribute2);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                foreach (var dataAttribute2 in subDoType.GetChildNodes())
-                                {
-                                    CreateDataAttributesIEC(subDataObject, dataAttribute2);
-                                }
-                            }
-                        }
-                        if (dataAttribute is NodeData)
-                        {
-                            CreateDataAttributesIEC(dataObject, dataAttribute);
-                        }
-                    }
-                    logicalNode.AddChildNode(dataObject);
                 }
                 ld.AddChildNode(logicalNode);
 
-                foreach (XElement el in ln.Elements(ns + "DataSet"))
-                {
-                    NodeVL nodeVL = new NodeVL(el.Attribute("name").Value);
-                    logicalNode.AddChildNode(nodeVL);
-                    foreach (XElement dsMember in el.Elements(ns + "FCDA"))
-                    {
-                        try
-                        {
-                            a = dsMember.Attribute("prefix");
-                            string prefix2 = a != null ? a.Value : "";
-                            a = dsMember.Attribute("lnClass");
-                            string lnClass2 = a != null ? a.Value : "";
-                            a = dsMember.Attribute("lnInst");
-                            string lnInst = a != null ? a.Value : "";
-                            string fullName = String.Concat(prefix2, lnClass2, lnInst);
-                            a = dsMember.Attribute("ldInst");
-                            string ldInst = a != null ? a.Value : "";
-                            a = dsMember.Attribute("doName");
-                            string doName = a != null ? a.Value : "";
-                            a = dsMember.Attribute("fc");
-                            string fc = a != null ? a.Value : "";
-
-                            // We are at the LN level, up 2 levels is an ied
-                            NodeIed iec = ld.Parent as NodeIed;
-
-                            string serverLink = ld.Name + "/" + fullName + "." + fc + "." + doName;
-                            serverLink = serverLink.Replace('.', '$');
-                            string memberName = ld.Name + "/" + fullName + "." + doName;
-
-                            // Cannot be done directly, the data are not yet present (instantiated)
-                            // instead, add a temporary object
-                            NodeVLM vlm = new NodeVLM(memberName);
-                            vlm.SCL_FCDesc = fc;
-                            vlm.SCL_ServerLink = serverLink;
-                            nodeVL.AddChildNode(vlm);
-                        }
-                        catch (Exception e)
-                        {
-                            Logger.getLogger().LogError("CreateDataSets IEC: " + e.Message);
-                        }
-                    }
-                }
+                CreateDataSets(logicalNode, ln.Elements(ns + "DataSet"), ns);
 
                 CreateReports(logicalNode, ln.Elements(ns + "ReportControl"), ns);
 
                 logicalNode.SortImmediateChildren(); // alphabetical
+            }
+        }
 
+        private void CreateSDO_DA(NodeBase dataObject, NodeBase doType)
+        {
+            // for each DA in the DOType
+            foreach (var dataAttribute in doType.GetChildNodes())
+            {
+                if (dataAttribute is NodeDO)
+                {
+                    // SDO (sub Data Object)
+                    NodeBase subDoType = null;
+                    try
+                    {
+                        subDoType = _dataObjectTypes.Single(dot => dot.Name.Equals((dataAttribute as NodeDO).SCL_Type));
+                    }
+                    catch (Exception e)
+                    {
+                        logger.LogError("SCL Parser: SDO type template not found: " + (dataAttribute as NodeDO).SCL_Type + ", for DO type: " + doType.Name + ", for LN type: " + doType.Parent.Name + ", in node: " + dataObject.Parent.Name + ", Exception: " + e.Message);
+                        continue;
+                    }
+                    NodeDO subDataObject = new NodeDO(dataAttribute.Name);
+                    subDataObject.SCL_ArraySize = (dataAttribute as NodeDO).SCL_ArraySize;
+
+                    dataObject.AddChildNode(subDataObject);
+                    if (subDataObject.SCL_ArraySize > 0)
+                    {
+                        for (int i = 0; i < subDataObject.SCL_ArraySize; i++)
+                        {
+                            NodeDO arrDataObject = new NodeDO("[" + i.ToString() + "]");
+                            subDataObject.AddChildNode(arrDataObject);
+                            arrDataObject.SCL_UpperDOName = dataObject.Name;
+
+                            foreach (var dataAttribute2 in subDoType.GetChildNodes())
+                            {
+                                if (dataAttribute2 is NodeDO)
+                                {
+                                    CreateSDO_DA(arrDataObject, subDoType);
+                                }
+                                else
+                                    CreateDataAttributesIEC(arrDataObject, dataAttribute2);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (var dataAttribute2 in subDoType.GetChildNodes())
+                        {
+                            if (dataAttribute2 is NodeDO)
+                            {
+                                CreateSDO_DA(subDataObject, subDoType);
+                            }
+                            else
+                                CreateDataAttributesIEC(subDataObject, dataAttribute2);
+                        }
+                    }
+                }
+                if (dataAttribute is NodeData)
+                {
+                    CreateDataAttributesIEC(dataObject, dataAttribute);
+                }
+            }
+        }
+
+        private void CreateDataSets(NodeLN logicalNode, IEnumerable<XElement> elements, XNamespace ns)
+        {
+            XAttribute a;
+            NodeBase ld = logicalNode.Parent;
+            foreach (XElement el in elements)
+            {
+                NodeVL nodeVL = new NodeVL(el.Attribute("name").Value);
+                logicalNode.AddChildNode(nodeVL);
+                foreach (XElement dsMember in el.Elements(ns + "FCDA"))
+                {
+                    try
+                    {
+                        a = dsMember.Attribute("prefix");
+                        string prefix2 = a != null ? a.Value : "";
+                        a = dsMember.Attribute("lnClass");
+                        string lnClass2 = a != null ? a.Value : "";
+                        a = dsMember.Attribute("lnInst");
+                        string lnInst = a != null ? a.Value : "";
+                        string fullName = String.Concat(prefix2, lnClass2, lnInst);
+                        a = dsMember.Attribute("ldInst");
+                        string ldInst = a != null ? a.Value : "";
+                        a = dsMember.Attribute("doName");
+                        string doName = a != null ? a.Value : "";
+                        a = dsMember.Attribute("fc");
+                        string fc = a != null ? a.Value : "";
+
+                        // We are at the LN level, up 2 levels is an ied
+                        //NodeIed iec = ld.Parent as NodeIed;
+
+                        string serverLink = ld.Name + "/" + fullName + "." + fc + "." + doName;
+                        serverLink = serverLink.Replace('.', '$');
+                        string memberName = ld.Name + "/" + fullName + "." + doName;
+
+                        // Cannot be done directly, the data are not yet present (instantiated)
+                        // instead, add a temporary object
+                        NodeVLM vlm = new NodeVLM(memberName);
+                        vlm.SCL_FCDesc = fc;
+                        vlm.SCL_ServerLink = serverLink;
+                        nodeVL.AddChildNode(vlm);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.getLogger().LogError("CreateDataSets IEC: " + e.Message);
+                    }
+                }
             }
         }
 
@@ -476,6 +491,12 @@ namespace IEDExplorer
                 for (int i = 0; i < dataAttributeInst.SCL_ArraySize; i++)
                 {
                     NodeData arrNode = new NodeData("[" + i.ToString() + "]");
+                    arrNode.SCL_Type = dataAttributeInst.SCL_Type;
+                    arrNode.SCL_BType = dataAttributeInst.SCL_BType;
+                    arrNode.SCL_DOName = dataAttributeInst.SCL_DOName;
+                    arrNode.SCL_FCDesc = dataAttributeInst.SCL_FCDesc;
+                    arrNode.SCL_TrgOps = dataAttributeInst.SCL_TrgOps;
+                    //arrNode.SCL_ArraySize = (dataAttribute as NodeData).SCL_ArraySize;
                     dataAttributeInst.AddChildNode(arrNode);
                     CreateDataAttributesChildIEC(arrNode);
                 }
@@ -568,8 +589,6 @@ namespace IEDExplorer
                 var type = el.Attribute("type");
                 if (type != null)
                     dataObject.SCL_Type = type.Value;
-                //CreateDataAttributes(dataObject, el.Elements(ns + "DAI"), ns);
-                dataObject.SortImmediateChildren();
                 root.AddChildNode(dataObject);
             }
         }

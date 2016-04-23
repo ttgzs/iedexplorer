@@ -146,3 +146,45 @@ Rev 0.77b 2016/02/04
 * Test XML DOM parser for SCL Parser and View
 * SCL Parser and View - more IEDs from SCD can be read in. Some improvement in parser, parser made non-static
 * Small correction in variables precedence in RCB activation dialog. Icon for EXE made explicit.
+
+
+Rev 0.78 experimental SCLServer release 2016/04/23
+This release is an experimental release with a new feature:
+IEC61850 SERVER representing data from a loaded SCL file = SCL Server
+SCL Server uses libiec61850.dll and its .net extension libiec61850dotnet.dll
+Both libraries are embedded in the .exe
+How to use the feature:
+Load a valid SCL file.
+SCL Server can be run by a right-click on the IED name in the SCL tree view, select Run SCLServer
+Values in the SCL Server can be changed manually only a.t.m. - right click in the SCL View Window
+Changed values should be visible for all connected IEC61850 clients via reads and reporting.
+GOOSE messaging and sampled values are not implemented.
+
+SCLServer is in ALPHA experimental state!!!
+SCLServer may be separated into an independent exe in the future!!!
+
+Shortened commit review:
+* SCLParserDOM2.cs - new review of SCL paresr
+* SCL server enhancements, debugging - writing values
+* Editing values in SCL Server model.
+* Inclusive reporting with configured TrgOps.
+* Tcp - disconnect recogniition
+* SCLServer - initial values
+* SCLView - changing values (manually)
+* initial values from SCL
+* SCL Arrays handling
+* sub data objects from SCL
+* CSL Parser - SDOs, arrays
+* Enhancing SCL Server and SCL Parser
+* SCLServer, SCLParserDOM.cs - unfinished. BERDecoder change - Vadim Evseev.
+* SCLServer
+* IEC61850.Server
+* Embedding iec61850.dll and iec61850dotnet.dll. Test client in SclServer.cs.
+* SCL view: DOs to LNs, icons
+* SCL read into iec structure
+* Watch View initial
+* AutoUpdateStoppedDialog.cs
+* SCLParserDOM.cs
+* Viewing SCL files - SCL View
+* Handling of dynamic DataSets finished
+
