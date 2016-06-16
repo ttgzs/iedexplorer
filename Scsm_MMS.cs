@@ -380,7 +380,7 @@ namespace IEDExplorer
                 ////////////////// Decoding
                 mymmspdu = decoder.decode<MMSpdu>(iecs.msMMS);
                 ////////////////// Decoding
-                if (iecs.CaptureDb.CaptureActive)
+                if (iecs.CaptureDb.CaptureActive && mymmspdu != null)
                 {
                     cap.MMSPdu = mymmspdu;
                     iecs.CaptureDb.AddPacket(cap);
@@ -394,6 +394,33 @@ namespace IEDExplorer
             if (mymmspdu == null)
             {
                 iecs.logger.LogError("mms.ReceiveData: Parsing Error!");
+
+                // Workaround - we can continue when reading-in the model also if one read fails
+                if (iecs.istate == Iec61850lStateEnum.IEC61850_READ_MODEL_DATA_WAIT)
+                {
+                    iecs.istate = Iec61850lStateEnum.IEC61850_READ_MODEL_DATA;
+                    NodeBase logNode = iecs.DataModel.ied.GetActualChildNode().GetActualChildNode().GetActualChildNode();
+                    if (logNode != null)
+                    {
+                        iecs.logger.LogWarning("mms.ReceiveData: Error reading " + logNode.IecAddress + " in IEC61850_READ_MODEL_DATA_WAIT, data values not actual in the subtree!");
+                    }
+                    // Should be possible in this phase: only 1 request can be pending in the discovery phase
+                    iecs.OutstandingCalls.Clear();
+                    // Set up the state variable
+                    if (iecs.DataModel.ied.GetActualChildNode().GetActualChildNode().NextActualChildNode() == null)
+                    {
+                        if (iecs.DataModel.ied.GetActualChildNode().NextActualChildNode() == null)
+                        {
+                            if (iecs.DataModel.ied.NextActualChildNode() == null)
+                            {
+                                // End of loop
+                                iecs.istate = Iec61850lStateEnum.IEC61850_READ_NAMELIST_NAMED_VARIABLE_LIST;
+                                iecs.logger.LogInfo("Reading named variable lists: [IEC61850_READ_NAMELIST_NAMED_VARIABLE_LIST]");
+                                iecs.DataModel.ied.ResetAllChildNodes();
+                            }
+                        }
+                    }
+                }
                 return -1;
             }
             else if (mymmspdu.Initiate_ResponsePDU != null)
@@ -545,14 +572,31 @@ namespace IEDExplorer
                         en.MoveNext();
                         string name = en.Current;
                         bool isdir = false;
-                        //if (de.FileAttributes.SizeOfFile.Value == 0)
+                        NodeFile nf;
+                        NodeFile upperdir = null;
+
                         if (name.EndsWith("/") || name.EndsWith("\\"))
                         {
                             isdir = true;
                             name = name.Substring(0, name.Length - 1);
                         }
-                        NodeFile nf = new NodeFile(name, isdir);
+                        if (name.Contains("/") || name.Contains("\\"))
+                        {
+                            string[] names = name.Split(new char[] { '/', '\\'});
+                            for (int i = 0; i < names.Length; i++)
+                            {
+                                if (i == 0) upperdir = new NodeFile(names[i], true);
+                                else if (i == (names.Length - 1)) name = names[i];
+                                else upperdir.AddChildNode(new NodeFile(names[i], true));
+                            }
+                        }
+                        nf = new NodeFile(name, isdir);
                         nf.ReportedSize = de.FileAttributes.SizeOfFile.Value;
+                        if (upperdir != null)
+                        {
+                            upperdir.AddChildNode(nf);
+                            nf = upperdir;
+                        }
                         (iecs.lastFileOperationData[0]).AddChildNode(nf);
                         //iecs.logger.LogInfo("FileName: " + name);
                     }

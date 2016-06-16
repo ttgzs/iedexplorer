@@ -158,7 +158,7 @@ namespace IEDExplorer.Views
                 }
                 nb = iecs.DataModel.files;
                 TreeNode tn4 = n.Nodes.Add("Files");
-                tn4.Tag = iecs.DataModel.files;
+                tn4.Tag = nb;
                 tn4.ImageIndex = 3;
                 tn4.SelectedImageIndex = 3;
                 nb.Tag = tn4;
@@ -195,13 +195,13 @@ namespace IEDExplorer.Views
                     tn3.SelectedImageIndex = 1;
                     makeTreeIec_dataNode(b, tn3);
                 }
-                nb = iecs.DataModel.files;
+                /*nb = iecs.DataModel.files;
                 TreeNode tn4 = n.Nodes.Add("Files");
-                tn4.Tag = iecs.DataModel.files;
+                tn4.Tag = nb;
                 tn4.ImageIndex = 3;
                 tn4.SelectedImageIndex = 3;
                 nb.Tag = tn4;
-                makeTree_fileNode(nb, tn4);
+                makeTree_fileNode(nb, tn4);*/
             }
         }
 
@@ -317,7 +317,13 @@ namespace IEDExplorer.Views
                     }
                     (b as NodeFile).DirectoryUpdated += Node_DirectoryUpdated;
                     makeTree_fileNode(b, tn2);
+                    //Logger.getLogger().LogDebug(""
+                    //tn.TreeView.Invalidate(true);
                 }
+                /*foreach (TreeNode tx in tn.Nodes)
+                {
+                    Logger.getLogger().LogDebug("TreeNode added: " + tx.Text + " to " + tn.TreeView.Name);
+                }*/
             }
             else
                 updateTree_fileNode(nb, tn);
