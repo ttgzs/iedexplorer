@@ -24,7 +24,7 @@ using System.Text;
 
 namespace IEDExplorer
 {
-    class NodeRCB : NodeBase
+    public class NodeRCB : NodeBase
     {
         //bool _defined = false;
 

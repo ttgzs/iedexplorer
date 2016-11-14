@@ -32,7 +32,7 @@ using System.Threading;
 
 namespace IEDExplorer
 {
-    class SCLServer
+    public class SCLServer
     {
         private Thread _workerThread;
         private bool _run;

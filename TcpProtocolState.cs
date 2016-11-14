@@ -19,7 +19,7 @@
 
 namespace IEDExplorer
 {
-        enum TcpProtocolState
+        public enum TcpProtocolState
         {
             TCP_STATE_START,
             TCP_CONNECT_WAIT,

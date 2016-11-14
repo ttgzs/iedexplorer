@@ -5,7 +5,7 @@ using System.Text;
 
 namespace IEDExplorer
 {
-    class RcbActivateParams
+    public class RcbActivateParams
     {
         public NodeRCB self;
 

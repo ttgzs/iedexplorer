@@ -45,7 +45,7 @@ namespace IEDExplorer
             return sLog;
         }
 
-        private Logger()
+        public Logger()
         {
             verbosity = Severity.Information;
             //verbosity = Severity.Debug;
@@ -95,6 +95,12 @@ namespace IEDExplorer
             }
         }
 
+        public void LogReport (string rptdVarQualityLog, string rptdVarTimestampLog, string rptdVarPathLog, string rptdVarDescriptionLog, string rptdVarValueLog)
+        {
+            if (OnLogReport != null)
+                OnLogReport(rptdVarQualityLog, rptdVarTimestampLog, rptdVarPathLog, rptdVarDescriptionLog, rptdVarValueLog);
+        }
+
         public void LogInfo(string message)
         {
             if (verbosity <= Severity.Information)
@@ -129,5 +135,9 @@ namespace IEDExplorer
 
         public delegate void OnClearLogDelegate();
         public event OnClearLogDelegate OnClearLog;
+
+        public delegate void OnLogReportDelegate (string rptdVarQualityLog, string rptdVarTimestampLog, string rptdVarPathLogstring, string rptdVarDescriptionLog, string rptdVarValueLog);
+        public event OnLogReportDelegate OnLogReport;
+
     }
 }

@@ -19,7 +19,7 @@
 
 namespace IEDExplorer
 {
-        enum Iec61850lStateEnum
+        public enum Iec61850lStateEnum
         {
             IEC61850_STATE_START,
             IEC61850_STATE_SHUTDOWN,

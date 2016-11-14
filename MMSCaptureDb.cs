@@ -5,7 +5,7 @@ using System.Text;
 
 namespace IEDExplorer
 {
-    class MMSCaptureDb
+    public class MMSCaptureDb
     {
         Iec61850State iecs;
         public delegate void NewPacket(MMSCapture cap);

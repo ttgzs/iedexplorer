@@ -5,7 +5,7 @@ using System.Text;
 
 namespace IEDExplorer
 {
-    class IsoSess
+    public class IsoSess
     {
         ushort callingSessionSelector;
         ushort calledSessionSelector;

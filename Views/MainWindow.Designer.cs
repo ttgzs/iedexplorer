@@ -55,6 +55,8 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
             this.toolStripButtonOpenSCL = new System.Windows.Forms.ToolStripSplitButton();
+            this.GooseSender = new System.Windows.Forms.ToolStripButton();
+            this.GooseExplorer = new System.Windows.Forms.ToolStripButton();
             this.dockPanel1 = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -71,7 +73,9 @@
             this.toolStripButtonConnParam,
             this.toolStripSeparator1,
             this.toolStripLabel2,
-            this.toolStripButtonOpenSCL});
+            this.toolStripButtonOpenSCL,
+            this.GooseSender,
+            this.GooseExplorer});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(920, 25);
@@ -165,6 +169,24 @@
             this.toolStripButtonOpenSCL.ToolTipText = "Open SCL file";
             this.toolStripButtonOpenSCL.ButtonClick += new System.EventHandler(this.toolStripButtonOpenSCL_Click);
             // 
+            // GooseSender
+            // 
+            this.GooseSender.Image = ((System.Drawing.Image)(resources.GetObject("GooseSender.Image")));
+            this.GooseSender.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.GooseSender.Name = "GooseSender";
+            this.GooseSender.Size = new System.Drawing.Size(96, 22);
+            this.GooseSender.Text = "GooseSender";
+            this.GooseSender.Click += new System.EventHandler(this.GooseSender_Click);
+            // 
+            // GooseExplorer
+            // 
+            this.GooseExplorer.Image = ((System.Drawing.Image)(resources.GetObject("GooseExplorer.Image")));
+            this.GooseExplorer.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.GooseExplorer.Name = "GooseExplorer";
+            this.GooseExplorer.Size = new System.Drawing.Size(102, 22);
+            this.GooseExplorer.Text = "GooseExplorer";
+            this.GooseExplorer.Click += new System.EventHandler(this.GooseExplorer_Click);
+            // 
             // dockPanel1
             // 
             this.dockPanel1.BackColor = System.Drawing.SystemColors.ControlDark;
@@ -253,5 +275,7 @@
         private System.Windows.Forms.ToolStripSplitButton toolStripButtonOpenSCL;
         private System.Windows.Forms.ToolStripButton toolStripButtonAbout;
         private System.Windows.Forms.ToolStripButton toolStripButtonConnParam;
+        private System.Windows.Forms.ToolStripButton GooseSender;
+        private System.Windows.Forms.ToolStripButton GooseExplorer;
     }
 }

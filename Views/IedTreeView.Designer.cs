@@ -46,7 +46,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(284, 262);
+            this.tabControl1.Size = new System.Drawing.Size(303, 421);
             this.tabControl1.TabIndex = 1;
             // 
             // tabPage1
@@ -55,7 +55,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(276, 236);
+            this.tabPage1.Size = new System.Drawing.Size(295, 395);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "IED View (MMS)";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -65,7 +65,7 @@
             this.treeViewIed.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeViewIed.Location = new System.Drawing.Point(3, 3);
             this.treeViewIed.Name = "treeViewIed";
-            this.treeViewIed.Size = new System.Drawing.Size(270, 230);
+            this.treeViewIed.Size = new System.Drawing.Size(289, 389);
             this.treeViewIed.TabIndex = 1;
             this.treeViewIed.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewIed_AfterSelect);
             this.treeViewIed.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeViewIed_NodeMouseClick);
@@ -79,7 +79,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(276, 236);
+            this.tabPage2.Size = new System.Drawing.Size(295, 395);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "IEC View (61850)";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -89,7 +89,7 @@
             this.treeViewIec.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeViewIec.Location = new System.Drawing.Point(3, 3);
             this.treeViewIec.Name = "treeViewIec";
-            this.treeViewIec.Size = new System.Drawing.Size(270, 230);
+            this.treeViewIec.Size = new System.Drawing.Size(289, 389);
             this.treeViewIec.TabIndex = 2;
             this.treeViewIec.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewIed_AfterSelect);
             this.treeViewIec.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeViewIed_NodeMouseClick);
@@ -101,7 +101,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 262);
+            this.ClientSize = new System.Drawing.Size(303, 421);
             this.Controls.Add(this.tabControl1);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Name = "IedTreeView";

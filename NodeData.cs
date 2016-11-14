@@ -24,7 +24,7 @@ using System.Text;
 
 namespace IEDExplorer
 {
-    class NodeData : NodeBase
+    public class NodeData : NodeBase
     {
         private scsm_MMS_TypeEnum _dataType = scsm_MMS_TypeEnum.structure;
         private string _bType = "";
@@ -540,6 +540,49 @@ namespace IEDExplorer
             return trgOps;
         }
 
+        public string StringValueQuality
+        {
+            get
+            {
+                string val = "";
+                if (DataValue != null) {
+                    switch (DataType) {
+                        case scsm_MMS_TypeEnum.bit_string:
+                            byte[] bbval = (byte[])DataValue;
+                            int blen = bbval.Length;
+                            int trail;
+
+                            if (DataParam != null)
+                                trail = (int)DataParam;
+                            else
+                                trail = 0;
+
+                            val = "";
+
+                            for (int i = 0; i < blen * 8 - trail; i++) {
+                                if (((bbval[(i / 8)] << (i % 8)) & 0x80) > 0) {
+                                    val = "Q";
+                                    break;
+                                }
+                            }
+                            break;
+                        default:
+                            val = DataValue.ToString();
+                            break;
+                    }
+                }
+                return val;
+            }
+            set
+            {
+                if (value != null && value != "") {
+                    switch (DataType) {
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
     }   // class NodeData
 
     [Flags]

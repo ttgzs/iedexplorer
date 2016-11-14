@@ -14,11 +14,14 @@ namespace IEDExplorer.Views
         List<DockContent> documentViews = new List<DockContent>();
         DockContent currentDocument;
 
-        MainWindow mainWindow;
+        public MainWindow mainWindow;
         LogView logWindow;
         IedTreeView iedWindow;
         IedDataView dataWindow;
         CaptureView captureWindow;
+        public ReportsView reportWindow;
+        public PoolView poolWindow;
+
         public List<int> SCLServers_usedPorts = new List<int>();
         WatchDataView watchWindow;
 
@@ -41,6 +44,18 @@ namespace IEDExplorer.Views
             dataWindow.CloseButtonVisible = false;
             dataWindow.FormClosing += new FormClosingEventHandler(persistentWindows_FormClosing);
             dataWindow.Show(dockPanel);
+
+            reportWindow = new ReportsView(env);
+            reportWindow.ShowHint = DockState.Document;
+            reportWindow.CloseButtonVisible = false;
+            reportWindow.FormClosing += new FormClosingEventHandler(persistentWindows_FormClosing);
+            reportWindow.Show(dockPanel);
+
+            poolWindow = new PoolView(env);
+            poolWindow.ShowHint = DockState.Document;
+            poolWindow.CloseButtonVisible = false;
+            poolWindow.FormClosing += new FormClosingEventHandler(persistentWindows_FormClosing);
+            poolWindow.Show(dockPanel);
 
             captureWindow = new CaptureView(this);
             captureWindow.ShowHint = DockState.Document;

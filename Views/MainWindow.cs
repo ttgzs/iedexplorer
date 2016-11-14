@@ -23,23 +23,40 @@ namespace IEDExplorer.Views
         Dictionary<string, IsoConnectionParameters> iedsDb = new Dictionary<string, IsoConnectionParameters>();
 
         Scsm_MMS_Worker worker;
+
+        delegate void OnReportReceivedCallback (string rptdVarQualityLog, string rptdVarTimestampLog, string rptdVarPathLogstring, string rptdVarDescriptionLog, string rptdVarValueLog);
+
         const int maxHistory = 20;
         IsoConnectionParameters isoPar;
 
         SCLServer sclServer = null;
 
         private WeifenLuo.WinFormsUI.Docking.VS2012LightTheme vS2012LightTheme1 = new VS2012LightTheme();
+        private Iec61850State iecf;
 
-        public MainWindow(Env envir)
+        public void Set_iecf (Iec61850State _iecf)
+        {
+            iecf = _iecf;
+        }
+
+        public Iec61850State Get_iecf()
+        {
+            return iecf;
+        }
+
+        public MainWindow (Env envir)
         {
             InitializeComponent();
             dockPanel1.Theme = vS2012LightTheme1;
             env = envir;
+            env.logger = new Logger();
 
             worker = new Scsm_MMS_Worker(env);
 
             wm = new WindowManager(dockPanel1, env, this);
             this.Text = "IED Explorer 0.78 experimental-SCL server";
+
+            logger.OnLogReport += new Logger.OnLogReportDelegate(logger_OnLogReport);
 
             logger.LogInfo("Starting main program ...");
 
@@ -250,6 +267,35 @@ namespace IEDExplorer.Views
                 iedsDb[std["hostname"]] = isoPar;
             }
         }
+
+        private void GooseSender_Click (object sender, EventArgs e)
+        {
+            GooseSender gooseSender = new GooseSender();
+            gooseSender.Show();
+        }
+
+        private void GooseExplorer_Click (object sender, EventArgs e)
+        {
+            GooseExplorer goose = new GooseExplorer(this.iecf, env.logger);
+            goose.Show();
+        }
+
+        void logger_OnLogReport (string rptdVarQualityLog, string rptdVarTimestampLog, string rptdVarPathLogstring, string rptdVarDescriptionLog, string rptdVarValueLog)
+        {
+            if (wm.reportWindow.ReportlistView.InvokeRequired) {
+                OnReportReceivedCallback d = new OnReportReceivedCallback(logger_OnLogReport);
+                this.Invoke(d, new object[] { rptdVarQualityLog, rptdVarTimestampLog, rptdVarPathLogstring, rptdVarDescriptionLog, rptdVarValueLog });
+            } else {
+                wm.reportWindow.ReportlistView.BeginUpdate();
+
+                ListViewItem item = new ListViewItem(new[] { (wm.reportWindow.ReportlistView.Items.Count + 1).ToString(), rptdVarQualityLog, rptdVarTimestampLog, rptdVarPathLogstring, rptdVarDescriptionLog, rptdVarValueLog });
+                wm.reportWindow.ReportlistView.Items.Add(item);
+
+                item.EnsureVisible();
+                wm.reportWindow.ReportlistView.EndUpdate();
+            }
+        }
+
 
     }
 }

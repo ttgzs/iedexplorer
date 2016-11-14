@@ -5,7 +5,7 @@ using System.Text;
 
 namespace IEDExplorer
 {
-    class IsoAcse
+    public class IsoAcse
     {
         public enum AcseAuthenticationMechanism
         {

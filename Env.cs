@@ -28,6 +28,7 @@ namespace IEDExplorer
 {
     public class Env
     {
+        public Logger logger;
         public WindowManager winMgr;
     }
 }

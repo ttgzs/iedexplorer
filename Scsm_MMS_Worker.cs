@@ -206,6 +206,7 @@ namespace IEDExplorer
                                         iecs.DataModel.BuildIECModelFromMMSModel();
                                         self._env.winMgr.MakeIedTree(iecs);
                                         self._env.winMgr.MakeIecTree(iecs);
+                                        self._env.winMgr.mainWindow.Set_iecf(iecs);
                                         iecs.istate = Iec61850lStateEnum.IEC61850_FREILAUF;
                                         break;
                                     case Iec61850lStateEnum.IEC61850_FREILAUF:

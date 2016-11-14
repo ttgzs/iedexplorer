@@ -227,6 +227,20 @@ namespace IEDExplorer
             return Node;
         }
 
+        public NodeBase LinkChildNode (NodeBase Node)
+        {
+            foreach (NodeBase n in _childNodes) {
+                /*
+                if (Node._name == n._name)
+                    return n;
+                 */
+                if (Node.IecAddress == n.IecAddress)
+                    return n;
+            }
+            _childNodes.Add(Node);
+            return Node;
+        }
+
         public void RemoveChildNode(NodeBase Node)
         {
             _childNodes.Remove(Node);

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace IEDExplorer
 {
-    class Iec61850Controller
+    public class Iec61850Controller
     {
         Iec61850State iecs;
         Iec61850Model model;

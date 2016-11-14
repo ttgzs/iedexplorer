@@ -5,7 +5,7 @@ using System.Text;
 
 namespace IEDExplorer
 {
-    class Iec61850Model
+    public class Iec61850Model
     {
         /// <summary>
         /// Server data

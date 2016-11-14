@@ -5,7 +5,7 @@ using System.Text;
 
 namespace IEDExplorer
 {
-    class IsoPres
+    public class IsoPres
     {
         uint callingPresentationSelector;
         uint calledPresentationSelector;

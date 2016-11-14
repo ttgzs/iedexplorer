@@ -19,7 +19,7 @@
 
 namespace IEDExplorer
 {
-        enum IsoTpktState
+        public enum IsoTpktState
         {
             TPKT_RECEIVE_START,
             TPKT_RECEIVE_ERROR,

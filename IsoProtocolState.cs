@@ -19,7 +19,7 @@
 
 namespace IEDExplorer
 {
-        enum IsoProtocolState
+    public enum IsoProtocolState
         {
             OSI_STATE_START,
             OSI_STATE_SHUTDOWN,

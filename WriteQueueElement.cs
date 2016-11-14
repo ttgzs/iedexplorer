@@ -24,7 +24,7 @@ using System.Text;
 
 namespace IEDExplorer
 {
-    class WriteQueueElement
+    public class WriteQueueElement
     {
         public WriteQueueElement(NodeBase[] Data, CommAddress Address, ActionRequested Action)
         {

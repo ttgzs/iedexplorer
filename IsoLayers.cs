@@ -7,7 +7,7 @@ using System.Net;
 
 namespace IEDExplorer
 {
-    class IsoLayers
+    public class IsoLayers
     {
         // ISO layers TPKT, COTP, SESS, PRES, ACSE coordinations
         Iec61850State iecs;

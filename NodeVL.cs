@@ -24,7 +24,7 @@ using System.Text;
 
 namespace IEDExplorer
 {
-    class NodeVL: NodeBase
+    public class NodeVL : NodeBase
     {
         public NodeVL(string Name)
             : base(Name)

@@ -6,7 +6,7 @@ using System.Collections.Specialized;
 
 namespace IEDExplorer
 {
-    class IsoConnectionParameters
+    public class IsoConnectionParameters
     {
         public IsoAcse.AcseAuthenticationParameter acseAuthParameter;
 

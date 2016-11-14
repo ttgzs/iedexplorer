@@ -27,7 +27,7 @@ using System.Collections.Concurrent;
 
 namespace IEDExplorer
 {
-    class Iec61850State: TcpState
+    public class Iec61850State: TcpState
     {
         /// <summary>
         /// Size of data buffer.

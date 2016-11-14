@@ -19,7 +19,7 @@
 
 namespace IEDExplorer
 {
-        enum FileTransferState
+        public enum FileTransferState
         {
             FILE_NO_ACTION,
             FILE_DIRECTORY,

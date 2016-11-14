@@ -24,7 +24,7 @@ using System.Threading;
 
 namespace IEDExplorer
 {
-    class TcpState
+    public class TcpState
     {
         /// <summary>
         ///  logger.

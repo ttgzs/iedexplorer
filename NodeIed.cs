@@ -24,7 +24,7 @@ using System.Text;
 
 namespace IEDExplorer
 {
-    class NodeIed: NodeBase
+    public class NodeIed : NodeBase
     {
         public NodeIed(string Name, Iec61850Model _model)
             : base(Name)

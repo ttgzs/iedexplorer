@@ -16,7 +16,6 @@
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
-    <NoWin32Manifest>False</NoWin32Manifest>
     <NoStdLib>False</NoStdLib>
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
@@ -69,10 +68,66 @@
   <PropertyGroup>
     <ApplicationIcon>Iedexplorer.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>Full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>Full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="iec61850dotnet">
       <HintPath>Embed\iec61850dotnet.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="PcapDotNet.Base, Version=1.0.3.21015, Culture=neutral, PublicKeyToken=4b6f3e583145a652, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>PcapDotNet\PcapDotNet.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="PcapDotNet.Core, Version=1.0.3.21026, Culture=neutral, PublicKeyToken=4b6f3e583145a652, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>PcapDotNet\PcapDotNet.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="PcapDotNet.Core.Extensions, Version=1.0.3.21028, Culture=neutral, PublicKeyToken=4b6f3e583145a652, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>PcapDotNet\PcapDotNet.Core.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="PcapDotNet.Packets, Version=1.0.3.21016, Culture=neutral, PublicKeyToken=4b6f3e583145a652, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>PcapDotNet\PcapDotNet.Packets.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -81,6 +136,7 @@
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -93,6 +149,58 @@
   <ItemGroup>
     <Compile Include="ActionRequested.cs" />
     <Compile Include="BNExtension\XMLEncoder.cs" />
+    <Compile Include="Dialogs\ControllableSignalsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ControllableSignalsDialog.designer.cs">
+      <DependentUpon>ControllableSignalsDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ExportListViewToCSV.cs" />
+    <Compile Include="Goose\ExportGooseToXml.cs" />
+    <Compile Include="Goose\ExportGvlToXml.cs" />
+    <Compile Include="Goose\GooseControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Goose\GooseControl.Designer.cs">
+      <DependentUpon>GooseControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Goose\GooseData.cs" />
+    <Compile Include="Goose\GooseDataeEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Goose\GooseDataeEdit.Designer.cs">
+      <DependentUpon>GooseDataeEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Goose\GooseExplorer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Goose\GooseExplorer.Designer.cs">
+      <DependentUpon>GooseExplorer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Goose\GooseSender.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Goose\GooseSender.Designer.cs">
+      <DependentUpon>GooseSender.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Goose\GooseTreeViewMgmt.cs" />
+    <Compile Include="Goose\ImportDataListFromXml.cs" />
+    <Compile Include="Goose\ImportGooseFromXml.cs" />
+    <Compile Include="Goose\SeqData.cs" />
+    <Compile Include="Goose_ASN1_Model\Data.cs" />
+    <Compile Include="Goose_ASN1_Model\DataSequence.cs" />
+    <Compile Include="Goose_ASN1_Model\FloatingPoint.cs" />
+    <Compile Include="Goose_ASN1_Model\GOOSE.cs" />
+    <Compile Include="Goose_ASN1_Model\GoosePdu.cs" />
+    <Compile Include="Goose_ASN1_Model\IEC61850.cs" />
+    <Compile Include="Goose_ASN1_Model\MMSString.cs" />
+    <Compile Include="Goose_ASN1_Model\TimeOfDay.cs" />
+    <Compile Include="Goose_ASN1_Model\UtcTime.cs" />
+    <Compile Include="MyTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="NodeGData.cs" />
+    <Compile Include="NodeGVL.cs" />
     <Compile Include="SCLParserDOM2.cs" />
     <Compile Include="NodeVLM.cs" />
     <Compile Include="Dialogs\AutoUpdateStoppedDialog.cs">
@@ -129,6 +237,8 @@
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="SCLServer.cs" />
+    <Compile Include="SCL_Parser\SCLParse.cs" />
+    <Compile Include="StringToDataConverter.cs" />
     <Compile Include="TreeViewAdv\Properties\Resources1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -187,9 +297,7 @@
     <Compile Include="Docking\DockPanel.AutoHideWindow.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Docking\DockPanel.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Docking\DockPanel.cs" />
     <Compile Include="Docking\DockPanel.DockDragHandler.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -497,6 +605,18 @@
     </Compile>
     <Compile Include="Views\CaptureView.Designer.cs">
       <DependentUpon>CaptureView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PoolView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\PoolView.Designer.cs">
+      <DependentUpon>PoolView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ReportsView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\ReportsView.Designer.cs">
+      <DependentUpon>ReportsView.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\WatchDataView.cs">
       <SubType>Form</SubType>
@@ -1047,6 +1167,21 @@
     <EmbeddedResource Include="Dialogs\AutoUpdateStoppedDialog.resx">
       <DependentUpon>AutoUpdateStoppedDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\ControllableSignalsDialog.resx">
+      <DependentUpon>ControllableSignalsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Goose\GooseControl.resx">
+      <DependentUpon>GooseControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Goose\GooseDataeEdit.resx">
+      <DependentUpon>GooseDataeEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Goose\GooseExplorer.resx">
+      <DependentUpon>GooseExplorer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Goose\GooseSender.resx">
+      <DependentUpon>GooseSender.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Views\AddNVLView.resx">
       <DependentUpon>AddNVLView.cs</DependentUpon>
     </EmbeddedResource>
@@ -1107,6 +1242,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\CaptureView.resx">
       <DependentUpon>CaptureView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\PoolView.resx">
+      <DependentUpon>PoolView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ReportsView.resx">
+      <DependentUpon>ReportsView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\WatchDataView.resx">
       <DependentUpon>WatchDataView.cs</DependentUpon>
@@ -1207,6 +1348,15 @@
     <None Include="Resources\RP2.ico" />
     <None Include="Resources\DS1.ico" />
     <None Include="Resources\VLM.ico" />
+    <Content Include="Resources\toolStripButton_Clear.Image.png" />
+    <Content Include="Resources\toolStripButton_Export.Image.png" />
+    <Content Include="Resources\toolStripButton_ExportCSV.Image.png" />
+    <Content Include="Resources\toolStripButton_GooseExplorer.Image.png" />
+    <Content Include="Resources\toolStripButton_GooseSender.Image.png" />
+    <Content Include="Resources\toolStripButton_OpenScl.Image.png" />
+    <Content Include="Resources\toolStripButton_Pooling.Image.png" />
+    <Content Include="Resources\toolStripButton_Run.Image.png" />
+    <Content Include="Resources\toolStripButton_Stop.Image.png" />
     <Content Include="TreeViewAdv\Resources\check.bmp" />
     <Content Include="TreeViewAdv\Resources\DVSplit.cur" />
     <Content Include="TreeViewAdv\Resources\Folder.bmp" />

@@ -7,7 +7,7 @@ using System.IO;
 
 namespace IEDExplorer
 {
-    class IsoCotp
+    public class IsoCotp
     {
         private const int COTP_HDR_CR_SIZEOF = 6; //18;
         public const int COTP_HDR_DT_SIZEOF = 3;

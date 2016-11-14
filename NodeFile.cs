@@ -25,7 +25,7 @@ using System.IO;
 
 namespace IEDExplorer
 {
-    class NodeFile: NodeBase
+    public class NodeFile : NodeBase
     {
         public NodeFile(string Name, bool isDir)
             : base(Name)
