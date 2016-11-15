@@ -44,10 +44,11 @@
             this.listView1.GridLines = true;
             this.listView1.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(12, 12);
+            this.listView1.Location = new System.Drawing.Point(9, 10);
+            this.listView1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(651, 201);
+            this.listView1.Size = new System.Drawing.Size(489, 164);
             this.listView1.TabIndex = 1;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
@@ -65,32 +66,37 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(12, 224);
+            this.button2.Location = new System.Drawing.Point(9, 182);
+            this.button2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(145, 35);
+            this.button2.Size = new System.Drawing.Size(109, 28);
             this.button2.TabIndex = 3;
+            this.button2.Tag = "true";
             this.button2.Text = "Send True";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button_Click);
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(518, 224);
+            this.button3.Location = new System.Drawing.Point(388, 182);
+            this.button3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(145, 35);
+            this.button3.Size = new System.Drawing.Size(109, 28);
             this.button3.TabIndex = 5;
+            this.button3.Tag = "false";
             this.button3.Text = "Send False";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button_Click);
             // 
             // ControllableSignalsDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(675, 268);
+            this.ClientSize = new System.Drawing.Size(506, 218);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.listView1);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "ControllableSignalsDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Controllable Signals";

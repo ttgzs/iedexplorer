@@ -94,107 +94,21 @@ namespace IEDExplorer
 
         private void button_Click(object sender, EventArgs e)
         {
+
             NodeData var = (NodeData)listView1.SelectedItems[0].Tag;
             Iec61850State iecs = var.GetIecs();
-            NodeData[] ndarr = new NodeData[1];                        
-
-            if ((var != null) && (iecs != null))
-            {
-                NodeData d = (NodeData)var.Parent;
-                NodeData b, c, f = null;
-                NodeData g = null;
-                
-                if(d != null)
-                {                                    
-                    f = new NodeData(d.Name);
-                    ndarr[0] = f;
-
-                    if((b = (NodeData)d.FindChildNode("ctlVal")) != null)
-                    {                        
-                        NodeData n = new NodeData(b.Name);
-                        n.DataType = ((NodeData)b).DataType;
-                        switch (n.DataType)
-                        {
-                            case scsm_MMS_TypeEnum.boolean:
-                                n.DataValue = (((Button)sender).Text == button2.Text) ? true : false;                                                              
-                                break;
-                        }                                                
-                        f.AddChildNode(n);
-                    }
-                    if ((b = (NodeData)d.FindChildNode("origin")) != null)
-                    {                        
-                        g = (NodeData)f.FindChildNode("origin");
-                     
-                        if (g == null)
-                        {
-                            g = new NodeData(b.Name);
-                            g.DataType = ((NodeData)b).DataType;
-                        }           
-
-                        if ((c = (NodeData)b.FindChildNode("orCat")) != null)
-                        {
-                            NodeData n = new NodeData(c.Name);
-                            n.DataType = ((NodeData)c).DataType;
-                            n.DataValue = 2L;
-                            ((NodeData)c).DataValue = 2L;                            
-                            g.AddChildNode(n);
-                        }
-                        if ((c = (NodeData)b.FindChildNode("orIdent")) != null)
-                        {
-                            NodeData n = new NodeData(c.Name);
-                            n.DataType = ((NodeData)c).DataType;
-                            string orIdent = "IEDExplorer";                            
-                            byte[] bytes = new byte[orIdent.Length];
-                            int tmp1, tmp2; bool tmp3;
-                            Encoder ascii = (new ASCIIEncoding()).GetEncoder();
-                            ascii.Convert(orIdent.ToCharArray(), 0, orIdent.Length, bytes, 0, orIdent.Length, true, out tmp1, out tmp2, out tmp3);
-                            n.DataValue = bytes;                                                       
-                            g.AddChildNode(n);                            
-                        }
-                        
-                        if((g.FindChildNode("orCat") != null) && (g.FindChildNode("orIdent") != null))
-                            f.AddChildNode(g);
-                    }
-                    if ((b = (NodeData)d.FindChildNode("ctlNum")) != null)
-                    {
-                        NodeData n = new NodeData(b.Name);
-                        n.DataType = ((NodeData)b).DataType;
-                        n.DataValue = m_ctlNum++;                                                                        
-                        f.AddChildNode(n);
-                    }
-                    if ((b = (NodeData)d.FindChildNode("T")) != null)
-                    {
-                        NodeData n = new NodeData(b.Name);
-                        n.DataType = ((NodeData)b).DataType;
-                        DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-                        TimeSpan diff = DateTime.Now - origin;
-                        uint ui = (uint)Math.Floor(diff.TotalSeconds);
-                        byte[] uib = BitConverter.GetBytes(ui);
-                        n.DataValue = new byte[] { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };                                                
-                        f.AddChildNode(n);
-                    }
-                    if ((b = (NodeData)d.FindChildNode("Test")) != null)
-                    {
-                        NodeData n = new NodeData(b.Name);
-                        n.DataType = ((NodeData)b).DataType;
-                        n.DataValue = false;                        
-                        f.AddChildNode(n);
-                    }
-                    if ((b = (NodeData)d.FindChildNode("Check")) != null)
-                    {
-                        NodeData n = new NodeData(b.Name);
-                        n.DataType = ((NodeData)b).DataType;
-                        n.DataValue = new byte[] { 0xC0 };
-                        //n.DataParam = ((NodeData)b).DataParam;
-                        n.DataParam = 6;                                             
-                        f.AddChildNode(n);
-                    }                    
-                                        
-                    iecs.Send(ndarr, d.CommAddress, ActionRequested.WriteAsStructure);
-                }
+            NodeData data = (NodeData)listView1.SelectedItems[0].Tag;
+            
+            CommandParams cPar = iecs.Controller.PrepareSendCommand((NodeBase)listView1.SelectedItems[0].Tag);
+            if (cPar != null) {
+                if ((String)(((Button)sender).Tag) == "true")
+                    cPar.ctlVal = true;
                 else
-                    MessageBox.Show("Basic structure not found!");
-            }                
+                    cPar.ctlVal = false;
+                iecs.Controller.SendCommand(data, cPar, ActionRequested.WriteAsStructure);
+            }
+            return;
+
          }             
     }
 }
