@@ -270,8 +270,15 @@ namespace IEDExplorer.Views
 
         private void GooseSender_Click (object sender, EventArgs e)
         {
-            GooseSender gooseSender = new GooseSender();
-            gooseSender.Show();
+            try
+            {
+                GooseSender gooseSender = new GooseSender();
+                gooseSender.Show();
+            }
+            catch
+            {
+                MessageBox.Show("Problem to initialize PCap", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
         }
 
         private void GooseExplorer_Click (object sender, EventArgs e)
@@ -294,6 +301,12 @@ namespace IEDExplorer.Views
                 item.EnsureVisible();
                 wm.reportWindow.ReportlistView.EndUpdate();
             }
+        }
+
+        private void toolStripButtonStartupRead_Click(object sender, EventArgs e)
+        {
+            env.dataReadOnStartup = toolStripButtonStartupRead.Checked;
+            logger.LogInfo("Read Data Values from IED on startup (time consuming, but useful) is set to: " + env.dataReadOnStartup.ToString());
         }
 
 

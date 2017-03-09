@@ -18,10 +18,12 @@
  */
 
 using System;
+using System.Threading;
 using System.Windows.Forms;
 using System.Reflection;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace IEDExplorer
 {
@@ -36,31 +38,49 @@ namespace IEDExplorer
             string resPrefix = "IEDExplorer.Embed.";
             string filename1 = "iec61850dotnet.dll";
             string filename2 = "iec61850.dll";
+            string filename3 = "PcapDotNet.Base.dll";
+            //string filename4 = "PcapDotNet.Core.dll";
+            string filename5 = "PcapDotNet.Core.Extensions.dll";
+            string filename6 = "PcapDotNet.Packets.dll";
+
             EmbeddedAssembly.Load(resPrefix + filename1, filename1);
             EmbeddedAssembly.Load(resPrefix + filename2, filename2);
+            EmbeddedAssembly.Load(resPrefix + filename3, filename3);
+            //EmbeddedAssembly.Load(resPrefix + filename4, filename4);
+            EmbeddedAssembly.Load(resPrefix + filename5, filename5);
+            EmbeddedAssembly.Load(resPrefix + filename6, filename6);
 
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
             Env env = new Env();
             Application.Run(new Views.MainWindow(env));
 
-            string path2 = null;
-            try
+            List<string> natives = new List<string>();
+            natives.Add(filename2);
+            //natives.Add(filename4);
+
+            foreach (string filename in natives)
             {
-                path2 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, filename2);
-                if (File.Exists(path2))
-                    File.Delete(path2);
-            }
-            catch
-            {
+                string path2 = null;
                 try
                 {
-                    UnloadImportedDll(path2);
-                    File.Delete(path2);
+                    path2 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, filename);
+                    if (File.Exists(path2))
+                        File.Delete(path2);
                 }
-                catch { }
+                catch
+                {
+                    try
+                    {
+                        UnloadImportedDll(path2);
+                        Thread.Sleep(100);
+                        File.Delete(path2);
+                    }
+                    catch { }
+                }
             }
         }
 

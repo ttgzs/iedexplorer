@@ -564,6 +564,7 @@ namespace IEDExplorer
             iecs.logger.LogInfo("FileDirectory PDU received!!");
             if (dir.ListOfDirectoryEntry != null)
             {
+                NodeFile upperdir = null;
                 foreach (DirectoryEntry de in dir.ListOfDirectoryEntry)
                 {
                     if (de.FileName != null)
@@ -573,19 +574,20 @@ namespace IEDExplorer
                         string name = en.Current;
                         bool isdir = false;
                         NodeFile nf;
-                        NodeFile upperdir = null;
 
                         if (name.EndsWith("/") || name.EndsWith("\\"))
                         {
                             isdir = true;
                             name = name.Substring(0, name.Length - 1);
                         }
+
+                        // TODO nonsens atm., Make more general!!!!!!!!!!!!!
                         if (name.Contains("/") || name.Contains("\\"))
                         {
-                            string[] names = name.Split(new char[] { '/', '\\'});
+                            string[] names = name.Split(new char[] { '/', '\\'},StringSplitOptions.RemoveEmptyEntries);
                             for (int i = 0; i < names.Length; i++)
                             {
-                                if (i == 0) upperdir = new NodeFile(names[i], true);
+                                if (i == 0 && upperdir == null) upperdir = new NodeFile(names[i], true);
                                 else if (i == (names.Length - 1)) name = names[i];
                                 else upperdir.AddChildNode(new NodeFile(names[i], true));
                             }

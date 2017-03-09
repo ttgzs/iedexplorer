@@ -174,17 +174,25 @@ namespace IEDExplorer
                                         iecs.mms.SendGetVariableAccessAttributes(iecs);
                                         break;
                                     case Iec61850lStateEnum.IEC61850_READ_MODEL_DATA:
-                                        iecs.logger.LogDebug("[IEC61850_READ_MODEL_DATA]");
-                                        CommAddress adr = new CommAddress();
-                                        adr.Domain = null;
-                                        adr.Variable = null;
-                                        adr.owner = null;
-                                        NodeBase[] data = new NodeBase[1];
-                                        // Issue reads by FC level
-                                        data[0] = iecs.DataModel.ied.GetActualChildNode().GetActualChildNode().GetActualChildNode();
-                                        WriteQueueElement wqel = new WriteQueueElement(data, adr, ActionRequested.Read);
-                                        iecs.istate = Iec61850lStateEnum.IEC61850_READ_MODEL_DATA_WAIT;
-                                        iecs.mms.SendRead(iecs, wqel);
+                                        if (_env.dataReadOnStartup)
+                                        {
+                                            iecs.logger.LogDebug("[IEC61850_READ_MODEL_DATA]");
+                                            CommAddress adr = new CommAddress();
+                                            adr.Domain = null;
+                                            adr.Variable = null;
+                                            adr.owner = null;
+                                            NodeBase[] data = new NodeBase[1];
+                                            // Issue reads by FC level
+                                            data[0] = iecs.DataModel.ied.GetActualChildNode().GetActualChildNode().GetActualChildNode();
+                                            WriteQueueElement wqel = new WriteQueueElement(data, adr, ActionRequested.Read);
+                                            iecs.istate = Iec61850lStateEnum.IEC61850_READ_MODEL_DATA_WAIT;
+                                            iecs.mms.SendRead(iecs, wqel);
+                                        }
+                                        else
+                                        {
+                                            iecs.logger.LogDebug("[IEC61850_READ_MODEL_DATA] - Skipped due to a presetting");
+                                            iecs.istate = Iec61850lStateEnum.IEC61850_READ_NAMELIST_NAMED_VARIABLE_LIST;
+                                        }
                                         break;
                                     case Iec61850lStateEnum.IEC61850_READ_NAMELIST_NAMED_VARIABLE_LIST:
                                         iecs.logger.LogDebug("[IEC61850_READ_NAMELIST_NAMED_VARIABLE_LIST]");

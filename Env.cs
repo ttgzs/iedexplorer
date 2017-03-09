@@ -30,5 +30,9 @@ namespace IEDExplorer
     {
         public Logger logger;
         public WindowManager winMgr;
+        /// <summary>
+        /// Flag to read data on startup.
+        /// </summary>
+        public bool dataReadOnStartup = true;
     }
 }

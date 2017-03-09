@@ -57,6 +57,7 @@
             this.toolStripButtonOpenSCL = new System.Windows.Forms.ToolStripSplitButton();
             this.GooseSender = new System.Windows.Forms.ToolStripButton();
             this.GooseExplorer = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonStartupRead = new System.Windows.Forms.ToolStripButton();
             this.dockPanel1 = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -71,6 +72,7 @@
             this.toolStripComboBoxLoggingLevel,
             this.toolStripLabel1,
             this.toolStripButtonConnParam,
+            this.toolStripButtonStartupRead,
             this.toolStripSeparator1,
             this.toolStripLabel2,
             this.toolStripButtonOpenSCL,
@@ -187,6 +189,20 @@
             this.GooseExplorer.Text = "GooseExplorer";
             this.GooseExplorer.Click += new System.EventHandler(this.GooseExplorer_Click);
             // 
+            // toolStripButtonStartupRead
+            // 
+            this.toolStripButtonStartupRead.Checked = true;
+            this.toolStripButtonStartupRead.CheckOnClick = true;
+            this.toolStripButtonStartupRead.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.toolStripButtonStartupRead.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonStartupRead.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonStartupRead.Image")));
+            this.toolStripButtonStartupRead.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonStartupRead.Name = "toolStripButtonStartupRead";
+            this.toolStripButtonStartupRead.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButtonStartupRead.Text = "toolStripButtonStartupRead";
+            this.toolStripButtonStartupRead.ToolTipText = "Read Data Values from IED on startup (time consuming, but useful)";
+            this.toolStripButtonStartupRead.Click += new System.EventHandler(this.toolStripButtonStartupRead_Click);
+            // 
             // dockPanel1
             // 
             this.dockPanel1.BackColor = System.Drawing.SystemColors.ControlDark;
@@ -277,5 +293,6 @@
         private System.Windows.Forms.ToolStripButton toolStripButtonConnParam;
         private System.Windows.Forms.ToolStripButton GooseSender;
         private System.Windows.Forms.ToolStripButton GooseExplorer;
+        private System.Windows.Forms.ToolStripButton toolStripButtonStartupRead;
     }
 }
