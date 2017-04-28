@@ -612,11 +612,11 @@
     <Compile Include="Views\CaptureView.Designer.cs">
       <DependentUpon>CaptureView.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\PoolView.cs">
+    <Compile Include="Views\PollView.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Views\PoolView.Designer.cs">
-      <DependentUpon>PoolView.cs</DependentUpon>
+    <Compile Include="Views\PollView.Designer.cs">
+      <DependentUpon>PollView.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\ReportsView.cs">
       <SubType>Form</SubType>
@@ -1249,8 +1249,8 @@
     <EmbeddedResource Include="Views\CaptureView.resx">
       <DependentUpon>CaptureView.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Views\PoolView.resx">
-      <DependentUpon>PoolView.cs</DependentUpon>
+    <EmbeddedResource Include="Views\PollView.resx">
+      <DependentUpon>PollView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\ReportsView.resx">
       <DependentUpon>ReportsView.cs</DependentUpon>

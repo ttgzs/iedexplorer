@@ -20,7 +20,7 @@ namespace IEDExplorer.Views
         IedDataView dataWindow;
         CaptureView captureWindow;
         public ReportsView reportWindow;
-        public PoolView poolWindow;
+        public PollView pollWindow;
 
         public List<int> SCLServers_usedPorts = new List<int>();
         WatchDataView watchWindow;
@@ -51,11 +51,11 @@ namespace IEDExplorer.Views
             reportWindow.FormClosing += new FormClosingEventHandler(persistentWindows_FormClosing);
             reportWindow.Show(dockPanel);
 
-            poolWindow = new PoolView(env);
-            poolWindow.ShowHint = DockState.Document;
-            poolWindow.CloseButtonVisible = false;
-            poolWindow.FormClosing += new FormClosingEventHandler(persistentWindows_FormClosing);
-            poolWindow.Show(dockPanel);
+            pollWindow = new PollView(env);
+            pollWindow.ShowHint = DockState.Document;
+            pollWindow.CloseButtonVisible = false;
+            pollWindow.FormClosing += new FormClosingEventHandler(persistentWindows_FormClosing);
+            pollWindow.Show(dockPanel);
 
             captureWindow = new CaptureView(this);
             captureWindow.ShowHint = DockState.Document;

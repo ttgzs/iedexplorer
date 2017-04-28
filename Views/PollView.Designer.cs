@@ -1,5 +1,5 @@
 ﻿namespace IEDExplorer.Views {
-    partial class PoolView {
+    partial class PollView {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -26,8 +26,8 @@
         private void InitializeComponent ()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PoolView));
-            this.tsPoolView = new System.Windows.Forms.ToolStrip();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PollView));
+            this.tsPollView = new System.Windows.Forms.ToolStrip();
             this.tsbStart = new System.Windows.Forms.ToolStripButton();
             this.tsbStop = new System.Windows.Forms.ToolStripButton();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
@@ -36,17 +36,17 @@
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.tsbExportList = new System.Windows.Forms.ToolStripButton();
             this.tsbClear = new System.Windows.Forms.ToolStripButton();
-            this.PoolListView = new System.Windows.Forms.ListView();
+            this.PollListView = new System.Windows.Forms.ListView();
             this.colName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.PoolTimer = new System.Windows.Forms.Timer(this.components);
-            this.tsPoolView.SuspendLayout();
+            this.PollTimer = new System.Windows.Forms.Timer(this.components);
+            this.tsPollView.SuspendLayout();
             this.SuspendLayout();
             // 
             // tsPoolView
             // 
-            this.tsPoolView.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsPollView.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsbStart,
             this.tsbStop,
             this.toolStripLabel1,
@@ -55,11 +55,11 @@
             this.toolStripButton1,
             this.tsbExportList,
             this.tsbClear});
-            this.tsPoolView.Location = new System.Drawing.Point(0, 0);
-            this.tsPoolView.Name = "tsPoolView";
-            this.tsPoolView.Size = new System.Drawing.Size(653, 25);
-            this.tsPoolView.TabIndex = 0;
-            this.tsPoolView.Text = "toolStrip1";
+            this.tsPollView.Location = new System.Drawing.Point(0, 0);
+            this.tsPollView.Name = "tsPollView";
+            this.tsPollView.Size = new System.Drawing.Size(653, 25);
+            this.tsPollView.TabIndex = 0;
+            this.tsPollView.Text = "toolStrip1";
             // 
             // tsbStart
             // 
@@ -132,26 +132,26 @@
             this.tsbClear.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbClear.Name = "tsbClear";
             this.tsbClear.Size = new System.Drawing.Size(23, 22);
-            this.tsbClear.Tag = "Clear Pooling List";
-            this.tsbClear.Text = "Clear Pooling List";
+            this.tsbClear.Tag = "Clear Polling List";
+            this.tsbClear.Text = "Clear Polling List";
             // 
             // PoolListView
             // 
-            this.PoolListView.AllowDrop = true;
-            this.PoolListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.PollListView.AllowDrop = true;
+            this.PollListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.colName,
             this.colType,
             this.colValue});
-            this.PoolListView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.PoolListView.GridLines = true;
-            this.PoolListView.Location = new System.Drawing.Point(0, 25);
-            this.PoolListView.Name = "PoolListView";
-            this.PoolListView.Size = new System.Drawing.Size(653, 316);
-            this.PoolListView.TabIndex = 1;
-            this.PoolListView.UseCompatibleStateImageBehavior = false;
-            this.PoolListView.View = System.Windows.Forms.View.Details;
-            this.PoolListView.DragDrop += new System.Windows.Forms.DragEventHandler(this.PoolListView_DragDrop);
-            this.PoolListView.DragEnter += new System.Windows.Forms.DragEventHandler(this.PoolListView_DragEnter);
+            this.PollListView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.PollListView.GridLines = true;
+            this.PollListView.Location = new System.Drawing.Point(0, 25);
+            this.PollListView.Name = "PollListView";
+            this.PollListView.Size = new System.Drawing.Size(653, 316);
+            this.PollListView.TabIndex = 1;
+            this.PollListView.UseCompatibleStateImageBehavior = false;
+            this.PollListView.View = System.Windows.Forms.View.Details;
+            this.PollListView.DragDrop += new System.Windows.Forms.DragEventHandler(this.PollListView_DragDrop);
+            this.PollListView.DragEnter += new System.Windows.Forms.DragEventHandler(this.PollListView_DragEnter);
             // 
             // colName
             // 
@@ -170,20 +170,20 @@
             // 
             // PoolTimer
             // 
-            this.PoolTimer.Tick += new System.EventHandler(this.PoolTimer_Tick);
+            this.PollTimer.Tick += new System.EventHandler(this.PollTimer_Tick);
             // 
             // PoolView
             // 
             this.ClientSize = new System.Drawing.Size(653, 341);
-            this.Controls.Add(this.PoolListView);
-            this.Controls.Add(this.tsPoolView);
+            this.Controls.Add(this.PollListView);
+            this.Controls.Add(this.tsPollView);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.Name = "PoolView";
-            this.Text = "Pool View";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PoolView_FormClosing);
-            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.PoolView_DragEnter);
-            this.tsPoolView.ResumeLayout(false);
-            this.tsPoolView.PerformLayout();
+            this.Name = "PollView";
+            this.Text = "Poll View";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PollView_FormClosing);
+            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.PollView_DragEnter);
+            this.tsPollView.ResumeLayout(false);
+            this.tsPollView.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -191,9 +191,9 @@
 
         #endregion
 
-        private System.Windows.Forms.ToolStrip tsPoolView;
+        private System.Windows.Forms.ToolStrip tsPollView;
         private System.Windows.Forms.ToolStripButton tsbStart;
-        private System.Windows.Forms.ListView PoolListView;
+        private System.Windows.Forms.ListView PollListView;
         private System.Windows.Forms.ColumnHeader colName;
         private System.Windows.Forms.ColumnHeader colType;
         private System.Windows.Forms.ColumnHeader colValue;
@@ -204,6 +204,6 @@
         private System.Windows.Forms.ToolStripButton tsbExportList;
         private System.Windows.Forms.ToolStripButton tsbClear;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
-        private System.Windows.Forms.Timer PoolTimer;
+        private System.Windows.Forms.Timer PollTimer;
     }
 }

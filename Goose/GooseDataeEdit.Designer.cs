@@ -210,7 +210,7 @@
             this.toolStripButton_Clear.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton_Clear.Name = "toolStripButton_Clear";
             this.toolStripButton_Clear.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton_Clear.Text = "Clear Pooling List";
+            this.toolStripButton_Clear.Text = "Clear Polling List";
             this.toolStripButton_Clear.ToolTipText = "Clear Data List";
             this.toolStripButton_Clear.Click += new System.EventHandler(this.toolStripButton_Clear_Click);
             // 
@@ -317,7 +317,7 @@
             this.toolStripButton_ClearSeq.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton_ClearSeq.Name = "toolStripButton_ClearSeq";
             this.toolStripButton_ClearSeq.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton_ClearSeq.Text = "Clear Pooling List";
+            this.toolStripButton_ClearSeq.Text = "Clear Polling List";
             this.toolStripButton_ClearSeq.ToolTipText = "Clear Sequence List";
             this.toolStripButton_ClearSeq.Click += new System.EventHandler(this.toolStripButton_ClearSeq_Click);
             // 

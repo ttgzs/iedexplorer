@@ -7,30 +7,30 @@ using System.Text;
 using System.Windows.Forms;
 
 namespace IEDExplorer.Views {
-    public partial class PoolView : WeifenLuo.WinFormsUI.Docking.DockContent {
+    public partial class PollView : WeifenLuo.WinFormsUI.Docking.DockContent {
         public Env environment;
         Boolean showOnce = false;
         public Iec61850State Iecs
         {
             set; get;
         }
-        public PoolView (Env env)
+        public PollView (Env env)
         {
             environment = env;
             InitializeComponent();
             cbRefreshInterval.SelectedIndex = 0;
-            PoolTimer.Interval = calcInterval(cbRefreshInterval.SelectedIndex);
+            PollTimer.Interval = calcInterval(cbRefreshInterval.SelectedIndex);
         }
 
         private void addVar (string address, string datatype, string val, CommAddress comaddr)
         {
             //public Boolean showErrOnce { set; get; }
 
-            if (PoolListView.FindItemWithText(address) == null) {
+            if (PollListView.FindItemWithText(address) == null) {
                 tsbStart.Enabled = true;
                 ListViewItem lvi = new ListViewItem(new string[] { address, datatype, val });
                 lvi.Tag = new CommAddress { Domain = comaddr.Domain, Variable = comaddr.Variable, owner = comaddr.owner };
-                PoolListView.Items.Add(lvi);
+                PollListView.Items.Add(lvi);
             } else {
                 if (!showOnce) {
                     MessageBox.Show("Data exists in list !", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -60,7 +60,7 @@ namespace IEDExplorer.Views {
 
         private void tsbStart_Click (object sender, EventArgs e)
         {
-            PoolTimer.Start();
+            PollTimer.Start();
             tsbStart.Enabled = false;
             tsbStop.Enabled = true;
         }
@@ -69,24 +69,24 @@ namespace IEDExplorer.Views {
         {
             tsbStart.Enabled = true;
             tsbStop.Enabled = false;
-            PoolTimer.Stop();
+            PollTimer.Stop();
         }
 
         private void cbRefreshInterval_SelectedIndexChanged (object sender, EventArgs e)
         {
-            PoolTimer.Interval = calcInterval(cbRefreshInterval.SelectedIndex);
+            PollTimer.Interval = calcInterval(cbRefreshInterval.SelectedIndex);
         }
 
-        private void PoolView_FormClosing (object sender, FormClosingEventArgs e)
+        private void PollView_FormClosing (object sender, FormClosingEventArgs e)
         {
-            PoolTimer.Stop();
+            PollTimer.Stop();
             tsbStart.Enabled = true;
             tsbStop.Enabled = false;
-            this.Hide();
-            e.Cancel = true;
+            //this.Hide();
+            //e.Cancel = true;
         }
 
-        private void PoolTimer_Tick (object sender, EventArgs e)
+        private void PollTimer_Tick (object sender, EventArgs e)
         {
             int i;
 
@@ -94,16 +94,16 @@ namespace IEDExplorer.Views {
             if (Iecs == null)
                 return;
 
-            for (i = 0; i < PoolListView.Items.Count; i++) {
-                NodeData nd = (NodeData)Iecs.DataModel.ied.FindNodeByAddress(((CommAddress)PoolListView.Items[i].Tag).Domain + "/" +
-                                                                    ((CommAddress)PoolListView.Items[i].Tag).Variable);
+            for (i = 0; i < PollListView.Items.Count; i++) {
+                NodeData nd = (NodeData)Iecs.DataModel.ied.FindNodeByAddress(((CommAddress)PollListView.Items[i].Tag).Domain + "/" +
+                                                                    ((CommAddress)PollListView.Items[i].Tag).Variable);
 
                 if (nd != null) {
-                    if (PoolListView.Items[i].SubItems[2].Text != nd.StringValue) {
-                        PoolListView.Items[i].ForeColor = Color.Red;
-                        PoolListView.Items[i].SubItems[2].Text = nd.StringValue;
+                    if (PollListView.Items[i].SubItems[2].Text != nd.StringValue) {
+                        PollListView.Items[i].ForeColor = Color.Red;
+                        PollListView.Items[i].SubItems[2].Text = nd.StringValue;
                     } else
-                        PoolListView.Items[i].ForeColor = Color.Black;
+                        PollListView.Items[i].ForeColor = Color.Black;
 
                     NodeBase[] ndarr = new NodeBase[1];
                     ndarr[0] = nd;
@@ -114,7 +114,7 @@ namespace IEDExplorer.Views {
 
         }
 
-        private void PoolListView_DragDrop (object sender, DragEventArgs e)
+        private void PollListView_DragDrop (object sender, DragEventArgs e)
         {
             NodeData d;
 
@@ -136,7 +136,7 @@ namespace IEDExplorer.Views {
             }
         }
 
-        private void PoolListView_DragEnter (object sender, DragEventArgs e)
+        private void PollListView_DragEnter (object sender, DragEventArgs e)
         {
             if ((e.Data.GetDataPresent(typeof(NodeData))))
                 e.Effect = DragDropEffects.Link;
@@ -144,7 +144,7 @@ namespace IEDExplorer.Views {
                 e.Effect = DragDropEffects.None;
         }
 
-        private void PoolView_DragEnter (object sender, DragEventArgs e)
+        private void PollView_DragEnter (object sender, DragEventArgs e)
         {
             if ((e.Data.GetDataPresent(typeof(NodeData))))
                 e.Effect = DragDropEffects.Link;
