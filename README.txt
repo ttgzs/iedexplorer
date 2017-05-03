@@ -188,3 +188,24 @@ Shortened commit review:
 * Viewing SCL files - SCL View
 * Handling of dynamic DataSets finished
 
+Rev 0.79 experimental SCLServer & GOOSE release 2017/03/05
+This release is an experimental release with a new feature:
+GOOSE functions.
+
+* Integration of Mireks features:
+- Goose Sender + Data Editor
+- Goose Explorer
+- Polling list
+- Reports list (still ongoing)
+Features are mostly UNTESTED.
+- Env optimizations
+
+* Poll View Renamed and made permanent without affecting application closing
+* Some changes for resding files, a choice not to read data model values on startup
+* Purge Mireks commits - delete binary files
+* Correction to sending command from contextmenu on Data node
+* + Goose explorer
++ Goose sender
++ Report event viewer
++ PoolViewer with Drag'N'Drop
+* Workaround for initial READs

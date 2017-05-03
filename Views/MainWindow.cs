@@ -27,7 +27,7 @@ namespace IEDExplorer.Views
         const int maxHistory = 20;
         IsoConnectionParameters isoPar;
 
-        SCLServer sclServer = null;
+        //SCLServer sclServer = null;
 
         private WeifenLuo.WinFormsUI.Docking.VS2012LightTheme vS2012LightTheme1 = new VS2012LightTheme();
         private Iec61850State iecf;
@@ -52,7 +52,7 @@ namespace IEDExplorer.Views
             worker = new Scsm_MMS_Worker();
 
             wm = new WindowManager(dockPanel1, this);
-            this.Text = "IED Explorer 0.80";
+            this.Text = "IED Explorer 0.79 Exp SCL Server & GOOSE";
 
             logger.LogInfo("Starting main program ...");
 
@@ -297,7 +297,5 @@ namespace IEDExplorer.Views
             _env.dataReadOnStartup = toolStripButtonStartupRead.Checked;
             logger.LogInfo("Read Data Values from IED on startup (time consuming, but useful) is set to: " + _env.dataReadOnStartup.ToString());
         }
-
-
     }
 }
