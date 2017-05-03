@@ -15,13 +15,13 @@ namespace IEDExplorer.Views
     public partial class IedDataView : DockContent
     {
         delegate void OnValueCallback(object sender, EventArgs e);
-        public Env environment;
+        Env _env;
         NodeBase actualNode;
         public bool DoNotShowAUStoppedDialog { get; set; }
 
-        public IedDataView(Env env)
+        public IedDataView()
         {
-            environment = env;
+            _env = Env.getEnv();
             InitializeComponent();
             toolStripComboBox_autoUpdate.SelectedIndex = 2;
             DoNotShowAUStoppedDialog = false;

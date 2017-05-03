@@ -20,11 +20,11 @@ using System.Windows.Forms.DataVisualization.Charting;
 
 namespace IEDExplorer
 {
-    public partial class GooseExplorer : Form
+    public partial class GooseExplorer : WeifenLuo.WinFormsUI.Docking.DockContent
     {
         IList<LivePacketDevice> _netDevices;
         PacketCommunicator _communicator;
-        //GooseData _RawGoose;
+
         private Iec61850State _iecf = null;             
         int _GoosesRcvd = 0;
         private Thread _workerThread;
@@ -34,7 +34,7 @@ namespace IEDExplorer
         delegate void OnValueCallback(object sender, EventArgs e);
         delegate void OnAddDataToGraph(object sender, EventArgs e);
 
-        private Thread addDataRunner;
+        //private Thread addDataRunner;
         private Random rand = new Random();
         public delegate void AddDataDelegate();
         public AddDataDelegate addDataDel;
@@ -421,13 +421,13 @@ namespace IEDExplorer
                                         {
                                             if (recursiveReadData(NdCn[k++], AllDataCn, null, 0, RawGoose.packet.Timestamp) < 0)
                                             {
-                                                MessageBox.Show("Error while updating data in DataSet: " + DecodedGoose.GoosePdu.DatSet + ", data structure mismatch !");
+                                                Logger.getLogger().LogError("Error while updating data in DataSet: " + DecodedGoose.GoosePdu.DatSet + ", data structure mismatch !");
                                                 break;
                                             }                                            
                                         }
                                         else
                                         {
-                                            MessageBox.Show("Error while updating data in DataSet: " + DecodedGoose.GoosePdu.DatSet + ", data structure mismatch !");
+                                            Logger.getLogger().LogError("Error while updating data in DataSet: " + DecodedGoose.GoosePdu.DatSet + ", data structure mismatch !");
                                             break;
                                         }
                                     }                                   
@@ -659,7 +659,7 @@ namespace IEDExplorer
                         
                         if ((DecodedGoose.GoosePdu.AllData.Count != NdCn.Length ) || recursiveReadData(NdCn[i++], AllDataCn, null, 0, RawGoose.packet.Timestamp) < 0)
                         {
-                            MessageBox.Show("Error while updating data in DataSet: " + DecodedGoose.GoosePdu.DatSet + ", data structure mismatch !\nCannot associate received DataSet with data included in SCL file.\nData will be displayed in raw mode.");
+                            Logger.getLogger().LogError("Error while updating data in DataSet: " + DecodedGoose.GoosePdu.DatSet + ", data structure mismatch !\nCannot associate received DataSet with data included in SCL file.\nData will be displayed in raw mode.");
 
                             foreach (NodeBase nb in NdCn)
                                 Vl.RemoveChildNode(nb);

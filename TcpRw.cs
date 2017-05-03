@@ -93,9 +93,10 @@ namespace IEDExplorer
                     if (tcps.workSocket.Connected)
                     {
                         tcps.workSocket.Shutdown(SocketShutdown.Both);
-                        tcps.receiveDone.WaitOne(15000);
+                        //tcps.receiveDone.WaitOne(15000);
                     }
                     tcps.workSocket.Close();
+                    tcps.workSocket.Dispose();
                     tcps.workSocket = null;
                 }
             }

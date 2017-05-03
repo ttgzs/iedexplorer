@@ -103,11 +103,11 @@ namespace IEDExplorer
                     }
                 }
                 else
-                    MessageBox.Show("No goses to Export !", "Export to Xml", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("No Gooses to Export !", "Export to Xml", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Logger.getLogger().LogError("Goose export Exception: " + ex.Message);
             }
         }
     }

@@ -17,14 +17,12 @@ namespace IEDExplorer.Views
     {
         public Logger logger = Logger.getLogger();
         WindowManager wm;
-        Env env;
+        Env _env;
         IniFileManager ini;
         IniFileManager ieds;
         Dictionary<string, IsoConnectionParameters> iedsDb = new Dictionary<string, IsoConnectionParameters>();
 
         Scsm_MMS_Worker worker;
-
-        delegate void OnReportReceivedCallback (string rptdVarQualityLog, string rptdVarTimestampLog, string rptdVarPathLogstring, string rptdVarDescriptionLog, string rptdVarValueLog);
 
         const int maxHistory = 20;
         IsoConnectionParameters isoPar;
@@ -44,19 +42,17 @@ namespace IEDExplorer.Views
             return iecf;
         }
 
-        public MainWindow (Env envir)
+        public MainWindow ()
         {
             InitializeComponent();
             dockPanel1.Theme = vS2012LightTheme1;
-            env = envir;
-            env.logger = new Logger();
+            _env = Env.getEnv();
+            _env.logger = new Logger();
 
-            worker = new Scsm_MMS_Worker(env);
+            worker = new Scsm_MMS_Worker();
 
-            wm = new WindowManager(dockPanel1, env, this);
-            this.Text = "IED Explorer 0.78 experimental-SCL server";
-
-            logger.OnLogReport += new Logger.OnLogReportDelegate(logger_OnLogReport);
+            wm = new WindowManager(dockPanel1, this);
+            this.Text = "IED Explorer 0.80";
 
             logger.LogInfo("Starting main program ...");
 
@@ -272,41 +268,34 @@ namespace IEDExplorer.Views
         {
             try
             {
-                GooseSender gooseSender = new GooseSender();
-                gooseSender.Show();
+                /*GooseSender gooseSender = new GooseSender();
+                gooseSender.Show();*/
+                wm.AddGooseSender();
             }
             catch
             {
-                MessageBox.Show("Problem to initialize PCap", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                logger.LogError("Problem to initialize PCap !!!");//, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
 
         private void GooseExplorer_Click (object sender, EventArgs e)
         {
-            GooseExplorer goose = new GooseExplorer(this.iecf, env.logger);
-            goose.Show();
-        }
-
-        void logger_OnLogReport (string rptdVarQualityLog, string rptdVarTimestampLog, string rptdVarPathLogstring, string rptdVarDescriptionLog, string rptdVarValueLog)
-        {
-            if (wm.reportWindow.ReportlistView.InvokeRequired) {
-                OnReportReceivedCallback d = new OnReportReceivedCallback(logger_OnLogReport);
-                this.Invoke(d, new object[] { rptdVarQualityLog, rptdVarTimestampLog, rptdVarPathLogstring, rptdVarDescriptionLog, rptdVarValueLog });
-            } else {
-                wm.reportWindow.ReportlistView.BeginUpdate();
-
-                ListViewItem item = new ListViewItem(new[] { (wm.reportWindow.ReportlistView.Items.Count + 1).ToString(), rptdVarQualityLog, rptdVarTimestampLog, rptdVarPathLogstring, rptdVarDescriptionLog, rptdVarValueLog });
-                wm.reportWindow.ReportlistView.Items.Add(item);
-
-                item.EnsureVisible();
-                wm.reportWindow.ReportlistView.EndUpdate();
+            /*GooseExplorer goose = new GooseExplorer(this.iecf, env.logger);
+            goose.Show();*/
+            try
+            {
+                wm.AddGooseExplorer(this.iecf, logger);
+            }
+            catch
+            {
+                logger.LogError("Problem to initialize PCap !!!");//, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
 
         private void toolStripButtonStartupRead_Click(object sender, EventArgs e)
         {
-            env.dataReadOnStartup = toolStripButtonStartupRead.Checked;
-            logger.LogInfo("Read Data Values from IED on startup (time consuming, but useful) is set to: " + env.dataReadOnStartup.ToString());
+            _env.dataReadOnStartup = toolStripButtonStartupRead.Checked;
+            logger.LogInfo("Read Data Values from IED on startup (time consuming, but useful) is set to: " + _env.dataReadOnStartup.ToString());
         }
 
 

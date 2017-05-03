@@ -46,9 +46,9 @@ namespace IEDExplorer
         public int TcpPort { get { return tcpPort; } set { tcpPort = value; } }
         IedServer server;
 
-        public SCLServer(Env env)
+        public SCLServer()
         {
-            _env = env;
+            _env = Env.getEnv();
             _waitHandles[0] = new ManualResetEvent(false);   // end thread
         }
 

@@ -41,7 +41,7 @@ namespace IEDExplorer
         public static Logger getLogger()
         {
             if (sLog == null)
-                sLog = new Logger();
+                new Logger();
             return sLog;
         }
 
@@ -54,6 +54,7 @@ namespace IEDExplorer
                 tmpFile = /*Path.Combine(Path.GetTempPath(),*/ "MMS_log_file.txt";
                 stream = new FileStream(tmpFile, FileMode.Create, FileAccess.Write, FileShare.Read);
                 writer = new StreamWriter(stream);
+                sLog = this;
             }
             catch { }
         }
@@ -95,12 +96,6 @@ namespace IEDExplorer
             }
         }
 
-        public void LogReport (string rptdVarQualityLog, string rptdVarTimestampLog, string rptdVarPathLog, string rptdVarDescriptionLog, string rptdVarValueLog)
-        {
-            if (OnLogReport != null)
-                OnLogReport(rptdVarQualityLog, rptdVarTimestampLog, rptdVarPathLog, rptdVarDescriptionLog, rptdVarValueLog);
-        }
-
         public void LogInfo(string message)
         {
             if (verbosity <= Severity.Information)
@@ -135,9 +130,6 @@ namespace IEDExplorer
 
         public delegate void OnClearLogDelegate();
         public event OnClearLogDelegate OnClearLog;
-
-        public delegate void OnLogReportDelegate (string rptdVarQualityLog, string rptdVarTimestampLog, string rptdVarPathLogstring, string rptdVarDescriptionLog, string rptdVarValueLog);
-        public event OnLogReportDelegate OnLogReport;
 
     }
 }

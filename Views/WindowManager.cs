@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using WeifenLuo.WinFormsUI.Docking;
 using System.Windows.Forms;
+using GOOSE_ASN1_Model;
 
 namespace IEDExplorer.Views
 {
@@ -19,19 +20,24 @@ namespace IEDExplorer.Views
         IedTreeView iedWindow;
         IedDataView dataWindow;
         CaptureView captureWindow;
-        public ReportsView reportWindow;
-        public PollView pollWindow;
+        ReportsView reportWindow;
+        PollView pollWindow;
 
         public List<int> SCLServers_usedPorts = new List<int>();
+        public bool ReportsRunning;
+
         WatchDataView watchWindow;
 
-        public Env env;
+        int gseViewsCount = 0;
+        int gexViewsCount = 0;
 
-        public WindowManager(DockPanel dockPanel, Env envir, MainWindow mWin)
+        public Env _env;
+
+        public WindowManager(DockPanel dockPanel, MainWindow mWin)
         {
             this.dockPanel = dockPanel;
-            env = envir;
-            env.winMgr = this;
+            _env = Env.getEnv();
+            _env.winMgr = this;
             mainWindow = mWin;
             //Create toolwindows
             iedWindow = new IedTreeView(this);
@@ -39,37 +45,37 @@ namespace IEDExplorer.Views
             iedWindow.FormClosing += new FormClosingEventHandler(persistentWindows_FormClosing);
             iedWindow.Show(dockPanel, DockState.DockLeft);
 
-            dataWindow = new IedDataView(env);
+            dataWindow = new IedDataView();
             dataWindow.ShowHint = DockState.Document;
             dataWindow.CloseButtonVisible = false;
             dataWindow.FormClosing += new FormClosingEventHandler(persistentWindows_FormClosing);
             dataWindow.Show(dockPanel);
 
-            reportWindow = new ReportsView(env);
+            reportWindow = new ReportsView();
             reportWindow.ShowHint = DockState.Document;
             reportWindow.CloseButtonVisible = false;
             reportWindow.FormClosing += new FormClosingEventHandler(persistentWindows_FormClosing);
             reportWindow.Show(dockPanel);
 
-            pollWindow = new PollView(env);
+            pollWindow = new PollView();
             pollWindow.ShowHint = DockState.Document;
             pollWindow.CloseButtonVisible = false;
             pollWindow.FormClosing += new FormClosingEventHandler(persistentWindows_FormClosing);
             pollWindow.Show(dockPanel);
 
-            captureWindow = new CaptureView(this);
+            captureWindow = new CaptureView();
             captureWindow.ShowHint = DockState.Document;
             captureWindow.CloseButtonVisible = false;
             captureWindow.FormClosing += new FormClosingEventHandler(persistentWindows_FormClosing);
             captureWindow.Show(dockPanel);
 
-            watchWindow = new WatchDataView(env);
+            watchWindow = new WatchDataView();
             watchWindow.ShowHint = DockState.Document;
             watchWindow.CloseButtonVisible = false;
             watchWindow.FormClosing += new FormClosingEventHandler(persistentWindows_FormClosing);
             //watchWindow.Show(dockPanel);
 
-            logWindow = new LogView(env);
+            logWindow = new LogView();
             logWindow.ShowHint = DockState.DockBottom;
             logWindow.CloseButtonVisible = false;
             logWindow.FormClosing += new FormClosingEventHandler(persistentWindows_FormClosing);
@@ -149,9 +155,11 @@ namespace IEDExplorer.Views
             };
             iecs.CaptureDb.CaptureActive = captureWindow.CaptureActive;
             iecs.CaptureDb.OnNewPacket += (cap) =>
-                {
-                    captureWindow.AddPacket(cap);
-                };
+            {
+                captureWindow.AddPacket(cap);
+            };
+            // re-use for Reports
+            iecs.Controller.NewReport += reportWindow.ReportsView_OnNewReport;
         }
 
         internal void UnBindFromCapture(Iec61850State iecs)
@@ -168,6 +176,8 @@ namespace IEDExplorer.Views
             {
                 captureWindow.AddPacket(cap);
             };
+            // re-use for Reports
+            iecs.Controller.NewReport -= reportWindow.ReportsView_OnNewReport;
         }
 
         public void AddSCLView(string filename)
@@ -184,7 +194,7 @@ namespace IEDExplorer.Views
                 }
             }
 
-            DockContent sclView = new SCLView(filename, env);
+            DockContent sclView = new SCLView(filename);
             sclView.FormClosed += new FormClosedEventHandler(sclView_FormClosed);
             documentViews.Add(sclView);
             sclView.Show(dockPanel);
@@ -196,6 +206,65 @@ namespace IEDExplorer.Views
             sclView.FormClosed -= new FormClosedEventHandler(sclView_FormClosed);
             sclView.StopServers();
             documentViews.Remove(sclView);
+        }
+
+        public void AddGooseExplorer(Iec61850State iecs, Logger logger)
+        {
+            /*foreach (DockContent dc in documentViews)
+            {
+                if (dc is GooseExplorer)
+                {
+                    dc.Show();
+                    return;
+                }
+            }*/
+
+            DockContent gexView = new GooseExplorer(iecs, logger);
+            gexView.FormClosed += new FormClosedEventHandler(gexView_FormClosed);
+            gexView.TabText = "GooseExplorer " + ++gexViewsCount;
+            documentViews.Add(gexView);
+            gexView.Show(dockPanel);
+        }
+
+        void gexView_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            GooseExplorer gexView = (sender as GooseExplorer);
+            gexView.FormClosed -= new FormClosedEventHandler(gexView_FormClosed);
+            documentViews.Remove(gexView);
+            --gexViewsCount;
+        }
+
+        public GooseDataEdit AddGooseDataEdit(string name, List<Data> dataList, List<SeqData> seqData, EventHandler ValueChanged)
+        {
+            DockContent gdeView = new GooseDataEdit(name, dataList, seqData, ValueChanged);
+            gdeView.FormClosed += new FormClosedEventHandler(gdeView_FormClosed);
+            documentViews.Add(gdeView);
+            gdeView.Show(dockPanel);
+            return (GooseDataEdit)gdeView;
+        }
+
+        void gdeView_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            GooseExplorer gdeView = (sender as GooseExplorer);
+            gdeView.FormClosed -= new FormClosedEventHandler(gdeView_FormClosed);
+            documentViews.Remove(gdeView);
+        }
+
+        public void AddGooseSender()
+        {
+            DockContent gseView = new GooseSender();
+            gseView.FormClosed += new FormClosedEventHandler(gseView_FormClosed);
+            gseView.TabText = "GooseSender " + ++gseViewsCount;
+            documentViews.Add(gseView);
+            gseView.Show(dockPanel, DockState.DockRight);
+        }
+
+        void gseView_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            GooseSender gseView = (sender as GooseSender);
+            gseView.FormClosed -= new FormClosedEventHandler(gseView_FormClosed);
+            documentViews.Remove(gseView);
+            --gseViewsCount;
         }
 
         internal void AddAddNVLView(NodeVL list, NodeBase lists, TreeNode listsNode, EventHandler onNVListChanged)

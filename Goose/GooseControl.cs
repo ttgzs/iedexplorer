@@ -29,7 +29,7 @@ namespace IEDExplorer
         GOOSE Goose;
         GoosePdu Pdu = new GoosePdu();
         bool dataChange = false;        
-        public GooseDataeEdit gooseDataEdit = null;
+        public GooseDataEdit gooseDataEdit = null;
         private object _monitor = new object();
         int _gooseCnt = 0;        
         
@@ -334,7 +334,7 @@ namespace IEDExplorer
                 (sender as Button).Text = "Stop";
 
                 if (gooseDataEdit == null)
-                    this.gooseDataEdit = new GooseDataeEdit(this.Name, dataList, seqData, Data_ValueChanged);
+                    this.gooseDataEdit = new GooseDataEdit(this.Name, dataList, seqData, Data_ValueChanged);
 
                 button_SendOnce.Enabled = false;
 
@@ -369,7 +369,8 @@ namespace IEDExplorer
         private void button_EditData_Click(object sender, EventArgs e)
         {
             if(gooseDataEdit == null)            
-                this.gooseDataEdit = new GooseDataeEdit(this.Name, dataList, seqData, Data_ValueChanged);
+                this.gooseDataEdit = Env.getEnv().winMgr.AddGooseDataEdit(this.Name, dataList, seqData, Data_ValueChanged);
+                    //new GooseDataEdit(this.Name, dataList, seqData, Data_ValueChanged);
 
             gooseDataEdit.Show();
         }

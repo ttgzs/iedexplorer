@@ -14,7 +14,7 @@ using System.Text.RegularExpressions;
 
 namespace IEDExplorer
 {
-    public partial class GooseSender : Form
+    public partial class GooseSender : WeifenLuo.WinFormsUI.Docking.DockContent
     {
         public int gooseItems = 0;
         IList<LivePacketDevice> _netDevices;

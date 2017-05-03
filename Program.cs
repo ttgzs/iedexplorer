@@ -24,6 +24,7 @@ using System.Reflection;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using PcapDotNet.Core;
 
 namespace IEDExplorer
 {
@@ -39,14 +40,14 @@ namespace IEDExplorer
             string filename1 = "iec61850dotnet.dll";
             string filename2 = "iec61850.dll";
             string filename3 = "PcapDotNet.Base.dll";
-            //string filename4 = "PcapDotNet.Core.dll";
+            string filename4 = "PcapDotNet.Core.dll";
             string filename5 = "PcapDotNet.Core.Extensions.dll";
             string filename6 = "PcapDotNet.Packets.dll";
 
             EmbeddedAssembly.Load(resPrefix + filename1, filename1);
             EmbeddedAssembly.Load(resPrefix + filename2, filename2);
             EmbeddedAssembly.Load(resPrefix + filename3, filename3);
-            //EmbeddedAssembly.Load(resPrefix + filename4, filename4);
+            EmbeddedAssembly.Load(resPrefix + filename4, filename4);
             EmbeddedAssembly.Load(resPrefix + filename5, filename5);
             EmbeddedAssembly.Load(resPrefix + filename6, filename6);
 
@@ -56,7 +57,7 @@ namespace IEDExplorer
             Application.SetCompatibleTextRenderingDefault(false);
 
             Env env = new Env();
-            Application.Run(new Views.MainWindow(env));
+            Application.Run(new Views.MainWindow());
 
             List<string> natives = new List<string>();
             natives.Add(filename2);
@@ -75,6 +76,7 @@ namespace IEDExplorer
                 {
                     try
                     {
+                        //AppDomain.CurrentDomain.DomainManager. //.Unload(AppDomain.CurrentDomain);
                         UnloadImportedDll(path2);
                         Thread.Sleep(100);
                         File.Delete(path2);

@@ -84,7 +84,7 @@ namespace IEDExplorer
                                         {
                                             NodeGVL gvl = new NodeGVL("Data");
                                             
-                                            GooseDataeEdit gde = new GooseDataeEdit();                                           
+                                            GooseDataEdit gde = new GooseDataEdit();                                           
 
                                             int i = 0;
 
@@ -196,10 +196,10 @@ namespace IEDExplorer
                         if ((dl as Data).isStructureSelected())
                             (dl as Data).Structure.Value.Add(nd);
                         else
-                            MessageBox.Show("Error: Invalid parent data type !");
+                            Logger.getLogger().LogError("Error: Invalid parent data type !");
                     }
                     else
-                        MessageBox.Show("Error: Invalid parent data type !");
+                        Logger.getLogger().LogError("Error: Invalid parent data type !");
                     break;
                 case "boolean":
                     nd = new Data();
@@ -215,10 +215,10 @@ namespace IEDExplorer
                         if ((dl as Data).isStructureSelected())
                             (dl as Data).Structure.Value.Add(nd);
                         else
-                            MessageBox.Show("Error: Invalid parent data type !");
+                            Logger.getLogger().LogError("Error: Invalid parent data type !");
                     }
                     else
-                        MessageBox.Show("Error: Invalid parent data type !");
+                        Logger.getLogger().LogError("Error: Invalid parent data type !");
                     break;
                 case "integer":
                     nd = new Data();
@@ -234,10 +234,10 @@ namespace IEDExplorer
                         if ((dl as Data).isStructureSelected())
                             (dl as Data).Structure.Value.Add(nd);
                         else
-                            MessageBox.Show("Error: Invalid parent data type !");
+                            Logger.getLogger().LogError("Error: Invalid parent data type !");
                     }
                     else
-                        MessageBox.Show("Error: Invalid parent data type !");
+                        Logger.getLogger().LogError("Error: Invalid parent data type !");
                     break;
 
                 case "bit_string":
@@ -262,10 +262,10 @@ namespace IEDExplorer
                         if ((dl as Data).isStructureSelected())
                             (dl as Data).Structure.Value.Add(nd);
                         else
-                            MessageBox.Show("Error: Invalid parent data type !");
+                            Logger.getLogger().LogError("Error: Invalid parent data type !");
                     }
                     else
-                        MessageBox.Show("Error: Invalid parent data type !");
+                        Logger.getLogger().LogError("Error: Invalid parent data type !");
                     break;
                 default:
                     break;

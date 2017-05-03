@@ -117,10 +117,27 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="tsPoolView.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
+  <metadata name="tsPollView.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>120, 17</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="tsbRefresh.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAJqSURBVDhPlZPtT1JhGMbZ/DvIGUYtrS1lOQgzli+pgDqB
+        NpnIAWE4fGG5TCVROYLKCXlREJMkzWXT3Njcoqwslem0F5O19dlvzs2vzW9XeHimo1rL37dr93PtPnt+
+        z+H8D3efyTuV88oMEs+OPFSaKPdJwiT+nXurWq55ucHSuFQX0yyqDuqeV6N2qhKyYAlML7TQzagh6sn3
+        kuPpmN/qhKY3mii93gX/9jDC38YwtRvAxI4XY58ewbM1iMF4HxQBOXKb+QOklqLptZZrfKWOjmw5MPt9
+        EqGvHjze8SPw2Q3v9hCYDRqOuA29q12QusuQbchykWqKxiW1xfbhPqYTIYR3xuDedMIwp8EtpxAimwD5
+        HVdR5S1HBVOCbF3mKKmdUr9QGxte72M3uuI0bjOFe4X2624yZuEbeAme9lyExHQUT6X7VROlR3d8kp+S
+        wRuH4j4BTUYnZDVwrRwlJ0Mzr6BUM3KqZrKcko5KqGJGTHGkgWKq1F1EFTmFlNAmoK515FLHztvW9FbS
+        P0E5LaPlobLD1DLRkbhXsE9G6bR+1EealjUJEllqn1S4ZYGSvZENZ9LKEDqW2pL3cyVGxqe0rFCjjk0r
+        +tceQLOgQPIVIvnJML/Ug1mnWaXDG3aoxquR08K3kFoK8zuti453Ye7HFKs0khhPU2pf62aV6mfrcdl8
+        IcrT8rikmiL5Cgcevm9HZDfIKg1+8cC37QKz6UD/SjeaFw2o8Vfikik7ytNlCkktHdWMzNsaNcI0T6GY
+        KcRNugAF1jzktecc5DZfjPGN5y1/bP6d4x8nqTTtEs/EsUZhT34nif+Aw/kFSy8zXbcRzP8AAAAASUVO
+        RK5CYII=
+</value>
+  </data>
   <data name="tsbStart.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
@@ -146,7 +163,7 @@
         AABJRU5ErkJggg==
 </value>
   </data>
-  <data name="toolStripButton1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="tsbImportPollingList.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
         YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAFUSURBVDhPtZJLcoJgEIS9Sk7jKpscJJtcwSploVXmBN4h
@@ -182,7 +199,7 @@
         W9mu0rRPRPpctUzr7R8AAAAASUVORK5CYII=
 </value>
   </data>
-  <metadata name="PoolTimer.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>128, 17</value>
+  <metadata name="PollTimer.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
   </metadata>
 </root>

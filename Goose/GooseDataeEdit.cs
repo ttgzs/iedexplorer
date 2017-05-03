@@ -15,7 +15,7 @@ using System.Threading;
 
 namespace IEDExplorer
 {
-    public partial class GooseDataeEdit : Form
+    public partial class GooseDataEdit : WeifenLuo.WinFormsUI.Docking.DockContent
     {
         private Thread _seqThread;
         private bool _run;
@@ -26,7 +26,7 @@ namespace IEDExplorer
         private Boolean _DataEditModeOnly = false;
         private string _prevText;
         private List<SeqData> _seqDataList = new List<SeqData>();
-        string _parentName;
+        //string _parentName;
 
         Rectangle dragBoxFromMouseDown;
         TreeNode nodeToDrag;
@@ -57,7 +57,7 @@ namespace IEDExplorer
             }
         }        
 
-        public GooseDataeEdit(string name, List<Data> dataList, List<SeqData> seqData, EventHandler ValueChanged)
+        public GooseDataEdit(string name, List<Data> dataList, List<SeqData> seqData, EventHandler ValueChanged)
         {
             InitializeComponent();
             _dataList = dataList;
@@ -68,14 +68,14 @@ namespace IEDExplorer
             listView_Goose.HideSelection = true;
 
             foreach (GOOSE_ASN1_Model.Data dataListCn in _dataList)
-                revursiveAddDataChangedHandler(dataListCn, true);
+                recursiveAddDataChangedHandler(dataListCn, true);
 
             this.Text = name.Replace(":", " - ") + this.Text;            
 
             updateTree();
         }
 
-        public GooseDataeEdit()
+        public GooseDataEdit()
         {
             InitializeComponent();
         }
@@ -746,7 +746,7 @@ namespace IEDExplorer
             DataListFromXml.Import(_dataList);
             
             foreach (GOOSE_ASN1_Model.Data dataListCn in _dataList)            
-                revursiveAddDataChangedHandler(dataListCn, true);            
+                recursiveAddDataChangedHandler(dataListCn, true);            
             
             updateTree();            
         }
@@ -756,19 +756,19 @@ namespace IEDExplorer
             listViewGoose_Clear();            
 
             foreach (GOOSE_ASN1_Model.Data dataListCn in dl)
-                revursiveAddDataChangedHandler(dataListCn, false);
+                recursiveAddDataChangedHandler(dataListCn, false);
 
             dl.Clear();
         }
 
-        private void revursiveAddDataChangedHandler(GOOSE_ASN1_Model.Data d, Boolean add)
+        private void recursiveAddDataChangedHandler(GOOSE_ASN1_Model.Data d, Boolean add)
         {
             if (d != null)
             {
                 if (d.isStructureSelected())
                 {
                     foreach (GOOSE_ASN1_Model.Data data in d.Structure.Value)
-                        revursiveAddDataChangedHandler(data, add);
+                        recursiveAddDataChangedHandler(data, add);
                 }
                 else
                     if (add)

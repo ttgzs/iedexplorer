@@ -8,18 +8,20 @@ using System.Windows.Forms;
 
 namespace IEDExplorer.Views {
     public partial class PollView : WeifenLuo.WinFormsUI.Docking.DockContent {
-        public Env environment;
+        Env _env;
         Boolean showOnce = false;
         public Iec61850State Iecs
         {
             set; get;
         }
-        public PollView (Env env)
+        public PollView ()
         {
-            environment = env;
+            _env = Env.getEnv();
             InitializeComponent();
             cbRefreshInterval.SelectedIndex = 0;
             PollTimer.Interval = calcInterval(cbRefreshInterval.SelectedIndex);
+
+            //tsbImportPollingList.hide
         }
 
         private void addVar (string address, string datatype, string val, CommAddress comaddr)
@@ -63,12 +65,14 @@ namespace IEDExplorer.Views {
             PollTimer.Start();
             tsbStart.Enabled = false;
             tsbStop.Enabled = true;
+            tsbRefresh.Enabled = false;
         }
 
         private void tsbStop_Click (object sender, EventArgs e)
         {
             tsbStart.Enabled = true;
             tsbStop.Enabled = false;
+            tsbRefresh.Enabled = true;
             PollTimer.Stop();
         }
 
@@ -82,15 +86,13 @@ namespace IEDExplorer.Views {
             PollTimer.Stop();
             tsbStart.Enabled = true;
             tsbStop.Enabled = false;
-            //this.Hide();
-            //e.Cancel = true;
         }
 
         private void PollTimer_Tick (object sender, EventArgs e)
         {
             int i;
 
-            Iecs = environment.winMgr.mainWindow.Get_iecf();
+            Iecs = _env.winMgr.mainWindow.Get_iecf();
             if (Iecs == null)
                 return;
 
@@ -109,13 +111,18 @@ namespace IEDExplorer.Views {
                     ndarr[0] = nd;
                     Iecs.Send(ndarr, nd.CommAddress, ActionRequested.Read);
                 }
-
             }
-
         }
 
         private void PollListView_DragDrop (object sender, DragEventArgs e)
         {
+
+            if (PollTimer.Enabled)
+            {
+                Logger.getLogger().LogWarning("PollView: Stop polling before entering new data to polling list!");
+                return;
+            }
+
             NodeData d;
 
             if ((d = (NodeData)e.Data.GetData(typeof(NodeData))) != null) {
@@ -150,6 +157,30 @@ namespace IEDExplorer.Views {
                 e.Effect = DragDropEffects.Link;
             else
                 e.Effect = DragDropEffects.None;
+        }
+
+        private void tsbRefresh_Click(object sender, EventArgs e)
+        {
+            PollTimer_Tick(null, null);
+        }
+
+        private void tsbImportPollingList_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(this, "Function not yet implemented", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void tsbExportList_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(this, "Function not yet implemented", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void tsbClear_Click(object sender, EventArgs e)
+        {
+            tsbStart.Enabled = true;
+            tsbStop.Enabled = false;
+            tsbRefresh.Enabled = true;
+            PollTimer.Stop();
+            PollListView.Items.Clear();
         }
     }
 }

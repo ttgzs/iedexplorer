@@ -12,10 +12,19 @@ namespace IEDExplorer
         long m_ctlNum = 0;
         System.Threading.Timer delayTimer;
 
+        public delegate void NewReportDelegate(string rptdVarQualityLog, string rptdVarTimestampLog, string rptdVarPathLogstring, string rptdVarDescriptionLog, string rptdVarValueLog);
+        public event NewReportDelegate NewReport;
+
         public Iec61850Controller(Iec61850State iecs, Iec61850Model model)
         {
             this.iecs = iecs;
             this.model = model;
+        }
+
+        public void FireNewReport(string rptdVarQualityLog, string rptdVarTimestampLog, string rptdVarPathLog, string rptdVarDescriptionLog, string rptdVarValueLog)
+        {
+            if (NewReport != null)
+                NewReport(rptdVarQualityLog, rptdVarTimestampLog, rptdVarPathLog, rptdVarDescriptionLog, rptdVarValueLog);
         }
 
         public void DeleteNVL(NodeVL nvl)

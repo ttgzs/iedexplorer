@@ -17,16 +17,14 @@ namespace IEDExplorer.Views
     {
         delegate void AddPacketDelegate(MMSCapture cap);
 
-        WindowManager winMgr;
         public bool CaptureActive;
         public delegate void CaptureActiveChanged(bool captureActive);
         public event CaptureActiveChanged OnCaptureActiveChanged;
         public delegate void ClearCapture();
         public event ClearCapture OnClearCapture;
 
-        public CaptureView(WindowManager wm)
+        public CaptureView()
         {
-            winMgr = wm;
             InitializeComponent();
         }
 

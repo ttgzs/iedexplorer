@@ -47,12 +47,12 @@ namespace IEDExplorer
                                 foreach (string type in notSupportedTypes)
                                     nst += " - " + type + "\r\n";
 
-                                MessageBox.Show("The following data types are not supported: \r\n" + nst, "Not supported data type(s) detected", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                Logger.getLogger().LogWarning("Not supported data type(s) detected: The following data types are not supported: \r\n" + nst);
                             }
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show(ex.Message, "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            Logger.getLogger().LogError("Exception" + ex.Message);
                         }
                     }
                     else
@@ -84,10 +84,10 @@ namespace IEDExplorer
                         if ((dl as Data).isStructureSelected())
                             (dl as Data).Structure.Value.Add(nd);
                         else
-                            MessageBox.Show("Error: Invalid parent data type !");
+                            Logger.getLogger().LogError("Error: Invalid parent data type !");
                     }
                     else
-                        MessageBox.Show("Error: Invalid parent data type !");
+                        Logger.getLogger().LogError("Error: Invalid parent data type !");
                     break;
                 case "boolean":
                     nd = new Data();
@@ -104,10 +104,10 @@ namespace IEDExplorer
                         if ((dl as Data).isStructureSelected())
                             (dl as Data).Structure.Value.Add(nd);
                         else
-                            MessageBox.Show("Error: Invalid parent data type !");
+                            Logger.getLogger().LogError("Error: Invalid parent data type !");
                     }
                     else
-                        MessageBox.Show("Error: Invalid parent data type !");
+                        Logger.getLogger().LogError("Error: Invalid parent data type !");
                     break;
                 case "integer":
                     nd = new Data();
@@ -124,10 +124,10 @@ namespace IEDExplorer
                         if ((dl as Data).isStructureSelected())
                             (dl as Data).Structure.Value.Add(nd);
                         else
-                            MessageBox.Show("Error: Invalid parent data type !");
+                            Logger.getLogger().LogError("Error: Invalid parent data type !");
                     }
                     else
-                        MessageBox.Show("Error: Invalid parent data type !");
+                        Logger.getLogger().LogError("Error: Invalid parent data type !");
                     break;
                 /* 
             case "float":
@@ -170,10 +170,10 @@ namespace IEDExplorer
                         if ((dl as Data).isStructureSelected())
                             (dl as Data).Structure.Value.Add(nd);
                         else
-                            MessageBox.Show("Error: Invalid parent data type !");
+                            Logger.getLogger().LogError("Error: Invalid parent data type !");
                     }
                     else
-                        MessageBox.Show("Error: Invalid parent data type !");
+                        Logger.getLogger().LogError("Error: Invalid parent data type !");
                     break;
                 default:
                     if (!nst.Contains(el.Attribute("Type").Value))

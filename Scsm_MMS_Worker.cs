@@ -40,9 +40,9 @@ namespace IEDExplorer
         public Iec61850State iecs;
         Logger logger = Logger.getLogger();
 
-        public Scsm_MMS_Worker(Env env)
+        public Scsm_MMS_Worker()
         {
-            _env = env;
+            _env = Env.getEnv();
         }
 
         public int Start(IsoConnectionParameters par)

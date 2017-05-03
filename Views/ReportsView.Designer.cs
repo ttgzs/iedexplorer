@@ -36,12 +36,18 @@
             this.colPath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsbRunReports = new System.Windows.Forms.ToolStripButton();
+            this.tsbStopReports = new System.Windows.Forms.ToolStripButton();
             this.tsReportView.SuspendLayout();
             this.SuspendLayout();
             // 
             // tsReportView
             // 
             this.tsReportView.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsbRunReports,
+            this.tsbStopReports,
+            this.toolStripSeparator1,
             this.tsbClearReports,
             this.tsbExportCSV});
             this.tsReportView.Location = new System.Drawing.Point(0, 0);
@@ -58,6 +64,7 @@
             this.tsbClearReports.Name = "tsbClearReports";
             this.tsbClearReports.Size = new System.Drawing.Size(23, 22);
             this.tsbClearReports.Text = "toolStripButton1";
+            this.tsbClearReports.ToolTipText = "Clear Reports";
             this.tsbClearReports.Click += new System.EventHandler(this.tsbClearReports_Click);
             // 
             // tsbExportCSV
@@ -68,6 +75,7 @@
             this.tsbExportCSV.Name = "tsbExportCSV";
             this.tsbExportCSV.Size = new System.Drawing.Size(23, 22);
             this.tsbExportCSV.Text = "toolStripButton1";
+            this.tsbExportCSV.ToolTipText = "Export Reports to CSV";
             this.tsbExportCSV.Click += new System.EventHandler(this.tsbExportCSV_Click);
             // 
             // ReportlistView
@@ -118,6 +126,34 @@
             this.colValue.Text = "Value";
             this.colValue.Width = 97;
             // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // tsbRunReports
+            // 
+            this.tsbRunReports.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbRunReports.Image = ((System.Drawing.Image)(resources.GetObject("tsbRunReports.Image")));
+            this.tsbRunReports.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbRunReports.Name = "tsbRunReports";
+            this.tsbRunReports.Size = new System.Drawing.Size(23, 22);
+            this.tsbRunReports.Text = "toolStripButton1";
+            this.tsbRunReports.ToolTipText = "Start Report Recording";
+            this.tsbRunReports.Click += new System.EventHandler(this.tsbRunReports_Click);
+            // 
+            // tsbStopReports
+            // 
+            this.tsbStopReports.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbStopReports.Enabled = false;
+            this.tsbStopReports.Image = ((System.Drawing.Image)(resources.GetObject("tsbStopReports.Image")));
+            this.tsbStopReports.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbStopReports.Name = "tsbStopReports";
+            this.tsbStopReports.Size = new System.Drawing.Size(23, 22);
+            this.tsbStopReports.Text = "toolStripButton1";
+            this.tsbStopReports.ToolTipText = "Stop Report Recording";
+            this.tsbStopReports.Click += new System.EventHandler(this.tsbStopReports_Click);
+            // 
             // ReportsView
             // 
             this.ClientSize = new System.Drawing.Size(805, 381);
@@ -145,5 +181,8 @@
         private System.Windows.Forms.ColumnHeader colValue;
         private System.Windows.Forms.ToolStripButton tsbClearReports;
         private System.Windows.Forms.ToolStripButton tsbExportCSV;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripButton tsbRunReports;
+        private System.Windows.Forms.ToolStripButton tsbStopReports;
     }
 }

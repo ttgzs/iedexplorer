@@ -364,6 +364,8 @@ namespace IEDExplorer
             insufficientspaceinfilestore = 9
         }
 
+        static Env _env = Env.getEnv();
+
         public int ReceiveData(Iec61850State iecs)
         {
             if (iecs == null)
@@ -683,12 +685,6 @@ namespace IEDExplorer
             int datacnt = 0;
             int reasoncnt = 0;
             int[] listmap = null;
-            string rptdVarQuality = "";
-            string rptdVarTimeQuality = "";
-            string rptdVarValue = "";
-            string rptdVarTimestamp = "";
-            string rptdVarDescription = "";
-            string rptdVarPath = "";
 
             iecs.logger.LogDebug("Report != null");
             if (Report.VariableAccessSpecification != null && Report.VariableAccessSpecification.VariableListName != null &&
@@ -867,75 +863,15 @@ namespace IEDExplorer
                                             NodeBase b = iecs.DataModel.ied.FindNodeByAddress(varName);
                                             Data dataref = list[i + datanum].Success;
                                             if (!(b is NodeFC))
+                                            {
                                                 // dataref = (dataref.Structure as List<Data>)[0];
-                                                if (list[i + datanum].Success != null) {
+                                                if (list[i + datanum].Success != null)
+                                                {
                                                     recursiveReadData(iecs, dataref, b, NodeState.Reported);
 
-                                                    /* Get information needed to log report */
-
-                                                    NodeBase[] nb = b.GetChildNodes();
-
-                                                    if (nb.Length == 0) {
-                                                        // Probably we've got report information about single DA not DO, so we don't have new infofmation about t and q
-                                                        nb = new NodeBase[1] { b };
-                                                        varName = varName.Replace("$" + b.Name, "");
-                                                        NodeBase t = iecs.DataModel.ied.FindNodeByAddress(varName + "$t");
-                                                        if (t != null)
-                                                            rptdVarTimestamp = (t as NodeData).StringValue;
-                                                    }
-
-                                                    rptdVarPath = nb[0].IecAddress;
-
-                                                    foreach (NodeBase nbs in nb) {
-                                                        switch (nbs.Name) {
-                                                            case "stVal":
-                                                                if (nbs.IecAddress.Contains("XCBR") || nbs.IecAddress.Contains("XSWI")) {
-                                                                    rptdVarValue = (nbs as NodeData).StringValue;
-                                                                    switch (rptdVarValue) {
-                                                                        case "01":
-                                                                            rptdVarValue = "Open";
-                                                                            break;
-                                                                        case "10":
-                                                                            rptdVarValue = "Closed";
-                                                                            break;
-                                                                        case "00":
-                                                                        case "11":
-                                                                            rptdVarValue = "Bad Pos";
-                                                                            break;
-                                                                        default:
-                                                                            break;
-                                                                    }
-                                                                } else
-                                                                    rptdVarValue = (nbs as NodeData).StringValue;
-
-                                                                break;
-                                                            case "q":
-                                                                rptdVarQuality = (nbs as NodeData).StringValueQuality;
-                                                                break;
-                                                            case "t":
-                                                                rptdVarTimestamp = (nbs as NodeData).StringValue;
-                                                                break;
-                                                            default:
-                                                                rptdVarValue = (nbs as NodeData).StringValue;
-                                                                break;
-                                                        }
-                                                    }
-
-                                                    NodeBase d = iecs.DataModel.ied.FindNodeByAddress(varName.Replace("$ST$", "$DC$"));
-                                                    if (d != null) {
-                                                        NodeBase[] nd = d.GetChildNodes();
-
-                                                        foreach (NodeBase nds in nd) {
-                                                            if (nds.Name == "d")
-                                                                rptdVarDescription = (nds as NodeData).StringValue;
-                                                        }
-                                                    } else
-                                                        rptdVarDescription = "";
-
-                                                    rptdVarTimeQuality = rptdVarTimestamp.Contains("Bad Time Quality") ? "T" : "";
-
-                                                    iecs.logger.LogReport(rptdVarQuality + rptdVarTimeQuality, rptdVarTimestamp, rptdVarPath, rptdVarDescription, rptdVarValue);
+                                                    if (_env.winMgr.ReportsRunning) createReportRecord(iecs, varName, b);
                                                 }
+                                            }
                                             datacnt++;
                                         }
                                         // Evaluation of OptFldsDataReference
@@ -955,14 +891,21 @@ namespace IEDExplorer
                                     if (lvb != null)
                                     {
                                         NodeBase[] nba = lvb.GetChildNodes();
-                                        //for (int j = 0; j < nba.Length; j++)
+
                                         if (datacnt < nba.Length)
                                         {
                                             if (!(nba[datacnt] is NodeFC))
                                             {
                                                 Data dataref = list[i].Success;
                                                 if (list[i].Success != null)
+                                                {
                                                     recursiveReadData(iecs, dataref, nba[listmap[datacnt]], NodeState.Reported);
+                                                    if (_env.winMgr.ReportsRunning)
+                                                    {
+                                                        varName = nba[listmap[datacnt]].CommAddress.Domain + "/" + nba[listmap[datacnt]].CommAddress.Variable;
+                                                        createReportRecord(iecs, varName, nba[listmap[datacnt]]);
+                                                    }
+                                                }
                                             }
                                             datacnt++;
                                         }
@@ -988,6 +931,91 @@ namespace IEDExplorer
                     }
                 }
             }
+        }
+
+        private void createReportRecord(Iec61850State iecs, string varName, NodeBase b)
+        {
+            /* Get information needed to log report */
+
+            string rptdVarQuality = "";
+            string rptdVarTimeQuality = "";
+            string rptdVarValue = "";
+            string rptdVarTimestamp = "";
+            string rptdVarDescription = "";
+            string rptdVarPath = "";
+
+            NodeBase[] nb = b.GetChildNodes();
+
+            if (nb.Length == 0)
+            {
+                // Probably we've got report information about single DA not DO, so we don't have new infofmation about t and q
+                nb = new NodeBase[1] { b };
+                varName = varName.Replace("$" + b.Name, "");
+                NodeBase t = iecs.DataModel.ied.FindNodeByAddress(varName + "$t");
+                if (t != null)
+                    rptdVarTimestamp = (t as NodeData).StringValue;
+            }
+
+            rptdVarPath = nb[0].IecAddress;
+
+            foreach (NodeBase nbs in nb)
+            {
+                switch (nbs.Name)
+                {
+                    case "stVal":
+                        if (nbs.IecAddress.Contains("XCBR") || nbs.IecAddress.Contains("XSWI"))
+                        {
+                            rptdVarValue = (nbs as NodeData).StringValue;
+                            switch (rptdVarValue)
+                            {
+                                case "01":
+                                    rptdVarValue = "Open";
+                                    break;
+                                case "10":
+                                    rptdVarValue = "Closed";
+                                    break;
+                                case "00":
+                                case "11":
+                                    rptdVarValue = "Bad Pos";
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        else
+                            rptdVarValue = (nbs as NodeData).StringValue;
+
+                        break;
+                    case "q":
+                        rptdVarQuality = (nbs as NodeData).StringValueQuality;
+                        break;
+                    case "t":
+                        rptdVarTimestamp = (nbs as NodeData).StringValue;
+                        break;
+                    default:
+                        rptdVarValue = (nbs as NodeData).StringValue;
+                        break;
+                }
+            }
+
+            NodeBase d = iecs.DataModel.ied.FindNodeByAddress(varName.Replace("$ST$", "$DC$"));
+            if (d != null)
+            {
+                NodeBase[] nd = d.GetChildNodes();
+
+                foreach (NodeBase nds in nd)
+                {
+                    if (nds.Name == "d")
+                        rptdVarDescription = (nds as NodeData).StringValue;
+                }
+            }
+            else
+                rptdVarDescription = "";
+
+            rptdVarTimeQuality = rptdVarTimestamp.Contains("Bad Time Quality") ? "T" : "";
+
+            iecs.Controller.FireNewReport(rptdVarQuality + rptdVarTimeQuality, rptdVarTimestamp, rptdVarPath, rptdVarDescription, rptdVarValue);
+            //return varName;
         }
 
         private void ReceiveRead(Iec61850State iecs, Read_Response Read, NodeBase[] lastOperationData)

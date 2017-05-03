@@ -43,13 +43,13 @@ namespace IEDExplorer.Views
         List<Iec61850Model> dataModels;
         public string Filename { get { return filename; } }
         private int _currentRow = -1;
-        public Env env;
+        public Env _env;
         Dictionary<NodeIed, SCLServer> runningServers = new Dictionary<NodeIed, SCLServer>();
 
-        public SCLView(string fname, Env envir)
+        public SCLView(string fname)
         {
             filename = fname;
-            env = envir;
+            _env = Env.getEnv();
             InitializeComponent();
             this.toolStrip1.Renderer = new MyRenderer();
             //try
@@ -560,7 +560,7 @@ namespace IEDExplorer.Views
             {
                 if (m.ied.Name == n.Name)
                 {
-                    SCLServer s = new SCLServer(env);
+                    SCLServer s = new SCLServer();
                     runningServers.Add(n, s);
                     int port = getFreePort();
                     s.Start(m, port);
@@ -633,15 +633,15 @@ namespace IEDExplorer.Views
         int getFreePort()
         {
             int i = 102;
-            while (env.winMgr.SCLServers_usedPorts.Contains(i)) i++;
+            while (_env.winMgr.SCLServers_usedPorts.Contains(i)) i++;
             return i;
         }
 
         void addStartedServer(int port)
         {
-            env.winMgr.SCLServers_usedPorts.Add(port);
+            _env.winMgr.SCLServers_usedPorts.Add(port);
             toolStripLabelServers.Text = "SCL Servers running, ports: ";
-            foreach (int p in env.winMgr.SCLServers_usedPorts)
+            foreach (int p in _env.winMgr.SCLServers_usedPorts)
             {
                 toolStripLabelServers.Text += p.ToString() + " ";
             }
@@ -650,13 +650,13 @@ namespace IEDExplorer.Views
 
         void removeStartedServer(int port)
         {
-            env.winMgr.SCLServers_usedPorts.Remove(port);
+            _env.winMgr.SCLServers_usedPorts.Remove(port);
             toolStripLabelServers.Text = "SCL Servers running, ports: ";
-            foreach (int p in env.winMgr.SCLServers_usedPorts)
+            foreach (int p in _env.winMgr.SCLServers_usedPorts)
             {
                 toolStripLabelServers.Text += p.ToString() + " ";
             }
-            if (env.winMgr.SCLServers_usedPorts.Count == 0)
+            if (_env.winMgr.SCLServers_usedPorts.Count == 0)
             {
                 toolStripLabelServers.BackColor = Color.Yellow;
                 toolStripLabelServers.Text = "SCL Servers not running";

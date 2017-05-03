@@ -43,7 +43,7 @@ namespace IEDExplorer
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Logger.getLogger().LogError("DataSet export Exception" + ex.Message);
             }
         }
 
@@ -95,7 +95,7 @@ namespace IEDExplorer
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Logger.getLogger().LogError("Goose export Exception" + ex.Message);
             }
         }
 

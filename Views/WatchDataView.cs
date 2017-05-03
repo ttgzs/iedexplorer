@@ -13,11 +13,11 @@ namespace IEDExplorer.Views
     public partial class WatchDataView : DockContent
     {
         delegate void OnValueCallback(object sender, EventArgs e);
-        public Env environment;
+        public Env _env;
 
-        public WatchDataView(Env env)
+        public WatchDataView()
         {
-            environment = env;
+            _env = Env.getEnv();
             InitializeComponent();
         }
 

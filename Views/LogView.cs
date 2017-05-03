@@ -15,11 +15,11 @@ namespace IEDExplorer.Views
     {
         Logger logger = Logger.getLogger();
         delegate void OnMessageCallback(string message);
-        Env environment;
+        Env _env;
 
-        public LogView(Env env)
+        public LogView()
         {
-            environment = env;
+            _env = Env.getEnv();
             InitializeComponent();
             logger.OnLogMessage += new Logger.OnLogMessageDelegate(logger_OnLogMessage);
             logger.OnClearLog += new Logger.OnClearLogDelegate(logger_OnClearLog);

@@ -30,6 +30,8 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CaptureView));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolStripButton_StartCapture = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton_StopCapture = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonClear = new System.Windows.Forms.ToolStripButton();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.listViewPackets = new System.Windows.Forms.ListView();
@@ -46,8 +48,7 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.treeViewXML = new System.Windows.Forms.TreeView();
             this.hexBoxHEX = new Be.Windows.Forms.HexBox();
-            this.toolStripButton_StartCapture = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton_StopCapture = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -67,6 +68,7 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButton_StartCapture,
             this.toolStripButton_StopCapture,
+            this.toolStripSeparator1,
             this.toolStripButtonClear});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
@@ -74,13 +76,36 @@
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
+            // toolStripButton_StartCapture
+            // 
+            this.toolStripButton_StartCapture.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton_StartCapture.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_StartCapture.Image")));
+            this.toolStripButton_StartCapture.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton_StartCapture.Name = "toolStripButton_StartCapture";
+            this.toolStripButton_StartCapture.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton_StartCapture.Text = "toolStripButton1";
+            this.toolStripButton_StartCapture.ToolTipText = "Start Capture";
+            this.toolStripButton_StartCapture.Click += new System.EventHandler(this.toolStripButton_StartCapture_Click);
+            // 
+            // toolStripButton_StopCapture
+            // 
+            this.toolStripButton_StopCapture.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton_StopCapture.Enabled = false;
+            this.toolStripButton_StopCapture.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_StopCapture.Image")));
+            this.toolStripButton_StopCapture.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton_StopCapture.Name = "toolStripButton_StopCapture";
+            this.toolStripButton_StopCapture.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton_StopCapture.Text = "toolStripButton1";
+            this.toolStripButton_StopCapture.ToolTipText = "Stop Capture";
+            this.toolStripButton_StopCapture.Click += new System.EventHandler(this.toolStripButton_StopCapture_Click);
+            // 
             // toolStripButtonClear
             // 
-            this.toolStripButtonClear.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButtonClear.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripButtonClear.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonClear.Image")));
             this.toolStripButtonClear.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonClear.Name = "toolStripButtonClear";
-            this.toolStripButtonClear.Size = new System.Drawing.Size(83, 22);
+            this.toolStripButtonClear.Size = new System.Drawing.Size(23, 22);
             this.toolStripButtonClear.Text = "Clear Capture";
             this.toolStripButtonClear.Click += new System.EventHandler(this.toolStripButtonClear_Click);
             // 
@@ -244,26 +269,10 @@
             this.hexBoxHEX.UseFixedBytesPerLine = true;
             this.hexBoxHEX.VScrollBarVisible = true;
             // 
-            // toolStripButton_StartCapture
+            // toolStripSeparator1
             // 
-            this.toolStripButton_StartCapture.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton_StartCapture.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_StartCapture.Image")));
-            this.toolStripButton_StartCapture.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton_StartCapture.Name = "toolStripButton_StartCapture";
-            this.toolStripButton_StartCapture.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton_StartCapture.Text = "toolStripButton1";
-            this.toolStripButton_StartCapture.Click += new System.EventHandler(this.toolStripButton_StartCapture_Click);
-            // 
-            // toolStripButton_StopCapture
-            // 
-            this.toolStripButton_StopCapture.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton_StopCapture.Enabled = false;
-            this.toolStripButton_StopCapture.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_StopCapture.Image")));
-            this.toolStripButton_StopCapture.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton_StopCapture.Name = "toolStripButton_StopCapture";
-            this.toolStripButton_StopCapture.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton_StopCapture.Text = "toolStripButton1";
-            this.toolStripButton_StopCapture.Click += new System.EventHandler(this.toolStripButton_StopCapture_Click);
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
             // CaptureView
             // 
@@ -315,6 +324,7 @@
         private System.Windows.Forms.TreeView treeViewXML;
         private System.Windows.Forms.ToolStripButton toolStripButton_StartCapture;
         private System.Windows.Forms.ToolStripButton toolStripButton_StopCapture;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
 
     }
 }
