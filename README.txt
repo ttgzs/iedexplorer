@@ -209,3 +209,8 @@ Features are mostly UNTESTED.
 + Report event viewer
 + PoolViewer with Drag'N'Drop
 * Workaround for initial READs
+
+Service release 0.79b 2017/05/09
+- reading SCL files
+- Owner RCB field readable
+- more TCP errors catched
