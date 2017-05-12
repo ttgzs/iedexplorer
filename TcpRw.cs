@@ -149,7 +149,7 @@ namespace IEDExplorer
         {
             // Retrieve the socket from the state object.
             TcpState tcps = (TcpState)ar.AsyncState;
-            //try
+            try
             {
                 // Complete the connection.
                 if (tcps.workSocket != null)
@@ -174,17 +174,17 @@ namespace IEDExplorer
                         }
                         catch (Exception e)
                         {
-                            tcps.logger.LogError(e.Message);
+                            tcps.logger.LogError("ReceiveCallback on EndReceive: " + e.Message);
                         }
                         // Signal that the data has been received.
                         tcps.receiveDone.Set();
                     }
                 }
             }
-            //catch (Exception e)
+            catch (Exception e)
             {
             //   StopClient(tcps);
-            //    tcps.logger.LogInfo(e.ToString());
+                tcps.logger.LogInfo("ReceiveCallback: " + e.ToString());
             }
         }
 

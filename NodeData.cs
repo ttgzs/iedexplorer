@@ -225,7 +225,31 @@ namespace IEDExplorer
                             if (DataValue != null)
                             {
                                 byte[] ba = System.Text.Encoding.ASCII.GetBytes(DataValue.ToString());
-                                val = BitConverter.ToString(ba);
+                                switch (Name)
+                                {
+                                    case "Owner":
+                                        foreach (byte ipb in ba)
+                                        {
+                                            val += ipb.ToString();
+                                            val += ".";
+                                        }
+                                        if (val.Length > 0) val = val.Substring(0, val.Length - 1);
+                                        break;
+                                    default:
+                                        bool nonAscii = false;
+                                        foreach (byte ipb in ba)
+                                        {
+                                            char c = Convert.ToChar(ipb);
+                                            if (Char.IsControl(c))
+                                            {
+                                                nonAscii = true;
+                                                break;
+                                            }
+                                            val += c;
+                                        }
+                                        if (nonAscii) val = BitConverter.ToString(ba);
+                                        break;
+                                }
                             }
                             break;
                         default:

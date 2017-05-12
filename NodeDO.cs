@@ -24,17 +24,18 @@ using System.Text;
 
 namespace IEDExplorer
 {
-    class NodeDO : NodeData
+    class NodeDO : NodeBase
+   // class NodeDO : NodeData
     {
         private string _type = "";
 
-        //public int SCL_ArraySize { get; set; }
+        public int SCL_ArraySize { get; set; }
 
-        //public string SCL_Type
-        //{
-        //    get { return _type; }
-        //    set { _type = value; }
-       //}
+        public string SCL_Type
+        {
+            get { return _type; }
+            set { _type = value; }
+        }
 
         public string SCL_UpperDOName { get; set; }
 
