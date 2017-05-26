@@ -175,14 +175,19 @@ namespace IEDExplorer
             return _childNodes.Count;
         }
 
-        public NodeBase AddChildNode(NodeBase Node)
+        public NodeBase AddChildNode(NodeBase Node, bool AddDeep = false)
         {
             if (Node == null) return null;       // defensive
             if (Node == this) return null;
             foreach (NodeBase n in _childNodes)
             {
                 if (Node.Name == n.Name)
+                {
+                    if (AddDeep)
+                        foreach (NodeBase nc in Node._childNodes)
+                            n.AddChildNode(nc, true);
                     return n;
+                }
             }
             _childNodes.Add(Node);
             Node.Parent = this;

@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using System.IO;
 using IEDExplorer.Dialogs;
+using System.Globalization;
 
 namespace IEDExplorer.Views
 {
@@ -139,7 +140,7 @@ namespace IEDExplorer.Views
                 if ((n as NodeFile).isDir)
                     val = "Dir";
                 else
-                    val = (n as NodeFile).ReportedSize.ToString();
+                    val = "size=" + (n as NodeFile).ReportedSize.ToString("n0").Replace(NumberFormatInfo.CurrentInfo.NumberGroupSeparator, " ") + " byte, time=" + (n as NodeFile).ReportedTime.ToString();
                 return new ListViewItem(new string[] { n.Name, n.ToString(), val, (n as NodeFile).FullName });
             }
             else if (n != null)
