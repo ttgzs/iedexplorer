@@ -10,6 +10,7 @@ using WeifenLuo.WinFormsUI.Docking;
 using System.IO;
 using IEDExplorer.Dialogs;
 using System.Globalization;
+using IEDExplorer.Resources;
 
 namespace IEDExplorer.Views
 {
@@ -310,5 +311,49 @@ namespace IEDExplorer.Views
             timer_Au_Tick(null, null);
         }
 
+        private void listView_data_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            {
+                ContextMenuStrip ctxmenu = new ContextMenuStrip();
+                System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Resource1));
+                //ToolStripMenuItem itCopy = new ToolStripMenuItem("Copy Name to Clipboard", ((System.Drawing.Image)(resources.GetObject("page_copy"))), new EventHandler(ctxMenu_OnClick));
+                ToolStripMenuItem itCopy = new ToolStripMenuItem("Copy Name to Clipboard", ((System.Drawing.Image)(resources.GetObject("page_copy"))), new EventHandler(ctxMenu_OnClick), Keys.Control | Keys.C);
+                //itCopy.ShortcutKeys = Keys.ControlKey
+                ctxmenu.Items.Add(itCopy);
+                if (listView_data.SelectedItems.Count > 0)
+                    ctxmenu.Show(listView_data, e.Location);
+            }
+        }
+
+        private void copyNameToClipboard()
+        {
+            if (listView_data.SelectedItems.Count > 0)
+            {
+                string result = "";
+                bool first = true;
+                foreach (ListViewItem lvi in listView_data.SelectedItems)
+                {
+                    if (first) first = false; else result += "\n";
+                    result += lvi.Text;
+                }
+                System.Windows.Forms.Clipboard.SetText(result);
+            }
+        }
+
+        private void ctxMenu_OnClick(object sender, EventArgs e)
+        {
+            copyNameToClipboard();
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == (Keys.Control | Keys.C))
+            {
+                copyNameToClipboard();
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
     }
 }

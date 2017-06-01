@@ -1359,6 +1359,7 @@
     <None Include="Resources\RP2.ico" />
     <None Include="Resources\DS1.ico" />
     <None Include="Resources\VLM.ico" />
+    <Content Include="Resources\page_copy.png" />
     <Content Include="Resources\toolStripButton_Clear.Image.png" />
     <Content Include="Resources\toolStripButton_Export.Image.png" />
     <Content Include="Resources\toolStripButton_ExportCSV.Image.png" />
