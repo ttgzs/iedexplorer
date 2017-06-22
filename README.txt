@@ -214,3 +214,10 @@ Service release 0.79b 2017/05/09
 - reading SCL files
 - Owner RCB field readable
 - more TCP errors catched
+
+Service release 0.79c 2017/06/22
+- Copy names from IedDataView
+- File directory listing enhanced
+
+
+
