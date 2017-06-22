@@ -27,8 +27,6 @@ namespace IEDExplorer.Views
         const int maxHistory = 20;
         IsoConnectionParameters isoPar;
 
-        //SCLServer sclServer = null;
-
         private WeifenLuo.WinFormsUI.Docking.VS2012LightTheme vS2012LightTheme1 = new VS2012LightTheme();
         private Iec61850State iecf;
 
@@ -52,7 +50,6 @@ namespace IEDExplorer.Views
             worker = new Scsm_MMS_Worker();
 
             wm = new WindowManager(dockPanel1, this);
-            this.Text = "IED Explorer 0.79b Exp SCL Server & GOOSE";
 
             logger.LogInfo("Starting main program ...");
 
@@ -237,7 +234,6 @@ namespace IEDExplorer.Views
         {
             AboutDialog ad = new AboutDialog();
             ad.ShowDialog();
-            //ad.Close();
         }
 
         private void toolStripButtonConnParam_Click(object sender, EventArgs e)

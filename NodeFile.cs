@@ -72,6 +72,8 @@ namespace IEDExplorer
 
         public int ReportedSize { get; set; }
 
+        public string ReportedTime { get; set; }
+
         public List<NodeFile> files { get; private set; }
 
         private byte[] data;

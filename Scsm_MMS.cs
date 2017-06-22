@@ -566,7 +566,6 @@ namespace IEDExplorer
             iecs.logger.LogInfo("FileDirectory PDU received!!");
             if (dir.ListOfDirectoryEntry != null)
             {
-                NodeFile upperdir = null;
                 foreach (DirectoryEntry de in dir.ListOfDirectoryEntry)
                 {
                     if (de.FileName != null)
@@ -574,35 +573,40 @@ namespace IEDExplorer
                         IEnumerator<string> en = de.FileName.Value.GetEnumerator();
                         en.MoveNext();
                         string name = en.Current;
+                        bool absolutePath = false;
                         bool isdir = false;
-                        NodeFile nf;
+                        NodeFile nf = null;
+                        NodeFile nfbase = null;
 
+                        if (name.StartsWith("/") || name.StartsWith("\\"))
+                        {
+                            absolutePath = true;
+                        }
                         if (name.EndsWith("/") || name.EndsWith("\\"))
                         {
                             isdir = true;
-                            name = name.Substring(0, name.Length - 1);
                         }
 
-                        // TODO nonsens atm., Make more general!!!!!!!!!!!!!
-                        if (name.Contains("/") || name.Contains("\\"))
+                        string[] names = name.Split(new char[] { '/', '\\'}, StringSplitOptions.RemoveEmptyEntries);
+                        for (int i = 0; i < names.Length; i++)
                         {
-                            string[] names = name.Split(new char[] { '/', '\\'},StringSplitOptions.RemoveEmptyEntries);
-                            for (int i = 0; i < names.Length; i++)
-                            {
-                                if (i == 0 && upperdir == null) upperdir = new NodeFile(names[i], true);
-                                else if (i == (names.Length - 1)) name = names[i];
-                                else upperdir.AddChildNode(new NodeFile(names[i], true));
-                            }
+                            bool isdirResult = isdir || (i < (names.Length - 1));
+                            if (i == 0) nfbase = nf = new NodeFile(names[i], isdirResult);
+                            else nf = (NodeFile)nf.AddChildNode(new NodeFile(names[i], isdirResult));
                         }
-                        nf = new NodeFile(name, isdir);
-                        nf.ReportedSize = de.FileAttributes.SizeOfFile.Value;
-                        if (upperdir != null)
+                        if (!nf.isDir)
                         {
-                            upperdir.AddChildNode(nf);
-                            nf = upperdir;
+                            nf.ReportedSize = de.FileAttributes.SizeOfFile.Value;
+                            nf.ReportedTime = de.FileAttributes.LastModified;
                         }
-                        (iecs.lastFileOperationData[0]).AddChildNode(nf);
-                        //iecs.logger.LogInfo("FileName: " + name);
+                        if (absolutePath)
+                        {
+                            (iecs.lastFileOperationData[0]).GetIedNode().AddChildNode(nfbase, true);
+                        }
+                        else
+                        {
+                            (iecs.lastFileOperationData[0]).AddChildNode(nfbase, true);
+                        }
                     }
                     else
                         iecs.logger.LogInfo("Empty FileName in FileDirectory PDU!!");
