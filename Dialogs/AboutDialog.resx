@@ -120,28 +120,28 @@
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="pictureBox1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-        iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAIAAACRXR/mAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsIAAA7CARUoSoAAAAS1SURBVFhHzVc7byRFEF4g5a/wB5zxR867yUZkRAgdOdmJ
-        zOSWX3sBOp2lSxFIDnCCZJKTSDY4kRBcaJlpvkf1TE/PrnfuNDpP6/O4H1VdX1VXP3axWF7OEXV7Jqjb
-        M0Hdngnq9kxQt2eCuj0T1O2ZYLE657/ji8/ZPlssN+hR/fKzZ1f8Hp9hdLG6dCehumF1D+m7ETjhB6uU
-        IBVMcXxB8yvqsyl+QcjKNCMH+MWolDnKGW2M8qW9D1Tpoa15oq++ff31d2+ML7/5RUTP+V1uKLB++dPV
-        3evft49g9eOvnHCESmt6B0KZnnG9IJ2aJqE0zfc//9F67Mj99uc/MSqB9KBvuu96UqKWph6jAmH4H1RK
-        LJanjDCdYzxJK6X/UgNlGciklxvoc6awcY8YQGCIMHNIRcyITqVEZ5gTiRYcUoGCGJ8j9yETNlyaBj1U
-        lLpTRFsEk8BP1g+qZGZdgDv4Xyiszr2ID6DmaHlXYh2PL2jDSyDv6QbWXebDN0VdlbEqe2lRwivIHNp0
-        uWXpvEMhBhum61Fq0UzHG+r8ssI5x6g4nDDa4wRUbeeWSzgRJosVsevc52c04FBprVHX17l1WGUyWtwN
-        KE2jIaggk3IAaPWU8qiPU5mMlgoTAosbgZENsYlIsHOcynS0sBzaqpCswIMUkuTXp5VV2N/HdLRcmqZd
-        mvhq5yoYumd2qbC/j6lpwfX1S4+SiiOEvGHq7FxElqHKdLQUGEBbSaPmxCCd0p6ER6pMRwsFNmK3+/D0
-        WZpfRAzYIFp7VB6hpYM03hg6TlWQOs6VdpbOdX1l3scBCOWbJ/swUmUvLU1n5+gKaXmWMlp6XHCKPISi
-        VePhCfNyqVhBao1S2UuL9DEXPeC9EbQE0eIoZulcR8GdmRJ66D1gKp7Bsc+X7EGVR2gx2uLOGbtoxVVt
-        ewik8qB1vXmgivyh+rMrNrOkph6l4mN2By16gPvYmVEuomnZLfHGwxWdcVylhKZVvDQw5kWk7XEq4kRa
-        lu9BsygB5Uq9iFqRFr2nprwcIh7Nh1Qyp3tEtJQPgDi9VPwROSjQOd0Vyi2FQXeZvf/r739pBgKtMQlH
-        aR6kRSfHqOzmBOAP+lxKMcAsEDX8E4NDII0kc0WJ/AioNU6Fo/uQ9w4yUe3YI32hTw8Ew1mvgPmkwInX
-        F/r0IAlu5tg+c0EkwZOHpwK3oX/XVwNPC+a4T8Jq4Gmhf2eLH+7exlGS0u3N0av3b195A7958e79i+eo
-        3FzHcErv7o44hJ7t2rMYz7tJsnqhdXtTyahnIGAwVFhBSIcxI7M52WbpjsT6Nl2f9HqygB0o6zfXMW2e
-        sDY0EHB/nAi1tAltC8OHaHUOEDneH03LD8UitjJpuXYtAJDIZRA/oFh34WQbtEInm6wNDQQMbkPk+95o
-        tdL92Ax7gkc0q2ihGc7siVYnYDCxsBmR8pW0Te7KrVrGYBhKH1z/6EXUAfFFEVtstHVvJ+5McPfkYurw
-        IZecCa3VHL++oaOhgOpIeV/yflLOBrp28IjAN57tqOg7EbAanpbLgh68ULTJiPwzAl80OZqjEzp6bOnC
-        5kt1ypu7e7HJPCb3SWm77IeYH1eF0a42K9TtOWB5+T9RANRkMlU0AwAAAABJRU5ErkJggg==
+        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
 </value>
   </data>
   <data name="label1.Text" xml:space="preserve">
@@ -161,6 +161,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with IEDExplorer.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
 </value>
+  </data>
+  <data name="label2.Text" xml:space="preserve">
+    <value>Credits:
+Joel Kaiser (joel-kaiser at users.sf.net): SCL Parser and Viewer
+Michael Zillgith (libiec61850.com): ISO layers code pattern, SCL server base library
+Mireks (mireks at users.sf.net): GOOSE related code</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

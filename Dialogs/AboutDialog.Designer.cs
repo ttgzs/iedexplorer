@@ -69,9 +69,9 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(70, 220);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(298, 26);
+            this.label2.Size = new System.Drawing.Size(394, 52);
             this.label2.TabIndex = 3;
-            this.label2.Text = "Credits:\r\nJoel Kaiser (joel-kaiser at users.sf.net): SCL Parser and Viewer";
+            this.label2.Text = resources.GetString("label2.Text");
             // 
             // AboutDialog
             // 
