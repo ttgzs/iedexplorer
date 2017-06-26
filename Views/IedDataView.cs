@@ -317,9 +317,7 @@ namespace IEDExplorer.Views
             {
                 ContextMenuStrip ctxmenu = new ContextMenuStrip();
                 System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Resource1));
-                //ToolStripMenuItem itCopy = new ToolStripMenuItem("Copy Name to Clipboard", ((System.Drawing.Image)(resources.GetObject("page_copy"))), new EventHandler(ctxMenu_OnClick));
                 ToolStripMenuItem itCopy = new ToolStripMenuItem("Copy Name to Clipboard", ((System.Drawing.Image)(resources.GetObject("page_copy"))), new EventHandler(ctxMenu_OnClick), Keys.Control | Keys.C);
-                //itCopy.ShortcutKeys = Keys.ControlKey
                 ctxmenu.Items.Add(itCopy);
                 if (listView_data.SelectedItems.Count > 0)
                     ctxmenu.Show(listView_data, e.Location);

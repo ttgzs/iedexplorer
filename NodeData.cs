@@ -171,8 +171,31 @@ namespace IEDExplorer
                             if (DataValue != null) val = DataValue.ToString() + "." + ((DateTime)(DataValue)).Millisecond.ToString() + " [LOC]";
                             if (DataParam != null)
                             {
-                                if (((byte)(DataParam) & 0x40) > 0)     // TimQualTimeBaseErr
-                                    val += " TimQualTimeBaseErr";
+                                bool close = false;
+                                if (((byte)(DataParam) & 0x20) > 0)
+                                {
+                                    val += "[ClockNotSynchronised";
+                                    close = true;
+                                }
+                                if (((byte)(DataParam) & 0x40) > 0)
+                                {
+                                    if (close)
+                                        val += ", ";
+                                    else
+                                        val += "[";
+                                    val += "ClockFailure";
+                                    close = true;
+                                }
+                                if (((byte)(DataParam) & 0x80) > 0)
+                                {
+                                    if (close)
+                                        val += ", ";
+                                    else
+                                        val += "[";
+                                    val += "LeapSecondKnown";
+                                    close = true;
+                                }
+                                if (close) val += "]";
                             }
                             break;
                         case scsm_MMS_TypeEnum.bit_string:

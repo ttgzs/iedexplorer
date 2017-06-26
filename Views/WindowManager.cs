@@ -210,18 +210,13 @@ namespace IEDExplorer.Views
 
         public void AddGooseExplorer(Iec61850State iecs, Logger logger)
         {
-            /*foreach (DockContent dc in documentViews)
-            {
-                if (dc is GooseExplorer)
-                {
-                    dc.Show();
-                    return;
-                }
-            }*/
-
             DockContent gexView = new GooseExplorer(iecs, logger);
             gexView.FormClosed += new FormClosedEventHandler(gexView_FormClosed);
             gexView.TabText = "GooseExplorer " + ++gexViewsCount;
+            if (iecs != null && iecs.DataModel != null && iecs.DataModel.ied != null)
+            {
+                gexView.TabText += ": " + iecs.hostname;
+            }
             documentViews.Add(gexView);
             gexView.Show(dockPanel);
         }

@@ -277,8 +277,6 @@ namespace IEDExplorer.Views
 
         private void GooseExplorer_Click (object sender, EventArgs e)
         {
-            /*GooseExplorer goose = new GooseExplorer(this.iecf, env.logger);
-            goose.Show();*/
             try
             {
                 wm.AddGooseExplorer(this.iecf, logger);
