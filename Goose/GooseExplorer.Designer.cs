@@ -78,7 +78,7 @@
             this.toolStripLabel_GoosesRcvdCnt});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1032, 26);
+            this.toolStrip1.Size = new System.Drawing.Size(774, 25);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -88,7 +88,7 @@
             this.toolStripButton_Start.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_Start.Image")));
             this.toolStripButton_Start.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton_Start.Name = "toolStripButton_Start";
-            this.toolStripButton_Start.Size = new System.Drawing.Size(23, 23);
+            this.toolStripButton_Start.Size = new System.Drawing.Size(23, 22);
             this.toolStripButton_Start.Text = "Start";
             this.toolStripButton_Start.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
@@ -98,31 +98,32 @@
             this.toolStripButton_Stop.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton_Stop.Image")));
             this.toolStripButton_Stop.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton_Stop.Name = "toolStripButton_Stop";
-            this.toolStripButton_Stop.Size = new System.Drawing.Size(23, 23);
+            this.toolStripButton_Stop.Size = new System.Drawing.Size(23, 22);
             this.toolStripButton_Stop.Text = "Stop";
             this.toolStripButton_Stop.Click += new System.EventHandler(this.toolStripButton2_Click);
             // 
             // toolStripComboBox_NedDevices
             // 
-            this.toolStripComboBox_NedDevices.DropDownHeight = 50;
+            this.toolStripComboBox_NedDevices.DropDownHeight = 500;
             this.toolStripComboBox_NedDevices.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBox_NedDevices.IntegralHeight = false;
             this.toolStripComboBox_NedDevices.MergeAction = System.Windows.Forms.MergeAction.Replace;
             this.toolStripComboBox_NedDevices.Name = "toolStripComboBox_NedDevices";
-            this.toolStripComboBox_NedDevices.Size = new System.Drawing.Size(350, 26);
+            this.toolStripComboBox_NedDevices.Size = new System.Drawing.Size(264, 25);
+            this.toolStripComboBox_NedDevices.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox_NedDevices_SelectedIndexChanged);
             // 
             // toolStripLabel_FoundIeds
             // 
             this.toolStripLabel_FoundIeds.Name = "toolStripLabel_FoundIeds";
             this.toolStripLabel_FoundIeds.Padding = new System.Windows.Forms.Padding(10, 0, 0, 0);
-            this.toolStripLabel_FoundIeds.Size = new System.Drawing.Size(99, 23);
+            this.toolStripLabel_FoundIeds.Size = new System.Drawing.Size(79, 22);
             this.toolStripLabel_FoundIeds.Text = "Found IEDs:";
             this.toolStripLabel_FoundIeds.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // toolStripLabel_FoundIedsCnt
             // 
             this.toolStripLabel_FoundIedsCnt.Name = "toolStripLabel_FoundIedsCnt";
-            this.toolStripLabel_FoundIedsCnt.Size = new System.Drawing.Size(16, 23);
+            this.toolStripLabel_FoundIedsCnt.Size = new System.Drawing.Size(13, 22);
             this.toolStripLabel_FoundIedsCnt.Text = "0";
             // 
             // toolStripComboBox_Ieds
@@ -134,21 +135,21 @@
             this.toolStripComboBox_Ieds.Margin = new System.Windows.Forms.Padding(7, 0, 1, 0);
             this.toolStripComboBox_Ieds.MergeAction = System.Windows.Forms.MergeAction.Replace;
             this.toolStripComboBox_Ieds.Name = "toolStripComboBox_Ieds";
-            this.toolStripComboBox_Ieds.Size = new System.Drawing.Size(220, 26);
+            this.toolStripComboBox_Ieds.Size = new System.Drawing.Size(166, 25);
             this.toolStripComboBox_Ieds.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox2_SelectedIndexChanged);
             // 
             // toolStripLabel_GoosesRcvd
             // 
             this.toolStripLabel_GoosesRcvd.Name = "toolStripLabel_GoosesRcvd";
             this.toolStripLabel_GoosesRcvd.Padding = new System.Windows.Forms.Padding(10, 0, 0, 0);
-            this.toolStripLabel_GoosesRcvd.Size = new System.Drawing.Size(108, 23);
+            this.toolStripLabel_GoosesRcvd.Size = new System.Drawing.Size(87, 22);
             this.toolStripLabel_GoosesRcvd.Text = "Gooses Rcvd:";
             this.toolStripLabel_GoosesRcvd.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // toolStripLabel_GoosesRcvdCnt
             // 
             this.toolStripLabel_GoosesRcvdCnt.Name = "toolStripLabel_GoosesRcvdCnt";
-            this.toolStripLabel_GoosesRcvdCnt.Size = new System.Drawing.Size(16, 23);
+            this.toolStripLabel_GoosesRcvdCnt.Size = new System.Drawing.Size(13, 22);
             this.toolStripLabel_GoosesRcvdCnt.Text = "0";
             // 
             // LiveViewChart
@@ -195,6 +196,7 @@
             legend1.Name = "Legend1";
             this.LiveViewChart.Legends.Add(legend1);
             this.LiveViewChart.Location = new System.Drawing.Point(0, 0);
+            this.LiveViewChart.Margin = new System.Windows.Forms.Padding(2);
             this.LiveViewChart.Name = "LiveViewChart";
             series1.BorderWidth = 3;
             series1.ChartArea = "ChartArea1";
@@ -212,7 +214,7 @@
             series2.Name = "Series2";
             this.LiveViewChart.Series.Add(series1);
             this.LiveViewChart.Series.Add(series2);
-            this.LiveViewChart.Size = new System.Drawing.Size(1032, 97);
+            this.LiveViewChart.Size = new System.Drawing.Size(774, 79);
             this.LiveViewChart.TabIndex = 6;
             this.LiveViewChart.Text = "chart1";
             title1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
@@ -224,6 +226,7 @@
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(2);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -233,16 +236,18 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.listView_Goose);
-            this.splitContainer1.Size = new System.Drawing.Size(1032, 346);
-            this.splitContainer1.SplitterDistance = 344;
+            this.splitContainer1.Size = new System.Drawing.Size(774, 277);
+            this.splitContainer1.SplitterDistance = 258;
+            this.splitContainer1.SplitterWidth = 3;
             this.splitContainer1.TabIndex = 7;
             // 
             // myTreeView_Goose
             // 
             this.myTreeView_Goose.Dock = System.Windows.Forms.DockStyle.Fill;
             this.myTreeView_Goose.Location = new System.Drawing.Point(0, 0);
+            this.myTreeView_Goose.Margin = new System.Windows.Forms.Padding(2);
             this.myTreeView_Goose.Name = "myTreeView_Goose";
-            this.myTreeView_Goose.Size = new System.Drawing.Size(344, 346);
+            this.myTreeView_Goose.Size = new System.Drawing.Size(258, 277);
             this.myTreeView_Goose.TabIndex = 4;
             this.myTreeView_Goose.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.myTreeView1_AfterSelect);
             this.myTreeView_Goose.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.myTreeView_Goose_NodeMouseClick);
@@ -258,10 +263,9 @@
             this.listView_Goose.FullRowSelect = true;
             this.listView_Goose.GridLines = true;
             this.listView_Goose.Location = new System.Drawing.Point(0, 0);
-            this.listView_Goose.Margin = new System.Windows.Forms.Padding(4);
             this.listView_Goose.Name = "listView_Goose";
             this.listView_Goose.ShowItemToolTips = true;
-            this.listView_Goose.Size = new System.Drawing.Size(684, 346);
+            this.listView_Goose.Size = new System.Drawing.Size(513, 277);
             this.listView_Goose.TabIndex = 5;
             this.listView_Goose.UseCompatibleStateImageBehavior = false;
             this.listView_Goose.View = System.Windows.Forms.View.Details;
@@ -289,7 +293,8 @@
             // splitContainer2
             // 
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer2.Location = new System.Drawing.Point(0, 26);
+            this.splitContainer2.Location = new System.Drawing.Point(0, 25);
+            this.splitContainer2.Margin = new System.Windows.Forms.Padding(2);
             this.splitContainer2.Name = "splitContainer2";
             this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -300,18 +305,21 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.LiveViewChart);
-            this.splitContainer2.Size = new System.Drawing.Size(1032, 447);
-            this.splitContainer2.SplitterDistance = 346;
+            this.splitContainer2.Size = new System.Drawing.Size(774, 359);
+            this.splitContainer2.SplitterDistance = 277;
+            this.splitContainer2.SplitterWidth = 3;
             this.splitContainer2.TabIndex = 8;
             // 
             // GooseExplorer
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1032, 473);
+            this.ClientSize = new System.Drawing.Size(774, 384);
             this.Controls.Add(this.splitContainer2);
             this.Controls.Add(this.toolStrip1);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "GooseExplorer";
             this.Text = "Goose Explorer";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Goose_FormClosing);
