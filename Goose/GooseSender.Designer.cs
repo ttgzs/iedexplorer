@@ -40,9 +40,9 @@
             this.toolStripButton_Import = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton_Export = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton_Clear = new System.Windows.Forms.ToolStripButton();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.toolStripButton_Toggle = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripButton_Toggle = new System.Windows.Forms.ToolStripButton();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -96,6 +96,7 @@
             this.toolStripComboBox_NedDevices.MergeAction = System.Windows.Forms.MergeAction.Replace;
             this.toolStripComboBox_NedDevices.Name = "toolStripComboBox_NedDevices";
             this.toolStripComboBox_NedDevices.Size = new System.Drawing.Size(264, 25);
+            this.toolStripComboBox_NedDevices.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox_NedDevices_SelectedIndexChanged);
             // 
             // toolStripLabel_GoosesSent
             // 
@@ -159,15 +160,10 @@
             this.toolStripButton_Clear.Text = "Clear Gooses";
             this.toolStripButton_Clear.Click += new System.EventHandler(this.toolStripButton_Clear_Click);
             // 
-            // panel1
+            // toolStripSeparator3
             // 
-            this.panel1.AutoScroll = true;
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 25);
-            this.panel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(596, 209);
-            this.panel1.TabIndex = 3;
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripButton_Toggle
             // 
@@ -180,10 +176,15 @@
             this.toolStripButton_Toggle.Text = "Toogle first data for all Gooses (Boolean only)";
             this.toolStripButton_Toggle.Click += new System.EventHandler(this.toolStripButton_Toggle_Click);
             // 
-            // toolStripSeparator3
+            // panel1
             // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
+            this.panel1.AutoScroll = true;
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 25);
+            this.panel1.Margin = new System.Windows.Forms.Padding(2);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(596, 209);
+            this.panel1.TabIndex = 3;
             // 
             // GooseSender
             // 
@@ -192,8 +193,9 @@
             this.ClientSize = new System.Drawing.Size(596, 234);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.toolStrip1);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "GooseSender";
             this.Text = "Goose Sender";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.GooseSender_FormClosing);

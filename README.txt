@@ -219,5 +219,6 @@ Service release 0.79c 2017/06/22
 - Copy names from IedDataView
 - File directory listing enhanced
 
-
-
+Service release 0.79d 2017/06/26
+- Timestamp quality bits listing
+- List GOOSE interfaces - Windows texts

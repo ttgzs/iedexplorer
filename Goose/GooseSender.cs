@@ -11,6 +11,7 @@ using PcapDotNet.Packets;
 using PcapDotNet.Packets.IpV4;
 using PcapDotNet.Core.Extensions;
 using System.Text.RegularExpressions;
+using System.Net.NetworkInformation;
 
 namespace IEDExplorer
 {
@@ -18,6 +19,7 @@ namespace IEDExplorer
     {
         public int gooseItems = 0;
         IList<LivePacketDevice> _netDevices;
+        List<string> netDevNames = new List<string>();
 
         public GooseSender()
         {
@@ -31,13 +33,13 @@ namespace IEDExplorer
 
             if (_netDevices.Count != 0)
             {
-                List<string> netDevNames = new List<string>();
                 string description;
+                NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces();
+                int x = adapters.Length;
 
                 for (int i = 0; i < _netDevices.Count; i++)
                 {
                     LivePacketDevice device = _netDevices[i];
-
                     if (device.Description != null)
                     {
                         description = Regex.Match(device.Description.Replace("(Microsoft's Packet Scheduler)", ""), @"'(.+?)'").Groups[1].Value;
@@ -46,12 +48,42 @@ namespace IEDExplorer
                     else
                         description = i.ToString("00");
 
-                    toolStripComboBox_NedDevices.Items.Add(description);
+                    for (int j = 0; j < adapters.Length; j++)
+                    {
+                        if (adapters[j].Id != null && adapters[j].Id.Contains("{") && device.Name.Contains("{"))
+                        {
+                            string guid1 = adapters[j].Id;
+                            string guid2 = device.Name.Substring(device.Name.IndexOf("{"));
+                            if (guid1 == guid2)
+                            {
+                                description += ": " + adapters[j].Name;
+                                break;
+                            }
+                        }
+                    }
+                    int idx = toolStripComboBox_NedDevices.Items.Add(description);
                     netDevNames.Add(device.Name);
                 }
 
                 toolStripComboBox_NedDevices.SelectedIndex = 0;
+
+                float largestSize = 0;
+                Graphics g = this.CreateGraphics();
+                for (int i = 0; i < toolStripComboBox_NedDevices.Items.Count; i++)
+                {
+                    SizeF textSize = g.MeasureString(toolStripComboBox_NedDevices.Items[i].ToString(), toolStripComboBox_NedDevices.Font);
+                    if (textSize.Width > largestSize)
+                        largestSize = textSize.Width;
+                }
+
+                if (largestSize > 0)
+                    toolStripComboBox_NedDevices.DropDownWidth = (int)largestSize;
             }
+        }
+
+        private void toolStripComboBox_NedDevices_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            toolStripComboBox_NedDevices.ToolTipText = toolStripComboBox_NedDevices.Items[toolStripComboBox_NedDevices.SelectedIndex].ToString();
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
