@@ -168,7 +168,7 @@ namespace IEDExplorer
                     switch (DataType)
                     {
                         case scsm_MMS_TypeEnum.utc_time:
-                            if (DataValue != null) val = DataValue.ToString() + "." + ((DateTime)(DataValue)).Millisecond.ToString() + " [LOC]";
+                            if (DataValue != null) val = DataValue.ToString() + "." + ((DateTime)(DataValue)).Millisecond.ToString("D3") + " [LOC]";
                             if (DataParam != null)
                             {
                                 bool close = false;
