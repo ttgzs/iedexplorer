@@ -353,5 +353,11 @@ namespace IEDExplorer.Views
             }
             return base.ProcessCmdKey(ref msg, keyData);
         }
+
+        private void toolStripButtonFind_Click(object sender, EventArgs e)
+        {
+            Dialogs.FindForm ff = new Dialogs.FindForm(listView_data);
+            ff.ShowDialog();
+        }
     }
 }

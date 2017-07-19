@@ -674,6 +674,12 @@ namespace IEDExplorer.Views
                 }
             }
         }
+
+        private void toolStripButtonFindName_Click(object sender, EventArgs e)
+        {
+            Dialogs.FindForm ff = new Dialogs.FindForm(dataGridView_data);
+            ff.ShowDialog();
+        }
     }
 
 }

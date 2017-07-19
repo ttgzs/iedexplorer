@@ -45,6 +45,7 @@
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.timer_Au = new System.Windows.Forms.Timer(this.components);
+            this.toolStripButtonFind = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -58,7 +59,8 @@
             this.toolStripComboBox_autoUpdate,
             this.toolStripLabel_autoupdate,
             this.toolStripSeparator1,
-            this.toolStripButtonSave});
+            this.toolStripButtonSave,
+            this.toolStripButtonFind});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(914, 25);
@@ -181,6 +183,16 @@
             this.timer_Au.Interval = 2000;
             this.timer_Au.Tick += new System.EventHandler(this.timer_Au_Tick);
             // 
+            // toolStripButtonFind
+            // 
+            this.toolStripButtonFind.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripButtonFind.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonFind.Image")));
+            this.toolStripButtonFind.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonFind.Name = "toolStripButtonFind";
+            this.toolStripButtonFind.Size = new System.Drawing.Size(50, 22);
+            this.toolStripButtonFind.Text = "Find";
+            this.toolStripButtonFind.Click += new System.EventHandler(this.toolStripButtonFind_Click);
+            // 
             // IedDataView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -216,6 +228,7 @@
         private System.Windows.Forms.ToolStripButton toolStripButtonSave;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripButton toolStripButtonRefresh;
+        private System.Windows.Forms.ToolStripButton toolStripButtonFind;
 
     }
 }

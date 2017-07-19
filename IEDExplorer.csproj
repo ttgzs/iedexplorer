@@ -160,6 +160,14 @@
     <Compile Include="Dialogs\ControllableSignalsDialog.designer.cs">
       <DependentUpon>ControllableSignalsDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\FindForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\FindForm.Designer.cs">
+      <DependentUpon>FindForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\Place.cs" />
+    <Compile Include="Dialogs\Wildcard.cs" />
     <Compile Include="ExportListViewToCSV.cs" />
     <Compile Include="Goose\ExportGooseToXml.cs" />
     <Compile Include="Goose\ExportGvlToXml.cs" />
@@ -1177,6 +1185,9 @@
     <EmbeddedResource Include="Dialogs\ControllableSignalsDialog.resx">
       <DependentUpon>ControllableSignalsDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\FindForm.resx">
+      <DependentUpon>FindForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Goose\GooseControl.resx">
       <DependentUpon>GooseControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -1359,6 +1370,7 @@
     <None Include="Resources\RP2.ico" />
     <None Include="Resources\DS1.ico" />
     <None Include="Resources\VLM.ico" />
+    <Content Include="Resources\find.png" />
     <Content Include="Resources\page_copy.png" />
     <Content Include="Resources\toolStripButton_Clear.Image.png" />
     <Content Include="Resources\toolStripButton_Export.Image.png" />
