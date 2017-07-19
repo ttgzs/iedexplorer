@@ -16,6 +16,9 @@ namespace IEDExplorer.Dialogs
         Place startPlace;
         DataGridView dgv;
         ListView lvw;
+        int selectedRow = -1;
+        Color Back;
+        Color Fore;
 
         public FindForm(DataGridView dgv)
         {
@@ -83,8 +86,19 @@ namespace IEDExplorer.Dialogs
                         if (wildcard.IsMatch(lvw.Items[row].Text))
                         {
                             lvw.SelectedItems.Clear();
-                            lvw.Items[row].Selected = true;
+                            if (selectedRow > -1)
+                            {
+                                lvw.Items[selectedRow].BackColor = Back;
+                                lvw.Items[selectedRow].ForeColor = Fore;
+                                lvw.Items[selectedRow].Selected = true;
+                            }
+                            //lvw.Items[row].Selected = true;
                             lvw.Items[row].EnsureVisible();
+                            Back = lvw.Items[row].BackColor;
+                            Fore = lvw.Items[row].ForeColor;
+                            lvw.Items[row].BackColor = SystemColors.Highlight;
+                            lvw.Items[row].ForeColor = SystemColors.HighlightText;
+                            selectedRow = row;
                             //lvw.FindForm().Focus();
                             //lvw.user;
                             startPlace.iLine = row + 1;
@@ -126,7 +140,17 @@ namespace IEDExplorer.Dialogs
             if (dgv != null)
                 this.dgv.Focus();
             else
+            {
+                if (selectedRow > -1)
+                {
+                    lvw.SelectedItems.Clear();
+                    lvw.Items[selectedRow].BackColor = Back;
+                    lvw.Items[selectedRow].ForeColor = Fore;
+                    lvw.Items[selectedRow].Selected = true;
+                }
+                this.lvw.FindForm().Focus();
                 this.lvw.Focus();
+            }
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
