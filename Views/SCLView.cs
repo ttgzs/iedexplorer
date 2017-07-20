@@ -680,6 +680,12 @@ namespace IEDExplorer.Views
             Dialogs.FindForm ff = new Dialogs.FindForm(dataGridView_data);
             ff.ShowDialog();
         }
+
+        private void dataGridView_data_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            ;
+        }
+
     }
 
 }

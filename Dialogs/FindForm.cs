@@ -20,12 +20,14 @@ namespace IEDExplorer.Dialogs
         Color Back;
         Color Fore;
 
+        // FindForm can serve either for a DataGridView
         public FindForm(DataGridView dgv)
         {
             InitializeComponent();
             this.dgv = dgv;
         }
 
+        // ... or for a ListView
         public FindForm(ListView lvw)
         {
             InitializeComponent();
@@ -71,9 +73,8 @@ namespace IEDExplorer.Dialogs
                     {
                         if (wildcard.IsMatch(dgv[0, row].Value.ToString()))
                         {
-                            //tb.ClearSelection();
                             dgv.Rows[row].Selected = true;
-                            dgv.CurrentCell = dgv.Rows[row].Cells[0];
+                            dgv.CurrentCell = dgv.Rows[row].Cells[0];   // make a new selection and clear others
                             startPlace.iLine = row + 1;
                             return;
                         }
@@ -92,15 +93,13 @@ namespace IEDExplorer.Dialogs
                                 lvw.Items[selectedRow].ForeColor = Fore;
                                 lvw.Items[selectedRow].Selected = true;
                             }
-                            //lvw.Items[row].Selected = true;
                             lvw.Items[row].EnsureVisible();
+                            // Active selection simulation when Listview does not have focus
                             Back = lvw.Items[row].BackColor;
                             Fore = lvw.Items[row].ForeColor;
                             lvw.Items[row].BackColor = SystemColors.Highlight;
                             lvw.Items[row].ForeColor = SystemColors.HighlightText;
                             selectedRow = row;
-                            //lvw.FindForm().Focus();
-                            //lvw.user;
                             startPlace.iLine = row + 1;
                             return;
                         }

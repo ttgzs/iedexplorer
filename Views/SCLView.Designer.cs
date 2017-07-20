@@ -33,6 +33,7 @@
             this.toolStripButtonCollapseAll = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabelServers = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -46,7 +47,6 @@
             this.column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -92,6 +92,17 @@
             this.toolStripLabelServers.Name = "toolStripLabelServers";
             this.toolStripLabelServers.Size = new System.Drawing.Size(133, 22);
             this.toolStripLabelServers.Text = "SCL Servers not running";
+            // 
+            // toolStripButton1
+            // 
+            this.toolStripButton1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton1.Name = "toolStripButton1";
+            this.toolStripButton1.Size = new System.Drawing.Size(50, 22);
+            this.toolStripButton1.Text = "Find";
+            this.toolStripButton1.ToolTipText = "Find Variable Name (Partial)";
+            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButtonFindName_Click);
             // 
             // splitContainer1
             // 
@@ -166,6 +177,7 @@
             // dataGridView_data
             // 
             this.dataGridView_data.AllowUserToAddRows = false;
+            this.dataGridView_data.AllowUserToDeleteRows = false;
             this.dataGridView_data.AllowUserToResizeRows = false;
             this.dataGridView_data.BackgroundColor = System.Drawing.SystemColors.Window;
             this.dataGridView_data.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
@@ -220,17 +232,6 @@
             this.column7.HeaderText = "Var Path";
             this.column7.Name = "column7";
             this.column7.Width = 69;
-            // 
-            // toolStripButton1
-            // 
-            this.toolStripButton1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(50, 22);
-            this.toolStripButton1.Text = "Find";
-            this.toolStripButton1.ToolTipText = "Find Variable Name (Partial)";
-            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButtonFindName_Click);
             // 
             // SCLView
             // 
