@@ -233,6 +233,9 @@ namespace IEDExplorer
 
         public int SendInit(Iec61850State iecs)
         {
+            //Reset dstref
+            Reset(iecs.cp);
+
             // Make COTP init telegramm
             int offs = IsoTpkt.TPKT_SIZEOF;
             int optof = COTP_HDR_IDX_OPTION;

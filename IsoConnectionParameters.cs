@@ -41,7 +41,7 @@ namespace IEDExplorer
             port = 102;
 
             IsoCotp.TSelector selector1 = new IsoCotp.TSelector(2, 0);
-            IsoCotp.TSelector selector2 = new IsoCotp.TSelector(2, 0);
+            IsoCotp.TSelector selector2 = new IsoCotp.TSelector(2, 1);
             setLocalAddresses(1, 1, selector1);
             setLocalApTitle("1.1.1.999", 12);
             setRemoteAddresses(1, 1, selector2);

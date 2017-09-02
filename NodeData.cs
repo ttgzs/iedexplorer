@@ -168,6 +168,7 @@ namespace IEDExplorer
                     switch (DataType)
                     {
                         case scsm_MMS_TypeEnum.utc_time:
+                            if (!(DataValue is DateTime)) break;
                             if (DataValue != null) val = DataValue.ToString() + "." + ((DateTime)(DataValue)).Millisecond.ToString("D3") + " [LOC]";
                             if (DataParam != null)
                             {
@@ -290,21 +291,51 @@ namespace IEDExplorer
                     {
                         switch (DataType)
                         {
-                            //case scsm_MMS_TypeEnum.utc_time:
-                            // Not supported
-                            //    break;
+                            case scsm_MMS_TypeEnum.utc_time:
+                                string tms = value;
+                                DateTime tval;
+
+                                if (tms.Contains('['))
+                                    tms = tms.Substring(0, tms.IndexOf('['));
+
+                                byte[] btm = new byte[] { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };
+                                DataValue = btm;
+
+                                if (DateTime.TryParse(tms, out tval))
+                                {
+                                    int t = (int)Scsm_MMS.ConvertToUnixTimestamp(tval);
+                                    byte[] uib = BitConverter.GetBytes(t);
+                                    btm[0] = uib[3];
+                                    btm[1] = uib[2];
+                                    btm[2] = uib[1];
+                                    btm[3] = uib[0];
+                                    // Milliseconds
+                                    int fractionOfSecond = (tval.Millisecond) * 16777 + ((tval.Millisecond * 216) / 1000);
+	                                /* encode fraction of second */
+                                    btm[4] = (byte)((fractionOfSecond >> 16) & 0xff);
+                                    btm[5] = (byte)((fractionOfSecond >> 8) & 0xff);
+                                    btm[6] = (byte)(fractionOfSecond & 0xff);
+
+	                                /* encode time quality */
+                                    btm[7] = 0x0a; /* 10 bit sub-second time accuracy */
+                                }
+                                else
+                                {
+                                    Logger.getLogger().LogError("NodeData.StringValue - cannot parse '" + tms + "' to DateTime");
+                                }
+                                break;
                             case scsm_MMS_TypeEnum.bit_string:
                                 byte[] bbval = (byte[])DataValue;
                                 int blen = bbval.Length;
                                 int trail = (int)DataParam;
 
-                                StringBuilder sb = new StringBuilder(32);
-                                for (int i = 0; i < blen * 8 - trail; i++)
+                                for (int i = 0; i < blen * 8 - trail && i < value.Length; i++)
                                 {
-                                    if (((bbval[(i / 8)] << (i % 8)) & 0x80) > 0)
-                                        sb.Append(1);     //.Insert(0, 1);
+                                    //if (((bbval[(i / 8)] << (i % 8)) & 0x80) > 0)
+                                    if (value[i] == '1')
+                                        bbval[(i / 8)] |= (byte)(0x80 >> (i % 8));
                                     else
-                                        sb.Append(0);     //.Insert(0, 0);
+                                        bbval[(i / 8)] &= (byte)~(0x80 >> (i % 8));
                                 }
                                 //val = sb.ToString();
                                 break;
@@ -351,20 +382,6 @@ namespace IEDExplorer
                                 else
                                 {
                                     Logger.getLogger().LogError("NodeData.StringValue - cannot parse '" + value + "' to float");
-                                }
-                                break;
-                            case scsm_MMS_TypeEnum.utc_time:
-                                DateTime tval;
-                                string tms = value;
-                                if (tms.Contains('['))
-                                    tms = tms.Substring(0, tms.IndexOf('['));
-                                if (DateTime.TryParse(tms, out tval))
-                                {
-                                    DataValue = tval;
-                                }
-                                else
-                                {
-                                    Logger.getLogger().LogError("NodeData.StringValue - cannot parse '" + tms + "' to DateTime");
                                 }
                                 break;
                             default:
