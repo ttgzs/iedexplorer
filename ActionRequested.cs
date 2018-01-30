@@ -35,5 +35,6 @@ namespace IEDExplorer
         OpenFile,
         ReadFile,
         CloseFile,
+        FileDelete
     }
 }

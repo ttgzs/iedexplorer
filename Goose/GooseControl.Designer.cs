@@ -467,7 +467,7 @@
             // 
             this.textBox_GoID.Location = new System.Drawing.Point(63, 63);
             this.textBox_GoID.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.textBox_GoID.MaxLength = 65;
+      this.textBox_GoID.MaxLength = 135;
             this.textBox_GoID.Name = "textBox_GoID";
             this.textBox_GoID.Size = new System.Drawing.Size(144, 20);
             this.textBox_GoID.TabIndex = 16;

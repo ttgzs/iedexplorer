@@ -256,14 +256,14 @@ namespace IEDExplorer
 
                             val = "";
 
-                            for (int i = 0; i < blen * 8 - trail; i++)
-                            {
-                                if (((bbval[(i / 8)] << (i % 8)) & 0x80) > 0)
-                                {
-                                    val = "Q";
-                                    break;
+						for(int i = 0; i < blen * 8 - trail; i++) {
+                                if(((bbval[(i / 8)] << (i % 8)) & 0x80) > 0) {
+                                     val += i.ToString("x");
+
                                 }
                             }
+                            if(val.Length > 0)
+                                val = "Q" + val;
                             break;
                         default:
                             val = DataValue.ToString();

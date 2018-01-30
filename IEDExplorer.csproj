@@ -121,7 +121,7 @@
     </Reference>
     <Reference Include="PcapDotNet.Core, Version=1.0.3.21026, Culture=neutral, PublicKeyToken=4b6f3e583145a652, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>packages\Pcap.Net.x64.1.0.3\lib\net40\PcapDotNet.Core.dll</HintPath>
+      <HintPath>Embed\PcapDotNet.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="PcapDotNet.Core.Extensions, Version=1.0.3.21028, Culture=neutral, PublicKeyToken=4b6f3e583145a652, processorArchitecture=AMD64">
@@ -310,9 +310,7 @@
     <Compile Include="Docking\DockPanel.AutoHideWindow.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Docking\DockPanel.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Docking\DockPanel.cs" />
     <Compile Include="Docking\DockPanel.DockDragHandler.cs">
       <SubType>Component</SubType>
     </Compile>

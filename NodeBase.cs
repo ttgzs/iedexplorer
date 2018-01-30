@@ -79,7 +79,10 @@ namespace IEDExplorer
         }
 
         public string Name { get; private set; }
-
+				public void NameSet4Test(string name)
+				{
+					this.Name = name;
+				}
         public string TypeId { get; set; }
 
         public bool IsIecModel { get; set; }
