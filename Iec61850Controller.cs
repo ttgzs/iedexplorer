@@ -310,8 +310,8 @@ namespace IEDExplorer
 
         public void ActivateNVL(NodeVL vl)
         {
-            Logger.getLogger().LogError("Function not active, try to configure an RCB!");
-            return;
+            //Logger.getLogger().LogError("Function not active, try to configure an RCB!");
+            //return;
 
             NodeBase ur = null;
             Iec61850State iecs = vl.GetIecs();
