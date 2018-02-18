@@ -71,6 +71,11 @@ namespace IEDExplorer
                     textBoxValue.Show();
                     textBoxValue.Text = ((long)Cpar.ctlVal).ToString();
                     break;
+                case scsm_MMS_TypeEnum.floating_point:
+                    comboBoxValue.Hide();
+                    textBoxValue.Show();
+                    textBoxValue.Text = ((float)Cpar.ctlVal).ToString();
+                    break;
                 default:
                     break;
             }
@@ -114,6 +119,17 @@ namespace IEDExplorer
                     else
                     {
                         MessageBox.Show("Cannot parse Value to Integer: {0}", textBoxValue.Text);
+                    }
+                    break;
+                case scsm_MMS_TypeEnum.floating_point:
+                    float res2 = 0;
+                    if (float.TryParse(textBoxValue.Text, out res2))
+                    {
+                        Cpar.ctlVal = res2;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Cannot parse Value to Float: {0}", textBoxValue.Text);
                     }
                     break;
                 default:

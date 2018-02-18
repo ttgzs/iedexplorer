@@ -528,7 +528,7 @@ namespace IEDExplorer.Views
                         listsNode = e.Node;
                         item.Click += new EventHandler(OnFileSaveClick);
                     }
-                    if (n is NodeData && n.Name == "ctlVal")
+                    if ((n is NodeData && n.Name == "ctlVal") || (n.Parent != null && n.Parent.Name == "ctlVal" && (n.Name == "i" || n.Name == "f")))
                     {
                         item = menu.Items.Add("Send Command (Writes)");
                         item.Tag = n;
