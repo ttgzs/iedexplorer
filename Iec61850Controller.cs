@@ -60,8 +60,30 @@ namespace IEDExplorer
             CommAddress ad = new CommAddress();
             NodeBase[] ndarr = new NodeBase[1];
             ndarr[0] = nfi;
+
+            if((nfi is NodeFile)) {
+              NodeData nd = new NodeData("x");
+              nd.DataType = scsm_MMS_TypeEnum.visible_string;
+              nd.DataValue = nfi.Name;
+              EditValue ev = new EditValue(nd);
+              System.Windows.Forms.DialogResult r = ev.ShowDialog();
+              if(r == System.Windows.Forms.DialogResult.OK) {
+                ad.Variable = nd.StringValue;
+                nfi.NameSet4Test(ad.Variable);
+              }
+            }
             nfi.Reset();
             iecs.Send(ndarr, ad, ActionRequested.OpenFile);
+        }
+
+        public void FileDelete(NodeFile nfi)
+        {
+             CommAddress ad = new CommAddress();
+             NodeBase[] ndarr = new NodeBase[1];
+             ndarr[0] = nfi;
+             //nfi.NameSet4Test("anyfile.icd");
+             nfi.Reset();
+             iecs.Send(ndarr, ad, ActionRequested.FileDelete);
         }
 
         public void DefineNVL(NodeVL nvl)
@@ -288,8 +310,8 @@ namespace IEDExplorer
 
         public void ActivateNVL(NodeVL vl)
         {
-            Logger.getLogger().LogError("Function not active, try to configure an RCB!");
-            return;
+            //Logger.getLogger().LogError("Function not active, try to configure an RCB!");
+            //return;
 
             NodeBase ur = null;
             Iec61850State iecs = vl.GetIecs();

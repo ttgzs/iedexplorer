@@ -24,8 +24,8 @@ using System.Text;
 
 namespace IEDExplorer
 {
-    class NodeDO : NodeBase
-   // class NodeDO : NodeData
+    //class NodeDO : NodeBase
+    class NodeDO : NodeData
     {
         private string _type = "";
 

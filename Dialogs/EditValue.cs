@@ -41,6 +41,8 @@ namespace IEDExplorer
         internal EditValue(NodeData n)
         {
             InitializeComponent();
+            chbSetZeroEntryID.Checked = false;
+            chbSetZeroEntryID.Enabled = true;
             data = n;
             this.textBox1.Text = n.StringValue;
             NodeBase nb = data;
@@ -73,7 +75,10 @@ namespace IEDExplorer
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            data.StringValue = this.textBox1.Text;
+            if(chbSetZeroEntryID.Checked == true)
+                data.StringValue = "\0\0\0\0\0\0\0\0";
+            else
+                data.StringValue = this.textBox1.Text;
         }
 
         internal bool UpdateTimestamp { get { return checkBoxTimestamp.Checked; } }

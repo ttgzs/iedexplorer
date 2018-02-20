@@ -455,6 +455,9 @@ namespace IEDExplorer
                 {
                     ReceiveRead(iecs, mymmspdu.Confirmed_ResponsePDU.Service.Read, operData);
                 }
+                else if(mymmspdu.Confirmed_ResponsePDU.Service.Write != null) {
+                  iecs.logger.LogError("Not implemented PDU Write response received!!");
+                } 
                 else if (mymmspdu.Confirmed_ResponsePDU.Service.DefineNamedVariableList != null)
                 {
                     ReceiveDefineNamedVariableList(iecs, mymmspdu.Confirmed_ResponsePDU.Service.DefineNamedVariableList, operData);
@@ -2399,6 +2402,46 @@ namespace IEDExplorer
             this.Send(iecs, mymmspdu, InvokeID, el.Data);
             return 0;
         }
+
+		public int SendFileDelete(Iec61850State iecs, WriteQueueElement el)
+		{
+			MMSpdu mymmspdu = new MMSpdu();
+			iecs.msMMSout = new MemoryStream();
+
+			Confirmed_RequestPDU crreq = new Confirmed_RequestPDU();
+			ConfirmedServiceRequest csrreq = new ConfirmedServiceRequest();
+			FileDelete_Request filedreq = new FileDelete_Request();
+			FileName filename = new FileName();
+
+			filename.initValue();
+			if(el.Data[0] is NodeFile)
+				filename.Add((el.Data[0] as NodeFile).FullName);
+			else {
+				iecs.logger.LogError("mms.SendDeleteFile: Request not a file!");
+				return -1;
+			}
+			filedreq.Value = filename;
+
+			iecs.lastFileOperationData[0] = el.Data[0];
+
+			csrreq.selectFileDelete(filedreq);
+
+			crreq.InvokeID = new Unsigned32(InvokeID++);
+
+			crreq.Service = csrreq;
+
+			mymmspdu.selectConfirmed_RequestPDU(crreq);
+
+			encoder.encode<MMSpdu>(mymmspdu, iecs.msMMSout);
+
+			if(iecs.msMMSout.Length == 0) {
+				iecs.logger.LogError("mms.SendDeleteFile: Encoding Error!");
+				return -1;
+			}
+
+			this.Send(iecs, mymmspdu, InvokeID, el.Data);
+			return 0;
+		}
 
         public int SendFileClose(Iec61850State iecs, WriteQueueElement el)
         {

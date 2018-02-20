@@ -188,6 +188,33 @@ namespace IEDExplorer.Views
             toolStripButton_Run.Enabled = true;
         }
 
+        public void Stop()
+        {
+            toolStripButton_Stop.Enabled = false;
+            toolStripButton_Run.Enabled = true;
+        }
+
+        public void Restart()
+        {
+            toolStripButton_Stop.Enabled = true;
+            toolStripButton_Stop.ImageTransparentColor = System.Drawing.Color.LightYellow;
+            if(toolStripComboBox_Hostname.Items.Count == 0) {
+                toolStripComboBox_Hostname.Items.Add("localhost");
+            }
+            toolStripButton_Run.Enabled = false;
+            AddAndSaveMruIp();
+            try {
+                isoPar = iedsDb[toolStripComboBox_Hostname.Text];
+            }  // read parameters of the current ied
+            catch { isoPar = null; }
+            if(isoPar == null) {
+                isoPar = new IsoConnectionParameters((IsoAcse.AcseAuthenticationParameter)null);
+                isoPar.hostname = toolStripComboBox_Hostname.Text;
+            }
+            worker.Start(isoPar);
+        }
+
+
         private void toolStripComboBox_Hostname_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (toolStripComboBox_Hostname.SelectedItem != null)

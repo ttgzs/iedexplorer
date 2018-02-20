@@ -53,12 +53,13 @@ namespace IEDExplorer
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.checkBoxTimestamp = new System.Windows.Forms.CheckBox();
+      this.chbSetZeroEntryID = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // buttonOK
             // 
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(185, 111);
+      this.buttonOK.Location = new System.Drawing.Point(184, 148);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(79, 33);
             this.buttonOK.TabIndex = 5;
@@ -69,7 +70,7 @@ namespace IEDExplorer
             // buttonCancel
             // 
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(287, 111);
+      this.buttonCancel.Location = new System.Drawing.Point(286, 148);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(79, 33);
             this.buttonCancel.TabIndex = 4;
@@ -104,11 +105,24 @@ namespace IEDExplorer
             this.checkBoxTimestamp.Text = "Update Timestamp (.t) to current time";
             this.checkBoxTimestamp.UseVisualStyleBackColor = true;
             // 
+      // chbSetZeroEntryID
+      // 
+      this.chbSetZeroEntryID.AutoSize = true;
+      this.chbSetZeroEntryID.Checked = true;
+      this.chbSetZeroEntryID.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.chbSetZeroEntryID.Location = new System.Drawing.Point(54, 98);
+      this.chbSetZeroEntryID.Name = "chbSetZeroEntryID";
+      this.chbSetZeroEntryID.Size = new System.Drawing.Size(117, 17);
+      this.chbSetZeroEntryID.TabIndex = 9;
+      this.chbSetZeroEntryID.Text = "Set Zero to EntryID";
+      this.chbSetZeroEntryID.UseVisualStyleBackColor = true;
+      // 
             // EditValue
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(395, 158);
+      this.ClientSize = new System.Drawing.Size(394, 193);
+      this.Controls.Add(this.chbSetZeroEntryID);
             this.Controls.Add(this.checkBoxTimestamp);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBox1);
@@ -129,5 +143,6 @@ namespace IEDExplorer
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox checkBoxTimestamp;
+    private System.Windows.Forms.CheckBox chbSetZeroEntryID;
     }
 }

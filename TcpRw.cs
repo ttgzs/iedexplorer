@@ -93,13 +93,16 @@ namespace IEDExplorer
                     if (tcps.workSocket.Connected)
                     {
                         tcps.workSocket.Shutdown(SocketShutdown.Both);
-                        //tcps.receiveDone.WaitOne(15000);
+                        tcps.receiveDone.WaitOne(5000);
                     }
+                    if(tcps.workSocket != null) {
+
                     tcps.workSocket.Close();
                     tcps.workSocket.Dispose();
                     tcps.workSocket = null;
+                    }
                 }
-            }
+            } 
             catch (Exception e)
             {
                 tcps.logger.LogError("Closing: " + e.ToString());
@@ -169,12 +172,16 @@ namespace IEDExplorer
                             tcps.recvBytes = tcps.workSocket.EndReceive(ar);
                             //Console.WriteLine("ReceiveCallback: Data received {0}",
                             //    tcps.recvBytes.ToString());
+                        } catch (Exception e) {
+                            tcps.logger.LogError(e.Message);
+                        }
 
+                        try {
                             IsoTpkt.Parse(tcps);
                         }
                         catch (Exception e)
                         {
-                            tcps.logger.LogError("ReceiveCallback on EndReceive: " + e.Message);
+                            tcps.logger.LogError(e.Message);
                         }
                         // Signal that the data has been received.
                         tcps.receiveDone.Set();
@@ -184,7 +191,7 @@ namespace IEDExplorer
             catch (Exception e)
             {
             //   StopClient(tcps);
-                tcps.logger.LogInfo("ReceiveCallback: " + e.ToString());
+            //    tcps.logger.LogInfo(e.ToString());
             }
         }
 

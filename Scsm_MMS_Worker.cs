@@ -36,6 +36,7 @@ namespace IEDExplorer
         private bool _run;
         private IsoConnectionParameters isoParameters;
         private Env _env;
+        private bool restart_allowed = false;
         WaitHandle[] _waitHandles = new WaitHandle[5];
         public Iec61850State iecs;
         Logger logger = Logger.getLogger();
@@ -48,6 +49,7 @@ namespace IEDExplorer
         public int Start(IsoConnectionParameters par)
         {
             isoParameters = par;
+            restart_allowed = true;
             return Start();
         }
 
@@ -68,12 +70,22 @@ namespace IEDExplorer
 
         public void Stop()
         {
+            Stop(true);
+        }
+        public void Stop(bool restart_enable)
+        {
+            restart_allowed = restart_enable;
             if (_workerThread != null)
             {
                 (_waitHandles[3] as ManualResetEvent).Set();
                 _workerThread = null;
                 logger.LogInfo(String.Format("Communication to hostname = {0}, port = {1} stopped.", isoParameters.hostname, isoParameters.port));
             }
+
+            _env.winMgr.mainWindow.BeginInvoke((Action)delegate
+            {
+                _env.winMgr.mainWindow.Stop();
+            });
         }
 
         public void SendCommand(Iec61850lStateEnum c)
@@ -116,7 +128,8 @@ namespace IEDExplorer
                         break;
                     case TcpProtocolState.TCP_STATE_SHUTDOWN:
                         iecs.logger.LogInfo("[TCP_STATE_SHUTDOWN]");
-                        Thread.Sleep(5000);
+                        Stop();
+                        Thread.Sleep(10000);
                         iecs.tstate = TcpProtocolState.TCP_STATE_START;
                         break;
                     case TcpProtocolState.TCP_CONNECTED:
@@ -307,6 +320,9 @@ namespace IEDExplorer
                                 case ActionRequested.CloseFile:
                                     iecs.mms.SendFileClose(iecs, el);
                                     break;
+                                case ActionRequested.FileDelete:
+                                    iecs.mms.SendFileDelete(iecs, el);
+                                    break;
                             }
                         }
                         break;
@@ -316,6 +332,13 @@ namespace IEDExplorer
             }
             TcpRw.StopClient(iecs);
             _env.winMgr.UnBindFromCapture(iecs);
+            if(restart_allowed) {
+                restart_allowed = false;
+                _env.winMgr.mainWindow.BeginInvoke((Action)delegate {
+                    _env.winMgr.mainWindow.Restart();
+                });
+            }
+
         }
     }
 }
