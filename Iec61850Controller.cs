@@ -240,7 +240,7 @@ namespace IEDExplorer
                     {
                         NodeData n = new NodeData(b.Name);
                         n.DataType = ((NodeData)b).DataType;
-                        n.DataValue = false;
+                        n.DataValue = cPar.Test;
                         ndar.Add(n);
                     }
                     if ((b = d.FindChildNode("Check")) != null)
