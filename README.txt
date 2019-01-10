@@ -222,3 +222,31 @@ Service release 0.79c 2017/06/22
 Service release 0.79d 2017/06/26
 - Timestamp quality bits listing
 - List GOOSE interfaces - Windows texts
+
+Service release 0.79e 2019/01/10
+* Read Test flag from CommandDialog
+* NodeDO.cs: base type for NodeDO should be NodeData for keep working Enable All RCB and for ActivateNVL
+* Iec61859Controller.cs: ActivateNVL is uncommented
+* EntryID is a 8 byte length value I've added possiblity to write 8byte 00-00-00-00-00-00-00-00
+    value to server to reset EntryID in BRCB
+* added GooseCnt
+* added File Delete command
+* autoreconnect feature (corrected)
+* Stop pooling if PoolView form is closed
+* Restored feature to edit file name before GetFile and GetFileList to test server behavior
+* extended information about Quality of data and Time
+* Added parsing of embedded structured data, Logging Write Response
+* Writing float commands
+* Iso connection reuse
+* bitstring write
+* datetime write
+* Cosmetics
+* Find Form Update
+* Find dialog
+* Time format (milliseconds) - leading zeroes
+* Service release 0.79d 2017/06/26
+* List GOOSE interfaces - Windows texts
+* cosmetics
+* List GOOSE interfaces
+* Copy names from IedDataView
+* File directory listing enhanced
