@@ -531,12 +531,12 @@ namespace IEDExplorer.Views
                     }
                     if ((n is NodeData && n.Name == "ctlVal") || (n.Parent != null && n.Parent.Name == "ctlVal" && (n.Name == "i" || n.Name == "f")))
                     {
-                        item = menu.Items.Add("Send Command (Writes)");
-                        item.Tag = n;
-                        item.Click += new EventHandler(OnSendCommandClick);
-                        item = menu.Items.Add("Send Command (Structure)");
+                        item = menu.Items.Add("Send Command (As MMS Structure)-Preferred");
                         item.Tag = n;
                         item.Click += new EventHandler(OnSendCommandAsStructureClick);
+                        item = menu.Items.Add("Send Command (As Plain MMS Writes)-Test");
+                        item.Tag = n;
+                        item.Click += new EventHandler(OnSendCommandClick);
                     }
                     if (n is NodeData || (n is NodeDO) && (!(n as NodeDO).IsIecModel) || n is NodeFC || n is NodeVL)
                     {

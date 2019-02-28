@@ -1497,13 +1497,7 @@ namespace IEDExplorer
             else if (data.isOctet_stringSelected())
             {
                 iecs.logger.LogDebug("data.Octet_string != null");
-                System.Text.Decoder ascii = (new ASCIIEncoding()).GetDecoder();
-                int bytesUsed = 0;
-                int charsUsed = 0;
-                bool completed = false;
-                char[] chars = new char[data.Octet_string.Length];
-                ascii.Convert(data.Octet_string, 0, data.Octet_string.Length, chars, 0, data.Octet_string.Length, true, out bytesUsed, out charsUsed, out completed);
-                (actualNode as NodeData).DataValue = new String(chars);
+                (actualNode as NodeData).DataValue = System.Text.ASCIIEncoding.ASCII.GetString(data.Octet_string);
             }
             else if (data.isUnsignedSelected())
             {
@@ -1514,40 +1508,7 @@ namespace IEDExplorer
             {
                 iecs.logger.LogDebug("data.Utc_time != null");
 
-                long seconds;
-                long millis;
-
-                //if (actualNode.Address == "BayControllerQ/LTRK1.ApcFTrk.T")
-                //    iecs.logger.LogDebug("BayControllerQ/LTRK1.ApcFTrk.T"); ;
-                if (data.Utc_time.Value != null && data.Utc_time.Value.Length == 8)
-                {
-                    seconds = (data.Utc_time.Value[0] << 24) +
-                              (data.Utc_time.Value[1] << 16) +
-                              (data.Utc_time.Value[2] << 8) +
-                              (data.Utc_time.Value[3]);
-
-                    millis = 0;
-                    for (int i = 0; i < 24; i++)
-                    {
-                        if (((data.Utc_time.Value[(i / 8) + 4] << (i % 8)) & 0x80) > 0)
-                        {
-                            millis += 1000000 / (1 << (i + 1));
-                        }
-                    }
-                    millis /= 1000;
-
-                    iecs.logger.LogDebug("calling ConvertFromUnixTimestamp");
-                    DateTime dt = ConvertFromUnixTimestamp(seconds);
-                    iecs.logger.LogDebug("return from ConvertFromUnixTimestamp");
-                    dt = dt.AddMilliseconds(millis);
-                    (actualNode as NodeData).DataValue = dt.ToLocalTime();
-                    (actualNode as NodeData).DataParam = data.Utc_time.Value[7];
-                }
-                else
-                {
-                    (actualNode as NodeData).DataValue = DateTime.Now;
-                    (actualNode as NodeData).DataParam = (byte)0xff;
-                }
+                (actualNode as NodeData).DataValue = ConvertFromUtcTime(data.Utc_time.Value, (actualNode as NodeData).DataParam);
             }
             else if (data.isVisible_stringSelected())
             {
@@ -2686,6 +2647,90 @@ namespace IEDExplorer
             DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
             TimeSpan diff = date - origin;
             return (long)Math.Floor(diff.TotalSeconds);
+        }
+
+        public static void ConvertToUtcTime(DateTime dt, byte[] utc_time)
+        {
+            int t = (int)Scsm_MMS.ConvertToUnixTimestamp(dt);
+            byte[] uib = BitConverter.GetBytes(t);
+            utc_time[0] = uib[3];
+            utc_time[1] = uib[2];
+            utc_time[2] = uib[1];
+            utc_time[3] = uib[0];
+
+            UInt32 remainder = (UInt32)dt.Millisecond;
+            UInt32 fractionOfSecond = (remainder) * 16777 + ((remainder * 216) / 1000);
+            /* encode fraction of second */
+            utc_time[4] = (byte)((fractionOfSecond >> 16) & 0xff);
+            utc_time[5] = (byte)((fractionOfSecond >> 8) & 0xff);
+            utc_time[6] = (byte)(fractionOfSecond & 0xff);
+            /* encode time quality */
+            utc_time[7] = 0x0a; /* 10 bit sub-second time accuracy */
+        }
+
+
+        public static DateTime ConvertFromUtcTime(byte[] utc_time, Object dataParam)
+        {
+            long seconds;
+            long millis;
+
+            if (utc_time != null && utc_time.Length == 8)
+            {
+                seconds = (utc_time[0] << 24) +
+                          (utc_time[1] << 16) +
+                          (utc_time[2] << 8) +
+                          (utc_time[3]);
+
+                millis = 0;
+                for (int i = 0; i < 24; i++)
+                {
+                    if (((utc_time[(i / 8) + 4] << (i % 8)) & 0x80) > 0)
+                    {
+                        millis += 1000000 / (1 << (i + 1));
+                    }
+                }
+                millis /= 1000;
+
+                DateTime dt = ConvertFromUnixTimestamp(seconds);
+                dt = dt.AddMilliseconds(millis);
+                dataParam = utc_time[7];
+                return dt.ToLocalTime();
+            }
+            else
+            {
+                dataParam = (byte)0xff;
+                return DateTime.Now;
+            }
+        }
+
+        public static DateTime ConvertFromUtcTime2(byte[] utc_time, Object dataParam)
+        {
+            long seconds;
+            long fractionOfSecond;
+
+            if (utc_time != null && utc_time.Length == 8)
+            {
+                seconds = (utc_time[0] << 24) +
+                          (utc_time[1] << 16) +
+                          (utc_time[2] << 8) +
+                          (utc_time[3]);
+
+                fractionOfSecond = (utc_time[4] << 16);
+                fractionOfSecond += (utc_time[5] << 8);
+                fractionOfSecond += (utc_time[6]);
+
+                UInt32 millis = (UInt32)(fractionOfSecond / 16777);
+
+                DateTime dt = ConvertFromUnixTimestamp(seconds);
+                dt = dt.AddMilliseconds(millis);
+                dataParam = utc_time[7];
+                return dt.ToLocalTime();
+            }
+            else
+            {
+                dataParam = (byte)0xff;
+                return DateTime.Now;
+            }
         }
 
         private int insertCall(Iec61850State iecs, int InvokeIdInc, NodeBase[] OperationData)

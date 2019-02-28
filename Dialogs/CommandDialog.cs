@@ -48,6 +48,7 @@ namespace IEDExplorer
             comboBoxValue.Items.Clear();
             if (Cpar.T != DateTime.MinValue)
                 dateTimePickerT.Value = Cpar.T;
+            checkBoxSBODiffTime.Enabled = false;
             groupBoxSBO.Enabled = (Cpar.CommandFlowFlag == CommandCtrlModel.Select_Before_Operate_With_Normal_Security ||
                 Cpar.CommandFlowFlag == CommandCtrlModel.Select_Before_Operate_With_Enhanced_Security) &&
                 !Cpar.Address.Contains(".Cancel.");
@@ -156,11 +157,20 @@ namespace IEDExplorer
             {
                 dateTimePickerT.Enabled = true;
                 dateTimePickerT.Value = DateTime.UtcNow;
+                if (groupBoxSBO.Enabled)
+                {
+                    checkBoxSBODiffTime.Enabled = true;
+                }
             }
             else
             {
                 dateTimePickerT.Enabled = false;
                 Cpar.T = DateTime.MinValue;
+                if (groupBoxSBO.Enabled)
+                {
+                    checkBoxSBODiffTime.Enabled = false;
+                    checkBoxSBODiffTime.Checked = false;
+                }
             }
         }
     }

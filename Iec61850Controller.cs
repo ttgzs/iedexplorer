@@ -151,6 +151,7 @@ namespace IEDExplorer
         {
             if (data != null)
             {
+                Logger.getLogger().LogInfo("Sending command " + data.IecAddress);
                 NodeData d = (NodeData)data.Parent;
                 if (d != null)
                 {
@@ -233,12 +234,9 @@ namespace IEDExplorer
 
                         if (cPar.T != DateTime.MinValue)
                         {
-                            int t = (int)Scsm_MMS.ConvertToUnixTimestamp(cPar.T);
-                            byte[] uib = BitConverter.GetBytes(t);
-                            btm[0] = uib[3];
-                            btm[1] = uib[2];
-                            btm[2] = uib[1];
-                            btm[3] = uib[0];
+                            if (d.Name == "Oper" && cPar.SBOdiffTime && cPar.SBOrun)
+                                cPar.T.AddMilliseconds(cPar.SBOtimeout);
+                            Scsm_MMS.ConvertToUtcTime(cPar.T, btm);
                         }
                         ndar.Add(n);
                     }

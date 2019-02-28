@@ -250,3 +250,10 @@ Service release 0.79e 2019/01/10
 * List GOOSE interfaces
 * Copy names from IedDataView
 * File directory listing enhanced
+
+Service release 0.79f 2019/02/28
+* Move to .net CLR ver 4.5
+* Better Write response diagnostic support
+* LastApplError unconfirmed PDU diagnostics support
+* SBO(w) Commands supported (Select / Operate by hand or in an automatic sequence)
+* Better Control Service diagnostics support
