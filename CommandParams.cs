@@ -39,6 +39,9 @@ namespace IEDExplorer
         public bool interlockCheck;
         public bool synchroCheck;
         public string Address;
+        public bool SBOrun;
+        public bool SBOdiffTime;
+        public int SBOtimeout;
     }
 
     public enum OrCat

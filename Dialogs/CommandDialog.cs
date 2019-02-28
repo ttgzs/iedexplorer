@@ -48,6 +48,10 @@ namespace IEDExplorer
             comboBoxValue.Items.Clear();
             if (Cpar.T != DateTime.MinValue)
                 dateTimePickerT.Value = Cpar.T;
+            groupBoxSBO.Enabled = (Cpar.CommandFlowFlag == CommandCtrlModel.Select_Before_Operate_With_Normal_Security ||
+                Cpar.CommandFlowFlag == CommandCtrlModel.Select_Before_Operate_With_Enhanced_Security) &&
+                !Cpar.Address.Contains(".Cancel.");
+
             switch (Cpar.DataType)
             {
                 case scsm_MMS_TypeEnum.boolean:
@@ -88,6 +92,13 @@ namespace IEDExplorer
             Cpar.Test = checkBoxTest.Checked;
             Cpar.orCat = (OrCat)comboBoxCat.SelectedIndex;
             Cpar.orIdent = textBoxIdent.Text;
+            Cpar.SBOrun = checkBoxSendSBO.Checked;
+            Cpar.SBOdiffTime = checkBoxSBODiffTime.Checked;
+            int ires = 0;
+            if (int.TryParse(maskedTextBoxSBOTimeout.Text, out ires))
+            {
+                Cpar.SBOtimeout = ires;
+            }
             switch (Cpar.DataType)
             {
                 case scsm_MMS_TypeEnum.boolean:

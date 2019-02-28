@@ -33,6 +33,7 @@ using WeifenLuo.WinFormsUI.Docking;
 using IEDExplorer.Resources;
 using System.Threading;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace IEDExplorer.Views
 {
@@ -719,28 +720,73 @@ namespace IEDExplorer.Views
 
         void OnSendCommandClick(object sender, EventArgs e)
         {
-            NodeBase data = (NodeBase)(sender as ToolStripItem).Tag;
-            CommandParams cPar = ctrl.PrepareSendCommand((NodeBase)(sender as ToolStripItem).Tag);
-            if (cPar != null)
-            {
-                CommandDialog cdlg = new CommandDialog(cPar);
-                if (cdlg.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
-                {
-                    ctrl.SendCommand(data, cPar, ActionRequested.Write);
-                }
-            }
+            DoSendCommandClick(sender, ActionRequested.Write);
         }
 
         void OnSendCommandAsStructureClick(object sender, EventArgs e)
         {
+            DoSendCommandClick(sender, ActionRequested.WriteAsStructure);
+        }
+
+        async Task PutTaskDelay(int millis)
+        {
+            await Task.Delay(millis);
+        }
+
+        async void DoSendCommandClick(object sender, ActionRequested how)
+        {
             NodeBase data = (NodeBase)(sender as ToolStripItem).Tag;
-            CommandParams cPar = ctrl.PrepareSendCommand((NodeBase)(sender as ToolStripItem).Tag);
+            CommandParams cPar = ctrl.PrepareSendCommand(data);
             if (cPar != null)
             {
                 CommandDialog cdlg = new CommandDialog(cPar);
                 if (cdlg.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
                 {
-                    ctrl.SendCommand(data, cPar, ActionRequested.WriteAsStructure);
+                    if (cPar.SBOrun)
+                    {
+                        string sName = (cPar.CommandFlowFlag == CommandCtrlModel.Select_Before_Operate_With_Enhanced_Security) ? "SBOw" : "SBO";
+                        NodeData d = (NodeData)data.Parent;
+                        NodeData op = null, sel = null;
+                        if (d != null)
+                        {
+                            if (d.Name == "SBOw" || d.Name == "SBO")
+                            {
+                                sName = "Oper";
+                                sel = (NodeData)data;
+                            }
+                            else
+                                op = (NodeData)data;
+                            NodeBase dd = d.Parent;
+                            if (dd != null)
+                            {
+                                NodeData d2 = (NodeData)dd.FindChildNode(sName);
+                                if (d2 != null)
+                                {
+                                    NodeData d3 = (NodeData)d2.FindChildNode("ctlVal");
+                                    if (d3 != null)
+                                    {
+                                        if (op == null)
+                                            op = d3;
+                                        else
+                                            sel = d3;
+                                        ctrl.SendCommand(sel, cPar, how);
+                                        await PutTaskDelay(cPar.SBOtimeout);
+                                        ctrl.SendCommand(op, cPar, how);
+                                    }
+                                    else
+                                        Logger.getLogger().LogWarning("Cannot send SBO command sequence, ctlVal not found in " + d2.IecAddress);
+                                }
+                                else
+                                    Logger.getLogger().LogWarning("Cannot send SBO command sequence, " + sName + " not found in " + dd.IecAddress);
+                            }
+                            else
+                                Logger.getLogger().LogWarning("Cannot send SBO command sequence, null parent of " + d.IecAddress);
+                        }
+                        else
+                            Logger.getLogger().LogWarning("Cannot send SBO command sequence, null parent of " + data.IecAddress);
+                    }
+                    else
+                        ctrl.SendCommand(data, cPar, how);
                 }
             }
         }

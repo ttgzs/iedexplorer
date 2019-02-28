@@ -45,11 +45,11 @@ namespace IEDExplorer.Views
                 dataGridView_log.FirstDisplayedScrollingRowIndex = dataGridView_log.RowCount - 1;
                 //listViewLog.BeginUpdate();
                 //ListViewItem item = dataGridView_log.Items.Add(message);
-                if (message.Contains("Error"))
+                if (message.Contains(" Warning:"))
+                    dataGridView_log.Rows[dataGridView_log.RowCount - 1].Cells[0].Style.ForeColor = Color.Blue;
+                else if (message.Contains(" Error:"))
                     dataGridView_log.Rows[dataGridView_log.RowCount - 1].Cells[0].Style.ForeColor = Color.Red;
                     //item.ForeColor = Color.Red;
-                else if (message.Contains("Warning"))
-                    dataGridView_log.Rows[dataGridView_log.RowCount - 1].Cells[0].Style.ForeColor = Color.Blue;
                     //item.ForeColor = Color.Blue;
                 //item.EnsureVisible();
                 //listViewLog.EndUpdate();

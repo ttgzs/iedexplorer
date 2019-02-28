@@ -364,6 +364,25 @@ namespace IEDExplorer
             insufficientspaceinfilestore = 9
         }
 
+        enum ControlAddCause
+        {
+            ADD_CAUSE_UNKNOWN = 0, ADD_CAUSE_NOT_SUPPORTED = 1, ADD_CAUSE_BLOCKED_BY_SWITCHING_HIERARCHY = 2, ADD_CAUSE_SELECT_FAILED = 3,
+            ADD_CAUSE_INVALID_POSITION = 4, ADD_CAUSE_POSITION_REACHED = 5, ADD_CAUSE_PARAMETER_CHANGE_IN_EXECUTION = 6, ADD_CAUSE_STEP_LIMIT = 7,
+            ADD_CAUSE_BLOCKED_BY_MODE = 8, ADD_CAUSE_BLOCKED_BY_PROCESS = 9, ADD_CAUSE_BLOCKED_BY_INTERLOCKING = 10, ADD_CAUSE_BLOCKED_BY_SYNCHROCHECK = 11,
+            ADD_CAUSE_COMMAND_ALREADY_IN_EXECUTION = 12, ADD_CAUSE_BLOCKED_BY_HEALTH = 13, ADD_CAUSE_1_OF_N_CONTROL = 14, ADD_CAUSE_ABORTION_BY_CANCEL = 15,
+            ADD_CAUSE_TIME_LIMIT_OVER = 16, ADD_CAUSE_ABORTION_BY_TRIP = 17, ADD_CAUSE_OBJECT_NOT_SELECTED = 18, ADD_CAUSE_OBJECT_ALREADY_SELECTED = 19,
+            ADD_CAUSE_NO_ACCESS_AUTHORITY = 20, ADD_CAUSE_ENDED_WITH_OVERSHOOT = 21, ADD_CAUSE_ABORTION_DUE_TO_DEVIATION = 22, ADD_CAUSE_ABORTION_BY_COMMUNICATION_LOSS = 23,
+            ADD_CAUSE_ABORTION_BY_COMMAND = 24, ADD_CAUSE_NONE = 25, ADD_CAUSE_INCONSISTENT_PARAMETERS = 26, ADD_CAUSE_LOCKED_BY_OTHER_CLIENT = 27
+        }
+
+        enum ControlError
+        {
+            NoError = 0,
+            Unknown = 1,
+            TimeoutTestNotOk = 2,
+            OperatortestNotOk = 3
+        }
+
         static Env _env = Env.getEnv();
 
         public int ReceiveData(Iec61850State iecs)
@@ -455,9 +474,11 @@ namespace IEDExplorer
                 {
                     ReceiveRead(iecs, mymmspdu.Confirmed_ResponsePDU.Service.Read, operData);
                 }
-                else if(mymmspdu.Confirmed_ResponsePDU.Service.Write != null) {
-                  iecs.logger.LogError("Not implemented PDU Write response received!!");
-                } 
+                else if (mymmspdu.Confirmed_ResponsePDU.Service.Write != null)
+                {
+                    ReceiveWrite(iecs, mymmspdu.Confirmed_ResponsePDU.Service.Write, operData);
+                    //iecs.logger.LogError("Not implemented PDU Write response received!!");
+                }
                 else if (mymmspdu.Confirmed_ResponsePDU.Service.DefineNamedVariableList != null)
                 {
                     ReceiveDefineNamedVariableList(iecs, mymmspdu.Confirmed_ResponsePDU.Service.DefineNamedVariableList, operData);
@@ -590,7 +611,7 @@ namespace IEDExplorer
                             isdir = true;
                         }
 
-                        string[] names = name.Split(new char[] { '/', '\\'}, StringSplitOptions.RemoveEmptyEntries);
+                        string[] names = name.Split(new char[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries);
                         for (int i = 0; i < names.Length; i++)
                         {
                             bool isdirResult = isdir || (i < (names.Length - 1));
@@ -679,6 +700,23 @@ namespace IEDExplorer
             }
             else
                 Logger.getLogger().LogWarning("NVL Not deleted on server: " + nvl.Name);
+        }
+
+        private void ReceiveWrite(Iec61850State iecs, Write_Response write, NodeBase[] lastOperationData)
+        {
+            int i = 0;
+            try
+            {
+                foreach (Write_Response.Write_ResponseChoiceType wrc in write.Value)
+                {
+                    if (wrc.isFailureSelected())
+                        Logger.getLogger().LogWarning("Write failed for " + lastOperationData[i++].IecAddress + ", failure: " + wrc.Failure.Value.ToString()
+                            + ", (" + Enum.GetName(typeof(DataAccessError), ((DataAccessError)wrc.Failure.Value)) + ")");
+                    if (wrc.isSuccessSelected())
+                        Logger.getLogger().LogInfo("Write succeeded for " + lastOperationData[i++].IecAddress);
+                }
+            }
+            catch { }
         }
 
         private void ReceiveInformationReport(Iec61850State iecs, InformationReport Report)
@@ -861,10 +899,13 @@ namespace IEDExplorer
                                         phase++;
                                 }
 #endif
-                                if (phase == phsDataReferences) { // Is this phase active, e.g. is this bit set in OptFlds??
+                                if (phase == phsDataReferences)
+                                { // Is this phase active, e.g. is this bit set in OptFlds??
                                     //phase++;
-                                    if ((rptOpts[0] & OptFldsDataReference) != 0) {
-                                        if (list[i].Success.isVisible_stringSelected()) {
+                                    if ((rptOpts[0] & OptFldsDataReference) != 0)
+                                    {
+                                        if (list[i].Success.isVisible_stringSelected())
+                                        {
                                             varName = list[i].Success.Visible_string;
                                             iecs.logger.LogDebug("Report Variable Name = " + varName);
                                             NodeBase b = iecs.DataModel.ied.FindNodeByAddress(varName);
@@ -886,7 +927,8 @@ namespace IEDExplorer
                                             break;
                                         else
                                             continue;
-                                    } else
+                                    }
+                                    else
                                         phase++;
                                 }
                                 // here we will be only if report is received without variable names
@@ -936,6 +978,83 @@ namespace IEDExplorer
                             }
                         }
                     }
+                }
+            }
+            else if (Report != null && Report.VariableAccessSpecification != null && Report.VariableAccessSpecification.isListOfVariableSelected())
+            {
+                foreach (VariableAccessSpecification.ListOfVariableSequenceType lvs in Report.VariableAccessSpecification.ListOfVariable)
+                {
+                    string lstErr = (lvs.VariableSpecification.isNameSelected() ? (lvs.VariableSpecification.Name.isVmd_specificSelected() ? lvs.VariableSpecification.Name.Vmd_specific.Value : "??") : "??");
+                    if (lstErr == "LastApplError")
+                    {
+                        int phs = 0;
+                        string cntrlObj = "";
+                        ControlError error = ControlError.NoError;
+                        OrCat originOrCat = OrCat.NOT_SUPPORTED;
+                        string originOrStr = "";
+                        long ctlNum = 0;
+                        ControlAddCause addCause = ControlAddCause.ADD_CAUSE_UNKNOWN;
+
+                        foreach (AccessResult ara in Report.ListOfAccessResult)
+                        {
+                            if (ara.isSuccessSelected() && ara.Success.isStructureSelected())
+                            {
+                                foreach (Data data in ara.Success.Structure)
+                                {
+                                    switch (phs++)
+                                    {
+                                        case 0:
+                                            if (data.isVisible_stringSelected())
+                                                cntrlObj = data.Visible_string;
+                                            break;
+                                        case 1:
+                                            if (data.isIntegerSelected())
+                                                error = (ControlError)data.Integer;
+                                            break;
+                                        case 2:
+                                            if (data.isStructureSelected())
+                                            {
+                                                int j = 0;
+                                                foreach (Data d in data.Structure)
+                                                {
+                                                    if (j == 0)
+                                                    {
+                                                        if (d.isIntegerSelected())
+                                                            originOrCat = (OrCat)d.Integer;
+                                                    }
+                                                    if (j == 1)
+                                                    {
+                                                        if (d.isOctet_stringSelected())
+                                                        {
+                                                            originOrStr = System.Text.Encoding.ASCII.GetString(d.Octet_string);
+                                                        }
+                                                    }
+                                                    ++j;
+                                                }
+                                            }
+                                            break;
+                                        case 3:
+                                            if (data.isIntegerSelected())
+                                                ctlNum = data.Integer;
+                                            break;
+                                        case 4:
+                                            if (data.isIntegerSelected())
+                                                addCause = (ControlAddCause)data.Integer;
+                                            break;
+                                    } // switch
+                                }
+                            } // if
+                        } // foreach
+                        Logger.getLogger().LogWarning("Have got LastApplError:" +
+                            ", Control Object: " + cntrlObj +
+                            ", Error: " + ((int)error).ToString() + " (" + Enum.GetName(typeof(ControlError), error) + ")" +
+                            ", Originator: " + ((int)originOrCat).ToString() + " (" + Enum.GetName(typeof(OrCat), originOrCat) + "), Id = " + originOrStr +
+                            ", CtlNum: " + ctlNum.ToString() +
+                            ", addCause: " + ((int)addCause).ToString() + " (" + Enum.GetName(typeof(ControlAddCause), addCause) + ")"
+                             );
+                    }
+                    else
+                        iecs.logger.LogDebug("Have unknown Unconfirmed PDU: " + lstErr);
                 }
             }
         }
@@ -1482,32 +1601,32 @@ namespace IEDExplorer
             {
                 iecs.logger.LogDebug("t.Structure != null");
                 if (t.Structure.Components != null) foreach (TypeDescription.StructureSequenceType.ComponentsSequenceType s in t.Structure.Components)
-                {
-                    iecs.logger.LogDebug(s.ComponentName.Value);
-                    NodeBase newActualNode;
-                    // DO or DA?
-                    bool isDO = false;
-                    if (actualNode is NodeFC) isDO = true;  // Safe to say under FC must be a DO
-                    if (isDO)
-                        newActualNode = new NodeDO(s.ComponentName.Value);
-                    else
-                        newActualNode = new NodeData(s.ComponentName.Value);
-                    newActualNode = actualNode.AddChildNode(newActualNode);
-                    RecursiveReadTypeDescription(iecs, newActualNode, s.ComponentType.TypeDescription);
-                    if (actualNode is NodeFC && (actualNode.Name == "RP" || actualNode.Name == "BR"))
                     {
-                        // Having RCB
-                        NodeBase nrpied;
-                        if (actualNode.Name == "RP") nrpied = iecs.DataModel.urcbs.AddChildNode(new NodeLD(iecs.DataModel.ied.GetActualChildNode().Name));
-                        else nrpied = iecs.DataModel.brcbs.AddChildNode(new NodeLD(iecs.DataModel.ied.GetActualChildNode().Name));
-                        NodeBase nrp = new NodeRCB(newActualNode.CommAddress.Variable);
-                        nrpied.AddChildNode(nrp);
-                        foreach (NodeBase nb in newActualNode.GetChildNodes())
+                        iecs.logger.LogDebug(s.ComponentName.Value);
+                        NodeBase newActualNode;
+                        // DO or DA?
+                        bool isDO = false;
+                        if (actualNode is NodeFC) isDO = true;  // Safe to say under FC must be a DO
+                        if (isDO)
+                            newActualNode = new NodeDO(s.ComponentName.Value);
+                        else
+                            newActualNode = new NodeData(s.ComponentName.Value);
+                        newActualNode = actualNode.AddChildNode(newActualNode);
+                        RecursiveReadTypeDescription(iecs, newActualNode, s.ComponentType.TypeDescription);
+                        if (actualNode is NodeFC && (actualNode.Name == "RP" || actualNode.Name == "BR"))
                         {
-                            nrp.LinkChildNodeByAddress(nb);
+                            // Having RCB
+                            NodeBase nrpied;
+                            if (actualNode.Name == "RP") nrpied = iecs.DataModel.urcbs.AddChildNode(new NodeLD(iecs.DataModel.ied.GetActualChildNode().Name));
+                            else nrpied = iecs.DataModel.brcbs.AddChildNode(new NodeLD(iecs.DataModel.ied.GetActualChildNode().Name));
+                            NodeBase nrp = new NodeRCB(newActualNode.CommAddress.Variable);
+                            nrpied.AddChildNode(nrp);
+                            foreach (NodeBase nb in newActualNode.GetChildNodes())
+                            {
+                                nrp.LinkChildNodeByAddress(nb);
+                            }
                         }
                     }
-                }
             }
             else if (t.Array != null)
             {
@@ -2403,45 +2522,47 @@ namespace IEDExplorer
             return 0;
         }
 
-		public int SendFileDelete(Iec61850State iecs, WriteQueueElement el)
-		{
-			MMSpdu mymmspdu = new MMSpdu();
-			iecs.msMMSout = new MemoryStream();
+        public int SendFileDelete(Iec61850State iecs, WriteQueueElement el)
+        {
+            MMSpdu mymmspdu = new MMSpdu();
+            iecs.msMMSout = new MemoryStream();
 
-			Confirmed_RequestPDU crreq = new Confirmed_RequestPDU();
-			ConfirmedServiceRequest csrreq = new ConfirmedServiceRequest();
-			FileDelete_Request filedreq = new FileDelete_Request();
-			FileName filename = new FileName();
+            Confirmed_RequestPDU crreq = new Confirmed_RequestPDU();
+            ConfirmedServiceRequest csrreq = new ConfirmedServiceRequest();
+            FileDelete_Request filedreq = new FileDelete_Request();
+            FileName filename = new FileName();
 
-			filename.initValue();
-			if(el.Data[0] is NodeFile)
-				filename.Add((el.Data[0] as NodeFile).FullName);
-			else {
-				iecs.logger.LogError("mms.SendDeleteFile: Request not a file!");
-				return -1;
-			}
-			filedreq.Value = filename;
+            filename.initValue();
+            if (el.Data[0] is NodeFile)
+                filename.Add((el.Data[0] as NodeFile).FullName);
+            else
+            {
+                iecs.logger.LogError("mms.SendDeleteFile: Request not a file!");
+                return -1;
+            }
+            filedreq.Value = filename;
 
-			iecs.lastFileOperationData[0] = el.Data[0];
+            iecs.lastFileOperationData[0] = el.Data[0];
 
-			csrreq.selectFileDelete(filedreq);
+            csrreq.selectFileDelete(filedreq);
 
-			crreq.InvokeID = new Unsigned32(InvokeID++);
+            crreq.InvokeID = new Unsigned32(InvokeID++);
 
-			crreq.Service = csrreq;
+            crreq.Service = csrreq;
 
-			mymmspdu.selectConfirmed_RequestPDU(crreq);
+            mymmspdu.selectConfirmed_RequestPDU(crreq);
 
-			encoder.encode<MMSpdu>(mymmspdu, iecs.msMMSout);
+            encoder.encode<MMSpdu>(mymmspdu, iecs.msMMSout);
 
-			if(iecs.msMMSout.Length == 0) {
-				iecs.logger.LogError("mms.SendDeleteFile: Encoding Error!");
-				return -1;
-			}
+            if (iecs.msMMSout.Length == 0)
+            {
+                iecs.logger.LogError("mms.SendDeleteFile: Encoding Error!");
+                return -1;
+            }
 
-			this.Send(iecs, mymmspdu, InvokeID, el.Data);
-			return 0;
-		}
+            this.Send(iecs, mymmspdu, InvokeID, el.Data);
+            return 0;
+        }
 
         public int SendFileClose(Iec61850State iecs, WriteQueueElement el)
         {

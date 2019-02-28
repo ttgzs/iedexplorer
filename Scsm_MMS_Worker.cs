@@ -334,9 +334,14 @@ namespace IEDExplorer
             _env.winMgr.UnBindFromCapture(iecs);
             if(restart_allowed) {
                 restart_allowed = false;
-                _env.winMgr.mainWindow.BeginInvoke((Action)delegate {
-                    _env.winMgr.mainWindow.Restart();
-                });
+                try
+                {
+                    _env.winMgr.mainWindow.BeginInvoke((Action)delegate
+                    {
+                        _env.winMgr.mainWindow.Restart();
+                    });
+                }
+                catch { }
             }
 
         }

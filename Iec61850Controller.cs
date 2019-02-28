@@ -136,6 +136,9 @@ namespace IEDExplorer
                     if (b != null)
                         if (b is NodeData)
                             cPar.CommandFlowFlag = (CommandCtrlModel)((long)((b as NodeData).DataValue));
+                    cPar.SBOrun = false;
+                    cPar.SBOdiffTime = false;
+                    cPar.SBOtimeout = 100;
                     return cPar;
                 }
                 else
@@ -215,7 +218,10 @@ namespace IEDExplorer
                     {
                         NodeData n = new NodeData(b.Name);
                         n.DataType = ((NodeData)b).DataType;
-                        n.DataValue = m_ctlNum++;
+                        if (d.Name == "SBO" || d.Name == "SBOw")
+                            n.DataValue = m_ctlNum;
+                        else
+                            n.DataValue = m_ctlNum++;
                         ndar.Add(n);
                     }
                     if ((b = d.FindChildNode("T")) != null)

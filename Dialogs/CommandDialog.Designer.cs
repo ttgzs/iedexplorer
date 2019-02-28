@@ -67,15 +67,21 @@ namespace IEDExplorer
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.textBoxValue = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.label7 = new System.Windows.Forms.Label();
             this.dateTimePickerT = new System.Windows.Forms.DateTimePicker();
             this.checkBoxTActive = new System.Windows.Forms.CheckBox();
-            this.textBoxValue = new System.Windows.Forms.TextBox();
+            this.groupBoxSBO = new System.Windows.Forms.GroupBox();
+            this.checkBoxSendSBO = new System.Windows.Forms.CheckBox();
+            this.checkBoxSBODiffTime = new System.Windows.Forms.CheckBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.maskedTextBoxSBOTimeout = new System.Windows.Forms.MaskedTextBox();
             this.groupBox1.SuspendLayout();
             this.groupBoxOrig.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.groupBoxSBO.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -91,7 +97,7 @@ namespace IEDExplorer
             // buttonOK
             // 
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(68, 361);
+            this.buttonOK.Location = new System.Drawing.Point(68, 453);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(79, 33);
             this.buttonOK.TabIndex = 1;
@@ -102,7 +108,7 @@ namespace IEDExplorer
             // buttonCancel
             // 
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(274, 361);
+            this.buttonCancel.Location = new System.Drawing.Point(274, 453);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(79, 33);
             this.buttonCancel.TabIndex = 2;
@@ -278,6 +284,13 @@ namespace IEDExplorer
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Command";
             // 
+            // textBoxValue
+            // 
+            this.textBoxValue.Location = new System.Drawing.Point(70, 69);
+            this.textBoxValue.Name = "textBoxValue";
+            this.textBoxValue.Size = new System.Drawing.Size(310, 20);
+            this.textBoxValue.TabIndex = 11;
+            // 
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.label7);
@@ -321,18 +334,67 @@ namespace IEDExplorer
             this.checkBoxTActive.UseVisualStyleBackColor = true;
             this.checkBoxTActive.CheckedChanged += new System.EventHandler(this.checkBoxTActive_CheckedChanged);
             // 
-            // textBoxValue
+            // groupBoxSBO
             // 
-            this.textBoxValue.Location = new System.Drawing.Point(70, 69);
-            this.textBoxValue.Name = "textBoxValue";
-            this.textBoxValue.Size = new System.Drawing.Size(310, 20);
-            this.textBoxValue.TabIndex = 11;
+            this.groupBoxSBO.Controls.Add(this.maskedTextBoxSBOTimeout);
+            this.groupBoxSBO.Controls.Add(this.checkBoxSBODiffTime);
+            this.groupBoxSBO.Controls.Add(this.checkBoxSendSBO);
+            this.groupBoxSBO.Controls.Add(this.label8);
+            this.groupBoxSBO.Location = new System.Drawing.Point(11, 359);
+            this.groupBoxSBO.Name = "groupBoxSBO";
+            this.groupBoxSBO.Size = new System.Drawing.Size(387, 73);
+            this.groupBoxSBO.TabIndex = 13;
+            this.groupBoxSBO.TabStop = false;
+            this.groupBoxSBO.Text = "SBO / SBOw";
+            // 
+            // checkBoxSendSBO
+            // 
+            this.checkBoxSendSBO.AutoSize = true;
+            this.checkBoxSendSBO.Location = new System.Drawing.Point(7, 19);
+            this.checkBoxSendSBO.Name = "checkBoxSendSBO";
+            this.checkBoxSendSBO.Size = new System.Drawing.Size(140, 17);
+            this.checkBoxSendSBO.TabIndex = 1;
+            this.checkBoxSendSBO.Tag = "";
+            this.checkBoxSendSBO.Text = "Send SBO(w) sequence";
+            this.checkBoxSendSBO.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxSBODiffTime
+            // 
+            this.checkBoxSBODiffTime.AutoSize = true;
+            this.checkBoxSBODiffTime.Location = new System.Drawing.Point(6, 42);
+            this.checkBoxSBODiffTime.Name = "checkBoxSBODiffTime";
+            this.checkBoxSBODiffTime.Size = new System.Drawing.Size(214, 17);
+            this.checkBoxSBODiffTime.TabIndex = 1;
+            this.checkBoxSBODiffTime.Tag = "";
+            this.checkBoxSBODiffTime.Text = "Send different time in SBO(w) sequence";
+            this.checkBoxSBODiffTime.UseVisualStyleBackColor = true;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.label8.Location = new System.Drawing.Point(162, 20);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(172, 13);
+            this.label8.TabIndex = 9;
+            this.label8.Text = "Time between Select/Operate [ms]";
+            // 
+            // maskedTextBoxSBOTimeout
+            // 
+            this.maskedTextBoxSBOTimeout.Location = new System.Drawing.Point(337, 17);
+            this.maskedTextBoxSBOTimeout.Mask = "00000";
+            this.maskedTextBoxSBOTimeout.Name = "maskedTextBoxSBOTimeout";
+            this.maskedTextBoxSBOTimeout.Size = new System.Drawing.Size(44, 20);
+            this.maskedTextBoxSBOTimeout.TabIndex = 10;
+            this.maskedTextBoxSBOTimeout.Text = "100";
+            this.maskedTextBoxSBOTimeout.ValidatingType = typeof(int);
             // 
             // CommandDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(413, 406);
+            this.ClientSize = new System.Drawing.Size(413, 506);
+            this.Controls.Add(this.groupBoxSBO);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBoxOrig);
@@ -351,6 +413,8 @@ namespace IEDExplorer
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            this.groupBoxSBO.ResumeLayout(false);
+            this.groupBoxSBO.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -382,5 +446,10 @@ namespace IEDExplorer
         private System.Windows.Forms.CheckBox checkBoxTActive;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox textBoxValue;
+        private System.Windows.Forms.GroupBox groupBoxSBO;
+        private System.Windows.Forms.CheckBox checkBoxSBODiffTime;
+        private System.Windows.Forms.CheckBox checkBoxSendSBO;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.MaskedTextBox maskedTextBoxSBOTimeout;
     }
 }
