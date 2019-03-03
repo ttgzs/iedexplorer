@@ -110,7 +110,7 @@ namespace IEDExplorer
         {
             foreach (NodeBase child in iec.GetChildNodes())
             {
-                if (child is NodeData || child is NodeVLM)
+                if ((child is NodeData && !(child is NodeDO)) || child is NodeVLM)
                 {
                     // First DataAttribute child
                     // Create the whole path down to Ied
@@ -123,7 +123,7 @@ namespace IEDExplorer
                     }
                     NodeBase subtree = model.ied;
                     string fc = "";
-                    if (child is NodeData)
+                    if (child is NodeData && !(child is NodeDO))
                     {
                         fc = (child as NodeData).SCL_FCDesc;
                         if (String.IsNullOrEmpty(fc))
@@ -197,7 +197,7 @@ namespace IEDExplorer
                     return;
                 }
                 XElement val = inst.Element(ns + "Val");
-                if (val != null && child is NodeData)
+                if (val != null && (child is NodeData) && !(child is NodeDO))
                 {
                     // Read value in
                     NodeData data = child as NodeData;
@@ -419,7 +419,7 @@ namespace IEDExplorer
                         }
                     }
                 }
-                if (dataAttribute is NodeData)
+                if (dataAttribute is NodeData && !(dataAttribute is NodeDO))
                 {
                     CreateDataAttributesIEC(dataObject, dataAttribute);
                 }
@@ -649,14 +649,14 @@ namespace IEDExplorer
                 {
                     NodeData data = new NodeData(el.Attribute("name").Value);
                     if (el.Attribute("fc") != null) data.SCL_FCDesc = el.Attribute("fc").Value;
-                    else if (root is NodeData) data.SCL_FCDesc = (root as NodeData).SCL_FCDesc;
+                    else if (root is NodeData && !(root is NodeDO)) data.SCL_FCDesc = (root as NodeData).SCL_FCDesc;
                     var bType = el.Attribute("bType");
                     if (bType == null)
                     {
                         XElement en = el.Element(ns + "Val");
                         if (en != null) data.DataValue = en.Value;
                         // Inheritance
-                        if (root is NodeData) data.SCL_BType = (root as NodeData).SCL_BType;
+                        if (root is NodeData && !(root is NodeDO)) data.SCL_BType = (root as NodeData).SCL_BType;
                     }
                     else
                     {
@@ -681,7 +681,7 @@ namespace IEDExplorer
                         trgOptions |= IEC61850.Common.TriggerOptions.DATA_UPDATE;
                     data.SCL_TrgOps = (byte)trgOptions;
                     // Inheritance
-                    if ((root is NodeData) && trgOptions == IEC61850.Common.TriggerOptions.NONE) data.SCL_TrgOps = (root as NodeData).SCL_TrgOps;
+                    if ((root is NodeData && !(root is NodeDO)) && trgOptions == IEC61850.Common.TriggerOptions.NONE) data.SCL_TrgOps = (root as NodeData).SCL_TrgOps;
                     int cnt = 0;
                     if (el.Attribute("count") != null)
                         int.TryParse(el.Attribute("count").Value, out cnt);

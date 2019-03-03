@@ -134,7 +134,7 @@ namespace IEDExplorer
                             break;
                     }
                     if (b != null)
-                        if (b is NodeData)
+                        if (b is NodeData && !(b is NodeDO))
                             cPar.CommandFlowFlag = (CommandCtrlModel)((long)((b as NodeData).DataValue));
                     cPar.SBOrun = false;
                     cPar.SBOdiffTime = false;

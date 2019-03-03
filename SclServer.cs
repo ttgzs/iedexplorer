@@ -138,7 +138,7 @@ namespace IEDExplorer
 
         void InitializeValues(NodeBase nb)
         {
-            if (nb.isLeaf() && (nb is NodeData))
+            if (nb.isLeaf() && (nb is NodeData && !(nb is NodeDO)))
             {
                 NodeData nd = nb as NodeData;
                 if (nd.SCLServerModelObject != null)
@@ -269,7 +269,7 @@ namespace IEDExplorer
                 isArr = dO.SCL_ArraySize > 0;
                 newmn  = new DataObject(dt.Name, mn, dO.SCL_ArraySize);
             }
-            else if (dt is NodeData)
+            else if (dt is NodeData && !(dt is NodeDO))
             {   // dt is NodeDA
                 NodeData dA = (NodeData)dt;
                 isArr = dA.SCL_ArraySize > 0;

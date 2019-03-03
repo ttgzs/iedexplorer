@@ -58,7 +58,7 @@ namespace IEDExplorer.Views
             foreach (ListViewItem l in this.listView_data.Items)
             {
                 if (l.Tag is TreeNode)
-                    if ((l.Tag as TreeNode).Tag is NodeData)
+                    if ((l.Tag as TreeNode).Tag is NodeData && !((l.Tag as TreeNode).Tag is NodeDO))
                         ((l.Tag as TreeNode).Tag as NodeData).ValueChanged -= new EventHandler(Node_ValueChanged);
             }
             this.listView_data.Items.Clear();
@@ -122,7 +122,7 @@ namespace IEDExplorer.Views
 
         ListViewItem makeRow(NodeBase n)
         {
-            if (n is NodeData)
+            if (n is NodeData && !(n is NodeDO))
             {
                 string val = (n as NodeData).StringValue;
                 ListViewItem lvi = new ListViewItem(new string[] { n.IecAddress, (n as NodeData).DataType.ToString(), val, "Dom = " + n.CommAddress.Domain + " Var = " + n.CommAddress.Variable });
@@ -170,7 +170,7 @@ namespace IEDExplorer.Views
             foreach (ListViewItem l in this.listView_data.Items)
             {
                 if (l.Tag is TreeNode)
-                    if ((l.Tag as TreeNode).Tag is NodeData)
+                    if ((l.Tag as TreeNode).Tag is NodeData && !((l.Tag as TreeNode).Tag is NodeDO))
                         ((l.Tag as TreeNode).Tag as NodeData).ValueChanged -= new EventHandler(Node_ValueChanged);
             }
             //worker.Stop();

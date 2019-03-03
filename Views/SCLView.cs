@@ -52,14 +52,15 @@ namespace IEDExplorer.Views
             _env = Env.getEnv();
             InitializeComponent();
             this.toolStrip1.Renderer = new MyRenderer();
-            //try
+            try
             {
                 //dataModels = new SCLParser().CreateTree(filename);
                 dataModels = new SCLParserDOM2().CreateTree(filename);
             }
-            //catch (Exception e)
+            catch (Exception e)
             {
-            //    Logger.getLogger().LogError(" Reading SCL file: " + filename + ": " + e.Message);
+                Logger.getLogger().LogError(" Reading SCL file: " + filename + ": " + e.Message);
+                return;
             }
             IedTreeView.makeImageList(treeViewSCL);
             IedTreeView.makeImageList(treeViewSCL_IEC);
@@ -202,7 +203,7 @@ namespace IEDExplorer.Views
                 string name = b.Name;
                 if (b is NodeRCB || b is NodeVL)
                     name = b.Name.Substring(b.Name.LastIndexOf("$") + 1);
-                if (b is NodeData && (b as NodeData).SCL_FCDesc != null && (b as NodeData).SCL_FCDesc != "") name += " [" + (b as NodeData).SCL_FCDesc + "]";
+                if (b is NodeData && !(b is NodeDO) && (b as NodeData).SCL_FCDesc != null && (b as NodeData).SCL_FCDesc != "") name += " [" + (b as NodeData).SCL_FCDesc + "]";
                 TreeNode tn2 = tn.Nodes.Add(name);
                 tn2.Tag = b;
                 b.TagR = tn2;
@@ -315,7 +316,7 @@ namespace IEDExplorer.Views
                     {
                         firsticon = 7;
                     }
-                    else if (b is NodeData)
+                    else if (b is NodeData && !(b is NodeDO))
                     {
                         firsticon = 8;
                     }
@@ -424,7 +425,7 @@ namespace IEDExplorer.Views
 
         private string[] makeRow(NodeBase n)
         {
-            if (n is NodeData)
+            if (n is NodeData && !(n is NodeDO))
             {
                 string val = (n as NodeData).StringValue;
                 string type = String.IsNullOrWhiteSpace((n as NodeData).SCL_BType)
@@ -497,7 +498,7 @@ namespace IEDExplorer.Views
                             item.Click += new EventHandler(OnRunServer);
                         }
                     }
-                    if (n is NodeData && n.isLeaf() && n.SCLServerModelObject != null)
+                    if (n is NodeData && !(n is NodeDO) && n.isLeaf() && n.SCLServerModelObject != null)
                     {
                         //if (
                         item = menu.Items.Add("Write Data");
@@ -606,7 +607,7 @@ namespace IEDExplorer.Views
             if (r == DialogResult.OK)
             {
                 if (data != null && data.GetIedNode() != null && data.GetIedNode().SCLServerRunning != null)
-                    data.GetIedNode().SCLServerRunning.UpdateServerData(data, null, false, ev.timeNode, ev.UpdateTimestamp);
+                    data.GetIedNode().SCLServerRunning.UpdateServerData(data, null, false, ev.TimeNode, ev.UpdateTimestamp);
             }
         }
 

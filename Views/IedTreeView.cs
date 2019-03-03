@@ -227,7 +227,7 @@ namespace IEDExplorer.Views
                 string name = b.Name;
                 if (b is NodeRCB || b is NodeVL)
                     name = b.Name.Substring(b.Name.LastIndexOf("$") + 1);
-                if (b is NodeData && (b as NodeData).SCL_FCDesc != null && (b as NodeData).SCL_FCDesc != "") name += " [" + (b as NodeData).SCL_FCDesc + "]";
+                if (b is NodeData && !(b is NodeDO) && (b as NodeData).SCL_FCDesc != null && (b as NodeData).SCL_FCDesc != "") name += " [" + (b as NodeData).SCL_FCDesc + "]";
                 TreeNode tn2 = tn.Nodes.Add(name);
                 tn2.Tag = b;
                 b.TagR = tn2;
@@ -389,7 +389,7 @@ namespace IEDExplorer.Views
                 {
                     firsticon = 7;
                 }
-                else if (b is NodeData)
+                else if (b is NodeData && !(b is NodeDO))
                 {
                     firsticon = 8;
                 }
@@ -529,7 +529,7 @@ namespace IEDExplorer.Views
                         listsNode = e.Node;
                         item.Click += new EventHandler(OnFileSaveClick);
                     }
-                    if ((n is NodeData && n.Name == "ctlVal") || (n.Parent != null && n.Parent.Name == "ctlVal" && (n.Name == "i" || n.Name == "f")))
+                    if ((n is NodeData && !(n is NodeDO) && n.Name == "ctlVal") || (n.Parent != null && n.Parent.Name == "ctlVal" && (n.Name == "i" || n.Name == "f")))
                     {
                         item = menu.Items.Add("Send Command (As MMS Structure)-Preferred");
                         item.Tag = n;
@@ -544,7 +544,7 @@ namespace IEDExplorer.Views
                         item.Tag = n;
                         item.Click += new EventHandler(OnReadDataClick);
                     }
-                    if (n is NodeData && n.isLeaf())
+                    if (n is NodeData && !(n is NodeDO) && n.isLeaf())
                     {
                         item = menu.Items.Add("Write Data");
                         item.Tag = n;

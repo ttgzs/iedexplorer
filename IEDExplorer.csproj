@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -116,6 +116,10 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>
+    </StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="iec61850dotnet">
@@ -243,7 +247,6 @@
     <Compile Include="IEC61850.Server\ReportControlBlock.cs" />
     <Compile Include="IEC61850.Server\SettingGroupControlBlock.cs" />
     <Compile Include="IEC61850.Server\Util.cs" />
-    <Compile Include="SCLParserDOM.cs" />
     <Compile Include="Dialogs\SplitStringDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -494,7 +497,6 @@
     <Compile Include="IsoPres.cs" />
     <Compile Include="IsoSess.cs" />
     <Compile Include="IsoUtil.cs" />
-    <Compile Include="SCLParser.cs" />
     <Compile Include="TreeViewAdv\BitmapHelper.cs" />
     <Compile Include="TreeViewAdv\GifDecoder.cs" />
     <Compile Include="TreeViewAdv\NumericTextBox.cs">

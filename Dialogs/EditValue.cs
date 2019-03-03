@@ -58,7 +58,7 @@ namespace IEDExplorer
                 {
                     nb = nb.Parent;
                     tNode = nb.FindChildNode("t");
-                    if (tNode != null && tNode is NodeData)
+                    if (tNode != null && (tNode is NodeData && !(tNode is NodeDO)))
                     {
                         tFound = true;
                         break;
@@ -83,7 +83,7 @@ namespace IEDExplorer
 
         internal bool UpdateTimestamp { get { return checkBoxTimestamp.Checked; } }
 
-        internal NodeData timeNode { get { if (tNode is NodeData) return (NodeData)tNode; return null; } }
+        internal NodeData TimeNode { get { if (tNode is NodeData && !(tNode is NodeDO)) return (NodeData)tNode; return null; } }
 
         internal void HideUpdateTimestamp()
         {

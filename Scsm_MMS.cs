@@ -1592,7 +1592,7 @@ namespace IEDExplorer
             else if (t.Array != null)
             {
                 iecs.logger.LogDebug("t.Array != null");
-                if (actualNode is NodeData)
+                if (actualNode is NodeData && !(actualNode is NodeDO))
                     (actualNode as NodeData).DataType = scsm_MMS_TypeEnum.array;
                 for (int i = 0; i < t.Array.NumberOfElements.Value; i++)
                 {
