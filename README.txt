@@ -257,3 +257,6 @@ Service release 0.79f 2019/02/28
 * LastApplError unconfirmed PDU diagnostics support
 * SBO(w) Commands supported (Select / Operate by hand or in an automatic sequence)
 * Better Control Service diagnostics support
+
+Service release 0.79g 2019/07/17
+* Check bits in command dialogs now working

@@ -251,7 +251,14 @@ namespace IEDExplorer
                     {
                         NodeData n = new NodeData(b.Name);
                         n.DataType = ((NodeData)b).DataType;
-                        n.DataValue = new byte[] { 0x40 };
+                        byte sync = 0x80;
+                        byte intl = 0x40;
+                        byte check = 0;
+                        if (cPar.synchroCheck)
+                            check |= sync;
+                        if (cPar.interlockCheck)
+                            check |= intl;
+                        n.DataValue = new byte[] { check };
                         n.DataParam = ((NodeData)b).DataParam;
                         ndar.Add(n);
                     }
