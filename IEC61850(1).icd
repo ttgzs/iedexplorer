@@ -1,0 +1,2855 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<SCL xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.iec.ch/61850/2003/SCL">
+    <Header id="ICD PNC" toolID="PNC_ICD_Tool" nameStructure="IEDName" version="1" />
+    <Communication>
+        <SubNetwork name="MMS" type="8-MMS">
+            <Text>Station bus</Text>
+            <BitRate unit="b/s">10</BitRate>
+            <ConnectedAP apName="S1" iedName="PNC_IED">
+                <Address>
+                    <P type="OSI-AP-Title">1,1,1,9999,1</P>
+                    <P type="OSI-AE-Qualifier">12</P>
+                    <P type="OSI-PSEL">00 00 00 01</P>
+                    <P type="OSI-SSEL">00 01</P>
+                    <P type="OSI-TSEL">00 01</P>
+                    <P type="IP-SUBNET">255.255.0.0</P>
+                    <P type="IP">192.168.1.230</P>
+                </Address>
+            </ConnectedAP>
+        </SubNetwork>
+    </Communication>
+    <IED configVersion="V1.00" desc="" manufacturer="PNC" name="PNC_IED">
+        <Services>
+            <DynAssociation />
+            <GetDirectory />
+            <GetDataObjectDefinition />
+            <DataObjectDirectory />
+            <GetDataSetValue />
+            <DataSetDirectory />
+            <ConfDataSet max="15" maxAttributes="800" />
+            <ReadWrite />
+            <ConfReportControl max="20" />
+            <GetCBValues />
+            <ReportSettings bufTime="Dyn" cbName="Conf" datSet="Conf" intgPd="Dyn" optFields="Conf" rptID="Dyn" />
+            <ConfLNs fixLnInst="true" fixPrefix="true" />
+        </Services>
+        <AccessPoint name="S1">
+            <Server>
+                <Authentication />
+                <LDevice desc="管理机转发" inst="MONT">
+                    <LN0 desc="General" lnClass="LLN0" lnType="LN0" inst="">
+                        <DataSet desc="遥测量数据集" name="ds01Measure">
+                            <FCDA ldInst="MONT" prefix="" lnInst="100" lnClass="CACC" doName="Tmp" fc="MX" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="100" lnClass="CACC" doName="Hum" fc="MX" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="101" lnClass="CACC" doName="Tmp" fc="MX" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="101" lnClass="CACC" doName="Hum" fc="MX" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="30" lnClass="TTMP" doName="TmpSv" fc="MX" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="31" lnClass="TTMP" doName="TmpSv" fc="MX" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="40" lnClass="THUM" doName="HumSv" fc="MX" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="41" lnClass="THUM" doName="HumSv" fc="MX" />
+                        </DataSet>
+                        <DataSet desc="遥信量数据集" name="ds01State">
+                            <FCDA ldInst="MONT" prefix="" lnInst="0" lnClass="CFAC" doName="ComState" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="0" lnClass="CFAC" doName="RunStat" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="10" lnClass="CLIC" doName="ComState" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="10" lnClass="CLIC" doName="RunStat" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="90" lnClass="CACC" doName="ComState" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="90" lnClass="CACC" doName="RunStat" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="100" lnClass="CACC" doName="ComState" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="100" lnClass="CACC" doName="RunStat" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="101" lnClass="CACC" doName="ComState" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="101" lnClass="CACC" doName="RunStat" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="120" lnClass="ZACC" doName="ComState" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="120" lnClass="ZACC" doName="RunStat" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="70" lnClass="ZIND" doName="ComState" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="70" lnClass="ZIND" doName="RunStat" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="71" lnClass="ZIND" doName="ComState" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="71" lnClass="ZIND" doName="RunStat" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="72" lnClass="ZIND" doName="ComState" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="72" lnClass="ZIND" doName="RunStat" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="73" lnClass="ZIND" doName="ComState" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="73" lnClass="ZIND" doName="RunStat" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="80" lnClass="TSMD" doName="ComState" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="80" lnClass="TSMD" doName="RunStat" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="81" lnClass="TSMD" doName="ComState" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="81" lnClass="TSMD" doName="RunStat" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="82" lnClass="TSMD" doName="ComState" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="82" lnClass="TSMD" doName="RunStat" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="83" lnClass="TSMD" doName="ComState" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="83" lnClass="TSMD" doName="RunStat" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="30" lnClass="TTMP" doName="ComState" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="30" lnClass="TTMP" doName="RunStat" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="31" lnClass="TTMP" doName="ComState" fc="ST" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="31" lnClass="TTMP" doName="RunStat" fc="ST" />
+                        </DataSet>
+                        <DataSet desc="遥脉量数据集" name="ds01Pulse">
+                            <FCDA ldInst="MONT" prefix="" lnInst="100" lnClass="CACC" doName="CtlModSt2" fc="MX" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="100" lnClass="CACC" doName="WinSpd" fc="MX" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="101" lnClass="CACC" doName="CtlModSt2" fc="MX" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="101" lnClass="CACC" doName="WinSpd" fc="MX" />
+                        </DataSet>
+                        <DataSet desc="遥调数据集" name="dsSetting">
+                            <FCDA ldInst="MONT" prefix="" lnInst="100" lnClass="CACC" doName="CtlMod1" fc="SG" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="100" lnClass="CACC" doName="CtlWinSpd" fc="SG" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="100" lnClass="CACC" doName="CtlMod2" fc="SG" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="101" lnClass="CACC" doName="CtlMod1" fc="SG" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="101" lnClass="CACC" doName="CtlWinSpd" fc="SG" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="101" lnClass="CACC" doName="CtlMod2" fc="SG" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="120" lnClass="ZACC" doName="CarNum" fc="SG" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="30" lnClass="TTMP" doName="TmpAlmMax" fc="SG" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="30" lnClass="TTMP" doName="TmpAlmMin" fc="SG" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="31" lnClass="TTMP" doName="TmpAlmMax" fc="SG" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="31" lnClass="TTMP" doName="TmpAlmMin" fc="SG" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="40" lnClass="THUM" doName="HumAlmMax" fc="SG" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="40" lnClass="THUM" doName="HumAlmMin" fc="SG" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="41" lnClass="THUM" doName="HumAlmMax" fc="SG" />
+                            <FCDA ldInst="MONT" prefix="" lnInst="41" lnClass="THUM" doName="HumAlmMin" fc="SG" />
+                        </DataSet>
+                        <ReportControl name="urcbds01Measure" desc="遥测量报告" buffered="false" confRev="1" datSet="ds01Measure" intgPd="60000" rptID="urcbds01Measure">
+                            <TrgOps dchg="true" dupd="true" period="true" qchg="true" />
+                            <OptFields configRef="true" dataRef="true" dataSet="true" entryID="true" reasonCode="true" seqNum="true" timeStamp="true" />
+                            <RptEnabled max="12" />
+                        </ReportControl>
+                        <ReportControl name="brcbds01State" desc="遥信量报告" buffered="true" confRev="1" datSet="ds01State" rptID="brcbds01State" intgPd="60000">
+                            <TrgOps dchg="true" dupd="true" period="false" qchg="true" />
+                            <OptFields configRef="true" dataRef="true" dataSet="true" entryID="true" reasonCode="true" seqNum="true" timeStamp="true" />
+                            <RptEnabled max="12" />
+                        </ReportControl>
+                        <ReportControl name="brcbds01Pulse" desc="遥脉量报告" buffered="false" confRev="1" datSet="ds01Pulse" intgPd="60000" rptID="urcbds01Pulse">
+                            <TrgOps dchg="true" dupd="true" period="true" qchg="true" />
+                            <OptFields configRef="true" dataRef="true" dataSet="true" entryID="true" reasonCode="true" seqNum="true" timeStamp="true" />
+                            <RptEnabled max="12" />
+                        </ReportControl>
+                        <DOI desc="服务器信息" name="Server">
+                            <DAI desc="用户名" name="user">
+                                <Val>root</Val>
+                            </DAI>
+                            <DAI desc="密码" name="passwd">
+                                <Val>123456</Val>
+                            </DAI>
+                            <DAI desc="RTU-ID" name="rtuid">
+                                <Val>23</Val>
+                            </DAI>
+                        </DOI>
+                        <SettingControl numOfSGs="4" actSG="1" />
+                    </LN0>
+                    <LN desc="device" inst="1" lnClass="LPHD" lnType="LPHDa" />
+                    <LN desc="空调1" inst="100" lnClass="CACC" lnType="CACC_TYPE_3" prefix="">
+                        <DOI desc="空调1|温度" name="Tmp">
+                            <SDI name="mag">
+                                <DAI name="f" />
+                            </SDI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>温度</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="空调1|湿度" name="Hum">
+                            <SDI name="mag">
+                                <DAI name="f" />
+                            </SDI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>湿度</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测类型" name="Type">
+                            <DAI name="stVal">
+                                <Val>CACC</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="测点ID" name="SenMP">
+                            <DAI name="dU">
+                                <Val>空调1</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="被监测设备信息" name="LinkedDevice">
+                            <DAI name="pms">
+                                <Val>huanj23</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>环境</Val>
+                            </DAI>
+                            <DAI name="bay">
+                                <Val>科惠环境</Val>
+                            </DAI>
+                            <DAI name="typeName">
+                                <Val>环境</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测设备信息" name="DeviceCode">
+                            <DAI name="pms">
+                                <Val>CACC100</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>空调1|湿度</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="模式" name="Mod">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="性能" name="Beh">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="健康" name="Health">
+                            <DAI name="stVal">
+                                <Val>Ok</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="外部健康信息" name="EEHealth">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>健康状况</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="传感器通讯状态" name="MoDevConf">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>传感器通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="空调1|通讯状态" name="ComState">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="空调1|空调状态" name="RunStat">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>空调状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="空调1|出风模式" name="CtlModSt2">
+                            <SDI name="instMag">
+                                <DAI name="i" />
+                            </SDI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>出风模式</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="空调1|风速" name="WinSpd">
+                            <SDI name="instMag">
+                                <DAI name="i" />
+                            </SDI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>风速</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI name="SPCSO" desc="空调1|空调控制">
+                            <SDI name="SBOw">
+                                <DAI name="ctlVal" />
+                            </SDI>
+                            <SDI name="Oper">
+                                <DAI name="ctlVal" />
+                            </SDI>
+                            <SDI name="Cancel">
+                                <DAI name="ctlVal" />
+                            </SDI>
+                            <DAI name="sboTimeout">
+                                <Val>60000</Val>
+                            </DAI>
+                            <DAI name="ctlModel">
+                                <Val>direct-with-normal-security</Val>
+                            </DAI>
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>空调控制</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI name="CtlMod1" desc="空调1|设置模式">
+                            <DAI name="setVal" />
+                            <DAI name="dU">
+                                <Val>设置模式</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI name="CtlWinSpd" desc="空调1|设置风速">
+                            <DAI name="setVal" />
+                            <DAI name="dU">
+                                <Val>设置风速</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI name="CtlMod2" desc="空调1|设置风栅">
+                            <DAI name="setVal" />
+                            <DAI name="dU">
+                                <Val>设置风栅</Val>
+                            </DAI>
+                        </DOI>
+                    </LN>
+                    <LN desc="空调2" inst="101" lnClass="CACC" lnType="CACC_TYPE_3" prefix="">
+                        <DOI desc="空调2|温度" name="Tmp">
+                            <SDI name="mag">
+                                <DAI name="f" />
+                            </SDI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>温度</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="空调2|湿度" name="Hum">
+                            <SDI name="mag">
+                                <DAI name="f" />
+                            </SDI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>湿度</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测类型" name="Type">
+                            <DAI name="stVal">
+                                <Val>CACC</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="测点ID" name="SenMP">
+                            <DAI name="dU">
+                                <Val>空调2</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="被监测设备信息" name="LinkedDevice">
+                            <DAI name="pms">
+                                <Val>huanj23</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>环境</Val>
+                            </DAI>
+                            <DAI name="bay">
+                                <Val>科惠环境</Val>
+                            </DAI>
+                            <DAI name="typeName">
+                                <Val>环境</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测设备信息" name="DeviceCode">
+                            <DAI name="pms">
+                                <Val>CACC101</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>空调2|湿度</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="模式" name="Mod">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="性能" name="Beh">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="健康" name="Health">
+                            <DAI name="stVal">
+                                <Val>Ok</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="外部健康信息" name="EEHealth">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>健康状况</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="传感器通讯状态" name="MoDevConf">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>传感器通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="空调2|通讯状态" name="ComState">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="空调2|空调状态" name="RunStat">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>空调状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="空调2|出风模式" name="CtlModSt2">
+                            <SDI name="instMag">
+                                <DAI name="i" />
+                            </SDI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>出风模式</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="空调2|风速" name="WinSpd">
+                            <SDI name="instMag">
+                                <DAI name="i" />
+                            </SDI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>风速</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI name="SPCSO" desc="空调2|空调控制">
+                            <SDI name="SBOw">
+                                <DAI name="ctlVal" />
+                            </SDI>
+                            <SDI name="Oper">
+                                <DAI name="ctlVal" />
+                            </SDI>
+                            <SDI name="Cancel">
+                                <DAI name="ctlVal" />
+                            </SDI>
+                            <DAI name="sboTimeout">
+                                <Val>60000</Val>
+                            </DAI>
+                            <DAI name="ctlModel">
+                                <Val>direct-with-normal-security</Val>
+                            </DAI>
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>空调控制</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI name="CtlMod1" desc="空调2|设置模式">
+                            <DAI name="setVal" />
+                            <DAI name="dU">
+                                <Val>设置模式</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI name="CtlWinSpd" desc="空调2|设置风速">
+                            <DAI name="setVal" />
+                            <DAI name="dU">
+                                <Val>设置风速</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI name="CtlMod2" desc="空调2|设置风栅">
+                            <DAI name="setVal" />
+                            <DAI name="dU">
+                                <Val>设置风栅</Val>
+                            </DAI>
+                        </DOI>
+                    </LN>
+                    <LN desc="温度1" inst="30" lnClass="TTMP" lnType="TTMP_TYPE_11" prefix="">
+                        <DOI desc="温度1|温度" name="TmpSv">
+                            <SDI name="instMag">
+                                <DAI name="i" />
+                            </SDI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>温度</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测类型" name="Type">
+                            <DAI name="stVal">
+                                <Val>TTMP</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="测点ID" name="SenMP">
+                            <DAI name="dU">
+                                <Val>温度1</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="被监测设备信息" name="LinkedDevice">
+                            <DAI name="pms">
+                                <Val>huanj23</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>环境</Val>
+                            </DAI>
+                            <DAI name="bay">
+                                <Val>科惠环境</Val>
+                            </DAI>
+                            <DAI name="typeName">
+                                <Val>环境</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测设备信息" name="DeviceCode">
+                            <DAI name="pms">
+                                <Val>TTMP30</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>温度1|温度</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="模式" name="Mod">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="性能" name="Beh">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="健康" name="Health">
+                            <DAI name="stVal">
+                                <Val>Ok</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="外部健康信息" name="EEHealth">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>健康状况</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="传感器通讯状态" name="MoDevConf">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>传感器通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="温度1|通讯状态" name="ComState">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="温度1|温度状态" name="RunStat">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>温度状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI name="TmpAlmMax" desc="温度1|温度最大值">
+                            <DAI name="setVal" />
+                            <DAI name="dU">
+                                <Val>温度最大值</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI name="TmpAlmMin" desc="温度1|温度最小值">
+                            <DAI name="setVal" />
+                            <DAI name="dU">
+                                <Val>温度最小值</Val>
+                            </DAI>
+                        </DOI>
+                    </LN>
+                    <LN desc="温度2" inst="31" lnClass="TTMP" lnType="TTMP_TYPE_11" prefix="">
+                        <DOI desc="温度2|温度" name="TmpSv">
+                            <SDI name="instMag">
+                                <DAI name="i" />
+                            </SDI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>温度</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测类型" name="Type">
+                            <DAI name="stVal">
+                                <Val>TTMP</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="测点ID" name="SenMP">
+                            <DAI name="dU">
+                                <Val>温度2</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="被监测设备信息" name="LinkedDevice">
+                            <DAI name="pms">
+                                <Val>huanj23</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>环境</Val>
+                            </DAI>
+                            <DAI name="bay">
+                                <Val>科惠环境</Val>
+                            </DAI>
+                            <DAI name="typeName">
+                                <Val>环境</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测设备信息" name="DeviceCode">
+                            <DAI name="pms">
+                                <Val>TTMP31</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>温度2|温度</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="模式" name="Mod">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="性能" name="Beh">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="健康" name="Health">
+                            <DAI name="stVal">
+                                <Val>Ok</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="外部健康信息" name="EEHealth">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>健康状况</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="传感器通讯状态" name="MoDevConf">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>传感器通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="温度2|通讯状态" name="ComState">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="温度2|温度状态" name="RunStat">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>温度状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI name="TmpAlmMax" desc="温度2|温度最大值">
+                            <DAI name="setVal" />
+                            <DAI name="dU">
+                                <Val>温度最大值</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI name="TmpAlmMin" desc="温度2|温度最小值">
+                            <DAI name="setVal" />
+                            <DAI name="dU">
+                                <Val>温度最小值</Val>
+                            </DAI>
+                        </DOI>
+                    </LN>
+                    <LN desc="湿度1" inst="40" lnClass="THUM" lnType="THUM_TYPE_12" prefix="">
+                        <DOI desc="湿度1|湿度" name="HumSv">
+                            <SDI name="instMag">
+                                <DAI name="i" />
+                            </SDI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>湿度</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测类型" name="Type">
+                            <DAI name="stVal">
+                                <Val>THUM</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="测点ID" name="SenMP">
+                            <DAI name="dU">
+                                <Val>湿度1</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="被监测设备信息" name="LinkedDevice">
+                            <DAI name="pms">
+                                <Val>huanj23</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>环境</Val>
+                            </DAI>
+                            <DAI name="bay">
+                                <Val>科惠环境</Val>
+                            </DAI>
+                            <DAI name="typeName">
+                                <Val>环境</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测设备信息" name="DeviceCode">
+                            <DAI name="pms">
+                                <Val>THUM40</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>湿度1|湿度</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="模式" name="Mod">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="性能" name="Beh">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="健康" name="Health">
+                            <DAI name="stVal">
+                                <Val>Ok</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="外部健康信息" name="EEHealth">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>健康状况</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="传感器通讯状态" name="MoDevConf">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>传感器通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI name="HumAlmMax" desc="湿度1|湿度最大值">
+                            <DAI name="setVal" />
+                            <DAI name="dU">
+                                <Val>湿度最大值</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI name="HumAlmMin" desc="湿度1|湿度最小值">
+                            <DAI name="setVal" />
+                            <DAI name="dU">
+                                <Val>湿度最小值</Val>
+                            </DAI>
+                        </DOI>
+                    </LN>
+                    <LN desc="湿度2" inst="41" lnClass="THUM" lnType="THUM_TYPE_12" prefix="">
+                        <DOI desc="湿度2|湿度" name="HumSv">
+                            <SDI name="instMag">
+                                <DAI name="i" />
+                            </SDI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>湿度</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测类型" name="Type">
+                            <DAI name="stVal">
+                                <Val>THUM</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="测点ID" name="SenMP">
+                            <DAI name="dU">
+                                <Val>湿度2</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="被监测设备信息" name="LinkedDevice">
+                            <DAI name="pms">
+                                <Val>huanj23</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>环境</Val>
+                            </DAI>
+                            <DAI name="bay">
+                                <Val>科惠环境</Val>
+                            </DAI>
+                            <DAI name="typeName">
+                                <Val>环境</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测设备信息" name="DeviceCode">
+                            <DAI name="pms">
+                                <Val>THUM41</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>湿度2|湿度</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="模式" name="Mod">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="性能" name="Beh">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="健康" name="Health">
+                            <DAI name="stVal">
+                                <Val>Ok</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="外部健康信息" name="EEHealth">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>健康状况</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="传感器通讯状态" name="MoDevConf">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>传感器通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI name="HumAlmMax" desc="湿度2|湿度最大值">
+                            <DAI name="setVal" />
+                            <DAI name="dU">
+                                <Val>湿度最大值</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI name="HumAlmMin" desc="湿度2|湿度最小值">
+                            <DAI name="setVal" />
+                            <DAI name="dU">
+                                <Val>湿度最小值</Val>
+                            </DAI>
+                        </DOI>
+                    </LN>
+                    <LN desc="风机" inst="0" lnClass="CFAC" lnType="CFAC_TYPE_0" prefix="">
+                        <DOI desc="风机|通讯状态" name="ComState">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="风机|风机状态" name="RunStat">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>风机状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测类型" name="Type">
+                            <DAI name="stVal">
+                                <Val>CFAC</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="测点ID" name="SenMP">
+                            <DAI name="dU">
+                                <Val>风机</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="被监测设备信息" name="LinkedDevice">
+                            <DAI name="pms">
+                                <Val>huanj23</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>环境</Val>
+                            </DAI>
+                            <DAI name="bay">
+                                <Val>科惠环境</Val>
+                            </DAI>
+                            <DAI name="typeName">
+                                <Val>环境</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测设备信息" name="DeviceCode">
+                            <DAI name="pms">
+                                <Val>CFAC0</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>风机|风机状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="模式" name="Mod">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="性能" name="Beh">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="健康" name="Health">
+                            <DAI name="stVal">
+                                <Val>Ok</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="外部健康信息" name="EEHealth">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>健康状况</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="传感器通讯状态" name="MoDevConf">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>传感器通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI name="SPCSO" desc="风机|风机控制">
+                            <SDI name="SBOw">
+                                <DAI name="ctlVal" />
+                            </SDI>
+                            <SDI name="Oper">
+                                <DAI name="ctlVal" />
+                            </SDI>
+                            <SDI name="Cancel">
+                                <DAI name="ctlVal" />
+                            </SDI>
+                            <DAI name="sboTimeout">
+                                <Val>60000</Val>
+                            </DAI>
+                            <DAI name="ctlModel">
+                                <Val>direct-with-normal-security</Val>
+                            </DAI>
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>风机控制</Val>
+                            </DAI>
+                        </DOI>
+                    </LN>
+                    <LN desc="照明" inst="10" lnClass="CLIC" lnType="CLIC_TYPE_1" prefix="">
+                        <DOI desc="照明|通讯状态" name="ComState">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="照明|照明状态" name="RunStat">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>照明状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测类型" name="Type">
+                            <DAI name="stVal">
+                                <Val>CLIC</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="测点ID" name="SenMP">
+                            <DAI name="dU">
+                                <Val>照明</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="被监测设备信息" name="LinkedDevice">
+                            <DAI name="pms">
+                                <Val>huanj23</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>环境</Val>
+                            </DAI>
+                            <DAI name="bay">
+                                <Val>科惠环境</Val>
+                            </DAI>
+                            <DAI name="typeName">
+                                <Val>环境</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测设备信息" name="DeviceCode">
+                            <DAI name="pms">
+                                <Val>CLIC10</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>照明|照明状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="模式" name="Mod">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="性能" name="Beh">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="健康" name="Health">
+                            <DAI name="stVal">
+                                <Val>Ok</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="外部健康信息" name="EEHealth">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>健康状况</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="传感器通讯状态" name="MoDevConf">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>传感器通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI name="SPCSO" desc="照明|照明控制">
+                            <SDI name="SBOw">
+                                <DAI name="ctlVal" />
+                            </SDI>
+                            <SDI name="Oper">
+                                <DAI name="ctlVal" />
+                            </SDI>
+                            <SDI name="Cancel">
+                                <DAI name="ctlVal" />
+                            </SDI>
+                            <DAI name="sboTimeout">
+                                <Val>60000</Val>
+                            </DAI>
+                            <DAI name="ctlModel">
+                                <Val>direct-with-normal-security</Val>
+                            </DAI>
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>照明控制</Val>
+                            </DAI>
+                        </DOI>
+                    </LN>
+                    <LN desc="除湿机" inst="90" lnClass="CACC" lnType="CACC_TYPE_2" prefix="">
+                        <DOI desc="除湿机|通讯状态" name="ComState">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="除湿机|除湿状态" name="RunStat">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>除湿状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测类型" name="Type">
+                            <DAI name="stVal">
+                                <Val>CACC</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="测点ID" name="SenMP">
+                            <DAI name="dU">
+                                <Val>除湿机</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="被监测设备信息" name="LinkedDevice">
+                            <DAI name="pms">
+                                <Val>huanj23</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>环境</Val>
+                            </DAI>
+                            <DAI name="bay">
+                                <Val>科惠环境</Val>
+                            </DAI>
+                            <DAI name="typeName">
+                                <Val>环境</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测设备信息" name="DeviceCode">
+                            <DAI name="pms">
+                                <Val>CACC90</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>除湿机|除湿状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="模式" name="Mod">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="性能" name="Beh">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="健康" name="Health">
+                            <DAI name="stVal">
+                                <Val>Ok</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="外部健康信息" name="EEHealth">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>健康状况</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="传感器通讯状态" name="MoDevConf">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>传感器通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI name="SPCSO" desc="除湿机|除湿控制">
+                            <SDI name="SBOw">
+                                <DAI name="ctlVal" />
+                            </SDI>
+                            <SDI name="Oper">
+                                <DAI name="ctlVal" />
+                            </SDI>
+                            <SDI name="Cancel">
+                                <DAI name="ctlVal" />
+                            </SDI>
+                            <DAI name="sboTimeout">
+                                <Val>60000</Val>
+                            </DAI>
+                            <DAI name="ctlModel">
+                                <Val>direct-with-normal-security</Val>
+                            </DAI>
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>除湿控制</Val>
+                            </DAI>
+                        </DOI>
+                    </LN>
+                    <LN desc="门禁" inst="120" lnClass="ZACC" lnType="ZACC_TYPE_5" prefix="">
+                        <DOI desc="门禁|通讯状态" name="ComState">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="门禁|门禁状态" name="RunStat">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>门禁状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测类型" name="Type">
+                            <DAI name="stVal">
+                                <Val>ZACC</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="测点ID" name="SenMP">
+                            <DAI name="dU">
+                                <Val>门禁</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="被监测设备信息" name="LinkedDevice">
+                            <DAI name="pms">
+                                <Val>huanj23</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>环境</Val>
+                            </DAI>
+                            <DAI name="bay">
+                                <Val>科惠环境</Val>
+                            </DAI>
+                            <DAI name="typeName">
+                                <Val>环境</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测设备信息" name="DeviceCode">
+                            <DAI name="pms">
+                                <Val>ZACC120</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>门禁|门禁状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="模式" name="Mod">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="性能" name="Beh">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="健康" name="Health">
+                            <DAI name="stVal">
+                                <Val>Ok</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="外部健康信息" name="EEHealth">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>健康状况</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="传感器通讯状态" name="MoDevConf">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>传感器通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI name="SPCSO" desc="门禁|门禁控制">
+                            <SDI name="SBOw">
+                                <DAI name="ctlVal" />
+                            </SDI>
+                            <SDI name="Oper">
+                                <DAI name="ctlVal" />
+                            </SDI>
+                            <SDI name="Cancel">
+                                <DAI name="ctlVal" />
+                            </SDI>
+                            <DAI name="sboTimeout">
+                                <Val>60000</Val>
+                            </DAI>
+                            <DAI name="ctlModel">
+                                <Val>direct-with-normal-security</Val>
+                            </DAI>
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>门禁控制</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI name="CarNum" desc="门禁|门禁卡号">
+                            <DAI name="setMag">
+                                <DAI name="i" />
+                            </DAI>
+                            <DAI name="dU">
+                                <Val>门禁卡号</Val>
+                            </DAI>
+                        </DOI>
+                    </LN>
+                    <LN desc="防盗1" inst="70" lnClass="ZIND" lnType="ZIND_TYPE_15" prefix="">
+                        <DOI desc="防盗1|通讯状态" name="ComState">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="防盗1|防盗状态" name="RunStat">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>防盗状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测类型" name="Type">
+                            <DAI name="stVal">
+                                <Val>ZIND</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="测点ID" name="SenMP">
+                            <DAI name="dU">
+                                <Val>防盗1</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="被监测设备信息" name="LinkedDevice">
+                            <DAI name="pms">
+                                <Val>huanj23</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>环境</Val>
+                            </DAI>
+                            <DAI name="bay">
+                                <Val>科惠环境</Val>
+                            </DAI>
+                            <DAI name="typeName">
+                                <Val>环境</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测设备信息" name="DeviceCode">
+                            <DAI name="pms">
+                                <Val>ZIND70</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>防盗1|防盗状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="模式" name="Mod">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="性能" name="Beh">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="健康" name="Health">
+                            <DAI name="stVal">
+                                <Val>Ok</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="外部健康信息" name="EEHealth">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>健康状况</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="传感器通讯状态" name="MoDevConf">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>传感器通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                    </LN>
+                    <LN desc="防盗2" inst="71" lnClass="ZIND" lnType="ZIND_TYPE_15" prefix="">
+                        <DOI desc="防盗2|通讯状态" name="ComState">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="防盗2|防盗状态" name="RunStat">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>防盗状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测类型" name="Type">
+                            <DAI name="stVal">
+                                <Val>ZIND</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="测点ID" name="SenMP">
+                            <DAI name="dU">
+                                <Val>防盗2</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="被监测设备信息" name="LinkedDevice">
+                            <DAI name="pms">
+                                <Val>huanj23</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>环境</Val>
+                            </DAI>
+                            <DAI name="bay">
+                                <Val>科惠环境</Val>
+                            </DAI>
+                            <DAI name="typeName">
+                                <Val>环境</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测设备信息" name="DeviceCode">
+                            <DAI name="pms">
+                                <Val>ZIND71</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>防盗2|防盗状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="模式" name="Mod">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="性能" name="Beh">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="健康" name="Health">
+                            <DAI name="stVal">
+                                <Val>Ok</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="外部健康信息" name="EEHealth">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>健康状况</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="传感器通讯状态" name="MoDevConf">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>传感器通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                    </LN>
+                    <LN desc="防盗3" inst="72" lnClass="ZIND" lnType="ZIND_TYPE_15" prefix="">
+                        <DOI desc="防盗3|通讯状态" name="ComState">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="防盗3|防盗状态" name="RunStat">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>防盗状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测类型" name="Type">
+                            <DAI name="stVal">
+                                <Val>ZIND</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="测点ID" name="SenMP">
+                            <DAI name="dU">
+                                <Val>防盗3</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="被监测设备信息" name="LinkedDevice">
+                            <DAI name="pms">
+                                <Val>huanj23</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>环境</Val>
+                            </DAI>
+                            <DAI name="bay">
+                                <Val>科惠环境</Val>
+                            </DAI>
+                            <DAI name="typeName">
+                                <Val>环境</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测设备信息" name="DeviceCode">
+                            <DAI name="pms">
+                                <Val>ZIND72</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>防盗3|防盗状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="模式" name="Mod">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="性能" name="Beh">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="健康" name="Health">
+                            <DAI name="stVal">
+                                <Val>Ok</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="外部健康信息" name="EEHealth">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>健康状况</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="传感器通讯状态" name="MoDevConf">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>传感器通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                    </LN>
+                    <LN desc="防盗4" inst="73" lnClass="ZIND" lnType="ZIND_TYPE_15" prefix="">
+                        <DOI desc="防盗4|通讯状态" name="ComState">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="防盗4|防盗状态" name="RunStat">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>防盗状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测类型" name="Type">
+                            <DAI name="stVal">
+                                <Val>ZIND</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="测点ID" name="SenMP">
+                            <DAI name="dU">
+                                <Val>防盗4</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="被监测设备信息" name="LinkedDevice">
+                            <DAI name="pms">
+                                <Val>huanj23</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>环境</Val>
+                            </DAI>
+                            <DAI name="bay">
+                                <Val>科惠环境</Val>
+                            </DAI>
+                            <DAI name="typeName">
+                                <Val>环境</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测设备信息" name="DeviceCode">
+                            <DAI name="pms">
+                                <Val>ZIND73</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>防盗4|防盗状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="模式" name="Mod">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="性能" name="Beh">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="健康" name="Health">
+                            <DAI name="stVal">
+                                <Val>Ok</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="外部健康信息" name="EEHealth">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>健康状况</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="传感器通讯状态" name="MoDevConf">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>传感器通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                    </LN>
+                    <LN desc="烟感1" inst="80" lnClass="TSMD" lnType="TSMD_TYPE_16" prefix="">
+                        <DOI desc="烟感1|通讯状态" name="ComState">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="烟感1|烟感状态" name="RunStat">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>烟感状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测类型" name="Type">
+                            <DAI name="stVal">
+                                <Val>TSMD</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="测点ID" name="SenMP">
+                            <DAI name="dU">
+                                <Val>烟感1</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="被监测设备信息" name="LinkedDevice">
+                            <DAI name="pms">
+                                <Val>huanj23</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>环境</Val>
+                            </DAI>
+                            <DAI name="bay">
+                                <Val>科惠环境</Val>
+                            </DAI>
+                            <DAI name="typeName">
+                                <Val>环境</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测设备信息" name="DeviceCode">
+                            <DAI name="pms">
+                                <Val>TSMD80</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>烟感1|烟感状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="模式" name="Mod">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="性能" name="Beh">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="健康" name="Health">
+                            <DAI name="stVal">
+                                <Val>Ok</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="外部健康信息" name="EEHealth">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>健康状况</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="传感器通讯状态" name="MoDevConf">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>传感器通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                    </LN>
+                    <LN desc="烟感2" inst="81" lnClass="TSMD" lnType="TSMD_TYPE_16" prefix="">
+                        <DOI desc="烟感2|通讯状态" name="ComState">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="烟感2|烟感状态" name="RunStat">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>烟感状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测类型" name="Type">
+                            <DAI name="stVal">
+                                <Val>TSMD</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="测点ID" name="SenMP">
+                            <DAI name="dU">
+                                <Val>烟感2</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="被监测设备信息" name="LinkedDevice">
+                            <DAI name="pms">
+                                <Val>huanj23</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>环境</Val>
+                            </DAI>
+                            <DAI name="bay">
+                                <Val>科惠环境</Val>
+                            </DAI>
+                            <DAI name="typeName">
+                                <Val>环境</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测设备信息" name="DeviceCode">
+                            <DAI name="pms">
+                                <Val>TSMD81</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>烟感2|烟感状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="模式" name="Mod">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="性能" name="Beh">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="健康" name="Health">
+                            <DAI name="stVal">
+                                <Val>Ok</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="外部健康信息" name="EEHealth">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>健康状况</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="传感器通讯状态" name="MoDevConf">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>传感器通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                    </LN>
+                    <LN desc="烟感3" inst="82" lnClass="TSMD" lnType="TSMD_TYPE_16" prefix="">
+                        <DOI desc="烟感3|通讯状态" name="ComState">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="烟感3|烟感状态" name="RunStat">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>烟感状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测类型" name="Type">
+                            <DAI name="stVal">
+                                <Val>TSMD</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="测点ID" name="SenMP">
+                            <DAI name="dU">
+                                <Val>烟感3</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="被监测设备信息" name="LinkedDevice">
+                            <DAI name="pms">
+                                <Val>huanj23</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>环境</Val>
+                            </DAI>
+                            <DAI name="bay">
+                                <Val>科惠环境</Val>
+                            </DAI>
+                            <DAI name="typeName">
+                                <Val>环境</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测设备信息" name="DeviceCode">
+                            <DAI name="pms">
+                                <Val>TSMD82</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>烟感3|烟感状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="模式" name="Mod">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="性能" name="Beh">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="健康" name="Health">
+                            <DAI name="stVal">
+                                <Val>Ok</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="外部健康信息" name="EEHealth">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>健康状况</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="传感器通讯状态" name="MoDevConf">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>传感器通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                    </LN>
+                    <LN desc="烟感4" inst="83" lnClass="TSMD" lnType="TSMD_TYPE_16" prefix="">
+                        <DOI desc="烟感4|通讯状态" name="ComState">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="烟感4|烟感状态" name="RunStat">
+                            <DAI name="stVal" />
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>烟感状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测类型" name="Type">
+                            <DAI name="stVal">
+                                <Val>TSMD</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="测点ID" name="SenMP">
+                            <DAI name="dU">
+                                <Val>烟感4</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="被监测设备信息" name="LinkedDevice">
+                            <DAI name="pms">
+                                <Val>huanj23</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>环境</Val>
+                            </DAI>
+                            <DAI name="bay">
+                                <Val>科惠环境</Val>
+                            </DAI>
+                            <DAI name="typeName">
+                                <Val>环境</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="监测设备信息" name="DeviceCode">
+                            <DAI name="pms">
+                                <Val>TSMD83</Val>
+                            </DAI>
+                            <DAI name="name">
+                                <Val>烟感4|烟感状态</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="模式" name="Mod">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="性能" name="Beh">
+                            <DAI name="stVal">
+                                <Val>on</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="健康" name="Health">
+                            <DAI name="stVal">
+                                <Val>Ok</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="外部健康信息" name="EEHealth">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>健康状况</Val>
+                            </DAI>
+                        </DOI>
+                        <DOI desc="传感器通讯状态" name="MoDevConf">
+                            <DAI name="stVal">
+                                <Val>1</Val>
+                            </DAI>
+                            <DAI name="q" />
+                            <DAI name="t" />
+                            <DAI name="dU">
+                                <Val>传感器通讯状态</Val>
+                            </DAI>
+                        </DOI>
+                    </LN>
+                </LDevice>
+            </Server>
+        </AccessPoint>
+    </IED>
+    <DataTypeTemplates>
+        <LNodeType id="CACC_TYPE_3" lnClass="CACC">
+            <DO name="Mod" type="SH_INC_Mod" />
+            <DO name="Beh" type="SH_INS_Beh" />
+            <DO name="Health" type="SH_INS_Health" />
+            <DO name="DataId" type="SH_MV_STR" desc="数据标识" />
+            <DO name="NamPlt" type="CN_LPL_LN0" />
+            <DO name="SmpProd" type="ING" desc="采集间隔" />
+            <DO name="LinkedDevice" type="SH_LPL_LNKDEV" desc="被监测设备标识" />
+            <DO name="DeviceCode" type="SH_LPL_DEVICE" desc="监测装置标识" />
+            <DO name="Type" type="SH_LPL_SP" desc="监测类型" />
+            <DO name="SenMP" type="SH_LPL_SP" desc="测点ID" />
+            <DO name="Loc" type="CN_SPS" desc="是否可控" />
+            <DO name="OpAct" type="CN_SPC" desc="立即采集" />
+            <DO name="MoDevConf" type="CN_SPS" />
+            <DO name="EEHealth" type="CN_ENS" />
+            <DO name="FileDone" type="SH_SPC_Update" desc="下载文件" />
+            <DO name="Update" type="SH_SPC_Update" desc="升级程序" />
+            <DO name="Tmp" type="AN_MV_f" />
+            <DO name="Hum" type="AN_MV_f" />
+            <DO name="ComState" type="CN_SPS" />
+            <DO name="RunStat" type="CN_SPS" />
+            <DO name="CtlModSt2" type="CN_SAV" />
+            <DO name="WinSpd" type="CN_SAV" />
+            <DO name="SPCSO" type="CN_SPC" />
+            <DO name="CtlMod1" type="ING" />
+            <DO name="CtlWinSpd" type="ING" />
+            <DO name="CtlMod2" type="ING" />
+        </LNodeType>
+        <LNodeType id="TTMP_TYPE_11" lnClass="TTMP">
+            <DO name="Mod" type="SH_INC_Mod" />
+            <DO name="Beh" type="SH_INS_Beh" />
+            <DO name="Health" type="SH_INS_Health" />
+            <DO name="DataId" type="SH_MV_STR" desc="数据标识" />
+            <DO name="NamPlt" type="CN_LPL_LN0" />
+            <DO name="SmpProd" type="ING" desc="采集间隔" />
+            <DO name="LinkedDevice" type="SH_LPL_LNKDEV" desc="被监测设备标识" />
+            <DO name="DeviceCode" type="SH_LPL_DEVICE" desc="监测装置标识" />
+            <DO name="Type" type="SH_LPL_SP" desc="监测类型" />
+            <DO name="SenMP" type="SH_LPL_SP" desc="测点ID" />
+            <DO name="Loc" type="CN_SPS" desc="是否可控" />
+            <DO name="OpAct" type="CN_SPC" desc="立即采集" />
+            <DO name="MoDevConf" type="CN_SPS" />
+            <DO name="EEHealth" type="CN_ENS" />
+            <DO name="FileDone" type="SH_SPC_Update" desc="下载文件" />
+            <DO name="Update" type="SH_SPC_Update" desc="升级程序" />
+            <DO name="TmpSv" type="CN_SAV" />
+            <DO name="ComState" type="CN_SPS" />
+            <DO name="RunStat" type="CN_SPS" />
+            <DO name="TmpAlmMax" type="ING" />
+            <DO name="TmpAlmMin" type="ING" />
+        </LNodeType>
+        <LNodeType id="THUM_TYPE_12" lnClass="THUM">
+            <DO name="Mod" type="SH_INC_Mod" />
+            <DO name="Beh" type="SH_INS_Beh" />
+            <DO name="Health" type="SH_INS_Health" />
+            <DO name="DataId" type="SH_MV_STR" desc="数据标识" />
+            <DO name="NamPlt" type="CN_LPL_LN0" />
+            <DO name="SmpProd" type="ING" desc="采集间隔" />
+            <DO name="LinkedDevice" type="SH_LPL_LNKDEV" desc="被监测设备标识" />
+            <DO name="DeviceCode" type="SH_LPL_DEVICE" desc="监测装置标识" />
+            <DO name="Type" type="SH_LPL_SP" desc="监测类型" />
+            <DO name="SenMP" type="SH_LPL_SP" desc="测点ID" />
+            <DO name="Loc" type="CN_SPS" desc="是否可控" />
+            <DO name="OpAct" type="CN_SPC" desc="立即采集" />
+            <DO name="MoDevConf" type="CN_SPS" />
+            <DO name="EEHealth" type="CN_ENS" />
+            <DO name="FileDone" type="SH_SPC_Update" desc="下载文件" />
+            <DO name="Update" type="SH_SPC_Update" desc="升级程序" />
+            <DO name="HumSv" type="CN_SAV" />
+            <DO name="HumAlmMax" type="ING" />
+            <DO name="HumAlmMin" type="ING" />
+        </LNodeType>
+        <LNodeType id="CFAC_TYPE_0" lnClass="CFAC">
+            <DO name="Mod" type="SH_INC_Mod" />
+            <DO name="Beh" type="SH_INS_Beh" />
+            <DO name="Health" type="SH_INS_Health" />
+            <DO name="DataId" type="SH_MV_STR" desc="数据标识" />
+            <DO name="NamPlt" type="CN_LPL_LN0" />
+            <DO name="SmpProd" type="ING" desc="采集间隔" />
+            <DO name="LinkedDevice" type="SH_LPL_LNKDEV" desc="被监测设备标识" />
+            <DO name="DeviceCode" type="SH_LPL_DEVICE" desc="监测装置标识" />
+            <DO name="Type" type="SH_LPL_SP" desc="监测类型" />
+            <DO name="SenMP" type="SH_LPL_SP" desc="测点ID" />
+            <DO name="Loc" type="CN_SPS" desc="是否可控" />
+            <DO name="OpAct" type="CN_SPC" desc="立即采集" />
+            <DO name="MoDevConf" type="CN_SPS" />
+            <DO name="EEHealth" type="CN_ENS" />
+            <DO name="FileDone" type="SH_SPC_Update" desc="下载文件" />
+            <DO name="Update" type="SH_SPC_Update" desc="升级程序" />
+            <DO name="ComState" type="CN_SPS" />
+            <DO name="RunStat" type="CN_SPS" />
+            <DO name="SPCSO" type="CN_SPC" />
+        </LNodeType>
+        <LNodeType id="CLIC_TYPE_1" lnClass="CLIC">
+            <DO name="Mod" type="SH_INC_Mod" />
+            <DO name="Beh" type="SH_INS_Beh" />
+            <DO name="Health" type="SH_INS_Health" />
+            <DO name="DataId" type="SH_MV_STR" desc="数据标识" />
+            <DO name="NamPlt" type="CN_LPL_LN0" />
+            <DO name="SmpProd" type="ING" desc="采集间隔" />
+            <DO name="LinkedDevice" type="SH_LPL_LNKDEV" desc="被监测设备标识" />
+            <DO name="DeviceCode" type="SH_LPL_DEVICE" desc="监测装置标识" />
+            <DO name="Type" type="SH_LPL_SP" desc="监测类型" />
+            <DO name="SenMP" type="SH_LPL_SP" desc="测点ID" />
+            <DO name="Loc" type="CN_SPS" desc="是否可控" />
+            <DO name="OpAct" type="CN_SPC" desc="立即采集" />
+            <DO name="MoDevConf" type="CN_SPS" />
+            <DO name="EEHealth" type="CN_ENS" />
+            <DO name="FileDone" type="SH_SPC_Update" desc="下载文件" />
+            <DO name="Update" type="SH_SPC_Update" desc="升级程序" />
+            <DO name="ComState" type="CN_SPS" />
+            <DO name="RunStat" type="CN_SPS" />
+            <DO name="SPCSO" type="CN_SPC" />
+        </LNodeType>
+        <LNodeType id="CACC_TYPE_2" lnClass="CACC">
+            <DO name="Mod" type="SH_INC_Mod" />
+            <DO name="Beh" type="SH_INS_Beh" />
+            <DO name="Health" type="SH_INS_Health" />
+            <DO name="DataId" type="SH_MV_STR" desc="数据标识" />
+            <DO name="NamPlt" type="CN_LPL_LN0" />
+            <DO name="SmpProd" type="ING" desc="采集间隔" />
+            <DO name="LinkedDevice" type="SH_LPL_LNKDEV" desc="被监测设备标识" />
+            <DO name="DeviceCode" type="SH_LPL_DEVICE" desc="监测装置标识" />
+            <DO name="Type" type="SH_LPL_SP" desc="监测类型" />
+            <DO name="SenMP" type="SH_LPL_SP" desc="测点ID" />
+            <DO name="Loc" type="CN_SPS" desc="是否可控" />
+            <DO name="OpAct" type="CN_SPC" desc="立即采集" />
+            <DO name="MoDevConf" type="CN_SPS" />
+            <DO name="EEHealth" type="CN_ENS" />
+            <DO name="FileDone" type="SH_SPC_Update" desc="下载文件" />
+            <DO name="Update" type="SH_SPC_Update" desc="升级程序" />
+            <DO name="ComState" type="CN_SPS" />
+            <DO name="RunStat" type="CN_SPS" />
+            <DO name="SPCSO" type="CN_SPC" />
+        </LNodeType>
+        <LNodeType id="ZACC_TYPE_5" lnClass="ZACC">
+            <DO name="Mod" type="SH_INC_Mod" />
+            <DO name="Beh" type="SH_INS_Beh" />
+            <DO name="Health" type="SH_INS_Health" />
+            <DO name="DataId" type="SH_MV_STR" desc="数据标识" />
+            <DO name="NamPlt" type="CN_LPL_LN0" />
+            <DO name="SmpProd" type="ING" desc="采集间隔" />
+            <DO name="LinkedDevice" type="SH_LPL_LNKDEV" desc="被监测设备标识" />
+            <DO name="DeviceCode" type="SH_LPL_DEVICE" desc="监测装置标识" />
+            <DO name="Type" type="SH_LPL_SP" desc="监测类型" />
+            <DO name="SenMP" type="SH_LPL_SP" desc="测点ID" />
+            <DO name="Loc" type="CN_SPS" desc="是否可控" />
+            <DO name="OpAct" type="CN_SPC" desc="立即采集" />
+            <DO name="MoDevConf" type="CN_SPS" />
+            <DO name="EEHealth" type="CN_ENS" />
+            <DO name="FileDone" type="SH_SPC_Update" desc="下载文件" />
+            <DO name="Update" type="SH_SPC_Update" desc="升级程序" />
+            <DO name="ComState" type="CN_SPS" />
+            <DO name="RunStat" type="CN_SPS" />
+            <DO name="SPCSO" type="CN_SPC" />
+            <DO name="CarNum" type="AN_ASG_SG_I" />
+        </LNodeType>
+        <LNodeType id="ZIND_TYPE_15" lnClass="ZIND">
+            <DO name="Mod" type="SH_INC_Mod" />
+            <DO name="Beh" type="SH_INS_Beh" />
+            <DO name="Health" type="SH_INS_Health" />
+            <DO name="DataId" type="SH_MV_STR" desc="数据标识" />
+            <DO name="NamPlt" type="CN_LPL_LN0" />
+            <DO name="SmpProd" type="ING" desc="采集间隔" />
+            <DO name="LinkedDevice" type="SH_LPL_LNKDEV" desc="被监测设备标识" />
+            <DO name="DeviceCode" type="SH_LPL_DEVICE" desc="监测装置标识" />
+            <DO name="Type" type="SH_LPL_SP" desc="监测类型" />
+            <DO name="SenMP" type="SH_LPL_SP" desc="测点ID" />
+            <DO name="Loc" type="CN_SPS" desc="是否可控" />
+            <DO name="OpAct" type="CN_SPC" desc="立即采集" />
+            <DO name="MoDevConf" type="CN_SPS" />
+            <DO name="EEHealth" type="CN_ENS" />
+            <DO name="FileDone" type="SH_SPC_Update" desc="下载文件" />
+            <DO name="Update" type="SH_SPC_Update" desc="升级程序" />
+            <DO name="ComState" type="CN_SPS" />
+            <DO name="RunStat" type="CN_SPS" />
+        </LNodeType>
+        <LNodeType id="TSMD_TYPE_16" lnClass="TSMD">
+            <DO name="Mod" type="SH_INC_Mod" />
+            <DO name="Beh" type="SH_INS_Beh" />
+            <DO name="Health" type="SH_INS_Health" />
+            <DO name="DataId" type="SH_MV_STR" desc="数据标识" />
+            <DO name="NamPlt" type="CN_LPL_LN0" />
+            <DO name="SmpProd" type="ING" desc="采集间隔" />
+            <DO name="LinkedDevice" type="SH_LPL_LNKDEV" desc="被监测设备标识" />
+            <DO name="DeviceCode" type="SH_LPL_DEVICE" desc="监测装置标识" />
+            <DO name="Type" type="SH_LPL_SP" desc="监测类型" />
+            <DO name="SenMP" type="SH_LPL_SP" desc="测点ID" />
+            <DO name="Loc" type="CN_SPS" desc="是否可控" />
+            <DO name="OpAct" type="CN_SPC" desc="立即采集" />
+            <DO name="MoDevConf" type="CN_SPS" />
+            <DO name="EEHealth" type="CN_ENS" />
+            <DO name="FileDone" type="SH_SPC_Update" desc="下载文件" />
+            <DO name="Update" type="SH_SPC_Update" desc="升级程序" />
+            <DO name="ComState" type="CN_SPS" />
+            <DO name="RunStat" type="CN_SPS" />
+        </LNodeType>
+        <LNodeType id="LPHDa" lnClass="LPHD">
+            <DO name="PhyNam" type="CN_DPL" />
+            <DO name="PhyHealth" type="CN_INS" />
+            <DO name="Proxy" type="CN_SPS" />
+            <DO name="PwrUp" type="CN_SPS" />
+            <DO name="PwrDn" type="CN_SPS" />
+            <DO name="PwrSupAlm" type="CN_SPS" />
+        </LNodeType>
+        <LNodeType id="LN0" lnClass="LLN0">
+            <DO name="Mod" type="SH_INC_Mod" />
+            <DO name="Beh" type="SH_INS_Beh" />
+            <DO name="Health" type="SH_INS_Health" />
+            <DO name="NamPlt" type="CN_LPL_LN0" />
+            <DO name="IcdVer" type="SH_LPL_SP" desc="Cid" />
+            <DO name="Server" type="SH_LPL_Server" />
+        </LNodeType>
+        <DOType id="SH_SPC_Update" cdc="SPC">
+            <DA name="SBO" fc="CO" bType="VisString64" />
+            <DA name="SBOw" fc="CO" bType="Struct" type="STRSelectWithValue" />
+            <DA name="Oper" fc="CO" bType="Struct" type="STROperate" />
+            <DA name="Cancel" fc="CO" bType="Struct" type="STRCancel" />
+            <DA name="origin" fc="ST" bType="Struct" type="Originator" />
+            <DA name="ctlNum" fc="ST" bType="INT8U" />
+            <DA name="stVal" fc="ST" bType="VisString255" dchg="true" />
+            <DA name="q" fc="ST" bType="Quality" qchg="true" />
+            <DA name="t" fc="ST" bType="Timestamp" />
+            <DA name="stSeld" fc="ST" bType="VisString255" dchg="true" />
+            <DA name="ctlModel" fc="CF" bType="Enum" type="ctlModel" />
+            <DA name="sboTimeout" fc="CF" bType="INT32U" />
+            <DA name="sboClass" fc="CF" bType="Enum" type="sboClass" />
+            <DA name="d" fc="DC" bType="VisString255" />
+            <DA name="dU" fc="DC" bType="Unicode255" />
+        </DOType>
+        <DOType id="SH_LPL_SP" cdc="LPL">
+            <DA name="stVal" bType="Unicode255" fc="DC" />
+            <DA name="dU" bType="Unicode255" fc="DC" />
+            <DA name="cdcNs" bType="VisString255" fc="EX">
+                <Val>SHEPC:2017</Val>
+            </DA>
+            <DA name="cdcName" bType="VisString255" fc="EX">
+                <Val>SHEPC:2017</Val>
+            </DA>
+            <DA name="dataNs" bType="VisString255" fc="EX">
+                <Val>SHEPC:2017</Val>
+            </DA>
+        </DOType>
+        <DOType id="SH_INC_Mod" cdc="INC">
+            <DA name="stVal" bType="Enum" type="Mod" dchg="true" fc="ST" />
+            <DA name="q" bType="Quality" qchg="true" fc="ST" />
+            <DA name="t" bType="Timestamp" fc="ST" />
+            <DA name="ctlModel" bType="Enum" type="ctlModel" fc="CF" />
+        </DOType>
+        <DOType id="SH_LPL_LNKDEV" cdc="LPL">
+            <DA name="dU" bType="Unicode255" fc="DC" />
+            <DA name="pms" bType="VisString255" fc="DC" />
+            <DA name="name" bType="Unicode255" fc="DC" />
+            <DA name="vendor" bType="Unicode255" fc="DC" />
+            <DA name="model" bType="Unicode255" fc="DC" />
+            <DA name="t" bType="VisString255" fc="DC" />
+            <DA name="phase" bType="VisString255" fc="DC" />
+            <DA name="vol" bType="VisString255" fc="DC" />
+            <DA name="typeName" bType="Unicode255" fc="DC" />
+            <DA name="bay" bType="Unicode255" fc="DC" />
+            <DA name="cdcNs" bType="VisString255" fc="EX">
+                <Val>SHEPC:2017</Val>
+            </DA>
+            <DA name="cdcName" bType="VisString255" fc="EX">
+                <Val>SHEPC:2017</Val>
+            </DA>
+            <DA name="dataNs" bType="VisString255" fc="EX">
+                <Val>SHEPC:2017</Val>
+            </DA>
+        </DOType>
+        <DOType id="SH_LPL_DEVICE" cdc="LPL">
+            <DA name="dU" bType="Unicode255" fc="DC" />
+            <DA name="pms" bType="VisString255" fc="DC" />
+            <DA name="name" bType="Unicode255" fc="DC" />
+            <DA name="vendor" bType="Unicode255" fc="DC" />
+            <DA name="model" bType="Unicode255" fc="DC" />
+            <DA name="t" bType="VisString255" fc="DC" />
+            <DA name="cdcNs" bType="VisString255" fc="EX">
+                <Val>SHEPC:2017</Val>
+            </DA>
+            <DA name="cdcName" bType="VisString255" fc="EX">
+                <Val>SHEPC:2017</Val>
+            </DA>
+            <DA name="dataNs" bType="VisString255" fc="EX">
+                <Val>SHEPC:2017</Val>
+            </DA>
+        </DOType>
+        <DOType id="SH_LPL_Server" cdc="LPL">
+            <DA name="user" bType="VisString255" fc="DC" />
+            <!--用户名-->
+            <DA name="passwd" bType="VisString255" fc="DC" />
+            <!--密码-->
+            <DA name="rtuid" bType="INT16" fc="DC" />
+            <!--RTU-ID-->
+        </DOType>
+        <DOType id="SH_INS_Health" cdc="INS">
+            <DA name="stVal" bType="Enum" type="Health" dchg="true" fc="ST" />
+            <DA name="q" bType="Quality" qchg="true" fc="ST" />
+            <DA name="t" bType="Timestamp" fc="ST" />
+        </DOType>
+        <DOType cdc="SPS" id="CN_SPS">
+            <DA bType="BOOLEAN" dchg="true" fc="ST" name="stVal" />
+            <DA bType="Quality" fc="ST" name="q" qchg="true" />
+            <DA bType="Timestamp" fc="ST" name="t" />
+            <DA bType="BOOLEAN" fc="SV" name="subEna" />
+            <DA bType="BOOLEAN" fc="SV" name="subVal" />
+            <DA bType="Quality" fc="SV" name="subQ" />
+            <DA bType="VisString64" fc="SV" name="subID" />
+            <DA bType="Unicode255" fc="DC" name="dU" />
+        </DOType>
+        <DOType cdc="SPS" id="CN_SPS_EX">
+            <DA bType="BOOLEAN" dchg="true" fc="ST" name="stVal" />
+            <DA bType="Quality" fc="ST" name="q" qchg="true" />
+            <DA bType="Timestamp" fc="ST" name="t" />
+            <DA bType="BOOLEAN" fc="SV" name="subEna" />
+            <DA bType="BOOLEAN" fc="SV" name="subVal" />
+            <DA bType="Quality" fc="SV" name="subQ" />
+            <DA bType="VisString64" fc="SV" name="subID" />
+            <DA bType="Unicode255" fc="DC" name="dU" />
+            <DA bType="VisString255" fc="EX" name="dataNs">
+                <Val>ZPEPC MODEL:2008</Val>
+            </DA>
+        </DOType>
+        <DOType cdc="DPS" id="CN_DPS_EX">
+            <DA bType="Dbpos" dchg="true" fc="ST" name="stVal" type="Dbpos" />
+            <DA bType="Quality" fc="ST" name="q" qchg="true" />
+            <DA bType="Timestamp" fc="ST" name="t" />
+            <DA bType="BOOLEAN" fc="SV" name="subEna" />
+            <DA bType="Dbpos" fc="SV" name="subVal" />
+            <DA bType="Quality" fc="SV" name="subQ" />
+            <DA bType="VisString64" fc="SV" name="subID" />
+            <DA bType="Unicode255" fc="DC" name="dU" />
+            <DA bType="VisString255" fc="EX" name="dataNs">
+                <Val>ZPEPC MODEL:2008</Val>
+            </DA>
+        </DOType>
+        <DOType id="SH_INS_Beh" cdc="INS">
+            <DA name="stVal" bType="Enum" type="Mod" fc="ST" dchg="true" />
+            <DA name="q" bType="Quality" fc="ST" qchg="true" />
+            <DA name="t" bType="Timestamp" fc="ST" />
+        </DOType>
+        <DOType cdc="INS" id="CN_INS">
+            <DA bType="INT32" dchg="true" fc="ST" name="stVal" />
+            <DA bType="Quality" fc="ST" name="q" qchg="true" />
+            <DA bType="Timestamp" fc="ST" name="t" />
+            <DA bType="BOOLEAN" fc="SV" name="subEna" />
+            <DA bType="INT32" fc="SV" name="subVal" />
+            <DA bType="Quality" fc="SV" name="subQ" />
+            <DA bType="VisString64" fc="SV" name="subID" />
+            <DA bType="Unicode255" fc="DC" name="dU" />
+        </DOType>
+        <DOType id="CN_ENS" cdc="ENS">
+            <DA name="stVal" bType="Enum" type="ENSEnum" dchg="true" fc="ST" />
+            <DA name="q" bType="Quality" qchg="true" fc="ST" />
+            <DA name="t" bType="Timestamp" fc="ST" />
+            <DA name="subEna" bType="BOOLEAN" fc="SV" />
+            <DA name="subVal" bType="INT32" fc="SV" />
+            <DA name="subQ" bType="Quality" fc="SV" />
+            <DA name="subID" bType="VisString64" fc="SV" />
+            <DA name="dU" bType="Unicode255" fc="DC" />
+        </DOType>
+        <DOType cdc="ACT" id="CN_ACT">
+            <DA bType="BOOLEAN" dchg="true" fc="ST" name="general" />
+            <DA bType="Quality" fc="ST" name="q" qchg="true" />
+            <DA bType="Timestamp" fc="ST" name="t" />
+            <DA bType="Unicode255" fc="DC" name="dU" />
+        </DOType>
+        <DOType cdc="MV" id="CN_MV">
+            <DA bType="Struct" dchg="true" fc="MX" name="mag" type="CN_AnalogueValue" />
+            <DA bType="Quality" fc="MX" name="q" qchg="true" />
+            <DA bType="Timestamp" fc="MX" name="t" />
+            <DA bType="BOOLEAN" fc="SV" name="subEna" />
+            <DA bType="Struct" fc="SV" name="subMag" type="CN_AnalogueValue" />
+            <DA bType="Quality" fc="SV" name="subQ" />
+            <DA bType="VisString64" fc="SV" name="subID" />
+            <DA bType="Struct" fc="CF" name="units" type="CN_units" />
+            <DA bType="INT32U" fc="CF" name="db" />
+            <DA bType="INT32U" fc="CF" name="zeroDb" />
+            <DA bType="Struct" fc="CF" name="sVC" type="CN_ScaledValueConfig" />
+            <DA bType="Unicode255" fc="DC" name="dU" />
+        </DOType>
+        <DOType cdc="CMV" id="CN_CMV">
+            <DA bType="Struct" dchg="true" fc="MX" name="cVal" type="CN_Vector" />
+            <DA bType="Quality" fc="MX" name="q" qchg="true" />
+            <DA bType="Timestamp" fc="MX" name="t" />
+            <DA bType="BOOLEAN" fc="SV" name="subEna" />
+            <DA bType="Struct" fc="SV" name="subCVal" type="CN_Vector" />
+            <DA bType="Quality" fc="SV" name="subQ" />
+            <DA bType="VisString64" fc="SV" name="subID" />
+            <DA bType="Struct" fc="CF" name="units" type="CN_units" />
+            <DA bType="INT32U" fc="CF" name="db" />
+            <DA bType="INT32U" fc="CF" name="zeroDb" />
+            <DA bType="Struct" fc="CF" name="magSVC" type="CN_ScaledValueConfig" />
+            <DA bType="Struct" fc="CF" name="angSVC" type="CN_ScaledValueConfig" />
+            <DA bType="Enum" fc="CF" name="angRef" type="angidCMV" />
+            <DA bType="Unicode255" fc="DC" name="dU" />
+        </DOType>
+        <DOType cdc="SPC" id="CN_SPC">
+            <DA bType="Struct" fc="CO" name="SBOw" type="CN_SBOw_Oper_SDPC" />
+            <DA bType="Struct" fc="CO" name="Oper" type="CN_SBOw_Oper_SDPC" />
+            <DA bType="Struct" fc="CO" name="Cancel" type="CN_Cancel_SDPC" />
+            <DA bType="BOOLEAN" dchg="true" fc="ST" name="stVal" />
+            <DA bType="Quality" fc="ST" name="q" qchg="true" />
+            <DA bType="Timestamp" fc="ST" name="t" />
+            <DA bType="BOOLEAN" fc="SV" name="subEna" />
+            <DA bType="BOOLEAN" fc="SV" name="subVal" />
+            <DA bType="Quality" fc="SV" name="subQ" />
+            <DA bType="VisString64" fc="SV" name="subID" />
+            <DA bType="Struct" fc="CF" name="pulseConfig" type="CN_PulseConfig" />
+            <DA bType="Enum" fc="CF" name="ctlModel" type="ctlModel" />
+            <DA bType="INT32U" fc="CF" name="sboTimeout" />
+            <DA bType="Enum" fc="CF" name="sboClass" type="sboClass" />
+            <DA bType="Unicode255" fc="DC" name="dU" />
+        </DOType>
+        <DOType cdc="DPC" id="CN_DPC">
+            <DA bType="Struct" fc="CO" name="SBOw" type="CN_SBOw_Oper_SDPC" />
+            <DA bType="Struct" fc="CO" name="Oper" type="CN_SBOw_Oper_SDPC" />
+            <DA bType="Struct" fc="CO" name="Cancel" type="CN_Cancel_SDPC" />
+            <DA bType="Dbpos" dchg="true" fc="ST" name="stVal" />
+            <DA bType="Quality" fc="ST" name="q" qchg="true" />
+            <DA bType="Timestamp" fc="ST" name="t" />
+            <DA bType="BOOLEAN" fc="SV" name="subEna" />
+            <DA bType="Dbpos" fc="SV" name="subVal" />
+            <DA bType="Quality" fc="SV" name="subQ" />
+            <DA bType="VisString64" fc="SV" name="subID" />
+            <DA bType="Struct" fc="CF" name="pulseConfig" type="CN_PulseConfig" />
+            <DA bType="Enum" fc="CF" name="ctlModel" type="ctlModel" />
+            <DA bType="INT32U" fc="CF" name="sboTimeout" />
+            <DA bType="Enum" fc="CF" name="sboClass" type="sboClass" />
+            <DA bType="Unicode255" fc="DC" name="dU" />
+        </DOType>
+        <DOType cdc="INC" id="CN_INC_Mod">
+            <DA name="stVal" bType="Enum" type="Mod" dchg="true" fc="ST" />
+            <DA bType="Quality" fc="ST" name="q" qchg="true" />
+            <DA bType="Timestamp" fc="ST" name="t" />
+            <DA bType="Enum" fc="CF" name="ctlModel" type="ctlModel">
+                <Val>0</Val>
+            </DA>
+        </DOType>
+        <DOType id="CN_INC" cdc="INC">
+            <DA name="SBOw" bType="Struct" type="CN_SBOw_Oper_INC" fc="CO" />
+            <DA name="Oper" bType="Struct" type="CN_SBOw_Oper_INC" fc="CO" />
+            <DA name="Cancel" bType="Struct" type="CN_Cancel_INC" fc="CO" />
+            <DA name="stVal" bType="INT32" type="" dchg="true" fc="ST" />
+            <DA name="q" bType="Quality" qchg="true" fc="ST" />
+            <DA name="t" bType="Timestamp" fc="ST" />
+            <DA name="subEna" bType="BOOLEAN" fc="SV" />
+            <DA name="subVal" bType="INT32" fc="SV" />
+            <DA name="subQ" bType="Quality" fc="SV" />
+            <DA name="subID" bType="VisString64" fc="SV" />
+            <DA name="ctlModel" bType="Enum" type="ctlModel" fc="CF" />
+            <DA name="sboTimeout" bType="INT32U" fc="CF" />
+            <DA name="sboClass" bType="Enum" type="sboClass" fc="CF" />
+            <DA name="minVal" bType="INT32" fc="CF" />
+            <DA name="maxVal" bType="INT32" fc="CF" />
+            <DA name="stepSize" bType="INT32U" fc="CF" />
+            <DA name="dU" bType="Unicode255" fc="DC" />
+        </DOType>
+        <DOType cdc="DPL" id="CN_DPL">
+            <DA bType="VisString255" fc="DC" name="vendor" />
+            <DA bType="VisString255" fc="DC" name="hwRev" />
+            <DA bType="VisString255" fc="DC" name="swRev" />
+            <DA bType="VisString255" fc="DC" name="serNum" />
+            <DA bType="VisString255" fc="DC" name="model" />
+            <DA bType="VisString255" fc="DC" name="location" />
+        </DOType>
+        <DOType cdc="LPL" id="CN_LPL_LN0">
+            <DA bType="VisString255" fc="DC" name="vendor" />
+            <DA bType="VisString255" fc="DC" name="swRev" />
+            <DA bType="VisString255" fc="DC" name="d" />
+            <DA bType="Unicode255" fc="DC" name="dU" />
+            <DA bType="VisString255" fc="DC" name="configRev" />
+            <DA bType="VisString255" fc="EX" name="ldNs">
+                <Val>IEC 61850-7-4:2003</Val>
+            </DA>
+        </DOType>
+        <DOType cdc="LPL" id="CN_LPL">
+            <DA bType="VisString255" fc="DC" name="vendor" />
+            <DA bType="VisString255" fc="DC" name="swRev" />
+            <DA bType="VisString255" fc="DC" name="d" />
+            <DA bType="Unicode255" fc="DC" name="dU" />
+        </DOType>
+        <DOType cdc="SPC" id="AN_SPC_DC">
+            <DA bType="Struct" fc="CO" name="Oper" type="AN_SBOw_Oper_SDPC" />
+            <DA bType="BOOLEAN" dchg="true" fc="ST" name="stVal" />
+            <DA bType="Quality" fc="ST" name="q" qchg="true" />
+            <DA bType="Timestamp" fc="ST" name="t" sAddr="ti" />
+            <DA bType="Enum" fc="CF" name="ctlModel" type="ctlModel" />
+            <DA bType="Unicode255" fc="DC" name="dU" />
+        </DOType>
+        <DOType cdc="MV" id="AN_MV_i">
+            <DA bType="Struct" dchg="true" fc="MX" name="mag" type="AN_AnalogueValue_i" />
+            <DA bType="Quality" fc="MX" name="q" qchg="true" />
+            <DA bType="Timestamp" fc="MX" name="t" />
+            <DA bType="Unicode255" fc="DC" name="dU" />
+        </DOType>
+        <DOType cdc="MV" id="AN_MV_f">
+            <DA bType="Struct" dchg="true" fc="MX" name="mag" type="AN_AnalogueValue_f" />
+            <DA bType="Quality" fc="MX" name="q" qchg="true" />
+            <DA bType="Timestamp" fc="MX" name="t" />
+            <DA bType="Unicode255" fc="DC" name="dU" />
+        </DOType>
+        <DOType id="CN_DEL" cdc="DEL">
+            <SDO name="phsAB" type="CN_CMV" />
+            <SDO name="phsBC" type="CN_CMV" />
+            <SDO name="phsCA" type="CN_CMV" />
+            <DA name="angRef" bType="Enum" type="angRefWYEEnum" fc="CF" />
+            <DA name="dU" bType="Unicode255" fc="DC" />
+        </DOType>
+        <DOType id="CN_WYE" cdc="WYE">
+            <SDO name="phsA" type="CN_CMV" />
+            <SDO name="phsB" type="CN_CMV" />
+            <SDO name="phsC" type="CN_CMV" />
+            <DA name="angRef" bType="Enum" type="angRefWYEEnum" fc="CF" />
+            <DA name="dU" bType="Unicode255" fc="DC" />
+        </DOType>
+        <DOType id="CN_SPG" cdc="SPG">
+            <DA name="setVal" bType="BOOLEAN" fc="SP" />
+            <DA name="dU" bType="Unicode255" fc="DC" />
+        </DOType>
+        <DOType cdc="ASG" id="AN_ASG_SP_I">
+            <DA bType="Struct" fc="SP" name="setMag" type="AN_AnalogueValue_i" />
+            <DA name="units" bType="Struct" type="CN_units" fc="CF" />
+            <DA name="sVC" bType="Struct" type="CN_ScaledValueConfig" fc="CF" />
+            <DA name="minVal" bType="Struct" type="CN_AnalogueValue" fc="CF" />
+            <DA name="maxVal" bType="Struct" type="CN_AnalogueValue" fc="CF" />
+            <DA name="stepSize" bType="Struct" type="CN_AnalogueValue" fc="CF" />
+            <DA bType="Unicode255" fc="DC" name="dU" />
+        </DOType>
+        <DOType id="AN_ASG_SP_F" cdc="ASG">
+            <DA name="setMag" bType="Struct" type="AN_AnalogueValue_f" fc="SP" />
+            <DA name="units" bType="Struct" type="CN_units" fc="CF" />
+            <DA name="sVC" bType="Struct" type="CN_ScaledValueConfig" fc="CF" />
+            <DA name="minVal" bType="Struct" type="CN_AnalogueValue" fc="CF" />
+            <DA name="maxVal" bType="Struct" type="CN_AnalogueValue" fc="CF" />
+            <DA name="stepSize" bType="Struct" type="CN_AnalogueValue" fc="CF" />
+            <DA name="dU" bType="Unicode255" fc="DC" />
+        </DOType>
+        <DOType cdc="ASG" id="AN_ASG_SG_I">
+            <DA bType="Struct" fc="SG" name="setMag" type="AN_AnalogueValue_i" />
+            <DA name="units" bType="Struct" type="CN_units" fc="CF" />
+            <DA name="sVC" bType="Struct" type="CN_ScaledValueConfig" fc="CF" />
+            <DA name="minVal" bType="Struct" type="CN_AnalogueValue" fc="CF" />
+            <DA name="maxVal" bType="Struct" type="CN_AnalogueValue" fc="CF" />
+            <DA name="stepSize" bType="Struct" type="CN_AnalogueValue" fc="CF" />
+            <DA bType="Unicode255" fc="DC" name="dU" />
+        </DOType>
+        <DOType id="AN_ASG_SG_F" cdc="ASG">
+            <DA name="setMag" bType="Struct" type="AN_AnalogueValue_f" fc="SG" />
+            <DA name="units" bType="Struct" type="CN_units" fc="CF" />
+            <DA name="sVC" bType="Struct" type="CN_ScaledValueConfig" fc="CF" />
+            <DA name="minVal" bType="Struct" type="CN_AnalogueValue" fc="CF" />
+            <DA name="maxVal" bType="Struct" type="CN_AnalogueValue" fc="CF" />
+            <DA name="stepSize" bType="Struct" type="CN_AnalogueValue" fc="CF" />
+            <DA name="dU" bType="Unicode255" fc="DC" />
+        </DOType>
+        <DOType id="CN_SAV" cdc="SAV">
+            <DA name="instMag" bType="Struct" type="AN_AnalogueValue_i" fc="MX" />
+            <DA name="q" bType="Quality" qchg="true" fc="MX" />
+            <DA bType="Timestamp" fc="MX" name="t" />
+            <DA name="units" bType="Struct" type="CN_units" fc="CF" />
+            <DA name="sVC" bType="Struct" type="CN_ScaledValueConfig" fc="CF" />
+            <DA name="min" bType="Struct" type="AN_AnalogueValue_i" fc="CF" />
+            <DA name="max" bType="Struct" type="AN_AnalogueValue_i" fc="CF" />
+            <DA name="dU" bType="Unicode255" fc="DC" />
+        </DOType>
+        <DOType id="ING" cdc="ING">
+            <DA name="setVal" fc="SG" bType="INT32" />
+            <DA name="setVal" fc="SE" bType="INT32" />
+            <DA name="minVal" fc="CF" bType="INT32" />
+            <DA name="maxVal" fc="CF" bType="INT32" />
+            <DA name="stepSize" fc="CF" bType="INT32U" />
+            <DA name="d" fc="DC" bType="VisString255" />
+            <DA name="dU" fc="DC" bType="Unicode255" />
+        </DOType>
+        <DOType id="SH_MV_STR" cdc="MV">
+            <DA name="stVal" fc="MX" bType="VisString255" dchg="true" />
+            <DA name="q" fc="MX" bType="Quality" qchg="true" />
+            <DA name="t" fc="MX" bType="Timestamp" />
+            <DA name="dU" fc="DC" bType="Unicode255" />
+            <DA name="dataNs" bType="VisString255" fc="EX">
+                <Val>SHEPC:2017</Val>
+            </DA>
+        </DOType>
+        <DAType id="Originator">
+            <BDA name="orCat" bType="Enum" type="orCatEnum" />
+            <BDA name="orIdent" bType="Octet64" />
+        </DAType>
+        <DAType id="STRSelectWithValue">
+            <BDA name="ctlVal" bType="VisString255" />
+            <BDA name="operTm" bType="Timestamp" />
+            <BDA name="origin" bType="Struct" type="Originator" />
+            <BDA name="ctlNum" bType="INT8U" />
+            <BDA name="T" bType="Timestamp" />
+            <BDA name="Test" bType="BOOLEAN" />
+            <BDA name="Check" bType="Check" />
+        </DAType>
+        <DAType id="STROperate">
+            <BDA name="ctlVal" bType="VisString255" />
+            <BDA name="operTm" bType="Timestamp" />
+            <BDA name="origin" bType="Struct" type="Originator" />
+            <BDA name="ctlNum" bType="INT8U" />
+            <BDA name="T" bType="Timestamp" />
+            <BDA name="Test" bType="BOOLEAN" />
+            <BDA name="Check" bType="Check" />
+        </DAType>
+        <DAType id="STRCancel">
+            <BDA name="ctlVal" bType="VisString255" />
+            <BDA name="operTm" bType="Timestamp" />
+            <BDA name="origin" bType="Struct" type="Originator" />
+            <BDA name="ctlNum" bType="INT8U" />
+            <BDA name="T" bType="Timestamp" />
+            <BDA name="Test" bType="BOOLEAN" />
+        </DAType>
+        <DAType id="CN_SBOw_Oper_SDPC">
+            <BDA bType="BOOLEAN" name="ctlVal" />
+            <BDA bType="Struct" name="origin" type="CN_Originator" />
+            <BDA bType="INT8U" name="ctlNum" />
+            <BDA bType="Timestamp" name="T" />
+            <BDA bType="BOOLEAN" name="Test" />
+            <BDA bType="Check" name="Check" />
+        </DAType>
+        <DAType id="CN_SBOw_Oper_INC">
+            <BDA bType="BOOLEAN" name="ctlVal" />
+            <BDA bType="Struct" name="origin" type="CN_Originator" />
+            <BDA bType="INT8U" name="ctlNum" />
+            <BDA bType="Timestamp" name="T" />
+            <BDA bType="BOOLEAN" name="Test" />
+            <BDA bType="Check" name="Check" />
+        </DAType>
+        <DAType id="CN_Cancel_SDPC">
+            <BDA bType="BOOLEAN" name="ctlVal" />
+            <BDA bType="Struct" name="origin" type="CN_Originator" />
+            <BDA bType="INT8U" name="ctlNum" />
+            <BDA bType="Timestamp" name="T" />
+            <BDA bType="BOOLEAN" name="Test" />
+        </DAType>
+        <DAType id="CN_Cancel_INC">
+            <BDA bType="BOOLEAN" name="ctlVal" />
+            <BDA bType="Struct" name="origin" type="CN_Originator" />
+            <BDA bType="INT8U" name="ctlNum" />
+            <BDA bType="Timestamp" name="T" />
+            <BDA bType="BOOLEAN" name="Test" />
+        </DAType>
+        <DAType id="CN_Vector">
+            <BDA bType="Struct" name="mag" type="CN_AnalogueValue" />
+            <BDA bType="Struct" name="ang" type="CN_AnalogueValue" />
+        </DAType>
+        <DAType id="CN_AnalogueValue">
+            <BDA bType="FLOAT32" name="f" />
+        </DAType>
+        <DAType id="AN_AnalogueValue_f">
+            <BDA name="f" bType="FLOAT32" />
+        </DAType>
+        <DAType id="CN_units">
+            <BDA bType="Enum" name="SIUnit" type="SIUnit" />
+            <BDA bType="Enum" name="multiplier" type="multiplier" />
+        </DAType>
+        <DAType id="CN_ScaledValueConfig">
+            <BDA bType="FLOAT32" name="scaleFactor" />
+            <BDA bType="FLOAT32" name="offset" />
+        </DAType>
+        <DAType id="CN_RangeConfig">
+            <BDA bType="Struct" name="hhLim" type="CN_AnalogueValue" />
+            <BDA bType="Struct" name="hLim" type="CN_AnalogueValue" />
+            <BDA bType="Struct" name="lLim" type="CN_AnalogueValue" />
+            <BDA bType="Struct" name="llLim" type="CN_AnalogueValue" />
+            <BDA bType="Struct" name="min" type="CN_AnalogueValue" />
+            <BDA bType="Struct" name="max" type="CN_AnalogueValue" />
+        </DAType>
+        <DAType id="CN_PulseConfig">
+            <BDA bType="Enum" name="cmdQual" type="PulseConfigCmdQual" />
+            <BDA bType="INT32U" name="onDur" />
+            <BDA bType="INT32U" name="offDur" />
+            <BDA bType="INT32U" name="numPls" />
+        </DAType>
+        <DAType id="CN_Originator">
+            <BDA bType="Enum" name="orCat" type="orCategory" />
+            <BDA bType="Octet64" name="orIdent" />
+        </DAType>
+        <DAType id="AN_Originator">
+            <BDA bType="Enum" name="orCat" type="orCategory" />
+            <BDA bType="Octet64" name="orIdent" />
+        </DAType>
+        <DAType id="AN_SBOw_Oper_SDPC">
+            <BDA bType="BOOLEAN" name="ctlVal" />
+            <BDA bType="Struct" name="origin" type="AN_Originator" />
+            <BDA bType="INT8U" name="ctlNum" />
+            <BDA bType="Timestamp" name="T" />
+            <BDA bType="BOOLEAN" name="Test" />
+            <BDA bType="Check" name="Check" />
+        </DAType>
+        <DAType id="AN_AnalogueValue_i">
+            <BDA bType="INT32" name="i" />
+        </DAType>
+        <EnumType id="orCatEnum">
+            <EnumVal ord="0">not-supported</EnumVal>
+            <EnumVal ord="1">bay-control</EnumVal>
+            <EnumVal ord="2">station-control</EnumVal>
+            <EnumVal ord="3">remote-control</EnumVal>
+            <EnumVal ord="4">automatic-bay</EnumVal>
+            <EnumVal ord="5">automatic-station</EnumVal>
+            <EnumVal ord="6">automatic-remote</EnumVal>
+            <EnumVal ord="7">maintenance</EnumVal>
+            <EnumVal ord="8">process</EnumVal>
+        </EnumType>
+        <EnumType id="angRefWYEEnum">
+            <EnumVal ord="9">Vother</EnumVal>
+            <EnumVal ord="8">Vca</EnumVal>
+            <EnumVal ord="6">Vab</EnumVal>
+            <EnumVal ord="4">Ab</EnumVal>
+            <EnumVal ord="10">Aother</EnumVal>
+            <EnumVal ord="2">Vc</EnumVal>
+            <EnumVal ord="7">Vbc</EnumVal>
+            <EnumVal ord="3">Aa</EnumVal>
+            <EnumVal ord="0">Va</EnumVal>
+            <EnumVal ord="1">Vb</EnumVal>
+            <EnumVal ord="5">Ac</EnumVal>
+        </EnumType>
+        <EnumType id="ENSEnum">
+            <EnumVal ord="0">0</EnumVal>
+            <EnumVal ord="1">1</EnumVal>
+            <EnumVal ord="2">2</EnumVal>
+            <EnumVal ord="3">3</EnumVal>
+            <EnumVal ord="4">4</EnumVal>
+            <EnumVal ord="5">5</EnumVal>
+            <EnumVal ord="6">6</EnumVal>
+            <EnumVal ord="7">7</EnumVal>
+            <EnumVal ord="8">8</EnumVal>
+            <EnumVal ord="9">9</EnumVal>
+            <EnumVal ord="10">10</EnumVal>
+        </EnumType>
+        <EnumType id="Mod">
+            <EnumVal ord="1">on</EnumVal>
+            <EnumVal ord="2">blocked</EnumVal>
+            <EnumVal ord="3">test</EnumVal>
+            <EnumVal ord="4">test/blocked</EnumVal>
+            <EnumVal ord="5">off</EnumVal>
+        </EnumType>
+        <EnumType id="Beh">
+            <EnumVal ord="1">on</EnumVal>
+            <EnumVal ord="2">blocked</EnumVal>
+            <EnumVal ord="3">test</EnumVal>
+            <EnumVal ord="4">test/blocked</EnumVal>
+            <EnumVal ord="5">off</EnumVal>
+        </EnumType>
+        <EnumType id="Health">
+            <EnumVal ord="1">Ok</EnumVal>
+            <EnumVal ord="2">Warning</EnumVal>
+            <EnumVal ord="3">Alarm</EnumVal>
+        </EnumType>
+        <EnumType id="ctlModel">
+            <EnumVal ord="0">status-only</EnumVal>
+            <EnumVal ord="1">direct-with-normal-security</EnumVal>
+            <EnumVal ord="2">sbo-with-normal-security</EnumVal>
+            <EnumVal ord="3">direct-with-enhanced-security</EnumVal>
+            <EnumVal ord="4">sbo-with-enhanced-security</EnumVal>
+        </EnumType>
+        <EnumType id="sboClass">
+            <EnumVal ord="0">operate-once</EnumVal>
+            <EnumVal ord="1">operate-many</EnumVal>
+        </EnumType>
+        <EnumType id="angidCMV">
+            <EnumVal ord="0">operate-once</EnumVal>
+            <EnumVal ord="1">operate-many</EnumVal>
+        </EnumType>
+        <EnumType id="PulseConfigCmdQual">
+            <EnumVal ord="0">pulse</EnumVal>
+            <EnumVal ord="1">persistent</EnumVal>
+        </EnumType>
+        <EnumType id="orCategory">
+            <EnumVal ord="0">not-supported</EnumVal>
+            <EnumVal ord="1">bay-control</EnumVal>
+            <EnumVal ord="2">station-control</EnumVal>
+            <EnumVal ord="3">remote-control</EnumVal>
+            <EnumVal ord="4">automatic-bay</EnumVal>
+            <EnumVal ord="5">automatic-station</EnumVal>
+            <EnumVal ord="6">automatic-remote</EnumVal>
+            <EnumVal ord="7">maintenance</EnumVal>
+            <EnumVal ord="8">process</EnumVal>
+        </EnumType>
+        <EnumType id="SIUnit">
+            <EnumVal ord="1" />
+            <EnumVal ord="2">m</EnumVal>
+            <EnumVal ord="3">kg</EnumVal>
+            <EnumVal ord="4">s</EnumVal>
+            <EnumVal ord="5">A</EnumVal>
+            <EnumVal ord="6">K</EnumVal>
+            <EnumVal ord="7">mol</EnumVal>
+            <EnumVal ord="8">cd</EnumVal>
+            <EnumVal ord="9">deg</EnumVal>
+            <EnumVal ord="10">rad</EnumVal>
+            <EnumVal ord="11">sr</EnumVal>
+            <EnumVal ord="21">Gy</EnumVal>
+            <EnumVal ord="22">q</EnumVal>
+            <EnumVal ord="23">°C</EnumVal>
+            <EnumVal ord="24">Sv</EnumVal>
+            <EnumVal ord="25">F</EnumVal>
+            <EnumVal ord="26">C</EnumVal>
+            <EnumVal ord="27">S</EnumVal>
+            <EnumVal ord="28">H</EnumVal>
+            <EnumVal ord="29">V</EnumVal>
+            <EnumVal ord="30">ohm</EnumVal>
+            <EnumVal ord="31">J</EnumVal>
+            <EnumVal ord="32">N</EnumVal>
+            <EnumVal ord="33">Hz</EnumVal>
+            <EnumVal ord="34">lx</EnumVal>
+            <EnumVal ord="35">Lm</EnumVal>
+            <EnumVal ord="36">Wb</EnumVal>
+            <EnumVal ord="37">T</EnumVal>
+            <EnumVal ord="38">W</EnumVal>
+            <EnumVal ord="39">Pa</EnumVal>
+            <EnumVal ord="41">m²</EnumVal>
+            <EnumVal ord="42">m³</EnumVal>
+            <EnumVal ord="43">m/s</EnumVal>
+            <EnumVal ord="44">m/s²</EnumVal>
+            <EnumVal ord="45">m³/s</EnumVal>
+            <EnumVal ord="46">m/m³</EnumVal>
+            <EnumVal ord="47">M</EnumVal>
+            <EnumVal ord="48">kg/m³</EnumVal>
+            <EnumVal ord="49">m²/s</EnumVal>
+            <EnumVal ord="50">W/m K</EnumVal>
+            <EnumVal ord="51">J/K</EnumVal>
+            <EnumVal ord="52">ppm</EnumVal>
+            <EnumVal ord="53">1/s</EnumVal>
+            <EnumVal ord="54">rad/s</EnumVal>
+            <EnumVal ord="61">VA</EnumVal>
+            <EnumVal ord="62">Watts</EnumVal>
+            <EnumVal ord="63">VAr</EnumVal>
+            <EnumVal ord="64">phi</EnumVal>
+            <EnumVal ord="65">cos(phi)</EnumVal>
+            <EnumVal ord="66">Vs</EnumVal>
+            <EnumVal ord="67">V²</EnumVal>
+            <EnumVal ord="68">As</EnumVal>
+            <EnumVal ord="69">A²</EnumVal>
+            <EnumVal ord="70">A²t</EnumVal>
+            <EnumVal ord="71">VAh</EnumVal>
+            <EnumVal ord="72">Wh</EnumVal>
+            <EnumVal ord="73">VArh</EnumVal>
+            <EnumVal ord="74">V/Hz</EnumVal>
+        </EnumType>
+        <EnumType id="multiplier">
+            <EnumVal ord="-24">y</EnumVal>
+            <EnumVal ord="-21">z</EnumVal>
+            <EnumVal ord="-18">a</EnumVal>
+            <EnumVal ord="-15">f</EnumVal>
+            <EnumVal ord="-12">p</EnumVal>
+            <EnumVal ord="-9">n</EnumVal>
+            <EnumVal ord="-6">µ</EnumVal>
+            <EnumVal ord="-3">m</EnumVal>
+            <EnumVal ord="-2">c</EnumVal>
+            <EnumVal ord="-1">d</EnumVal>
+            <EnumVal ord="0" />
+            <EnumVal ord="1">da</EnumVal>
+            <EnumVal ord="2">h</EnumVal>
+            <EnumVal ord="3">k</EnumVal>
+            <EnumVal ord="6">M</EnumVal>
+            <EnumVal ord="9">G</EnumVal>
+            <EnumVal ord="12">T</EnumVal>
+            <EnumVal ord="15">P</EnumVal>
+            <EnumVal ord="18">E</EnumVal>
+            <EnumVal ord="21">Z</EnumVal>
+            <EnumVal ord="24">Y</EnumVal>
+        </EnumType>
+    </DataTypeTemplates>
+</SCL>
